@@ -2,6 +2,8 @@
 
 ## 技术选型
 
+### Docker 部署
+
 ### 服务端 
 
 > 使用 `nestjs` + `mongodb` + `redis` + `cos`

@@ -8,7 +8,8 @@ import { ConfigService } from '../config/config.service';
 
 class CacheKeys {
     readonly user: string = 'user:%d';
-    readonly signupCode: string = 'signupcode:%s';
+    readonly smsCode: string = 'smscode:%s';
+    readonly smsCodeTime: string = 'smscodetime:%s';
     readonly userToken: string = 'usertoken:%d';
     readonly publishArticle: string = 'publisharticle:%d';
     readonly categories: string = 'categories';
@@ -39,13 +40,23 @@ export class RedisService {
         return await this.client.set(cacheKey, JSON.stringify(user), 'EX', 1 * 60 * 60);
     }
 
-    async setSignupCode(phone: string, code: string) {
-        const cacheKey = util.format(this.cacheKeys.signupCode, phone);
-        return await this.client.set(cacheKey, code, 'EX', 10 * 60);
+    async setSmsCode(phone: string, code: string, timeout = 10) {
+        const cacheKey = util.format(this.cacheKeys.smsCode, phone);
+        return await this.client.set(cacheKey, code, 'EX', timeout * 60);
     }
 
-    async getSignupCode(phone: string): Promise<string> {
-        const cacheKey = util.format(this.cacheKeys.signupCode, phone);
+    async getSmsCode(phone: string): Promise<string> {
+        const cacheKey = util.format(this.cacheKeys.smsCode, phone);
+        return await this.client.get(cacheKey);
+    }
+
+    async setSmsCodeTime(phone: string, timeout = 10): Promise<string> {
+        const cacheKey = util.format(this.cacheKeys.smsCodeTime, phone);
+        return await this.client.set(cacheKey, Date.now(), 'EX', timeout);
+    }
+
+    async getSmsCodeTime(phone: string): Promise<string> {
+        const cacheKey = util.format(this.cacheKeys.smsCodeTime, phone);
         return await this.client.get(cacheKey);
     }
 

@@ -13,3 +13,6 @@ export class UserConstants {
     static readonly PERSONAL_HOMEPAGE__MAX_LENGTH: number = 100;
     static readonly CAPTCHA_LENGTH: number = 6;
 }
+export class CodeConstants {
+    static readonly CODE_REREPEAT: number = 60
+}

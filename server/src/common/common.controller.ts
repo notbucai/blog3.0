@@ -1,16 +1,21 @@
-import { Controller, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { Controller, Post, UseInterceptors, UploadedFile, Get, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import * as util from 'util';
+
 import { ImgUploadDto, FileDto } from './dto/imgUpload.dto';
 import { MyHttpException } from '../core/exception/my-http.exception';
 import { ErrorCode } from '../constants/error';
 import { CosService } from './cos.service';
+import { SMSService } from './sms.service';
+import { RedisService } from '../redis/redis.service';
+import { CodeConstants } from '../constants/constants';
 
 @Controller('common')
 @ApiTags('公共接口')
 export class CommonController {
 
-  constructor(private readonly cosService: CosService) { }
+  constructor(private readonly cosService: CosService, private readonly smsService: SMSService, private readonly redisService: RedisService) { }
 
   @Post('uploadImage')
   @UseInterceptors(FileInterceptor('file', {
@@ -32,6 +37,28 @@ export class CommonController {
   })
   public uploadImage(@UploadedFile() file: FileDto) {
     return this.cosService.uploadImage(file);
+  }
+
+  @Get('sendPhoneCode')
+  @ApiOperation({ summary: "发送验证码" })
+  @ApiQuery({ name: 'phone', example: "13767284559" })
+  public async sendPhoneCode(@Query('phone') phone: string) {
+    const reg = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/;
+    if (!reg.test(phone)) {
+      throw new MyHttpException({ code: ErrorCode.InvalidPhone.CODE });
+    }
+    const expire = 10; // 10分钟
+    const reExpireSecond = CodeConstants.CODE_REREPEAT; // 重复请求 间隔 60 second
+    // 判断间隔
+    const oldCodeTime = await this.redisService.getSmsCodeTime(phone);
+    if (oldCodeTime) {
+      throw new MyHttpException({ code: ErrorCode.RequestRepeat.CODE });
+    }
+
+    const code: string = "11111" || await this.smsService.sendSMSCode(phone, expire);
+    this.redisService.setSmsCodeTime(phone, reExpireSecond); // 储存间隔
+    this.redisService.setSmsCode(phone, code, expire); // 储存验证码
+    return {};
   }
 
 }

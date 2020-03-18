@@ -1,4 +1,4 @@
-import { UserConstants } from './constants';
+import { UserConstants, CodeConstants } from './constants';
 class CodeAndMsg {
     CODE: number;
     MESSAGE: string;
@@ -24,8 +24,9 @@ export class ErrorCode {
         MESSAGE: `昵称 格式不正确，需要是${UserConstants.USERNAME_MIN_LENGTH}到${UserConstants.USERNAME_MAX_LENGTH}个字符，只能包含英文、中文、下划线，不能包含空格。`,
     };
 
-    static readonly InvalidPhone: CodeAndMsg = { CODE: 1006, MESSAGE: '无效的手机号' };
-    static readonly InvalidCaptcha: CodeAndMsg = { CODE: 1007, MESSAGE: '验证码无效或已过期，请重新发送验证码' };
+    static readonly InvalidPhone: CodeAndMsg = { CODE: 1060, MESSAGE: '无效的手机号' };
+    static readonly InvalidCaptcha: CodeAndMsg = { CODE: 1061, MESSAGE: '验证码无效或已过期，请重新发送验证码' };
+    static readonly RequestRepeat: CodeAndMsg = { CODE: 1062, MESSAGE: `获取验证码间隔为${CodeConstants.CODE_REREPEAT}秒` };
 
     static readonly InvalidPassword: CodeAndMsg = {
         CODE: 1008,

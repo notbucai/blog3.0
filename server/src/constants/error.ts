@@ -1,4 +1,4 @@
-import {UserConstants} from './constants';
+import { UserConstants } from './constants';
 class CodeAndMsg {
     CODE: number;
     MESSAGE: string;
@@ -34,6 +34,8 @@ export class ErrorCode {
 
     static readonly UserNameExists: CodeAndMsg = { CODE: 1009, MESSAGE: '用户名已存在' };
     static readonly PhoneExists: CodeAndMsg = { CODE: 1010, MESSAGE: '手机号已存在' };
+
+    static readonly ImageTypeError: CodeAndMsg = { CODE: 1020, MESSAGE: '图片格式不正确' };
 
     static CodeToMessage(code: number): string {
         for (const key of Object.keys(this)) {

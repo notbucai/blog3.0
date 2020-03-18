@@ -26,7 +26,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
             this.logger.info({
                 data: {
                     req: {
-                        method: 'GET',
+                        method: req.method,
                         url: req.originalUrl,
                         headers: {
                             'user-agent': req.headers['user-agent'],

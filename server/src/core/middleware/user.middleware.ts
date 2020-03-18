@@ -6,7 +6,6 @@ import { ErrorCode } from '../../constants/error';
 import { User } from '../../entity/user.entity';
 import { UserService } from '../../user/user.service';
 import { MyLoggerService } from '../../common/logger.service';
-import { MyRequest } from '../types/net';
 
 @Injectable()
 export class UserMiddleware implements NestMiddleware {

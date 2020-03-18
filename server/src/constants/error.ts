@@ -1,4 +1,4 @@
-
+import {UserConstants} from './constants';
 class CodeAndMsg {
     CODE: number;
     MESSAGE: string;
@@ -19,18 +19,18 @@ export class ErrorCode {
     static readonly TokenError: CodeAndMsg = { CODE: 1003, MESSAGE: 'token错误' };
     static readonly Frozen: CodeAndMsg = { CODE: 1004, MESSAGE: '账号已冻结' };
 
-    // static readonly InvalidUserName: CodeAndMsg = {
-    //     CODE: 1005,
-    //     MESSAGE: `昵称 格式不正确，需要是${UserConstants.USERNAME_MIN_LENGTH}到${UserConstants.USERNAME_MAX_LENGTH}个字符，只能包含英文、中文、下划线，不能包含空格。`,
-    // };
+    static readonly InvalidUserName: CodeAndMsg = {
+        CODE: 1005,
+        MESSAGE: `昵称 格式不正确，需要是${UserConstants.USERNAME_MIN_LENGTH}到${UserConstants.USERNAME_MAX_LENGTH}个字符，只能包含英文、中文、下划线，不能包含空格。`,
+    };
 
     static readonly InvalidPhone: CodeAndMsg = { CODE: 1006, MESSAGE: '无效的手机号' };
     static readonly InvalidCaptcha: CodeAndMsg = { CODE: 1007, MESSAGE: '验证码无效或已过期，请重新发送验证码' };
 
-    // static readonly InvalidPassword: CodeAndMsg = {
-    //     CODE: 1008,
-    //     MESSAGE: `密码需要是${UserConstants.PASSWORD_MIN_LENGTH}到${UserConstants.PASSWORD_MAX_LENGTH}个字符之间`,
-    // };
+    static readonly InvalidPassword: CodeAndMsg = {
+        CODE: 1008,
+        MESSAGE: `密码需要是${UserConstants.PASSWORD_MIN_LENGTH}到${UserConstants.PASSWORD_MAX_LENGTH}个字符之间`,
+    };
 
     static readonly UserNameExists: CodeAndMsg = { CODE: 1009, MESSAGE: '用户名已存在' };
     static readonly PhoneExists: CodeAndMsg = { CODE: 1010, MESSAGE: '手机号已存在' };

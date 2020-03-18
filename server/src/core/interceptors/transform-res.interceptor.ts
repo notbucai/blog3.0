@@ -6,7 +6,7 @@ import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
 import { StatsD } from 'hot-shots';
 import { MyRequest } from '../types/net';
-import { MyLoggerService } from '../../common/logger.service';
+import { LoggerService } from '../../common/logger.service';
 
 // let localStatsD: StatsD;
 
@@ -15,7 +15,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
 
     constructor(
         private readonly configService: ConfigService,
-        private readonly logger: MyLoggerService,
+        private readonly logger: LoggerService,
     ) { }
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {

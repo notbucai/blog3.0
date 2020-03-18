@@ -2,7 +2,7 @@ import { ConfigService } from './config/config.service';
 import { TransformResInterceptor } from './core/interceptors/transform-res.interceptor';
 import { GlobalExceptionFilter } from './core/filters/global-exceptoin.filter';
 import { ValidateDtoPipe } from './core/pipes/validate-dto.pipe';
-import { MyLoggerService } from './common/logger.service';
+import { LoggerService } from './common/logger.service';
 import { INestApplication } from '@nestjs/common';
 
 // api文档插件
@@ -25,7 +25,7 @@ function initSwagger(app, swaggerPrefix) {
 
 export default async function bootstrap(app: INestApplication, listening: boolean = true) {
     const configService: ConfigService = app.get(ConfigService);
-    const myLoggerService: MyLoggerService = app.get(MyLoggerService);
+    const myLoggerService: LoggerService = app.get(LoggerService);
 
     myLoggerService.info({
         message: 'Starting Nest application...',

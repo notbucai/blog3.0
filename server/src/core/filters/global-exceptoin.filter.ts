@@ -7,13 +7,13 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
-import { MyLoggerService } from '../../common/logger.service';
+import { LoggerService } from '../../common/logger.service';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
     constructor(
         private readonly configService: ConfigService,
-        private readonly logger: MyLoggerService,
+        private readonly logger: LoggerService,
     ) { }
 
     catch(exception: any, host: ArgumentsHost) {

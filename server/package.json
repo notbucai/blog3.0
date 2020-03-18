@@ -27,6 +27,7 @@
     "@nestjs/typeorm": "^7.0.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.11.0",
+    "cos-nodejs-sdk-v5": "^2.5.20",
     "hot-shots": "^7.1.0",
     "ioredis": "^4.16.0",
     "jsonwebtoken": "^8.5.1",

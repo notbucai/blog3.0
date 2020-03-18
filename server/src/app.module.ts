@@ -1,16 +1,13 @@
 import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { RedisService } from './redis/redis.service';
 import { RedisModule } from './redis/redis.module';
 
 import { CommonModule } from './common/common.module';
 import { ConfigService } from './config/config.service';
-import { UserModule } from './user/user.module';
+import { UserModule } from './modules/user/user.module';
 import { UserMiddleware } from './core/middleware/user.middleware';
 
 @Module({

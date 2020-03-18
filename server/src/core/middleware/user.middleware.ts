@@ -4,8 +4,8 @@ import { ConfigService } from '../../config/config.service';
 import { RedisService } from '../../redis/redis.service';
 import { ErrorCode } from '../../constants/error';
 import { User } from '../../entity/user.entity';
-import { UserService } from '../../user/user.service';
-import { MyLoggerService } from '../../common/logger.service';
+import { UserService } from '../../modules/user/user.service';
+import { LoggerService } from '../../common/logger.service';
 
 @Injectable()
 export class UserMiddleware implements NestMiddleware {
@@ -13,7 +13,7 @@ export class UserMiddleware implements NestMiddleware {
         private readonly configService: ConfigService,
         private readonly redisService: RedisService,
         private readonly userService: UserService,
-        private readonly logger: MyLoggerService,
+        private readonly logger: LoggerService,
     ) { }
 
     use(request: Request, response: Response, next: any) {

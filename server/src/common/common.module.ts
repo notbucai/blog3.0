@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MyLoggerService } from './logger.service';
+import { LoggerService } from './logger.service';
 
 @Module({
   imports: [
@@ -8,10 +8,10 @@ import { MyLoggerService } from './logger.service';
   controllers: [
   ],
   providers: [
-    MyLoggerService,
+    LoggerService,
   ],
   exports: [
-    MyLoggerService,
+    LoggerService,
   ],
 })
 export class CommonModule { }

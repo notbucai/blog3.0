@@ -35,7 +35,7 @@ export class RedisService {
     }
 
     async setUser(user: User) {
-        const cacheKey = util.format(this.cacheKeys.user, user.id);
+        const cacheKey = util.format(this.cacheKeys.user, user._id);
         return await this.client.set(cacheKey, JSON.stringify(user), 'EX', 1 * 60 * 60);
     }
 

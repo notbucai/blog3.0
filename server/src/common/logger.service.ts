@@ -8,7 +8,7 @@ class LogData {
     public data?: any;
 }
 
-export class MyLoggerService {
+export class LoggerService {
 
     private writeLog(logMethod: string, logData: LogData) {
         logData = logData || { message: '', data: {} };

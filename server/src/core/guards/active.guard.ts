@@ -3,13 +3,13 @@ import { User, UserStatus } from '../../entity/user.entity';
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
 import { MyHttpException } from '../exception/my-http.exception';
-import { MyLoggerService } from 'src/common/logger.service';
+import { LoggerService } from 'src/common/logger.service';
 
 @Injectable()
 export class ActiveGuard implements CanActivate {
     constructor(
         private readonly configService: ConfigService,
-        private readonly logger: MyLoggerService
+        private readonly logger: LoggerService
     ) { }
 
     canActivate(context: ExecutionContext): boolean {

@@ -35,4 +35,4 @@ lerna-debug.log*
 
 # env
 production.conf.*
-./src/config/*
+/src/config/*

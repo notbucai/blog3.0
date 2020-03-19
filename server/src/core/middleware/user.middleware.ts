@@ -22,15 +22,19 @@ export class UserMiddleware implements NestMiddleware {
 
         const tokenName: string = this.configService.server.tokenName;
         const tokenSecret: string = this.configService.server.tokenSecret;
-        const token: string = req.headers[tokenName] || '';
+        let token: string = req.headers[tokenName] || '';
         req.user = null;
         res.locals.user = null;
+
         if (!token) {
             next();
             return;
         }
 
+        token = token.replace('Bearer ', '')
+
         jwt.verify(token, tokenSecret, { algorithms: ['HS256'] }, async (err, payload) => {
+
             if (err) {
                 res.json({
                     code: ErrorCode.TokenError.CODE,
@@ -39,12 +43,12 @@ export class UserMiddleware implements NestMiddleware {
                 return;
             }
             const userID = (payload as any).id;
+
             let userToken: string;
             let user: User;
 
-            [userToken, user] = await Promise.all([
+            [userToken] = await Promise.all([
                 this.redisService.getUserToken(userID),
-                this.redisService.getUser(userID),
             ]);
 
             const isLogin = userToken && token === userToken;

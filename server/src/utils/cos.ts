@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-18 15:24:38
  * @LastEditors: bucai
- * @LastEditTime: 2020-03-18 20:05:49
+ * @LastEditTime: 2020-03-19 19:14:59
  * @Description: cos操作类
  */
 import * as path from 'path';
@@ -50,7 +50,7 @@ export class COSActions {
 
 export const generatePath = (filename: string): string => {
   const filePathJson = path.parse(filename);
-  const md5 = crypto.createHash('md5').update(filename).digest('hex');
+  const md5 = crypto.createHash('md5').update(filename + Date.now()).digest('hex');
   const dirname = moment(Date.now()).format('YYYY/MM/DD');
   return path.join(dirname, md5 + filePathJson.ext);
 }

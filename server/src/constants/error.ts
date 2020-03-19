@@ -25,6 +25,7 @@ export class ErrorCode {
     };
 
     static readonly InvalidPhone: CodeAndMsg = { CODE: 1060, MESSAGE: '无效的手机号' };
+    static readonly InvalidLogin: CodeAndMsg = { CODE: 1060, MESSAGE: '无效的登陆名' };
     static readonly InvalidCaptcha: CodeAndMsg = { CODE: 1061, MESSAGE: '验证码无效或已过期，请重新发送验证码' };
     static readonly RequestRepeat: CodeAndMsg = { CODE: 1062, MESSAGE: `获取验证码间隔为${CodeConstants.CODE_REREPEAT}秒` };
 
@@ -37,6 +38,7 @@ export class ErrorCode {
 
     static readonly UserNameExists: CodeAndMsg = { CODE: 1009, MESSAGE: '用户名已存在' };
     static readonly PhoneExists: CodeAndMsg = { CODE: 1010, MESSAGE: '手机号已存在' };
+    static readonly UserNoExists: CodeAndMsg = { CODE: 1012, MESSAGE: '用户不存在' };
 
     static readonly ImageTypeError: CodeAndMsg = { CODE: 1020, MESSAGE: '图片格式不正确' };
 

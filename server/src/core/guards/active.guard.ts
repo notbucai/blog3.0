@@ -21,7 +21,10 @@ export class ActiveGuard implements CanActivate {
                 timeLabel: new Date().toLocaleDateString(),
             }
         });
+
         const user = request.user as User;
+        console.log(user);
+        
         if (!user) {
             throw new MyHttpException({
                 code: ErrorCode.LoginTimeout.CODE,

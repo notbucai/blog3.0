@@ -8,7 +8,8 @@ import { LoggerService } from '../common/logger.service';
 @ApiTags('OAuth')
 export class OauthController {
 
-  constructor(private readonly oauthService: OauthService, private readonly logger: LoggerService) { }
+  constructor(private readonly oauthService: OauthService, 
+    private readonly logger: LoggerService) { }
 
   // https://github.com/login/oauth/authorize?client_id=121bf37951669bd171d4&state=github
   @Get('login')
@@ -18,7 +19,6 @@ export class OauthController {
     let data = null;
     try {
       const token = this.oauthService[state] && await this.oauthService[state](code);
-      console.log('token: ', token);
 
       data = {
         "success": true,

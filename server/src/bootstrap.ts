@@ -16,6 +16,7 @@ function initSwagger(app, swaggerPrefix) {
         .setTitle("博客3.0")
         .setDescription('博客3.0 接口文档') // 文档介绍
         .setVersion('1.0.0') // 文档版本
+        .addBearerAuth() 
         // .addTag('') // 每个tag标签都可以对应着几个@ApiUseTags('用户,安全') 然后被ApiUseTags注释，字符串一致的都会变成同一个标签下的
         // .setBasePath('http://localhost:5000')
         .build();

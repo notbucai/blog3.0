@@ -8,6 +8,7 @@ import { ConfigService } from 'src/config/config.service';
 import { UserService } from '../modules/user/user.service';
 import { CommonService } from '../common/common.service';
 import { LoggerService } from '../common/logger.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class OauthService {
@@ -16,6 +17,8 @@ export class OauthService {
     private readonly userService: UserService,
     private readonly commonService: CommonService,
     private readonly logger: LoggerService,
+    private readonly redisService: RedisService
+
   ) { }
 
   public async github(code: string) {
@@ -47,13 +50,14 @@ export class OauthService {
     }
 
     const githubUser = userResult.data;
+    let token: string;
 
+    let newUser: User = await this.userService.findByGithubId(githubUser.id);
     // NOTE: 1. 通过github登陆名 查询数据库是否绑定 
-    const userExist = await this.userService.findByGithubId(githubUser.id);
-    if (userExist) {
+    if (newUser) {
       // NOTE: 1.1 已绑定生成token
-      this.logger.info({ message: "GITHUB已绑定用户", data: userExist })
-      return this.commonService.generateToken(userExist);
+      this.logger.info({ message: "GITHUB已绑定用户", data: newUser })
+      token = await this.commonService.generateToken(newUser);
     } else {
       // NOTE: 1.2 未绑定添加数据库
       this.logger.info({ message: "GITHUB未绑定用户", data: { githubID: githubUser.id } })
@@ -68,9 +72,12 @@ export class OauthService {
       user.numberroduce = githubUser.bio;
       user.status = UserStatus.Actived;
 
-      const newUser = await this.userService.createUser(user);
+      newUser = await this.userService.createUser(user);
 
-      return this.commonService.generateToken(newUser);
     }
+    token = await this.commonService.generateToken(newUser)
+    await this.redisService.setUserToken(newUser._id.toString(), token);
+    await this.redisService.setUser(newUser);
+    return token;
   }
 }

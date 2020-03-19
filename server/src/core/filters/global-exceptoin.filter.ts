@@ -18,7 +18,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     catch(exception: any, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
-        const request = ctx.getRequest();
+        // const request = ctx.getRequest();
         const response = ctx.getResponse();
         const nestjsMessage = exception.message;
         let message;
@@ -53,16 +53,17 @@ export class GlobalExceptionFilter implements ExceptionFilter {
                 message: [exception.message, exception.stack].join('\n'),
             });
         }
-        const apiPrefix = this.configService.server.apiPrefix;
-        if (code === ErrorCode.LoginTimeout.CODE && request.originalUrl.indexOf(apiPrefix) !== 0) {
-            const redirectURL = encodeURIComponent(request.originalUrl);
-            let url = '/signin';
-            if (redirectURL) {
-                url = `${url}?miliref=${redirectURL}`;
-            }
-            response.redirect(url);
-            return;
-        }
+        // NOTE: 权限不足跳转由前端判定
+        // const apiPrefix = this.configService.server.apiPrefix;
+        // if (code === ErrorCode.LoginTimeout.CODE && request.originalUrl.indexOf(apiPrefix) !== 0) {
+        //     const redirectURL = encodeURIComponent(request.originalUrl);
+        //     let url = '/signin';
+        //     if (redirectURL) {
+        //         url = `${url}?miliref=${redirectURL}`;
+        //     }
+        //     response.redirect(url);
+        //     return;
+        // }
         response.status(HttpStatus.OK).json({
             code,
             message,

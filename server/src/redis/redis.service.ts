@@ -7,10 +7,10 @@ import { ConfigService } from '../config/config.service';
 // import { Category } from '../entity/category.entity';
 
 class CacheKeys {
-    readonly user: string = 'user:%d';
+    readonly user: string = 'user:%s';
     readonly validationCode: string = 'validationcode:%s';
     readonly validationCodeTime: string = 'validationcodetime:%s';
-    readonly userToken: string = 'usertoken:%d';
+    readonly userToken: string = 'usertoken:%s';
     readonly publishArticle: string = 'publisharticle:%d';
     readonly categories: string = 'categories';
 }
@@ -25,7 +25,7 @@ export class RedisService {
         this.cacheKeys = new CacheKeys();
     }
 
-    async getUser(userID): Promise<User> {
+    async getUser(userID:string): Promise<User> {
         const cacheKey = util.format(this.cacheKeys.user, userID);
         const userStr = await this.client.get(cacheKey);
         if (!userStr) {
@@ -60,18 +60,18 @@ export class RedisService {
         return await this.client.get(cacheKey);
     }
 
-    async setUserToken(userID: number, token: string) {
+    async setUserToken(userID: string, token: string) {
         const cacheKey = util.format(this.cacheKeys.userToken, userID);
         const tokenMaxAge: number = this.configService.server.tokenMaxAge;
         return await this.client.set(cacheKey, token, 'EX', Math.floor(tokenMaxAge / 1000));
     }
 
-    async getUserToken(userID: number) {
+    async getUserToken(userID: string) {
         const cacheKey = util.format(this.cacheKeys.userToken, userID);
         return await this.client.get(cacheKey);
     }
 
-    async setPublishArticle(userID: number, article) {
+    async setPublishArticle(userID: string, article) {
         const cacheKey = util.format(this.cacheKeys.publishArticle, userID);
         return await this.client.set(cacheKey, JSON.stringify(article), 'EX', 60 * 60);
     }

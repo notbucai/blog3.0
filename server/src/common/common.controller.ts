@@ -1,5 +1,5 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Get, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { Controller, Post, UseInterceptors, UploadedFile, Get, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as util from 'util';
 
@@ -11,6 +11,7 @@ import { SMSService } from './sms.service';
 import { RedisService } from '../redis/redis.service';
 import { CodeConstants } from '../constants/constants';
 import { EmailService } from './email.service';
+import { ActiveGuard } from '../core/guards/active.guard';
 
 @Controller('common')
 @ApiTags('公共接口')
@@ -24,6 +25,7 @@ export class CommonController {
   ) { }
 
   @Post('uploadImage')
+  @UseGuards(ActiveGuard)
   @UseInterceptors(FileInterceptor('file', {
     fileFilter(req, file, callback) {
       if (!file.mimetype.startsWith('image/')) {
@@ -35,6 +37,7 @@ export class CommonController {
       }
     }
   }))
+  @ApiBearerAuth()
   @ApiOperation({ summary: "图片上传" })
   @ApiConsumes('multipart/form-data')
   @ApiBody({

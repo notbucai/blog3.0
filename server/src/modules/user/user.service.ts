@@ -16,18 +16,33 @@ export class UserService {
     private readonly configService: ConfigService
   ) { };
 
-  getUser(id: string): any {
-    return { id };
+  getUser(id: string): Promise<User | undefined> {
+    return this.userRepository.findOne(id);
   }
 
   async findByPhoneOrUsername(phone: string, username: string): Promise<User | undefined> {
+    const where$or: object[] = [{ phone }, { username }]
+
     const user: User = await this.userRepository.findOne({
       select: [
         '_id', 'username', 'phone'
       ],
       where: {
-        $or: [{ phone }, { username }]
+        $or: where$or
       },
+    });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+  async findByObj(obj: object): Promise<User | undefined> {
+    const user: User = await this.userRepository.findOne({
+      select: [
+        '_id', 'username', 'phone', 'pass',
+      ],
+      where: obj,
     });
 
     if (user) {
@@ -88,7 +103,7 @@ export class UserService {
     return hash;
   }
 
-  verifyPassword(password, hashedPass) {
+  verifyPassword(password: string, hashedPass: string) {
     if (!password || !hashedPass) {
       return false;
     }

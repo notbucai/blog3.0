@@ -8,8 +8,8 @@ import { ConfigService } from '../config/config.service';
 
 class CacheKeys {
     readonly user: string = 'user:%d';
-    readonly smsCode: string = 'smscode:%s';
-    readonly smsCodeTime: string = 'smscodetime:%s';
+    readonly validationCode: string = 'validationcode:%s';
+    readonly validationCodeTime: string = 'validationcodetime:%s';
     readonly userToken: string = 'usertoken:%d';
     readonly publishArticle: string = 'publisharticle:%d';
     readonly categories: string = 'categories';
@@ -40,23 +40,23 @@ export class RedisService {
         return await this.client.set(cacheKey, JSON.stringify(user), 'EX', 1 * 60 * 60);
     }
 
-    async setSmsCode(phone: string, code: string, timeout = 10) {
-        const cacheKey = util.format(this.cacheKeys.smsCode, phone);
+    async setValidationCode(phone: string, code: string, timeout = 10) {
+        const cacheKey = util.format(this.cacheKeys.validationCode, phone);
         return await this.client.set(cacheKey, code, 'EX', timeout * 60);
     }
 
-    async getSmsCode(phone: string): Promise<string> {
-        const cacheKey = util.format(this.cacheKeys.smsCode, phone);
+    async getValidationCode(phone: string): Promise<string> {
+        const cacheKey = util.format(this.cacheKeys.validationCode, phone);
         return await this.client.get(cacheKey);
     }
 
-    async setSmsCodeTime(phone: string, timeout = 10): Promise<string> {
-        const cacheKey = util.format(this.cacheKeys.smsCodeTime, phone);
+    async setValidationCodeTime(phone: string, timeout = 10): Promise<string> {
+        const cacheKey = util.format(this.cacheKeys.validationCodeTime, phone);
         return await this.client.set(cacheKey, Date.now(), 'EX', timeout);
     }
 
-    async getSmsCodeTime(phone: string): Promise<string> {
-        const cacheKey = util.format(this.cacheKeys.smsCodeTime, phone);
+    async getValidationCodeTime(phone: string): Promise<string> {
+        const cacheKey = util.format(this.cacheKeys.validationCodeTime, phone);
         return await this.client.get(cacheKey);
     }
 

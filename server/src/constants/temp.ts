@@ -1,0 +1,1 @@
+export const EmailCode = `您好！您的验证码是：<br/><br/><b>%s</b><br/><br/>若非您本人操作的，请忽略本邮件，一切如常。`;

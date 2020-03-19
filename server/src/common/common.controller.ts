@@ -10,12 +10,18 @@ import { CosService } from './cos.service';
 import { SMSService } from './sms.service';
 import { RedisService } from '../redis/redis.service';
 import { CodeConstants } from '../constants/constants';
+import { EmailService } from './email.service';
 
 @Controller('common')
 @ApiTags('公共接口')
 export class CommonController {
 
-  constructor(private readonly cosService: CosService, private readonly smsService: SMSService, private readonly redisService: RedisService) { }
+  constructor(
+    private readonly cosService: CosService,
+    private readonly smsService: SMSService,
+    private readonly emailService: EmailService,
+    private readonly redisService: RedisService
+  ) { }
 
   @Post('uploadImage')
   @UseInterceptors(FileInterceptor('file', {
@@ -40,7 +46,7 @@ export class CommonController {
   }
 
   @Get('sendPhoneCode')
-  @ApiOperation({ summary: "发送验证码" })
+  @ApiOperation({ summary: "发送手机验证码" })
   @ApiQuery({ name: 'phone', example: "13767284559" })
   public async sendPhoneCode(@Query('phone') phone: string) {
     const reg = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/;
@@ -50,14 +56,28 @@ export class CommonController {
     const expire = 10; // 10分钟
     const reExpireSecond = CodeConstants.CODE_REREPEAT; // 重复请求 间隔 60 second
     // 判断间隔
-    const oldCodeTime = await this.redisService.getSmsCodeTime(phone);
+    const oldCodeTime = await this.redisService.setValidationCodeTime(phone);
     if (oldCodeTime) {
       throw new MyHttpException({ code: ErrorCode.RequestRepeat.CODE });
     }
 
     const code: string = "11111" || await this.smsService.sendSMSCode(phone, expire);
-    this.redisService.setSmsCodeTime(phone, reExpireSecond); // 储存间隔
-    this.redisService.setSmsCode(phone, code, expire); // 储存验证码
+    this.redisService.setValidationCodeTime(phone, reExpireSecond); // 储存间隔
+    this.redisService.setValidationCode(phone, code, expire); // 储存验证码
+    return {};
+  }
+
+  @Get('sendEmailCode')
+  @ApiOperation({ summary: "发送邮箱验证码" })
+  @ApiQuery({ name: 'email', example: "1450941858@qq.com" })
+  public async sendEmailCode(@Query('email') email: string) {
+    const reg = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    if (!reg.test(email)) {
+      throw new MyHttpException({ code: ErrorCode.InvalidPhone.CODE });
+    }
+    const expire = 10; // 10分钟
+    const code: string = await this.emailService.sendCode(email);
+    this.redisService.setValidationCode(email, code, expire); // 储存验证码
     return {};
   }
 

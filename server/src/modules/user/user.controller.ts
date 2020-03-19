@@ -23,7 +23,7 @@ export class UserController {
 
     // TODO: 验证验证码
 
-    const code = await this.redisService.getSmsCode(signupDto.phone);
+    const code = await this.redisService.getValidationCode(signupDto.phone);
     let isVerification = true;
     if (code !== signupDto.code) {
       isVerification = false;

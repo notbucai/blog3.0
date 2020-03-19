@@ -4,6 +4,7 @@ import { LoggerService } from './logger.service';
 import { CommonController } from './common.controller';
 import { CosService } from './cos.service';
 import { SMSService } from './sms.service';
+import { EmailService } from './email.service';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { SMSService } from './sms.service';
   providers: [
     CosService,
     SMSService,
+    EmailService,
     LoggerService,
   ],
   exports: [

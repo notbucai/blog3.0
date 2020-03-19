@@ -33,6 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongodb": "^3.5.5",
+    "nodemailer": "^6.4.5",
     "pino": "^5.17.0",
     "qcloudsms_js": "^0.1.1",
     "reflect-metadata": "^0.1.13",

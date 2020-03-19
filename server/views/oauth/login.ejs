@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第三方账号登录 - 不才博客</title>
+  <style>
+    html {
+      font-family: Helvetica, "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    body {
+      padding: 2em;
+      text-align: center;
+    }
+
+    .title {
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1 class="title">正在登录...</h1>
+    <p class="msg"></p>
+  </div>
+  <!-- {\"success\":false,\"msg\":\"Unauthorized\"} -->
+  <script>var initData = JSON.parse(`<%- data %>`)</script>
+  <script>
+    function closePageWithDelay(delay) {
+      window.setTimeout(function () {
+        closePage()
+      }, delay)
+    }
+
+    function closePage() {
+      var isSubWindow = !!window.opener
+      if (isSubWindow) {
+        window.close()
+      } else {
+        window.history.go(-1)
+      }
+    }
+
+    function loadUrl(url) {
+      window.location.href = url
+    }
+
+    function updateTitle(title) {
+      setElementText('.title', title)
+    }
+
+    function updateMsg(msg) {
+      setElementText('.msg', msg)
+    }
+
+    function setElementText(selector, text) {
+      document.querySelector(selector).innerText = text || ''
+    }
+
+    function isInWechatApp() {
+      return /micromessenger/i.test(navigator.userAgent)
+    }
+  </script>
+  <script>(function () {
+
+      var inWechat = isInWechatApp()
+      var url = inWechat && window.localStorage.getItem('OAUTH_LOGIN_URL')
+
+      if (initData.success) {
+        const lstore = window.opener && window.opener.localStorage || localStorage;
+        if (lstore) {
+          lstore.setItem("token", initData.token);
+        }
+        if (url) {
+          loadUrl(url)
+        } else {
+          closePageWithDelay(500)
+        }
+      } else {
+        if (inWechat && url) {
+          loadUrl(url)
+        }
+        updateTitle('登录失败')
+        updateMsg(initData.msg)
+        closePageWithDelay(5000)
+      }
+
+    })()
+  </script>
+</body>
+
+</html>

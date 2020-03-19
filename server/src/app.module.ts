@@ -9,6 +9,7 @@ import { CommonModule } from './common/common.module';
 import { ConfigService } from './config/config.service';
 import { UserModule } from './modules/user/user.module';
 import { UserMiddleware } from './core/middleware/user.middleware';
+import { OauthModule } from './oauth/oauth.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { UserMiddleware } from './core/middleware/user.middleware';
       inject: [ConfigService],
     }),
     CommonModule,
-    UserModule
+    UserModule,
+    OauthModule
   ],
   controllers: [],
   providers: [],

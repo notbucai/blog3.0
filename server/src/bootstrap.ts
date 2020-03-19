@@ -1,3 +1,5 @@
+import * as path from 'path';
+import * as ejs from 'ejs';
 import { ConfigService } from './config/config.service';
 import { TransformResInterceptor } from './core/interceptors/transform-res.interceptor';
 import { GlobalExceptionFilter } from './core/filters/global-exceptoin.filter';
@@ -23,6 +25,16 @@ function initSwagger(app, swaggerPrefix) {
     SwaggerModule.setup(swaggerPrefix, app, document);
 }
 
+
+function initView(app) {
+    const configService: ConfigService = app.get(ConfigService);
+    const viewPath = path.join(__dirname, '../views');
+
+    app.setBaseViewsDir(viewPath) // 放视图的文件
+    app.setViewEngine('ejs');
+}
+
+
 export default async function bootstrap(app: INestApplication, listening: boolean = true) {
     const configService: ConfigService = app.get(ConfigService);
     const myLoggerService: LoggerService = app.get(LoggerService);
@@ -38,7 +50,7 @@ export default async function bootstrap(app: INestApplication, listening: boolea
     app.useGlobalPipes(new ValidateDtoPipe(configService));
     app.useGlobalInterceptors(new TransformResInterceptor(configService, myLoggerService));
     app.useGlobalFilters(new GlobalExceptionFilter(configService, myLoggerService));
-
+    initView(app);
     initSwagger(app, configService.server.swaggerPrefix);
 
     if (listening) {

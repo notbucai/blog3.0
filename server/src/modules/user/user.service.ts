@@ -15,7 +15,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly configService: ConfigService
   ) { };
-  
+
   getUser(id: string): any {
     return { id };
   }
@@ -23,13 +23,28 @@ export class UserService {
   async findByPhoneOrUsername(phone: string, username: string): Promise<User | undefined> {
     const user: User = await this.userRepository.findOne({
       select: [
-        'username', 'phone'
+        '_id', 'username', 'phone'
       ],
       where: {
         $or: [{ phone }, { username }]
       },
     });
-    console.log('user=>', user);
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+
+  async findByGithubId(githubID: number): Promise<User | undefined> {
+    const user: User = await this.userRepository.findOne({
+      select: [
+        '_id', 'username', 'phone'
+      ],
+      where: {
+        githubID
+      },
+    });
 
     if (user) {
       return user;
@@ -51,6 +66,10 @@ export class UserService {
     newUser.sex = UserSex.Unknown;
     newUser.avatarURL = `${this.configService.static.imgPath}/avatar.jpg`;
     return await this.userRepository.save(newUser);
+  }
+
+  async createUser(user: User): Promise<User> {
+    return await this.userRepository.save(user);
   }
 
   generateHashPassword(password) {

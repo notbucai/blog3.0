@@ -7,12 +7,19 @@ import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
 import { RedisService } from '../../redis/redis.service';
 import { ConfigService } from '../../config/config.service';
+import { CommonService } from 'src/common/common.service';
 
 @Controller('users')
 @ApiTags('用户')
 export class UserController {
 
-  constructor(private readonly logger: LoggerService, private readonly userService: UserService, private readonly redisService: RedisService, private readonly configService: ConfigService) { };
+  constructor(
+    private readonly logger: LoggerService,
+    private readonly userService: UserService,
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
+    private readonly commonService: CommonService,
+  ) { };
 
   @Post('/signup')
   @ApiOperation({ summary: "注册" })
@@ -53,8 +60,9 @@ export class UserController {
         code: ErrorCode.UserNameExists.CODE,
       });
     }
-    const data = await this.userService.create(signupDto);
-    return data;
+    const user = await this.userService.create(signupDto);
+    // 生成token
+    return this.commonService.generateToken(user);
   }
 
   @Post('/signin')
@@ -64,7 +72,7 @@ export class UserController {
       data: signupDto
     });
 
-    // TODO: 验证验证码
+    // NOTE: 验证验证码
 
     const existUser = await this.userService.findByPhoneOrUsername(signupDto.phone, signupDto.username);
     if (existUser) {
@@ -78,6 +86,8 @@ export class UserController {
       });
     }
     const data = await this.userService.create(signupDto);
+    // NOTE: 生成token
+
     return data;
   }
 

@@ -80,5 +80,4 @@ export class CommonController {
     this.redisService.setValidationCode(email, code, expire); // 储存验证码
     return {};
   }
-
 }

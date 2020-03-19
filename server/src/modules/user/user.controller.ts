@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Body, Post } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Put } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto, SingInType } from './dto/signin.dto';
@@ -10,6 +10,7 @@ import { RedisService } from '../../redis/redis.service';
 import { ConfigService } from '../../config/config.service';
 import { CommonService } from 'src/common/common.service';
 import { User } from '../../entity/user.entity';
+import { RepassDto } from './dto/repass.dto';
 
 @Controller('users')
 @ApiTags('用户')
@@ -97,7 +98,7 @@ export class UserController {
     return token;
   }
 
-  @Post('/:id')
+  @Get('/:id')
   @ApiOperation({ summary: "用户信息" })
   @ApiParam({ name: "id", example: '5e732d7db681f7439e306e4b' })
   public async user(@Param('id') id: string) {
@@ -108,7 +109,56 @@ export class UserController {
   }
 
 
+  @Put('/repass')
+  @ApiOperation({ summary: "重置密码" })
+  public async repass(@Body() repassDto: RepassDto) {
+    this.logger.info({
+      data: repassDto
+    });
 
+    // TODO: 验证验证码
 
+    const code = await this.redisService.getValidationCode(repassDto.login);
+    let isVerification = true;
+    if (code !== repassDto.code) {
+      isVerification = false;
+    }
+
+    // 测试服务器，减少资源浪费
+    if (this.configService.env === this.configService.DEVELOPMENT) {
+      if (repassDto.code === '888888') {
+        isVerification = true;
+      }
+    }
+
+    if (!isVerification) {
+      throw new MyHttpException({
+        code: ErrorCode.InvalidCaptcha.CODE
+      });
+    }
+    const where: any = {};
+    // 判断登陆名是什么
+    //  where
+    // 符合手机号要求就是手机
+    // 符合邮箱就是邮箱
+    // 不符合就用户名登陆
+    if (/^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/.test(repassDto.login)) {
+      where.phone = repassDto.login;
+    } else if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(repassDto.login)) {
+      where.email = repassDto.login;
+    } else {
+      throw new MyHttpException({
+        code: ErrorCode.ParamsError.CODE
+      });
+    }
+    const existUser = await this.userService.findByObj(where);
+    if (!existUser) {
+      throw new MyHttpException({
+        code: ErrorCode.UserNoExists.CODE,
+      });
+    }
+    await this.userService.repass(existUser._id, repassDto.pass);
+    return {};
+  }
 
 }

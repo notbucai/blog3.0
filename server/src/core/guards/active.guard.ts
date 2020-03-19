@@ -23,7 +23,6 @@ export class ActiveGuard implements CanActivate {
         });
 
         const user = request.user as User;
-        console.log(user);
         
         if (!user) {
             throw new MyHttpException({

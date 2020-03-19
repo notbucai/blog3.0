@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult, ObjectID } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import * as _ from 'lodash';
@@ -86,15 +86,19 @@ export class UserService {
   async createUser(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }
+  async repass(userId: ObjectID, pass: string): Promise<UpdateResult> {
+    pass = this.generateHashPassword(pass);
+    return this.userRepository.update({ _id: userId }, { pass });
+  }
 
-  generateHashPassword(password) {
+  generateHashPassword(password: string) {
     let codeArr = _.shuffle(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']);
     codeArr = codeArr.slice(0, 10);
     const salt: string = codeArr.join('');
     return this.encryptPassword(password, salt, this.configService.server.passSalt);
   }
 
-  private encryptPassword(password, salt, configSalt) {
+  private encryptPassword(password: string, salt: string, configSalt: string) {
     const m1 = crypto.createHash('md5');
     const pass = m1.update(password).digest('hex');
     let hash = salt + pass + configSalt;

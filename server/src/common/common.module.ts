@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerService } from './logger.service';
 import { CommonController } from './common.controller';
 import { CommonService } from './common.service';

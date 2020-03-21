@@ -1,3 +1,4 @@
+
 export class UserConstants {
     static readonly USERNAME_MIN_LENGTH: number = 2;
     static readonly USERNAME_MAX_LENGTH: number = 16;

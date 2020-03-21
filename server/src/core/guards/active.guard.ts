@@ -1,5 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
-import { User, UserStatus } from '../../entity/user.entity';
+import { User, UserStatus } from '../../models/user.entity';
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
 import { MyHttpException } from '../exception/my-http.exception';

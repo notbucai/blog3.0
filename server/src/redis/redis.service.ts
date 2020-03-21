@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import * as util from 'util';
 import * as _ from 'lodash';
-import { User } from '../entity/user.entity';
+import { User } from '../models/user.entity';
 import { ConfigService } from '../config/config.service';
 // import { Category } from '../entity/category.entity';
 

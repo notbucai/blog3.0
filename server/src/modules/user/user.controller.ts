@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Body, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Param, Body, Post, Put, UseGuards, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto, SingInType } from './dto/signin.dto';
 import { LoggerService } from '../../common/logger.service';
@@ -8,9 +8,15 @@ import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
 import { RedisService } from '../../redis/redis.service';
 import { ConfigService } from '../../config/config.service';
-import { CommonService } from 'src/common/common.service';
-import { User } from '../../entity/user.entity';
+import { CommonService } from '../../common/common.service';
+import { User, UserRole } from '../../models/user.entity';
 import { RepassDto } from './dto/repass.dto';
+import { ActiveGuard } from '../../core/guards/active.guard';
+import { CurUser } from '../../core/decorators/user.decorator';
+import { UpdateUserInfoDto } from './dto/update-userinfo.dto';
+import { Roles } from 'src/core/decorators/roles.decorator';
+import { RolesGuard } from 'src/core/guards/roles.guard';
+import { ListDto } from './dto/list.dto';
 
 @Controller('users')
 @ApiTags('用户')
@@ -98,6 +104,41 @@ export class UserController {
     return token;
   }
 
+  @Get('/info')
+  @UseGuards(ActiveGuard)
+  @ApiOperation({ summary: "当前用户信息" })
+  @ApiBearerAuth()
+  public async logininfo(@CurUser() user: User) {
+    return user;
+  }
+
+  /**
+    * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
+    */
+  @Put(`/info`)
+  @UseGuards(ActiveGuard)
+  @ApiOperation({ summary: " 更新用户信息(头像、职位、公司、个人介绍、个人主页)" })
+  @ApiBearerAuth()
+  async updateUserInfo(@CurUser() user: User, @Body() updateUserInfoDto: UpdateUserInfoDto) {
+    await this.userService.updateUserInfo(user._id, updateUserInfoDto);
+    return {};
+  }
+
+  /**
+    * 列表
+    */
+  @Get(`/list`)
+  @UseGuards(ActiveGuard, RolesGuard)
+  @Roles(UserRole.Admin, UserRole.SuperAdmin)
+  @ApiOperation({ summary: "用户列表" })
+  @ApiBearerAuth()
+  async list(@Query() listDto: ListDto) {
+    if (listDto.page_index < 1 || listDto.page_size < 1) {
+      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    }
+    return this.userService.findList(listDto);
+  }
+
   @Get('/:id')
   @ApiOperation({ summary: "用户信息" })
   @ApiParam({ name: "id", example: '5e732d7db681f7439e306e4b' })
@@ -117,7 +158,6 @@ export class UserController {
     });
 
     // TODO: 验证验证码
-
     const code = await this.redisService.getValidationCode(repassDto.login);
     let isVerification = true;
     if (code !== repassDto.code) {

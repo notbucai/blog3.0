@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { User, UserStatus } from '../entity/user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
+import { User, UserStatus } from '../models/user.entity';
 import axios from 'axios';
-import * as util from 'util';
-import { ConfigService } from 'src/config/config.service';
+import { ConfigService } from '../config/config.service';
 import { UserService } from '../modules/user/user.service';
 import { CommonService } from '../common/common.service';
 import { LoggerService } from '../common/logger.service';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class OauthService {

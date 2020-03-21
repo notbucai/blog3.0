@@ -1,35 +1,97 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, UpdateResult, ObjectID } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as crypto from 'crypto';
 import * as _ from 'lodash';
 
-import { User, UserRole, UserStatus, UserSex } from '../../entity/user.entity';
+import { User, UserRole, UserStatus, UserSex } from '../../models/user.entity';
 import { SignUpDto } from './dto/signup.dto';
 import { ConfigService } from '../../config/config.service';
+import { UpdateUserInfoDto } from './dto/update-userinfo.dto';
+import { MyHttpException } from '../../core/exception/my-http.exception';
+import { ErrorCode } from '../../constants/error';
+// import { InjectModel } from 'nestjs-typegoose';
+// import { returnmodeltype } from '@typegoose/typegoose';
+import { ObjectID } from 'mongodb';
+
+import { ReturnModelType } from '@typegoose/typegoose';
+import { InjectModel } from 'nestjs-typegoose';
+import { ListDto } from './dto/list.dto';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    @InjectModel(User) public readonly userSchema: ReturnModelType<typeof User>,
   ) { };
 
-  getUser(id: string): Promise<User | undefined> {
-    return this.userRepository.findOne(id);
+  getUser(id: string) {
+    return this.userSchema.findById(id);
+  }
+  /**
+    * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
+    */
+  async updateUserInfo(userID: ObjectID | string, updateUserInfoDto: UpdateUserInfoDto) {
+    const updateData: any = {};
+    if (typeof updateUserInfoDto.avatarURL !== 'undefined') {
+      updateData.avatarURL = updateUserInfoDto.avatarURL;
+    }
+    if (typeof updateUserInfoDto.job !== 'undefined') {
+      updateData.job = updateUserInfoDto.job;
+    }
+    if (typeof updateUserInfoDto.company !== 'undefined') {
+      updateData.company = updateUserInfoDto.company;
+    }
+    if (typeof updateUserInfoDto.introduce !== 'undefined') {
+      updateData.introduce = updateUserInfoDto.introduce;
+    }
+    if (typeof updateUserInfoDto.personalHomePage !== 'undefined') {
+      updateData.personalHomePage = updateUserInfoDto.personalHomePage;
+    }
+    if (typeof updateUserInfoDto.username !== 'undefined') {
+      updateData.username = updateUserInfoDto.username;
+      const theUser: User = await this.userSchema.findOne({
+        select: ['_id'],
+        where: { username: updateData.username },
+      });
+      if (theUser) {
+        throw new MyHttpException({
+          code: ErrorCode.ParamsError.CODE,
+          message: `已存在用户名为 ${updateData.username} 的用户`,
+        });
+      }
+    }
+    return this.userSchema.update({
+      _id: userID,
+    }, updateData);
+  }
+
+  async findList(listDto: ListDto) {
+    let query = {};
+
+    listDto.page_index = Number(listDto.page_index) || 1;
+    listDto.page_size = Number(listDto.page_size) || 20;
+
+    if (listDto.keyword) {
+      const keyRe = new RegExp(listDto.keyword);
+      query = {
+        $or: [
+          { username: keyRe },
+          { phone: keyRe },
+          { githubLogin: keyRe },
+          { githubName: keyRe },
+        ]
+      };
+    }
+    const list = await this.userSchema.find(query).skip((listDto.page_index - 1) * listDto.page_size).limit(listDto.page_size);
+    const count = await this.userSchema.count(query);
+    return {
+      list,
+      count
+    }
   }
 
   async findByPhoneOrUsername(phone: string, username: string): Promise<User | undefined> {
-    const where$or: object[] = [{ phone }, { username }]
-
-    const user: User = await this.userRepository.findOne({
-      select: [
-        '_id', 'username', 'phone'
-      ],
-      where: {
-        $or: where$or
-      },
+    const user: User = await this.userSchema.findOne({
+      $or: [{ phone }, { username }]
     });
 
     if (user) {
@@ -37,13 +99,9 @@ export class UserService {
     }
     return undefined;
   }
+
   async findByObj(obj: object): Promise<User | undefined> {
-    const user: User = await this.userRepository.findOne({
-      select: [
-        '_id', 'username', 'phone', 'pass',
-      ],
-      where: obj,
-    });
+    const user: User = await this.userSchema.findOne(obj);
 
     if (user) {
       return user;
@@ -52,13 +110,8 @@ export class UserService {
   }
 
   async findByGithubId(githubID: number): Promise<User | undefined> {
-    const user: User = await this.userRepository.findOne({
-      select: [
-        '_id', 'username', 'phone'
-      ],
-      where: {
-        githubID
-      },
+    const user: User = await this.userSchema.findOne({
+      githubID
     });
 
     if (user) {
@@ -67,7 +120,7 @@ export class UserService {
     return undefined;
   }
 
-  async create(signupDto: SignUpDto): Promise<User> {
+  async create(signupDto: SignUpDto) {
     const newUser = new User();
     newUser.createdAt = new Date();
     newUser.updatedAt = newUser.createdAt;
@@ -80,15 +133,15 @@ export class UserService {
     newUser.commentCount = 0;
     newUser.sex = UserSex.Unknown;
     newUser.avatarURL = `${this.configService.static.imgPath}/avatar.jpg`;
-    return await this.userRepository.save(newUser);
+    return this.userSchema.create(newUser);
   }
 
   async createUser(user: User): Promise<User> {
-    return await this.userRepository.save(user);
+    return await this.userSchema.create(user);
   }
-  async repass(userId: ObjectID, pass: string): Promise<UpdateResult> {
+  async repass(userId: ObjectID, pass: string) {
     pass = this.generateHashPassword(pass);
-    return this.userRepository.update({ _id: userId }, { pass });
+    return this.userSchema.update({ _id: userId }, { pass });
   }
 
   generateHashPassword(password: string) {

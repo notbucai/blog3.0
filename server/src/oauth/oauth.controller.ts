@@ -1,6 +1,5 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { ConfigService } from 'src/config/config.service';
 import { OauthService } from './oauth.service';
 import { LoggerService } from '../common/logger.service';
 

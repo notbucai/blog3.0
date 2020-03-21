@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '../../config/config.service';
 import { RedisService } from '../../redis/redis.service';
 import { ErrorCode } from '../../constants/error';
-import { User } from '../../entity/user.entity';
+import { User } from '../../models/user.entity';
 import { UserService } from '../../modules/user/user.service';
 import { LoggerService } from '../../common/logger.service';
 
@@ -43,7 +43,7 @@ export class UserMiddleware implements NestMiddleware {
                 return;
             }
             const userID = (payload as any).id;
-
+            
             let userToken: string;
             let user: User;
 

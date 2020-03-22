@@ -61,7 +61,16 @@ export class UserService {
     }
     return this.userSchema.update({
       _id: userID,
-    }, updateData);
+    }, {
+      $set: {
+        ...updateData,
+        updatedAt: Date.now()
+      }
+    });
+  }
+
+  async changeRole(id: string, role: number) {
+    return this.userSchema.findByIdAndUpdate(id, { $set: { role } });
   }
 
   async findList(listDto: ListDto) {
@@ -82,7 +91,7 @@ export class UserService {
       };
     }
     const list = await this.userSchema.find(query).skip((listDto.page_index - 1) * listDto.page_size).limit(listDto.page_size);
-    const count = await this.userSchema.count(query);
+    const count = await this.userSchema.countDocuments(query);
     return {
       list,
       count
@@ -122,7 +131,7 @@ export class UserService {
 
   async create(signupDto: SignUpDto) {
     const newUser = new User();
-    newUser.createdAt = new Date();
+    newUser.createdAt = Date.now();
     newUser.updatedAt = newUser.createdAt;
     newUser.activatedAt = newUser.createdAt;
     newUser.phone = signupDto.phone;
@@ -141,7 +150,7 @@ export class UserService {
   }
   async repass(userId: ObjectID, pass: string) {
     pass = this.generateHashPassword(pass);
-    return this.userSchema.update({ _id: userId }, { pass });
+    return this.userSchema.update({ _id: userId }, { pass, updatedAt: Date.now() });
   }
 
   generateHashPassword(password: string) {

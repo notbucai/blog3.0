@@ -1,21 +1,19 @@
 import { prop } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { Article } from './article.entity';
 
 export class Tag extends Base {
 
-  @prop()
-  createdAt: Date;
+  @prop({ default: Date.now() })
+  createdAt: number;
 
-  @prop()
-  updatedAt: Date;
+  @prop({ default: Date.now() })
+  updatedAt: number;
 
-  @prop()
+  @prop({ unique: true, required: true })
   name: string;
 
-  @prop({ ref: Article, count: true })
-  article: number;
-
-  @prop()
+  @prop({ default: null })
   iconURL: string;
+
+  articleCount: number;
 }

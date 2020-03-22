@@ -9,6 +9,7 @@ import { InjectModel } from 'nestjs-typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Article } from '../../models/article.entity';
 import { User } from '../../models/user.entity';
+import { AllListDto } from './dto/allList.dto';
 
 
 @Injectable()
@@ -60,6 +61,91 @@ export class CommentService {
     comment.htmlContent = createCommentDto.htmlContent;
 
     return commentRepository.create(comment);
+  }
+
+  async findList(source: string, listDto: AllListDto) {
+    const commentRepository = this.getCommentSchema(source);
+
+    let query = {};
+
+    listDto.page_index = Number(listDto.page_index) || 1;
+    listDto.page_size = Number(listDto.page_size) || 20;
+
+    if (listDto.keyword) {
+      const keyRe = new RegExp(listDto.keyword);
+      query = {
+        $or: [
+          { htmlContent: keyRe },
+          { 'user.username': keyRe },
+        ]
+      };
+    }
+    const list = await commentRepository
+      .find(query)
+      .skip((listDto.page_index - 1) * listDto.page_size)
+      .limit(listDto.page_size)
+      .populate({
+        path: 'parent',
+        select: '-sourceID -__v -rootID',
+        populate: {
+          path: 'user',
+          select: "username avatarURL"
+        },
+      })
+      .populate({
+        path: 'article',
+        // select: '-sourceID -__v -rootID',
+        populate: {
+          path: 'user',
+          select: "username avatarURL"
+        },
+      })
+      .populate({
+        path: 'rootID',
+        select: '-sourceID -__v -rootID',
+        populate: {
+          path: 'user',
+          select: "username avatarURL"
+        },
+      })
+      .populate([{ path: 'user', select: "username avatarURL" }])
+    const count = await commentRepository.countDocuments(query);
+    return {
+      list,
+      count
+    }
+  }
+
+  async getById(source: string, id: string) {
+    const commentRepository = this.getCommentSchema(source);
+
+    return commentRepository.findById(id).populate({
+      path: 'parent',
+      select: '-sourceID -__v -rootID',
+      populate: {
+        path: 'user',
+        select: "username avatarURL"
+      },
+    })
+      .populate({
+        path: 'rootID',
+        select: '-sourceID -__v -rootID',
+        populate: {
+          path: 'user',
+          select: "username avatarURL"
+        },
+      })
+      .populate([{ path: 'user', select: "username avatarURL" }])
+  }
+
+  async delById(source: string, id: string) {
+    const commentRepository = this.getCommentSchema(source);
+    return commentRepository.deleteOne({ _id: id })
+  }
+
+  async updateById(source: string, id: string, htmlContent: string) {
+    const commentRepository = this.getCommentSchema(source);
+    return commentRepository.updateOne({ _id: id }, { $set: { htmlContent, updatedAt: Date.now() } });
   }
 
   // 查询子评论

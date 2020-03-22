@@ -11,6 +11,10 @@ import { OauthModule } from './oauth/oauth.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { CommonModule } from './common/common.module';
+import { ArticleController } from './modules/article/article.controller';
+import { ArticleService } from './modules/article/article.service';
+import { ArticleModule } from './modules/article/article.module';
+import { TagModule } from './modules/tag/tag.module';
 
 @Module({
   imports: [
@@ -36,9 +40,11 @@ import { CommonModule } from './common/common.module';
       inject: [ConfigService],
     }),
     CommonModule,
-    UserModule,
     OauthModule,
-    CommentModule
+    UserModule,
+    CommentModule,
+    ArticleModule,
+    TagModule,
   ],
   controllers: [],
   providers: [],

@@ -3,7 +3,7 @@ import { CommentService } from './comment.service';
 import { CommentController } from './comment.controller';
 import { CommonModule } from '../../common/common.module';
 import { TypegooseModule } from 'nestjs-typegoose';
-import { ArticleComment, MessageComment } from 'src/models/comment.entity';
+import { ArticleComment, MessageComment } from '../../models/comment.entity';
 
 @Module({
   imports: [

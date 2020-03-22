@@ -14,9 +14,10 @@ import { RepassDto } from './dto/repass.dto';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { CurUser } from '../../core/decorators/user.decorator';
 import { UpdateUserInfoDto } from './dto/update-userinfo.dto';
-import { Roles } from 'src/core/decorators/roles.decorator';
-import { RolesGuard } from 'src/core/guards/roles.guard';
+import { Roles } from '../../core/decorators/roles.decorator';
+import { RolesGuard } from '../../core/guards/roles.guard';
 import { ListDto } from './dto/list.dto';
+import { UserChangeRoleDto } from './dto/role.dto';
 
 @Controller('users')
 @ApiTags('用户')
@@ -38,7 +39,6 @@ export class UserController {
     });
 
     // TODO: 验证验证码
-
     const code = await this.redisService.getValidationCode(signupDto.phone);
     let isVerification = true;
     if (code !== signupDto.code) {
@@ -70,7 +70,7 @@ export class UserController {
       });
     }
     const user = await this.userService.create(signupDto);
-    return user;
+    return {};
   }
 
   @Post('/signin')
@@ -199,6 +199,21 @@ export class UserController {
     }
     await this.userService.repass(existUser._id, repassDto.pass);
     return {};
+  }
+
+  @Post('change/role')
+  @UseGuards(ActiveGuard, RolesGuard)
+  @Roles(UserRole.SuperAdmin)
+  @ApiOperation({ summary: "修改用户权限" })
+  @ApiBearerAuth()
+  async changeRole(@Body() RoleDto: UserChangeRoleDto, @CurUser() user: User) {
+    if (user._id.toHexString() === RoleDto.id) {
+      throw new MyHttpException({ message: "不能给自己操作" })
+    }
+    if (RoleDto.role >= UserRole.SuperAdmin) {
+      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    }
+    return this.userService.changeRole(RoleDto.id, RoleDto.role);
   }
 
 }

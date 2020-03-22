@@ -1,78 +1,39 @@
-import { ArticleComment } from './comment.entity';
 import { User } from './user.entity';
 import { Tag } from './tag.entity';
-import { prop, Ref } from '@typegoose/typegoose';
+import { prop, Ref, arrayProp } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-
-export enum ArticleStatus {
-  Verifying = 1, // 审核中
-  VerifySuccess = 2, // 审核通过
-  VerifyFail = 3, // 审核未通过
-}
-
-export enum ArticleContentType {
-  Markdown = 1,
-  HTML = 2,
-}
 
 export class Article extends Base {
 
-  @prop()
-  createdAt: Date;
+  @prop({ default: Date.now() })
+  updatedAt: number;
+
+  @prop({ default: Date.now() })
+  createdAt: number;
+
+  @prop({ default: null })
+  deletedAt: number;
 
   @prop()
-  updatedAt: Date;
-
-  @prop()
-  deletedAt: Date;
-
-  @prop()
-  lastCommentAt: Date;
-
-  @prop()
-  name: string;
-
-  @prop()
-  browseCount: number;
-
-  @prop()
-  commentCount: number; // 总评论数
-
-  @prop()
-  rootCommentCount: number; // 一级评论数
-
-  @prop()
-  likedCount: number;
-
-  @prop()
-  wordCount: number;
-
-  @prop()
-  hot: number;
-
-  @prop()
-  status: ArticleStatus;
-
-  @prop()
-  content: string;
-
-  @prop()
-  htmlContent: string;
+  title: string;
 
   @prop()
   summary: string;
 
   @prop()
+  htmlContent: string;
+
+  @prop({ default: 0 })
+  browseCount: number;
+
+  @prop()
   coverURL: string;
 
   @prop()
-  contentType: ArticleContentType;
+  wordCount: number;
 
-  @prop({ ref: Tag })
-  tegs: Tag[]
-
-  @prop({ ref: ArticleComment })
-  comments: Ref<ArticleComment[]>;
+  @arrayProp({ itemsRef: Tag })
+  tags: Array<Ref<Tag>>
 
   @prop({ ref: User })
   user: Ref<User>;

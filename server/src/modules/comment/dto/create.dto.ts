@@ -4,29 +4,29 @@ import {
   MinLength,
   MaxLength,
   ValidateIf,
+  IsMongoId,
 } from 'class-validator';
 import { CommentConstants } from '../../../constants/comment';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCommentDto {
 
+
+  @ValidateIf(o => o.sourceID !== undefined)
   @IsString({
     message: '无效的sourceID',
   })
   @ApiProperty({ description: "sourceID" })
+  @IsMongoId({ message: '无效的sourceID' })
   readonly sourceID: string;
 
   @ValidateIf(o => o.parentID !== undefined)
-  @IsString({
-    message: '无效的parentID',
-  })
-  @ApiProperty({ description: "rootID" })
+  @IsMongoId({ message: '无效的parentID' })
+  @ApiProperty({ description: "parentID" })
   readonly parentID: string;
 
   @ValidateIf(o => o.rootID !== undefined)
-  @IsString({
-    message: '无效的rootID',
-  })
+  @IsMongoId({ message: '无效的rootID' })
   @ApiProperty({ description: "rootID" })
   readonly rootID: string;
 

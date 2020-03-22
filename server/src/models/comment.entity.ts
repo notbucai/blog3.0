@@ -12,14 +12,14 @@ export enum CommentStatus {
 
 export class Comment extends Base {
 
-  @prop()
-  createdAt: Date;
+  @prop({ default: Date.now() })
+  createdAt: number;
 
-  @prop()
-  updatedAt: Date;
+  @prop({ default: Date.now() })
+  updatedAt: number;
 
-  @prop()
-  deletedAt: Date;
+  @prop({ default: null })
+  deletedAt: number;
 
   @prop()
   htmlContent: string;

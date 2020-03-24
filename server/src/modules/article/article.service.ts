@@ -91,11 +91,11 @@ export class ArticleService {
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }]);
 
-    const count = await this.articleSchema.countDocuments(where);
+    const total = await this.articleSchema.countDocuments(where);
 
     return {
       list,
-      count
+      total
     }
   }
 }

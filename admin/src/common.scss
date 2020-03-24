@@ -1,0 +1,62 @@
+._text-style {
+  background-image: -webkit-gradient(linear, right 0, left 0, from(#ff0844), to(#009688));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #000;
+}
+
+html,
+body {
+  font-size: 14px;
+  // background-image: linear-gradient(to left, #6a85b6 0%, #bac8e0 100%);
+  background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+  color: #333;
+}
+
+._page {
+  width: 100%;
+  min-height: 300px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.tc {
+  text-align: center;
+}
+
+.fb {
+  font-weight: bold;
+}
+
+// 封装常用边距
+$listKey:t,
+b,
+l,
+r;
+
+$listVal:top,
+bottom,
+left,
+right;
+
+@for $size from 0 to 4 {
+  .p#{$size} {
+    padding: $size * 10px;
+  }
+
+  @for $i from 1 to length($listKey)+1 {
+    .p#{nth($listKey,$i)}#{$size} {
+      padding-#{nth($listVal,$i)}: $size * 10px;
+    }
+  }
+
+  .m#{$size} {
+    margin: $size * 10px;
+  }
+
+  @for $i from 1 to length($listKey)+1 {
+    .m#{nth($listKey,$i)}#{$size} {
+      margin-#{nth($listVal,$i)}: $size * 10px;
+    }
+  }
+}

@@ -109,10 +109,10 @@ export class CommentService {
         },
       })
       .populate([{ path: 'user', select: "username avatarURL" }])
-    const count = await commentRepository.countDocuments(query);
+    const total = await commentRepository.countDocuments(query);
     return {
       list,
-      count
+      total
     }
   }
 

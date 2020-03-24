@@ -11,13 +11,14 @@ import { ApiBearerAuth, ApiTags, ApiParam } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { CurUser } from '../../core/decorators/user.decorator';
 import { ArticleListDto } from './dto/list.dto';
+import { ChangeArticleStatus } from './dto/status.dto';
 
 @Controller('article')
 @ApiTags('文章')
 export class ArticleController {
 
   constructor(
-    private readonly articleService: ArticleService
+    private readonly articleService: ArticleService,
   ) { }
 
   @Get('list')
@@ -52,9 +53,19 @@ export class ArticleController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
   async get(@Param('id') id: string) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.articleService.findById(id);
+  }
+
+  @Put(':id/status')
+  @ApiBearerAuth()
+  @UseGuards(ActiveGuard, RolesGuard)
+  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  async changeStatus(@Param('id') id: string, @Body() body: ChangeArticleStatus) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.articleService.changeStatus(id, body.status);
   }
 
 }

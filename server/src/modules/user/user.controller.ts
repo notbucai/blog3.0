@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Body, Post, Put, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Param, Body, Post, Put, UseGuards, Query, Delete } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto, SingInType } from './dto/signin.dto';
@@ -18,6 +18,8 @@ import { Roles } from '../../core/decorators/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { ListDto } from './dto/list.dto';
 import { UserChangeRoleDto } from './dto/role.dto';
+import { ObjectID } from 'mongodb';
+import { ChangeUserStatus } from './dto/status.dto';
 
 @Controller('users')
 @ApiTags('用户')
@@ -147,6 +149,15 @@ export class UserController {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
     return this.userService.getUser(id);
+  }
+
+  @Put(':id/status')
+  @ApiBearerAuth()
+  @UseGuards(ActiveGuard, RolesGuard)
+  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  async changeStatus(@Param('id') id: string, @Body() body: ChangeUserStatus) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.userService.changeStatus(id, body.status);
   }
 
 

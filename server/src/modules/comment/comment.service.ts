@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, LessThan, In } from 'typeorm';
 import { ObjectID } from 'mongodb';
-import { MessageComment, ArticleComment, Comment } from '../../models/comment.entity';
+import { MessageComment, ArticleComment, Comment, CommentStatus } from '../../models/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentConstants } from '../../constants/comment';
 import { CreateCommentDto } from './dto/create.dto';
@@ -57,10 +57,16 @@ export class CommentService {
     } else {
       comment.sourceID = new ObjectID(CommentConstants.CommonMessageID);
     }
+    comment.status = CommentStatus.VerifySuccess;
     comment.user = userID;
     comment.htmlContent = createCommentDto.htmlContent;
 
     return commentRepository.create(comment);
+  }
+
+  async changeStatus(source: string, id: string, status: CommentStatus = 1) {
+    const commentRepository = this.getCommentSchema(source);
+    return commentRepository.findByIdAndUpdate(id, { $set: { status } });
   }
 
   async findList(source: string, listDto: AllListDto) {

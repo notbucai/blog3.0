@@ -24,7 +24,7 @@ export class Comment extends Base {
   @prop()
   htmlContent: string;
 
-  @prop()
+  @prop({ enum: CommentStatus, default: CommentStatus.VerifySuccess })
   status: CommentStatus;
 
   parent: Ref<Comment>; // 直接父评论

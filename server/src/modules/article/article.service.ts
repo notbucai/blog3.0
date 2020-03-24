@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { Article } from '../../models/article.entity';
+import { Article, ArticleStatus } from '../../models/article.entity';
 import { Tag } from '../../models/tag.entity';
 import { InjectModel } from 'nestjs-typegoose';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
@@ -17,6 +17,8 @@ export class ArticleService {
     private readonly articleSchema: ReturnModelType<typeof Article>,
     @InjectModel(Tag)
     private readonly tagSchema: ReturnModelType<typeof Tag>,
+    @InjectModel(Comment)
+    private readonly commentSchema: ReturnModelType<typeof Comment>,
   ) { }
 
   // 创建
@@ -36,8 +38,13 @@ export class ArticleService {
 
     article.tags = tags;
     article.user = userId;
+    article.status = 1;
     article.wordCount = createDto.htmlContent.replace(/[\s\n\r\t\f\v]+/g, '').length;
     return this.articleSchema.create(article);
+  }
+
+  async changeStatus(id: string, status: ArticleStatus = 1) {
+    return this.articleSchema.findByIdAndUpdate(id, { $set: { status } })
   }
 
   async deleteById(id: string) {
@@ -84,12 +91,21 @@ export class ArticleService {
     const page_index = Number(listDto.page_index || 1) - 1;
     const page_size = Number(listDto.page_size || 1);
 
-    const list = await this.articleSchema
+    const a_list = await this.articleSchema
       .find(where, '-htmlContent')
       .skip(page_index * page_size)
       .limit(page_size)
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }]);
+
+    const list_p = a_list.map(async item => {
+      item = item.toJSON();
+      item.commentCount = await this.commentSchema.countDocuments({ article: item._id });
+      return item;
+    });
+    // commentSchema
+
+    const list = await Promise.all(list_p);
 
     const total = await this.articleSchema.countDocuments(where);
 

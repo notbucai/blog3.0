@@ -145,6 +145,10 @@ export class UserService {
     return this.userSchema.create(newUser);
   }
 
+  async changeStatus(id: string, status: UserStatus) {
+    return this.userSchema.findByIdAndUpdate(id, { status });
+  }
+
   async createUser(user: User): Promise<User> {
     return await this.userSchema.create(user);
   }

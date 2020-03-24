@@ -6,6 +6,16 @@
     </el-breadcrumb>
 
     <div class="table mt2">
+      <el-input
+        placeholder="请输入内容"
+        size="small"
+        clearable
+        v-model="keyword"
+        class="search_input mb2"
+      >
+        <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
+      </el-input>
+
       <el-table
         :data="tableData"
         v-loading="loading"
@@ -104,7 +114,7 @@
 
     <el-dialog title="权限设置" :visible.sync="dialogFormVisible" width="30%">
       <div class="tc">
-        <div class="pb2 fb" v-if="current">设置“{{current.username}}”的权限"</div>
+        <div class="pb2 fb" v-if="current">设置“{{current.username}}”的权限</div>
         <el-radio-group v-model="roleRadio" size="small">
           <el-radio-button :label="index+1" v-for="(item, index) in roleList" :key="index">{{item}}</el-radio-button>
         </el-radio-group>
@@ -136,7 +146,8 @@ export default {
       total: 0,
       page_size: 10,
       page_index: 1,
-      loading: true
+      loading: true,
+      keyword: ''
     };
   },
   computed: {
@@ -155,15 +166,24 @@ export default {
   methods: {
     async loadData() {
       this.loading = true;
-      const { page_size, page_index } = this;
-      const [, data] = await this.$http.userlist({
+      const { page_size, page_index, keyword } = this;
+      const query = {
         page_size,
         page_index
-      });
+      };
+      if (keyword) {
+        query.keyword = keyword;
+      }
+      const [, data] = await this.$http.userlist(query);
       this.loading = false;
       // this.tableData = data;
       this.tableData = data.list;
       this.total = data.total;
+    },
+    handleSearch() {
+      // const keyword;
+      this.page_index = 1;
+      this.loadData();
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
@@ -204,9 +224,7 @@ export default {
       if (err) {
         return;
       }
-      this.$notify.success({
-        title: '修改成功'
-      });
+      this.$notify.success({ title: '修改成功' });
       this.current.role = this.roleRadio;
       this.current = null;
       // TODO: 以后有空再改
@@ -221,6 +239,9 @@ export default {
   .avatarURL {
     width: 32px;
     height: 32px;
+  }
+  .search_input {
+    width: 400px;
   }
 }
 </style>

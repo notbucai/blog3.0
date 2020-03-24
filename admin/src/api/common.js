@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-23 09:31:46
  * @LastEditors: bucai
- * @LastEditTime: 2020-03-24 13:53:50
+ * @LastEditTime: 2020-03-24 14:36:33
  * @Description: 共用接口
  */
 
@@ -17,11 +17,13 @@ export const userInfo = () => {
 }
 
 export const userlist = (params) => {
-  return $get('/users/list', {
-    params
-  });
+  return $get('/users/list', { params });
 }
 
 export const changeRole = (data) => {
   return $post('/users/change/role', data);
+}
+
+export const articleList = (params) => {
+  return $get('/article/list', { params });
 }

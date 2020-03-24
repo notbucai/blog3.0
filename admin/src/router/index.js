@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/home/Index.vue';
 import Login from '../views/auth/Login.vue';
 import UserList from '../views/user/List.vue';
+import ArticleList from '../views/article/List.vue';
 
 Vue.use(VueRouter)
 
@@ -36,6 +37,14 @@ const routes = [
     path: '/user/list',
     name: 'UserList',
     component: UserList,
+    meta: {
+      role: 3
+    }
+  },
+  {
+    path: '/article/list',
+    name: 'ArticleList',
+    component: ArticleList,
     meta: {
       role: 3
     }

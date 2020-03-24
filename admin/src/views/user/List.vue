@@ -86,18 +86,18 @@
         </el-table-column>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              :disabled="scope.row.role === 4"
-              @click="handleChangeRole(scope.row)"
-            >权限</el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              v-if="scope.row.status == 2"
-              @click="handleChangeStatus(scope.row)"
-            >冻结</el-button>
-            <el-button size="mini" type="danger" v-else @click="handleChangeStatus(scope.row)">激活</el-button>
+            <div v-if="!(scope.row.role === 4)">
+              <el-button size="mini" @click="handleChangeRole(scope.row)">权限</el-button>
+              <!-- :disabled="scope.row.role === 4" -->
+              <el-button
+                size="mini"
+                type="danger"
+                v-if="scope.row.status == 2"
+                @click="handleChangeStatus(scope.row)"
+              >冻结</el-button>
+              <el-button size="mini" type="success" v-else @click="handleChangeStatus(scope.row)">激活</el-button>
+            </div>
+            <div v-else>禁止操作</div>
           </template>
         </el-table-column>
       </el-table>
@@ -207,6 +207,16 @@ export default {
         status = 3;
       }
       await this.$confirm('是否' + msg + '“' + item.username + '”？');
+      const [err, data] = await this.$http.changeUserStatus(item._id, {
+        status
+      });
+      if (err) {
+        return;
+      }
+      this.$notify.success({ title: '操作成功' });
+      item.status = status;
+      // TODO: 以后有空再改
+      this.tableData = [...this.tableData];
     },
     handleChangeRole(item) {
       console.log(item);

@@ -30,7 +30,7 @@
               <span slot="title">主页</span>
             </el-menu-item>
             <el-menu-item index="/user" route="/user/list" class="layout_aside-item _text-style">
-              <i class="iconfont iconwenzhang"></i>
+              <i class="iconfont iconshiliangzhinengduixiang"></i>
               <span slot="title">用户管理</span>
             </el-menu-item>
             <el-menu-item
@@ -46,12 +46,12 @@
               route="/comment/list"
               class="layout_aside-item _text-style"
             >
-              <i class="iconfont iconwenzhang"></i>
+              <i class="iconfont iconpinglun"></i>
               <span slot="title">评论管理</span>
             </el-menu-item>
             <el-menu-item index="/tag" route="/tag/list" class="layout_aside-item _text-style">
               <i class="iconfont iconpinglun"></i>
-              <span slot="title">栏目管理</span>
+              <span slot="title">标签管理</span>
             </el-menu-item>
           </el-menu>
         </el-aside>

@@ -4,6 +4,8 @@ import Home from '../views/home/Index.vue';
 import Login from '../views/auth/Login.vue';
 import UserList from '../views/user/List.vue';
 import ArticleList from '../views/article/List.vue';
+import CommentList from '../views/comment/List.vue';
+import TagList from '../views/tag/List.vue';
 
 Vue.use(VueRouter)
 
@@ -16,7 +18,7 @@ export enum UserRole {
 }
 */
 
-const routes = [
+export const routes = [
   {
     path: '/',
     name: 'home',
@@ -46,7 +48,23 @@ const routes = [
     name: 'ArticleList',
     component: ArticleList,
     meta: {
-      role: 3
+      role: 2
+    }
+  },
+  {
+    path: '/comment/list',
+    name: 'CommentList',
+    component: CommentList,
+    meta: {
+      role: 2
+    }
+  },
+  {
+    path: '/tag/list',
+    name: 'TagList',
+    component: TagList,
+    meta: {
+      role: 2
     }
   }
   // {

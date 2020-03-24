@@ -70,13 +70,19 @@ export const $ajax = async (methods = 'get', ...args) => {
 }
 
 export const $get = (url, config = {}) => {
-  return $ajax('get', url, config); ``
+  return $ajax('get', url, config);
 }
 
 export const $post = (url, data = {}, config = {}) => {
-  return $ajax('post', url, data, config); ``
+  return $ajax('post', url, data, config);
+}
+export const $put = (url, data = {}, config = {}) => {
+  return $ajax('put', url, data, config);
 }
 
+export const $del = (url, data = {}, config = {}) => {
+  return $ajax('delete', url, data, config);
+}
 
 export default _axios;
 // Plugin.install = function(Vue, options) {

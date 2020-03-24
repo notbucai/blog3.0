@@ -6,15 +6,25 @@
     </el-breadcrumb>
 
     <div class="table mt2">
-      <el-input
-        placeholder="请输入内容"
-        size="small"
-        clearable
-        v-model="keyword"
-        class="search_input mb2"
-      >
-        <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
-      </el-input>
+      <div>
+        <el-select v-model="source" size="small" class="pr1" placeholder="请选择" @change="loadData">
+          <el-option
+            v-for="item in sources"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+        <el-input
+          placeholder="请输入内容"
+          size="small"
+          clearable
+          v-model="keyword"
+          class="search_input mb2"
+        >
+          <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
+        </el-input>
+      </div>
 
       <el-table
         :data="tableData"
@@ -31,20 +41,19 @@
           label="ID"
           max-width="200"
         ></el-table-column>
-
         <el-table-column
-          prop="title"
+          prop="sourceID"
           header-align="center"
           show-overflow-tooltip
-          label="标题"
+          label="sourceID"
           max-width="200"
         ></el-table-column>
 
         <el-table-column
-          prop="summary"
+          prop="parent"
           header-align="center"
           show-overflow-tooltip
-          label="简介"
+          label="parent"
           max-width="200"
         ></el-table-column>
 
@@ -60,29 +69,13 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="tags" align="center" label="标签" min-width="100">
-          <template slot-scope="scope">
-            <!-- <div v-if="scope.row.user">{{scope.row.user.username}}</div> -->
-            <div v-if="scope.row.tags">
-              <el-tag size="mini" v-for="(item, index) in scope.row.tags" :key="index">{{item.name}}</el-tag>
-            </div>
-          </template>
-        </el-table-column>
 
         <el-table-column
-          prop="commentCount"
-          align="center"
+          prop="htmlContent"
+          header-align="center"
           show-overflow-tooltip
-          label="评论数量"
-          max-width="100"
-        ></el-table-column>
-
-        <el-table-column
-          prop="browseCount"
-          align="center"
-          show-overflow-tooltip
-          label="浏览数量"
-          max-width="100"
+          label="内容"
+          max-width="320"
         ></el-table-column>
 
         <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
@@ -152,7 +145,19 @@ export default {
       page_size: 10,
       page_index: 1,
       loading: true,
-      keyword: ''
+      keyword: '',
+      source: 'message',
+      // TODO: 后期通过接口获取
+      sources: [
+        {
+          label: '留言',
+          value: 'message'
+        },
+        {
+          label: '文章',
+          value: 'article'
+        }
+      ]
     };
   },
   computed: {
@@ -177,7 +182,7 @@ export default {
       if (keyword) {
         query.keyword = keyword;
       }
-      const [, data] = await this.$http.articleList(query);
+      const [, data] = await this.$http.commentList(this.source, query);
       this.loading = false;
       // this.tableData = data;
       this.tableData = data.list;
@@ -208,7 +213,11 @@ export default {
       // TODO: 发送AJAX
       const id = this.current._id;
       const status = this.currentRadio;
-      const [err, data] = await this.$http.changeArticleStatus(id, { status });
+      const [err, data] = await this.$http.changeCommentStatus(
+        this.source,
+        id,
+        { status }
+      );
       this.dialogFormVisible = false;
       if (err) return;
       this.changStatusLoading = false;

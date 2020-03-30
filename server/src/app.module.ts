@@ -15,6 +15,8 @@ import { ArticleController } from './modules/article/article.controller';
 import { ArticleService } from './modules/article/article.service';
 import { ArticleModule } from './modules/article/article.module';
 import { TagModule } from './modules/tag/tag.module';
+import { RoleService } from './modules/role/role.service';
+import { RoleModule } from './modules/role/role.module';
 
 @Module({
   imports: [
@@ -45,6 +47,7 @@ import { TagModule } from './modules/tag/tag.module';
     CommentModule,
     ArticleModule,
     TagModule,
+    RoleModule,
   ],
   controllers: [],
   providers: [],

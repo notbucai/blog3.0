@@ -9,7 +9,7 @@ import { ErrorCode } from '../../constants/error';
 import { RedisService } from '../../redis/redis.service';
 import { ConfigService } from '../../config/config.service';
 import { CommonService } from '../../common/common.service';
-import { User, UserRole } from '../../models/user.entity';
+import { User, } from '../../models/user.entity';
 import { RepassDto } from './dto/repass.dto';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { CurUser } from '../../core/decorators/user.decorator';
@@ -131,7 +131,7 @@ export class UserController {
     */
   @Get(`/list`)
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Admin, UserRole.SuperAdmin)
   @ApiOperation({ summary: "用户列表" })
   @ApiBearerAuth()
   async list(@Query() listDto: ListDto) {
@@ -154,7 +154,7 @@ export class UserController {
   @Put(':id/status')
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   async changeStatus(@Param('id') id: string, @Body() body: ChangeUserStatus) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.userService.changeStatus(id, body.status);
@@ -214,15 +214,12 @@ export class UserController {
 
   @Post('change/role')
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.SuperAdmin)
+  // @Roles(UserRole.SuperAdmin)
   @ApiOperation({ summary: "修改用户权限" })
   @ApiBearerAuth()
   async changeRole(@Body() RoleDto: UserChangeRoleDto, @CurUser() user: User) {
     if (user._id.toHexString() === RoleDto.id) {
       throw new MyHttpException({ message: "不能给自己操作" })
-    }
-    if (RoleDto.role >= UserRole.SuperAdmin) {
-      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     }
     return this.userService.changeRole(RoleDto.id, RoleDto.role);
   }

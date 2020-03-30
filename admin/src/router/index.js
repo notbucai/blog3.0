@@ -18,15 +18,61 @@ export enum UserRole {
 }
 */
 
-export const routes = [
+export const navRoutes = [
   {
     path: '/',
     name: 'home',
     component: Home,
     meta: {
-      role: 2
+      role: 2,
+      title: "主页",
+      icon: "iconjiaobenkongzhitai"
     }
   },
+  {
+    path: '/user/list',
+    name: 'UserList',
+    component: UserList,
+    meta: {
+      role: 3,
+      title: "用户管理",
+      icon: "iconshiliangzhinengduixiang"
+    }
+  },
+  {
+    path: '/article/list',
+    name: 'ArticleList',
+    component: ArticleList,
+    meta: {
+      role: 2,
+      title: "文章管理",
+      icon: "iconwenzhang"
+    }
+  },
+  {
+    path: '/comment/list',
+    name: 'CommentList',
+    component: CommentList,
+    meta: {
+      role: 2,
+      title: "评论管理",
+      icon: "iconpinglun"
+    }
+  },
+  {
+    path: '/tag/list',
+    name: 'TagList',
+    component: TagList,
+    meta: {
+      role: 2,
+      title: "标签管理",
+      icon: "iconpinglun"
+    }
+  }
+];
+
+export const routes = [
+
   {
     path: '/login',
     name: 'login',
@@ -35,38 +81,7 @@ export const routes = [
       noLayout: true, // 表示不需要布局
     }
   },
-  {
-    path: '/user/list',
-    name: 'UserList',
-    component: UserList,
-    meta: {
-      role: 3
-    }
-  },
-  {
-    path: '/article/list',
-    name: 'ArticleList',
-    component: ArticleList,
-    meta: {
-      role: 2
-    }
-  },
-  {
-    path: '/comment/list',
-    name: 'CommentList',
-    component: CommentList,
-    meta: {
-      role: 2
-    }
-  },
-  {
-    path: '/tag/list',
-    name: 'TagList',
-    component: TagList,
-    meta: {
-      role: 2
-    }
-  }
+  ...navRoutes
   // {
   //   path: '/about',
   //   name: 'about',

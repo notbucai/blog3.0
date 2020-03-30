@@ -14,7 +14,6 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { UserRole } from '../../../models/user.entity';
 import { ErrorCode } from '../../../constants/error';
 
 export class UserChangeRoleDto {
@@ -24,7 +23,7 @@ export class UserChangeRoleDto {
   @ApiProperty()
   id: string;
 
-  @IsEnum(UserRole, { message: ErrorCode.ParamsError.MESSAGE })
+  // @IsEnum(UserRole, { message: ErrorCode.ParamsError.MESSAGE })
   @ApiProperty()
   role: number;
 

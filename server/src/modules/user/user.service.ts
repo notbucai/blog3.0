@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as _ from 'lodash';
 
-import { User, UserRole, UserStatus, UserSex } from '../../models/user.entity';
+import { User, UserStatus, UserSex } from '../../models/user.entity';
 import { SignUpDto } from './dto/signup.dto';
 import { ConfigService } from '../../config/config.service';
 import { UpdateUserInfoDto } from './dto/update-userinfo.dto';
@@ -24,7 +24,7 @@ export class UserService {
   ) { };
 
   getUser(id: string) {
-    return this.userSchema.findById(id);
+    return this.userSchema.findById(id).populate('role');
   }
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
@@ -137,7 +137,7 @@ export class UserService {
     newUser.phone = signupDto.phone;
     newUser.username = signupDto.username.replace(/\s+/g, ''); // 用户名中不能有空格
     newUser.pass = this.generateHashPassword(signupDto.pass);
-    newUser.role = UserRole.Normal;
+    // newUser.role = UserRole.Normal;
     newUser.status = UserStatus.Actived;
     newUser.commentCount = 0;
     newUser.sex = UserSex.Unknown;

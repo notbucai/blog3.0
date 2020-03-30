@@ -10,20 +10,26 @@ export class RolesGuard implements CanActivate {
     constructor(
         private readonly reflector: Reflector,
         private readonly configService: ConfigService,
-    ) {}
+    ) { }
 
     canActivate(context: ExecutionContext): boolean {
-        const roles = this.reflector.get<number[]>('roles', context.getHandler());
-        if (!roles) {
-            return true;
-        }
+        // const roles = this.reflector.get<number[]>('roles', context.getHandler());
+        // if (!roles) {
+        //     return true;
+        // }
         const request = context.switchToHttp().getRequest();
         const user = request.user as User;
 
-        const hasRole = (role) => !!roles.find((item) => item === role);
-        if (user && hasRole(user.role)) {
+        if (user && user.isAdmin) {
             return true;
         }
+
+        // const hasRole = (role) => !!roles.find((item) => item === role);
+        if (user && user.role) {
+            return true;
+        }
+        
+
         throw new MyHttpException({
             code: ErrorCode.Forbidden.CODE,
         });

@@ -6,7 +6,7 @@ import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
 import { CommentService } from './comment.service';
 import { CurUser } from '../../core/decorators/user.decorator';
-import { User, UserRole } from '../../models/user.entity';
+import { User } from '../../models/user.entity';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { ListCommentDto } from './dto/list.dto';
 import { AllListDto } from './dto/allList.dto';
@@ -27,7 +27,7 @@ export class CommentController {
 
   @Get('alllist/:source')
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Admin, UserRole.SuperAdmin)
+  //  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   @ApiOperation({ summary: "所有的评论列表" })
   public async alllist(@Param('source') source: string, @Query() listDto: AllListDto) {
@@ -98,9 +98,9 @@ export class CommentController {
     }
 
     const oldComment = await this.commentService.getById(source, id);
-    if ((oldComment.user as User)._id !== user._id && user.role === UserRole.Normal) {
-      throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
-    }
+    // if ((oldComment.user as User)._id !== user._id && user.role === UserRole.Normal) {
+    //   throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
+    // }
 
     const comment = await this.commentService.delById(source, id);
     return comment;
@@ -117,16 +117,16 @@ export class CommentController {
       });
     }
     const oldComment = await this.commentService.getById(source, id);
-    if ((oldComment.user as User)._id !== user._id && user.role === UserRole.Normal) {
-      throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
-    }
+    // if ((oldComment.user as User)._id !== user._id && user.role === UserRole.Normal) {
+    //   throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
+    // }
     const comment = await this.commentService.updateById(source, id, updateDto.htmlContent);
     return comment;
   }
 
   @Put(':source/:id/status')
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论状态" })
   public async changeStatus(@Param('source') source: string, @Param('id') id: string, @Body() statusDto: ChangeCommentStatusDto) {

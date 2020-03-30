@@ -1,19 +1,13 @@
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, getModelForClass, Ref } from '@typegoose/typegoose';
 import { Exclude } from 'class-transformer';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
+import { Role } from './role.entity';
 
 class UserScoreDef {
     readonly CreateArticle: number = 5;
 }
 
 export const UserScore = new UserScoreDef();
-
-export enum UserRole {
-    Normal = 1, // 普通用户
-    Editor = 2, // 网站编辑
-    Admin = 3, // 管理员
-    SuperAdmin = 4, // 超级管理员
-}
 
 export enum UserStatus {
     InActive = 1, // 未激活
@@ -66,8 +60,11 @@ export class User extends Base {
     @prop()
     commentCount: number;
 
+    @prop({ ref: Role, default: null })
+    role: Ref<Role>; // 角色
+
     @prop()
-    role: UserRole; // 角色
+    isAdmin: boolean; // 是否管理员
 
     @prop()
     status: UserStatus; // 用户状态

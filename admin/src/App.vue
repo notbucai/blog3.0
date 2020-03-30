@@ -25,34 +25,17 @@
             class="layout_aside-menu"
             :collapse="isCollapse"
           >
-            <el-menu-item index="/" route="/" class="layout_aside-item _text-style">
-              <i class="iconfont iconjiaobenkongzhitai"></i>
-              <span slot="title">主页</span>
-            </el-menu-item>
-            <el-menu-item index="/user" route="/user/list" class="layout_aside-item _text-style">
-              <i class="iconfont iconshiliangzhinengduixiang"></i>
-              <span slot="title">用户管理</span>
-            </el-menu-item>
-            <el-menu-item
-              index="/article"
-              route="/article/list"
-              class="layout_aside-item _text-style"
-            >
-              <i class="iconfont iconwenzhang"></i>
-              <span slot="title">文章管理</span>
-            </el-menu-item>
-            <el-menu-item
-              index="/comment"
-              route="/comment/list"
-              class="layout_aside-item _text-style"
-            >
-              <i class="iconfont iconpinglun"></i>
-              <span slot="title">评论管理</span>
-            </el-menu-item>
-            <el-menu-item index="/tag" route="/tag/list" class="layout_aside-item _text-style">
-              <i class="iconfont iconpinglun"></i>
-              <span slot="title">标签管理</span>
-            </el-menu-item>
+            <template v-for="(item, index) in navList">
+              <el-menu-item
+                :key="index"
+                :index="item.name"
+                :route="item.path"
+                class="layout_aside-item _text-style"
+              >
+                <i v-if="item.icon" class="iconfont" :class="item.icon"></i>
+                <span slot="title">{{item.title}}</span>
+              </el-menu-item>
+            </template>
           </el-menu>
         </el-aside>
         <el-container>
@@ -70,6 +53,8 @@
 </template>
 
 <script>
+import { navRoutes } from './router';
+import { mapState } from 'vuex';
 export default {
   data() {
     return {
@@ -77,9 +62,25 @@ export default {
     };
   },
   computed: {
+    ...mapState(['user']),
+    // 对导航权限控制
+    navList() {
+      if (!this.user) return [];
+      const role = this.user.role;
+      return navRoutes
+        .filter(item => item.meta.role <= role)
+        .map(item => {
+          return {
+            title: item.meta.title,
+            icon: item.meta.icon,
+            name: item.name,
+            path: item.path
+          };
+        });
+    },
     currentNavIndex() {
-      const path = this.$route.path;
-      return '/' + path.split('/')[1];
+      // const path = this.$route.path;
+      return this.$route.name;
     }
   },
   methods: {}
@@ -150,7 +151,7 @@ export default {
     }
   }
 }
-.layout_content{
+.layout_content {
   overflow: hidden;
 }
 .layout_aside {

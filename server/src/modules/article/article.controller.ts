@@ -6,7 +6,7 @@ import { ErrorCode } from '../../constants/error';
 import { Roles } from '../../core/decorators/roles.decorator';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { RolesGuard } from '../../core/guards/roles.guard';
-import { UserRole, User } from '../../models/user.entity';
+import { User } from '../../models/user.entity';
 import { ApiBearerAuth, ApiTags, ApiParam } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { CurUser } from '../../core/decorators/user.decorator';
@@ -28,7 +28,7 @@ export class ArticleController {
 
   @Post()
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   async created(@Body() createDto: CreateDto, @CurUser() user: User) {
     return this.articleService.create(createDto, user._id);
@@ -36,7 +36,7 @@ export class ArticleController {
 
   @Delete(':id')
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   async deleted(@Param('id') id: string) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
@@ -45,7 +45,7 @@ export class ArticleController {
 
   @Put(':id')
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   async updated(@Param('id') id: string, @Body() createDto: CreateDto) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
@@ -62,7 +62,7 @@ export class ArticleController {
   @Put(':id/status')
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   async changeStatus(@Param('id') id: string, @Body() body: ChangeArticleStatus) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.articleService.changeStatus(id, body.status);

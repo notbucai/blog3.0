@@ -8,7 +8,6 @@ import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { ActiveGuard } from 'src/core/guards/active.guard';
 import { RolesGuard } from 'src/core/guards/roles.guard';
-import { UserRole } from 'src/models/user.entity';
 
 @Controller('tag')
 @ApiTags('标签')
@@ -20,7 +19,7 @@ export class TagController {
 
   @Post()
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   @ApiOperation({ summary: "创建tag" })
   async create(@Body() tagDto: CreateDto) {
@@ -59,7 +58,7 @@ export class TagController {
 
   @Put(':id')
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   @ApiOperation({ summary: '通过id更新' })
   async updateById(@Param('id') id: string, @Body() tagDto: CreateDto) {
@@ -71,7 +70,7 @@ export class TagController {
 
   @Delete(':id')
   @UseGuards(ActiveGuard, RolesGuard)
-  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiOperation({ summary: '通过id删除' })
   @ApiBearerAuth()
   async delById(@Param('id') id: string) {

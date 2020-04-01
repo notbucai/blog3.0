@@ -6,6 +6,8 @@ import UserList from '../views/user/List.vue';
 import ArticleList from '../views/article/List.vue';
 import CommentList from '../views/comment/List.vue';
 import TagList from '../views/tag/List.vue';
+import RoleList from '../views/role/List.vue';
+import AclList from '../views/acl/List.vue';
 
 Vue.use(VueRouter)
 
@@ -24,7 +26,7 @@ export const navRoutes = [
     name: 'home',
     component: Home,
     meta: {
-      role: 2,
+      role: 'home_page',
       title: "主页",
       icon: "iconjiaobenkongzhitai"
     }
@@ -34,7 +36,7 @@ export const navRoutes = [
     name: 'UserList',
     component: UserList,
     meta: {
-      role: 3,
+      role: 'user_page',
       title: "用户管理",
       icon: "iconshiliangzhinengduixiang"
     }
@@ -44,7 +46,7 @@ export const navRoutes = [
     name: 'ArticleList',
     component: ArticleList,
     meta: {
-      role: 2,
+      role: 'article_page',
       title: "文章管理",
       icon: "iconwenzhang"
     }
@@ -54,7 +56,7 @@ export const navRoutes = [
     name: 'CommentList',
     component: CommentList,
     meta: {
-      role: 2,
+      role: 'comment_page',
       title: "评论管理",
       icon: "iconpinglun"
     }
@@ -64,8 +66,28 @@ export const navRoutes = [
     name: 'TagList',
     component: TagList,
     meta: {
-      role: 2,
+      role: 'tag_page',
       title: "标签管理",
+      icon: "iconpinglun"
+    }
+  },
+  {
+    path: '/role/list',
+    name: 'RoleList',
+    component: RoleList,
+    meta: {
+      role: 'role_page',
+      title: "角色管理",
+      icon: "iconpinglun"
+    }
+  },
+  {
+    path: '/acl/list',
+    name: 'AclList',
+    component: AclList,
+    meta: {
+      role: 'acl_page',
+      title: "权限点管理",
       icon: "iconpinglun"
     }
   }

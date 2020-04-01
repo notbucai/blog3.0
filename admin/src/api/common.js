@@ -2,11 +2,11 @@
  * @Author: bucai
  * @Date: 2020-03-23 09:31:46
  * @LastEditors: bucai
- * @LastEditTime: 2020-03-24 21:00:48
+ * @LastEditTime: 2020-04-01 21:49:31
  * @Description: 共用接口
  */
 
-import { $ajax, $post, $get, $put,$del } from '../plugins/axios';
+import { $ajax, $post, $get, $put, $del } from '../plugins/axios';
 
 export const login = (data) => {
   return $post('/users/signin', data)
@@ -58,4 +58,39 @@ export const tagDelete = (id) => {
 
 export const tagCreate = (data) => {
   return $post(`/tag`, data);
+}
+
+
+
+export const aclList = (params) => {
+  return $get(`/role/acl`, { params });
+}
+export const aclCreate = (data) => {
+  return $post(`/role/acl`, data);
+}
+export const aclDelete = (id) => {
+  return $del(`/role/acl/${id}`);
+}
+export const aclUpdate = (id, data) => {
+  return $put(`/role/acl/${id}`, data);
+}
+
+
+export const roleList = (params) => {
+  return $get(`/role`, { params });
+}
+export const roleDelete = (id) => {
+  return $del(`/role/${id}`);
+}
+export const roleCreate = (data) => {
+  return $post(`/role`, data);
+}
+export const roleUpdate = (id, data) => {
+  return $put(`/role/${id}`, data);
+}
+export const roleBind = (id, data) => {
+  return $post(`/role/bind/${id}`, data);
+}
+export const roleAcl = (params) => {
+  return $get(`/role/acl/role`, { params });
 }

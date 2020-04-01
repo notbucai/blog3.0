@@ -131,7 +131,7 @@ export class UserController {
     */
   @Get(`/list`)
   @UseGuards(ActiveGuard, RolesGuard)
-  // @Roles(UserRole.Admin, UserRole.SuperAdmin)
+  @Roles('UserList')
   @ApiOperation({ summary: "用户列表" })
   @ApiBearerAuth()
   async list(@Query() listDto: ListDto) {
@@ -154,7 +154,7 @@ export class UserController {
   @Put(':id/status')
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)
-  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  @Roles('ChangeStatus')
   async changeStatus(@Param('id') id: string, @Body() body: ChangeUserStatus) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.userService.changeStatus(id, body.status);
@@ -214,7 +214,7 @@ export class UserController {
 
   @Post('change/role')
   @UseGuards(ActiveGuard, RolesGuard)
-  // @Roles(UserRole.SuperAdmin)
+  @Roles('BindRole', true)
   @ApiOperation({ summary: "修改用户权限" })
   @ApiBearerAuth()
   async changeRole(@Body() RoleDto: UserChangeRoleDto, @CurUser() user: User) {

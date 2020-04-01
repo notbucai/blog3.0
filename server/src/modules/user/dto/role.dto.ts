@@ -25,6 +25,7 @@ export class UserChangeRoleDto {
 
   // @IsEnum(UserRole, { message: ErrorCode.ParamsError.MESSAGE })
   @ApiProperty()
-  role: number;
+  @IsMongoId({ message: ErrorCode.ParamsError.MESSAGE })
+  role: string;
 
 }

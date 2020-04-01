@@ -61,7 +61,7 @@ export class AclService {
       .find({})
       .skip((page_index - 1) * page_size)
       .limit(page_size)
-      .populate('parent');
+      // .populate('parent');
     const total = await this.aclSchema.countDocuments({});
     return {
       list,

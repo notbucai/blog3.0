@@ -27,7 +27,7 @@ export class CommentController {
 
   @Get('alllist/:source')
   @UseGuards(ActiveGuard, RolesGuard)
-  //  @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  @Roles('CommentAllList')
   @ApiBearerAuth()
   @ApiOperation({ summary: "所有的评论列表" })
   public async alllist(@Param('source') source: string, @Query() listDto: AllListDto) {
@@ -126,6 +126,7 @@ export class CommentController {
 
   @Put(':source/:id/status')
   @UseGuards(ActiveGuard, RolesGuard)
+  @Roles('ChangeCommentStatus')
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论状态" })

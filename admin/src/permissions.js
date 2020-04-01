@@ -2,10 +2,10 @@
  * @Author: bucai
  * @Date: 2020-03-22 21:18:13
  * @LastEditors: bucai
- * @LastEditTime: 2020-03-22 21:45:10
+ * @LastEditTime: 2020-04-01 20:36:21
  * @Description: 路由权限验证
  */
-import { Notify } from 'element-ui';
+import { Notification } from 'element-ui';
 
 export default (router, store) => {
   router.beforeEach((to, from, next) => {
@@ -13,14 +13,20 @@ export default (router, store) => {
     const user = store.state.user;
     // 判断路由是否需要鉴权
     if (roleRoute) {
-      if (!user) return next({ path: '/login', query: { redirect: to.path } }); // 这里没有带参数，所以可能会出现问题
+      if (!user || !user.role) return next({ path: '/login', query: { redirect: to.path } }); // 这里没有带参数，所以可能会出现问题
+      if (user.isAdmin) return next();
       const userRole = user.role;
+      console.log(userRole.acls,roleRoute);
+      
       // 判断用户是否和当前权限匹配
-      if (userRole >= roleRoute) {
+      const status = userRole.acls.find((item) => {
+        return item.name === roleRoute;
+      });
+      if (status) {
         next();
       } else {
         // 错误提示，但不跳转
-        Notify.error({
+        Notification.error({
           title: '没有权限',
         });
       }

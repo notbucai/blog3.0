@@ -66,9 +66,17 @@ export default {
     // 对导航权限控制
     navList() {
       if (!this.user) return [];
-      const role = this.user.role;
+      if (!this.user.role) return [];
+      const acls = this.user.role.acls;
       return navRoutes
-        .filter(item => item.meta.role <= role)
+        .filter(item => {
+          if (this.user.isAdmin) return true;
+          const roleRoute = item.meta.role;
+          const status = acls.find(item => {
+            return item.name === roleRoute;
+          });
+          return status;
+        })
         .map(item => {
           return {
             title: item.meta.title,

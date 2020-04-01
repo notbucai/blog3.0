@@ -19,7 +19,7 @@ export class TagController {
 
   @Post()
   @UseGuards(ActiveGuard, RolesGuard)
-  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  @Roles('CreateTag')
   @ApiBearerAuth()
   @ApiOperation({ summary: "创建tag" })
   async create(@Body() tagDto: CreateDto) {
@@ -58,7 +58,7 @@ export class TagController {
 
   @Put(':id')
   @UseGuards(ActiveGuard, RolesGuard)
-  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  @Roles('UpdateTag')
   @ApiBearerAuth()
   @ApiOperation({ summary: '通过id更新' })
   async updateById(@Param('id') id: string, @Body() tagDto: CreateDto) {
@@ -70,6 +70,7 @@ export class TagController {
 
   @Delete(':id')
   @UseGuards(ActiveGuard, RolesGuard)
+  @Roles('DeleteTag')
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiOperation({ summary: '通过id删除' })
   @ApiBearerAuth()

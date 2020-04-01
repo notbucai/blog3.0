@@ -24,7 +24,7 @@ export class UserService {
   ) { };
 
   getUser(id: string) {
-    return this.userSchema.findById(id).populate('role');
+    return this.userSchema.findById(id).populate({ path: 'role', populate: 'acls' });
   }
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
@@ -69,7 +69,7 @@ export class UserService {
     });
   }
 
-  async changeRole(id: string, role: number) {
+  async changeRole(id: string, role: string) {
     return this.userSchema.findByIdAndUpdate(id, { $set: { role } });
   }
 

@@ -27,16 +27,14 @@ export class ArticleController {
   }
 
   @Post()
-  @UseGuards(ActiveGuard, RolesGuard)
-  // @Roles(UserRole.Admin, UserRole.SuperAdmin)
+  @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   async created(@Body() createDto: CreateDto, @CurUser() user: User) {
     return this.articleService.create(createDto, user._id);
   }
 
   @Delete(':id')
-  @UseGuards(ActiveGuard, RolesGuard)
-  // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   async deleted(@Param('id') id: string) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
@@ -44,7 +42,7 @@ export class ArticleController {
   }
 
   @Put(':id')
-  @UseGuards(ActiveGuard, RolesGuard)
+  @UseGuards(ActiveGuard)
   // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   async updated(@Param('id') id: string, @Body() createDto: CreateDto) {
@@ -62,6 +60,7 @@ export class ArticleController {
   @Put(':id/status')
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)
+  @Roles('ChangeArticleStatus')
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   async changeStatus(@Param('id') id: string, @Body() body: ChangeArticleStatus) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });

@@ -2,7 +2,7 @@
   <div class="_page p2 pt1">
     <el-breadcrumb separator="/">
       <el-breadcrumb-item :to="{ path: '/home' }">主页</el-breadcrumb-item>
-      <el-breadcrumb-item>文章管理</el-breadcrumb-item>
+      <el-breadcrumb-item>标签管理</el-breadcrumb-item>
     </el-breadcrumb>
     <div class="table mt2">
       <div class="pb2">

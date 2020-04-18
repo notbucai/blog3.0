@@ -90,7 +90,7 @@ export class UserService {
         ]
       };
     }
-    const list = await this.userSchema.find(query).skip((listDto.page_index - 1) * listDto.page_size).limit(listDto.page_size);
+    const list = await this.userSchema.find(query).skip((listDto.page_index - 1) * listDto.page_size).limit(listDto.page_size).populate({ path: 'role' });
     const total = await this.userSchema.countDocuments(query);
     return {
       list,

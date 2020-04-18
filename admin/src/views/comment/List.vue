@@ -69,7 +69,6 @@
           </template>
         </el-table-column>
 
-
         <el-table-column
           prop="htmlContent"
           header-align="center"
@@ -92,7 +91,12 @@
         </el-table-column>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
-            <el-button size="mini" plain @click="handleChangeStatus(scope.row)">改变状态</el-button>
+            <el-button
+              size="mini"
+              plain
+              @click="handleChangeStatus(scope.row)"
+              v-if="$permissions('ChangeCommentStatus')"
+            >改变状态</el-button>
           </template>
         </el-table-column>
       </el-table>

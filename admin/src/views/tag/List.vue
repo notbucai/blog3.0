@@ -6,7 +6,7 @@
     </el-breadcrumb>
     <div class="table mt2">
       <div class="pb2">
-        <el-button type="primary" @click="handleAdd" size="small">添加</el-button>
+        <el-button type="primary" @click="handleAdd" size="small" v-if="$permissions('CreateTag')">添加</el-button>
       </div>
       <el-table
         :data="tableData"
@@ -49,8 +49,8 @@
 
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
-            <el-button size="mini" plain @click="handleEdit(scope.row)">修改</el-button>
-            <el-button size="mini" plain type="danger" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button size="mini" plain @click="handleEdit(scope.row)" v-if="$permissions('UpdateTag')">修改</el-button>
+            <el-button size="mini" plain type="danger" @click="handleDelete(scope.row)" v-if="$permissions('DeleteTag')">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

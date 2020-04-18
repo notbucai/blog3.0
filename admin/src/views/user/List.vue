@@ -79,23 +79,34 @@
             <el-tag v-if="scope.row.status == 3" type="danger">已冻结</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="role" show-overflow-tooltip label="状态" width="120" align="center">
+        <el-table-column prop="role" show-overflow-tooltip label="角色" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag type="info">{{scope.row.role | role}}</el-tag>
+            <el-tag type="info" v-if="scope.row.role">{{scope.row.role.name}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
             <div v-if="!(scope.row.role === 4)">
-              <el-button size="mini" @click="handleChangeRole(scope.row)">权限</el-button>
-              <!-- :disabled="scope.row.role === 4" -->
               <el-button
                 size="mini"
-                type="danger"
-                v-if="scope.row.status == 2"
-                @click="handleChangeStatus(scope.row)"
-              >冻结</el-button>
-              <el-button size="mini" type="success" v-else @click="handleChangeStatus(scope.row)">激活</el-button>
+                @click="handleChangeRole(scope.row)"
+                v-if="$permissions('BindRole')"
+              >角色</el-button>
+              <!-- :disabled="scope.row.role === 4" -->
+              <template v-if="$permissions('ChangeStatus')">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  v-if="scope.row.status == 2"
+                  @click="handleChangeStatus(scope.row)"
+                >冻结</el-button>
+                <el-button
+                  size="mini"
+                  type="success"
+                  v-else
+                  @click="handleChangeStatus(scope.row)"
+                >激活</el-button>
+              </template>
             </div>
             <div v-else>禁止操作</div>
           </template>
@@ -114,10 +125,8 @@
 
     <el-dialog title="权限设置" :visible.sync="dialogFormVisible" width="30%">
       <div class="tc">
-        <div class="pb2 fb" v-if="current">设置“{{current.username}}”的权限</div>
-        <el-radio-group v-model="roleRadio" size="small">
-          <el-radio-button :label="index+1" v-for="(item, index) in roleList" :key="index">{{item}}</el-radio-button>
-        </el-radio-group>
+        <div class="pb2 fb" v-if="current">设置“{{current.username}}”的角色</div>
+        <el-input v-model="roleId" label="角色id" placeholder="请输入角色id"></el-input>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false" size="small">取 消</el-button>
@@ -141,7 +150,7 @@ export default {
       dialogFormVisible: false,
       tableData: [],
       // roleList: ['普通用户', '网站编辑', '管理员'],
-      roleRadio: 1,
+      roleId: '',
       roleLoading: false,
       total: 0,
       page_size: 10,
@@ -151,13 +160,11 @@ export default {
     };
   },
   computed: {
-    ...mapState(['user']),
-    roleList() {
-      const role = this.user.role;
-      return ['普通用户', '网站编辑', '管理员'].filter(
-        (item, index) => index < role
-      );
-    }
+    ...mapState(['user'])
+    // roleList() {
+    //   const role = this.user.isAdmin;
+    //   return
+    // }
   },
   created() {
     this.loadData();
@@ -226,7 +233,7 @@ export default {
     },
     async handleChangeRoleCofirm() {
       const id = this.current._id;
-      const role = this.roleRadio;
+      const role = this.roleId;
       this.roleLoading = true;
       const [err, data] = await this.$http.changeRole({ id, role });
       this.roleLoading = false;

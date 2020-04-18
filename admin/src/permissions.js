@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-22 21:18:13
  * @LastEditors: bucai
- * @LastEditTime: 2020-04-18 20:22:42
+ * @LastEditTime: 2020-04-18 20:39:56
  * @Description: 路由权限验证
  */
 import { Notification } from 'element-ui';
@@ -15,6 +15,7 @@ import { Notification } from 'element-ui';
 export const permission = (store, point) => {
   if (!point) return true;
   const user = store.state.user;
+  if (!user) return false;
   const userRole = user.role;
   if (user.isAdmin) {
     return true;
@@ -35,10 +36,12 @@ export const permission = (store, point) => {
 export const router = (router, store) => {
   router.beforeEach((to, from, next) => {
     const roleRoute = to.meta.role;
+
     // 判断路由是否需要鉴权
     if (permission(store, roleRoute)) {
       next();
     } else {
+      next('/login?redirect=' + to.fullPath);
       // 错误提示，但不跳转
       Notification.error({
         title: '没有权限',

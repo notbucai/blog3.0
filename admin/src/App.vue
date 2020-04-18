@@ -13,7 +13,7 @@
               />
               <div class="current_user-username _text-style">bucai</div>
             </div>
-            <div class="current_user-exit _text-style">退了</div>
+            <div class="current_user-exit _text-style" @click="handleQuit">退了</div>
           </div>
         </div>
       </el-header>
@@ -91,7 +91,12 @@ export default {
       return this.$route.name;
     }
   },
-  methods: {}
+  methods: {
+    handleQuit() {
+      this.$store.dispatch('quit');
+      this.$router.replace('/login');
+    }
+  }
 };
 </script>
 
@@ -155,6 +160,7 @@ export default {
       }
       &-exit {
         padding-left: 30px;
+        cursor: pointer;
       }
     }
   }

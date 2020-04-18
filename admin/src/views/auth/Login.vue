@@ -5,7 +5,10 @@
     <div class="login-container">
       <!-- 插画 -->
       <div class="login-pic">
-        <img :src="`https://image.notbucai.com/pixiv/${pixivIndex}.jpg?imageMogr2/thumbnail/600x`" alt="pic" />
+        <img
+          :src="`https://image.notbucai.com/pixiv/${pixivIndex}.jpg?imageMogr2/thumbnail/600x`"
+          alt="pic"
+        />
       </div>
       <!-- 登陆框 -->
       <div class="login-form">
@@ -51,11 +54,22 @@ export default {
           { min: 6, message: '不能少于6个字符', trigger: 'blur' }
         ]
       },
-      pixivIndex
+      pixivIndex,
+      redirectPath: ''
     };
   },
   computed: {
     ...mapState(['token'])
+  },
+  created() {
+    const redirect = this.$route.query.redirect;
+    this.redirectPath = redirect;
+    if (redirect) return;
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.$router.push('/home');
+      return;
+    }
   },
   mounted() {
     stopCanAn = canvasAn(this.$refs['space']);
@@ -91,8 +105,9 @@ export default {
       if (data) {
         this.setUser(data);
         this.$message.success('登陆成功');
+        let path = this.redirectPath || '/home';
         // 跳转路由
-        this.$router.push('/');
+        this.$router.push(path);
       }
     }
   }

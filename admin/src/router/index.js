@@ -22,7 +22,7 @@ export enum UserRole {
 
 export const navRoutes = [
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: Home,
     meta: {
@@ -95,6 +95,11 @@ export const navRoutes = [
 
 export const routes = [
 
+  {
+    path: '/',
+    name: 'adminSystem',
+    redirect: '/login'
+  },
   {
     path: '/login',
     name: 'login',

@@ -15,6 +15,10 @@ export default new Vuex.Store({
     },
     SET_USER(state, data) {
       state.user = data;
+    },
+    QUIT(state) {
+      state.user = null;
+      state.token = null;
     }
   },
   actions: {
@@ -25,7 +29,11 @@ export default new Vuex.Store({
     setUser({ commit }, payload) {
       commit('SET_USER', payload);
       store.set('user', payload);
-    }
+    },
+    quit({ commit }) {
+      commit('QUIT');
+      store.clear();
+    },
   },
   modules: {
   }

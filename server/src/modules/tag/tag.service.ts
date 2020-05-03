@@ -9,7 +9,7 @@ import { CreateDto } from './dto/create.dto';
 export class TagService {
   constructor(
     @InjectModel(Tag) public readonly tagSchema: ReturnModelType<typeof Tag>,
-    @InjectModel(Tag) public readonly articleSchema: ReturnModelType<typeof Article>,
+    @InjectModel(Article) public readonly articleSchema: ReturnModelType<typeof Article>,
   ) { }
 
 
@@ -37,13 +37,18 @@ export class TagService {
     const tags = await this.tagSchema.find();
     const p_all = tags.map(async (item) => {
       item = item.toJSON()
-      item.articleCount = await this.articleSchema.countDocuments({ tag: item._id });
+      console.log('item._id', item._id);
+
+      item.articleCount = await this.articleSchema.countDocuments({ tags: { $elemMatch: { $eq: item._id } } });
       return item;
     });
     return await Promise.all(p_all);
   }
   async findCountGreaterZero() {
-    return (await this.findAll()).filter(item => item.articleCount);
+    const tags = await this.findAll();
+    console.log('tags', tags);
+
+    return tags.filter(item => item.articleCount);
   }
   async findById(id: string) {
     return this.tagSchema.findById(id);

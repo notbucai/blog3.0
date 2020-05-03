@@ -22,7 +22,7 @@ export class SignInDto {
         message: '手机号码/邮箱地址或用户名不正确',
     })
     @IsString()
-    @ApiProperty({ description: '登陆账号', example: "13767284559" })
+    @ApiProperty({ description: '登录账号', example: "13767284559" })
     readonly login: string;
     
     @Length(UserConstants.PASSWORD_MIN_LENGTH, UserConstants.PASSWORD_MAX_LENGTH, {

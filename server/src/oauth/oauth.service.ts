@@ -50,7 +50,7 @@ export class OauthService {
     let token: string;
 
     let newUser: User = await this.userService.findByGithubId(githubUser.id);
-    // NOTE: 1. 通过github登陆名 查询数据库是否绑定 
+    // NOTE: 1. 通过github登录名 查询数据库是否绑定 
     if (newUser) {
       // NOTE: 1.1 已绑定生成token
       this.logger.info({ message: "GITHUB已绑定用户", data: newUser })

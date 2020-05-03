@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-04-19 15:26:33
  * @LastEditors: bucai
- * @LastEditTime: 2020-04-19 15:28:14
+ * @LastEditTime: 2020-05-03 12:37:56
  * @Description: 
  */
 // 引入vue 及 lodash
@@ -19,7 +19,10 @@ const requireComponent = require.context('../components/', false, /_base-[\w-]+\
 // 遍历 require 进来的组件并注册
 requireComponent.keys().forEach((fileName) => {
   const componentConfig = requireComponent(fileName)
-  const componentName = upperFirst( camelCase( fileName.replace(/^\.\/_/, '').replace(/\.\w+$/, '') ) )
+  const componentName = upperFirst(camelCase(fileName.replace(/^\.\/_/, '').replace(/\.\w+$/, '')))
   // 全局注册组件
   Vue.component(componentName, componentConfig.default || componentConfig)
-})
+});
+
+import Snackbar from '../components/snackbar';
+Vue.$snackbar = Vue.prototype.$snackbar = Snackbar;

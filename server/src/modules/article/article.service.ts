@@ -89,14 +89,16 @@ export class ArticleService {
       where.$or = whereOrKeys.map(key => ({ [key]: rx }))
     }
     const page_index = Number(listDto.page_index || 1) - 1;
-    const page_size = Number(listDto.page_size || 1);
+    const page_size = Number(listDto.page_size || 10);
 
     const a_list = await this.articleSchema
       .find(where, '-htmlContent')
+      .sort({ _id: -1 })
       .skip(page_index * page_size)
       .limit(page_size)
       .populate([{ path: 'user', select: "-pass" }])
-      .populate([{ path: 'tags' }]);
+      .populate([{ path: 'tags' }])
+      .exec();
 
     const list_p = a_list.map(async item => {
       item = item.toJSON();
@@ -108,6 +110,32 @@ export class ArticleService {
     const list = await Promise.all(list_p);
 
     const total = await this.articleSchema.countDocuments(where);
+
+    return {
+      list,
+      total
+    }
+  }
+
+  async pageHotList() {
+
+    const a_list = await this.articleSchema
+      .find({ coverURL: { $ne: null } }, '-htmlContent')
+      .populate([{ path: 'user', select: "-pass" }])
+      .populate([{ path: 'tags' }])
+      .sort({ browseCount: -1 })
+      .limit(6)
+      .exec();
+
+    const list_p = a_list.map(async item => {
+      item = item.toJSON();
+      item.commentCount = await this.commentSchema.countDocuments({ article: item._id });
+      return item;
+    });
+
+    const list = await Promise.all(list_p);
+
+    const total = await this.articleSchema.countDocuments();
 
     return {
       list,

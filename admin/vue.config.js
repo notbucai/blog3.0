@@ -19,6 +19,7 @@ module.exports = {
     },
   },
   devServer: {
+    port: 9906,
     proxy: {
       "/api": {
         // target: "https://api.notbucai.cc",

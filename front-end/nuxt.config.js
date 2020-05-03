@@ -29,7 +29,10 @@ module.exports = {
   */
   plugins: [
     './plugins/axios.js',
-    './plugins/global-components'
+    './plugins/constant.js',
+    './plugins/global-components',
+    './plugins/filters.js',
+    { src: './plugins/dom.js', ssr: false },
   ],
   /*
   ** Nuxt.js dev-modules
@@ -64,7 +67,8 @@ module.exports = {
     '@nuxtjs/axios',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
-    '@nuxtjs/style-resources'
+    '@nuxtjs/style-resources',
+    'cookie-universal-nuxt'
   ],
   styleResources: {
     scss: './assets/variables.scss',
@@ -78,7 +82,7 @@ module.exports = {
 
   },
   proxy: {
-    '/api/': { target: 'http://127.0.0.1:9905', pathRewrite: { '^/api/': '' } }
+    '/api/': { target: 'http://127.0.0.1:9905/', pathRewrite: { '^/api/': '' } }
   },
   /*
   ** Build configuration

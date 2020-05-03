@@ -21,7 +21,20 @@ export class ArticleController {
     private readonly articleService: ArticleService,
   ) { }
 
+  @Get('list/hot')
+  async hotList() {
+    return this.articleService.pageHotList();
+  }
+
+  @Get('list/all')
+  async pageList(@Query() ListDto: ArticleListDto) {
+    return this.articleService.pageList(ListDto);
+  }
+
   @Get('list')
+  @ApiBearerAuth()
+  @UseGuards(ActiveGuard, RolesGuard)
+  @Roles('ArticleList')
   async list(@Query() ListDto: ArticleListDto) {
     return this.articleService.pageList(ListDto);
   }

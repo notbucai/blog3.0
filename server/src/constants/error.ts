@@ -25,7 +25,7 @@ export class ErrorCode {
     };
 
     static readonly InvalidPhone: CodeAndMsg = { CODE: 1060, MESSAGE: '无效的手机号' };
-    static readonly InvalidLogin: CodeAndMsg = { CODE: 1060, MESSAGE: '无效的登陆名' };
+    static readonly InvalidLogin: CodeAndMsg = { CODE: 1060, MESSAGE: '无效的登录名' };
     static readonly InvalidCaptcha: CodeAndMsg = { CODE: 1061, MESSAGE: '验证码无效或已过期，请重新发送验证码' };
     static readonly RequestRepeat: CodeAndMsg = { CODE: 1062, MESSAGE: `获取验证码间隔为${CodeConstants.CODE_REREPEAT}秒` };
 

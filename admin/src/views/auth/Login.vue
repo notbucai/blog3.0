@@ -10,9 +10,9 @@
           alt="pic"
         />
       </div>
-      <!-- 登陆框 -->
+      <!-- 登录框 -->
       <div class="login-form">
-        <div class="login-form--title">登陆</div>
+        <div class="login-form--title">登录</div>
         <el-form :model="formData" :rules="rules" ref="login-form" class="login-form_form">
           <el-form-item prop="login">
             <el-input v-model="formData.login" placeholder="请输入手机/邮箱/用户名"></el-input>
@@ -26,7 +26,7 @@
               type="primary"
               round
               @click="handleSubmit('login-form')"
-            >登陆</el-button>
+            >登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -48,7 +48,7 @@ export default {
         pass: ''
       },
       rules: {
-        login: [{ required: true, message: '请输入登陆名' }],
+        login: [{ required: true, message: '请输入登录名' }],
         pass: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 6, message: '不能少于6个字符', trigger: 'blur' }
@@ -104,7 +104,7 @@ export default {
       loadingMark && loadingMark.close();
       if (data) {
         this.setUser(data);
-        this.$message.success('登陆成功');
+        this.$message.success('登录成功');
         let path = this.redirectPath || '/home';
         // 跳转路由
         this.$router.push(path);

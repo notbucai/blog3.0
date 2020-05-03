@@ -12,7 +12,7 @@ export class OauthController {
 
   // https://github.com/login/oauth/authorize?client_id=121bf37951669bd171d4&state=github
   @Get('login')
-  @ApiOperation({ summary: 'oauth登陆' })
+  @ApiOperation({ summary: 'oauth登录' })
   public async github(@Res() res, @Query('code') code: string, @Query('state') state: string) {
     this.logger.info({ data: 'login ' + state });
     let data = null;

@@ -59,12 +59,14 @@ export class CommonController {
     const expire = 10; // 10分钟
     const reExpireSecond = CodeConstants.CODE_REREPEAT; // 重复请求 间隔 60 second
     // 判断间隔
-    const oldCodeTime = await this.redisService.setValidationCodeTime(phone);
+    const oldCodeTime = await this.redisService.getValidationCodeTime(phone);
+    console.log('oldCodeTime:', oldCodeTime);
+
     if (oldCodeTime) {
       throw new MyHttpException({ code: ErrorCode.RequestRepeat.CODE });
     }
 
-    const code: string = "11111" || await this.smsService.sendSMSCode(phone, expire);
+    const code: string = "111111" || await this.smsService.sendSMSCode(phone, expire);
     this.redisService.setValidationCodeTime(phone, reExpireSecond); // 储存间隔
     this.redisService.setValidationCode(phone, code, expire); // 储存验证码
     return {};

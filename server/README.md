@@ -79,7 +79,7 @@ wordCount # 字数
 likedCount # 被喜欢的数量
 uLikeCount # 点过多少喜欢
 
-githubID # github登陆
+githubID # github登录
 
 # followCount # 
 # followerCount # 

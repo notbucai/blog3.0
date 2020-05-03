@@ -42,6 +42,8 @@ export class UserController {
 
     // TODO: 验证验证码
     const code = await this.redisService.getValidationCode(signupDto.phone);
+    console.log('code', signupDto.phone, code);
+
     let isVerification = true;
     if (code !== signupDto.code) {
       isVerification = false;
@@ -72,21 +74,25 @@ export class UserController {
       });
     }
     const user = await this.userService.create(signupDto);
-    return {};
+    const token = await this.commonService.generateToken(user);
+    
+    await this.redisService.setUserToken(user._id.toString(), token);
+    await this.redisService.setUser(user);
+    return token;
   }
 
   @Post('/signin')
-  @ApiOperation({ summary: "账号密码登陆" })
+  @ApiOperation({ summary: "账号密码登录" })
   public async signin(@Body() signinDto: SignInDto) {
     this.logger.info({
       data: SignInDto
     });
     const where: any = {};
-    // 判断登陆名是什么
+    // 判断登录名是什么
     //  where
     // 符合手机号要求就是手机
     // 符合邮箱就是邮箱
-    // 不符合就用户名登陆
+    // 不符合就用户名登录
 
     if (/^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/.test(signinDto.login)) {
       where.phone = signinDto.login;
@@ -188,11 +194,11 @@ export class UserController {
       });
     }
     const where: any = {};
-    // 判断登陆名是什么
+    // 判断登录名是什么
     //  where
     // 符合手机号要求就是手机
     // 符合邮箱就是邮箱
-    // 不符合就用户名登陆
+    // 不符合就用户名登录
     if (/^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/.test(repassDto.login)) {
       where.phone = repassDto.login;
     } else if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(repassDto.login)) {

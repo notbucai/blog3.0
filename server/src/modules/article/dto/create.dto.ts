@@ -11,10 +11,10 @@ export class CreateArticleDto {
 
   @ValidateIf(o => o.coverURL !== undefined)
   @IsUrl({
-    protocols: ['https', 'http'],
-    require_protocol: true,
-  }, { message: "必须为url" })
-  @ApiProperty({ description: "tags" })
+    protocols: ['https'],
+    require_protocol: false,
+  }, { message: "图片必须为url" })
+  @ApiProperty({ description: "coverURL" })
   coverURL: string
 
   // summary: string; // 自动获取前面的150个字

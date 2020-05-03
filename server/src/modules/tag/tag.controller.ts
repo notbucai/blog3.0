@@ -36,6 +36,9 @@ export class TagController {
   }
 
   @Get('list')
+  // @UseGuards(ActiveGuard, RolesGuard)
+  // @Roles('CreateTag')
+  // @ApiBearerAuth()
   @ApiOperation({ summary: '获取所有' })
   async list() {
     return this.tagService.findAll();

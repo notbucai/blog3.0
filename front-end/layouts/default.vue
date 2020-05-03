@@ -2,7 +2,7 @@
   <v-app>
     <v-app-bar app dense flat :height="56" tile>
       <!-- -->
-      <div class="toolbar-content">
+      <div class="toolbar-content container">
         <div class="toolbar-title">
           <v-btn elevation="0" text href="/" nuxt>不才</v-btn>
         </div>
@@ -16,7 +16,24 @@
             <v-icon v-if="$vuetify.theme.dark">mdi-white-balance-sunny</v-icon>
             <v-icon v-if="!$vuetify.theme.dark">mdi-weather-night</v-icon>
           </v-btn>
-          <v-btn color="info" elevation="0">登陆</v-btn>
+          <v-btn color="info" elevation="0" @click="SET_LOGIN_OR_REGISTER_DIALOG" v-if="!user">登录</v-btn>
+          <div class="pl-2" v-else>
+            <v-menu :nudge-left="46" :nudge-bottom="10" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-avatar size="36" color="primary" v-on="on" style="cursor: pointer;">
+                  <img :src="user.avatarURL" :alt="user.username" />
+                </v-avatar>
+              </template>
+              <v-list>
+                <v-list-item dense v-for="item in userNavs" :key="item.key">
+                  <v-btn text block class="justify-start" @click="handleSelectAction(item.key)">
+                    <v-icon left>mdi-{{item.icon}}</v-icon>
+                    {{item.title}}
+                  </v-btn>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </div>
         </div>
       </div>
     </v-app-bar>
@@ -26,21 +43,56 @@
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
         <!-- If using vue-router -->
-        <nuxt/>
+        <nuxt />
       </v-container>
     </v-content>
 
-    <v-footer app>
-      <!-- -->
-    </v-footer>
+    <v-footer app absolute>123</v-footer>
+
+    <LoginOrRegister />
   </v-app>
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex';
+import LoginOrRegister from '@/components/LoginOrRegister.vue';
 export default {
+  components: { LoginOrRegister },
+  data() {
+    this.userNavs = [
+      {
+        icon: 'pencil',
+        title: '写文章',
+        key: 'publish'
+      },
+      {
+        icon: 'account',
+        title: '我的账号',
+        key: 'account'
+      },
+      {
+        icon: 'cog',
+        title: '设置',
+        key: 'setup'
+      },
+      {
+        icon: 'exit-to-app',
+        title: '退出',
+        key: 'exit'
+      }
+    ];
+    return {};
+  },
+  computed: {
+    ...mapState(['user'])
+  },
   methods: {
+    ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
     handleChangeTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    },
+    handleSelectAction(key) {
+      console.log(key);
     }
   }
 };
@@ -48,20 +100,21 @@ export default {
 
 <style lang="scss">
 .theme--light.v-application {
-  background-color: #f9f9f9;
+  background-color: #f4f4f4;
 }
 .theme--light.v-app-bar.v-toolbar.v-sheet {
   background-color: #fff;
 }
 .theme--dark.v-app-bar.v-toolbar.v-sheet {
-  background-color: #121212;
+  background-color: #151515;
 }
 
 .toolbar-content {
-  max-width: 1440px;
-  width: 100%;
+  /* max-width: 1440px;
+  width: 100%; */
   height: 100%;
-  margin: 0 auto;
+  /* margin: 0 auto; */
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -80,10 +133,16 @@ export default {
       border: none;
     }
   }
-  .toolbar-action{
-    .v-btn{
+  .toolbar-action {
+    display: flex;
+    align-items: center;
+    .v-btn {
       margin-left: 12px;
     }
   }
+}
+#app .v-card {
+  border-radius: 8px !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05) !important;
 }
 </style>

@@ -21,7 +21,7 @@
             <v-row align="end">
               <div class="carousel-info-box">
                 <h1>{{item.title}}</h1>
-                <v-btn color="error" rounded>阅读全文</v-btn>
+                <v-btn color="error" rounded nuxt :to="`/article/${item._id}`">阅读全文</v-btn>
               </div>
             </v-row>
           </v-container>
@@ -38,33 +38,7 @@
           </v-row>
         </v-container>
 
-        <v-card
-          class="mx-auto mb-6 article-item"
-          v-for="(item, index) in articleStore.list"
-          :key="index"
-        >
-          <v-lazy>
-            <v-img
-              :aspect-ratio="18/9"
-              v-if="item.coverURL"
-              :src="item.coverURL"
-              :lazy-src="item.coverURL+'?imageMogr2/thumbnail/100x'"
-            />
-          </v-lazy>
-
-          <v-card-title>
-            <nuxt-link :to="`/article/${item._id}`" class="title_a">{{item.title}}</nuxt-link>
-          </v-card-title>
-          <v-card-subtitle>{{item.createdAt | format}}</v-card-subtitle>
-
-          <v-card-text class="text--primary">
-            <div>{{item.summary}}</div>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-btn text color="error">开始阅读</v-btn>
-          </v-card-actions>
-        </v-card>
+        <article-item v-for="item in articleStore.list" :key="item._id" :article="item" />
         <div class="d-flex justify-center" v-if="articleStore.list.length < articleStore.total">
           <v-btn
             color="error"
@@ -84,7 +58,7 @@
         <v-card class="mx-auto mb-6 pa-2">
           <nuxt-link to="/tag/xxx" class="tag-item-link">
             <v-chip class="ma-2" label v-for="(item, index) in taglist" :key="index">
-              <v-icon left>mdi-{{item.icon}}</v-icon>
+              <v-icon left small>mdi-{{item.iconURL}}</v-icon>
               {{item.name}}
             </v-chip>
           </nuxt-link>
@@ -95,6 +69,7 @@
 </template>
 
 <script>
+import ArticleItem from '@/components/article/ArticleItem.vue';
 export default {
   async asyncData({ $axios }) {
     const promiseList = [];
@@ -115,13 +90,14 @@ export default {
     const innerHeight = window.innerHeight;
     this.carouselHeight = innerHeight - top - 10;
   },
+  components: { ArticleItem },
   data() {
     return {
       carouselHeight: 0,
       cycle: false,
       page_index: 1,
       articleLoading: false,
-      taglist:[],
+      taglist: [],
       articleStore: {
         list: [],
         total: 999
@@ -162,13 +138,43 @@ export default {
   border-radius: 8px;
   color: #fff;
 }
-.article-item .title_a {
-  color: inherit;
-  text-decoration: none;
-}
+
 .tag-item-link {
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+}
+
+.theme--dark {
+  .Index {
+    background-color: #1e1e1e;
+
+    .height {
+      background-color: #000;
+      color: #fff;
+    }
+
+    .v-note-wrapper.markdown-body {
+      background-color: inherit;
+      border: #303030;
+    }
+
+    .v-note-wrapper
+      .v-note-panel
+      .v-note-edit.divarea-wrapper.scroll-style::-webkit-scrollbar {
+      background-color: #000;
+    }
+
+    .v-note-wrapper
+      .v-note-panel
+      .v-note-show
+      .v-show-content.scroll-style::-webkit-scrollbar-thumb,
+    .v-note-wrapper
+      .v-note-panel
+      .v-note-show
+      .v-show-content-html.scroll-style::-webkit-scrollbar-thumb {
+      background-color: #303030;
+    }
+  }
 }
 </style>

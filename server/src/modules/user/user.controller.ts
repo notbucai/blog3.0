@@ -20,6 +20,8 @@ import { ListDto } from './dto/list.dto';
 import { UserChangeRoleDto } from './dto/role.dto';
 import { ObjectID } from 'mongodb';
 import { ChangeUserStatus } from './dto/status.dto';
+import { CommentService } from '../comment/comment.service';
+import { ArticleService } from '../article/article.service';
 
 @Controller('users')
 @ApiTags('用户')
@@ -31,6 +33,8 @@ export class UserController {
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
     private readonly commonService: CommonService,
+    private readonly articleService: ArticleService,
+    private readonly commentService: CommentService
   ) { };
 
   @Post('/signup')
@@ -75,7 +79,7 @@ export class UserController {
     }
     const user = await this.userService.create(signupDto);
     const token = await this.commonService.generateToken(user);
-    
+
     await this.redisService.setUserToken(user._id.toString(), token);
     await this.redisService.setUser(user);
     return token;
@@ -149,12 +153,17 @@ export class UserController {
 
   @Get('/:id')
   @ApiOperation({ summary: "用户信息" })
-  @ApiParam({ name: "id", example: '5e732d7db681f7439e306e4b' })
+  @ApiParam({ name: "id", example: '5e84512f2058ff40cc3dc344' })
   public async user(@Param('id') id: string) {
     if (!id) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
-    return this.userService.getUser(id);
+    const user = await this.userService.getBasiceUser(id);
+    if(typeof user == 'undefined' || user === null){
+      throw  new MyHttpException({ code: ErrorCode.UserNoExists.CODE });
+    }
+    
+    return user;
   }
 
   @Put(':id/status')
@@ -166,7 +175,29 @@ export class UserController {
     return this.userService.changeStatus(id, body.status);
   }
 
+  @Get(':id/achievement')
+  @ApiOperation({ summary: "获取用户成就" })
+  async achievement(@Param('id') id: string) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.userService.achievement(id);
+  }
 
+
+  @Get(':id/article')
+  @ApiOperation({ summary: "获取用户文章" })
+  async articleList(@Param('id') id: string) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.articleService.listByUserId(id);
+  }
+
+  @Get(':id/:source/comment')
+  @ApiOperation({ summary: "获取用户评论" })
+  async commentlist(@Param('id') id: string, @Param('source') source: string) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    if (!this.commentService.isValidSource(source)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.commentService.getListByUserId(source, id);
+  }
+  
   @Put('/repass')
   @ApiOperation({ summary: "重置密码" })
   public async repass(@Body() repassDto: RepassDto) {

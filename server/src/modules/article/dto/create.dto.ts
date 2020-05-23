@@ -9,7 +9,7 @@ export class CreateArticleDto {
   @ApiProperty({ description: "title" })
   title: string;
 
-  @ValidateIf(o => o.coverURL !== undefined)
+  @ValidateIf(o => typeof o.coverURL === 'string' && o.coverURL.length)
   @IsUrl({
     protocols: ['https'],
     require_protocol: false,
@@ -17,11 +17,19 @@ export class CreateArticleDto {
   @ApiProperty({ description: "coverURL" })
   coverURL: string
 
-  // summary: string; // 自动获取前面的150个字
+  @ApiProperty({ description: "summary" })
+  @Length(0, 200, { message: ErrorCode.ParamsError.MESSAGE })
+  summary: string
+
   @IsString({ message: ErrorCode.ParamsError.MESSAGE })
   @MinLength(1, { message: ErrorCode.ParamsError.MESSAGE })
-  @ApiProperty({ description: "htmlContent" })
-  htmlContent: string;
+  @ApiProperty({ description: "content" })
+  content: string;
+
+  // @IsString({ message: ErrorCode.ParamsError.MESSAGE })
+  // @MinLength(1, { message: ErrorCode.ParamsError.MESSAGE })
+  // @ApiProperty({ description: "htmlContent" })
+  // htmlContent: string;
 
   @ValidateIf(o => Array.isArray(o.tags))
   @IsMongoId({ each: true, message: ErrorCode.ParamsError.MESSAGE })

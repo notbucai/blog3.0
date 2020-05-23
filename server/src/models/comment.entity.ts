@@ -1,7 +1,7 @@
 import { User } from './user.entity';
 import { Article } from './article.entity';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
-import { prop, Ref, mapProp, arrayProp } from '@typegoose/typegoose';
+import { prop, Ref, mapProp, arrayProp, modelOptions } from '@typegoose/typegoose';
 import { ObjectID } from 'mongodb';
 
 export enum CommentStatus {
@@ -22,7 +22,7 @@ export class Comment extends Base {
   deletedAt: number;
 
   @prop()
-  htmlContent: string;
+  content: string;
 
   @prop({ enum: CommentStatus, default: CommentStatus.VerifySuccess })
   status: CommentStatus;
@@ -44,9 +44,17 @@ export class Comment extends Base {
   commentCounts: number; // 子评论数
 
 }
-
+@modelOptions({
+  schemaOptions: {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+})
 export class ArticleComment extends Comment {
-  @prop({ ref: Article, localField: 'sourceID', foreignField: '_id' })
+  @prop({
+    ref: Article.name, localField: 'sourceID', foreignField: '_id',
+    justOne: true,
+  })
   article: Ref<Article>;
 
   @prop({ ref: ArticleComment })

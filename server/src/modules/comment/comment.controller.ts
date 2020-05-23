@@ -31,7 +31,7 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "所有的评论列表" })
   public async alllist(@Param('source') source: string, @Query() listDto: AllListDto) {
-    if (!this.isValidSource(source)) {
+    if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
@@ -43,11 +43,9 @@ export class CommentController {
   }
 
   @Get('list/:source/:id')
-  @UseGuards(ActiveGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: "一级评论列表" })
   public async list(@Param('source') source: string, @Param('id') id: string, @Query() listCommentDto: ListCommentDto) {
-    if (!this.isValidSource(source)) {
+    if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
@@ -59,11 +57,9 @@ export class CommentController {
   }
 
   @Get('list/:source')
-  @UseGuards(ActiveGuard)
-  @ApiBearerAuth()
   @ApiOperation({ summary: "子评论列表" })
   public async childList(@Param('source') source: string, @Query('rootID') rootID: string, @CurUser() user: User) {
-    if (!this.isValidSource(source)) {
+    if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
@@ -77,7 +73,7 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "发表评论" })
   public async comment(@Body() createCommentDto: CreateCommentDto, @Param('source') source: string, @CurUser() user: User) {
-    if (!this.isValidSource(source)) {
+    if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
@@ -91,7 +87,7 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "删除评论" })
   public async del(@Param('source') source: string, @Param('id') id: string, @CurUser() user: User) {
-    if (!this.isValidSource(source) || !ObjectID.isValid(id)) {
+    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
@@ -111,7 +107,7 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论" })
   public async update(@Param('source') source: string, @Param('id') id: string, @Body() updateDto: UpdateCommentDto, @CurUser() user: User) {
-    if (!this.isValidSource(source) || !ObjectID.isValid(id)) {
+    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
@@ -120,7 +116,7 @@ export class CommentController {
     // if ((oldComment.user as User)._id !== user._id && user.role === UserRole.Normal) {
     //   throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
     // }
-    const comment = await this.commentService.updateById(source, id, updateDto.htmlContent);
+    const comment = await this.commentService.updateById(source, id, updateDto.content);
     return comment;
   }
 
@@ -131,21 +127,12 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论状态" })
   public async changeStatus(@Param('source') source: string, @Param('id') id: string, @Body() statusDto: ChangeCommentStatusDto) {
-    if (!this.isValidSource(source) || !ObjectID.isValid(id)) {
+    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
     const comment = await this.commentService.changeStatus(source, id, statusDto.status);
     return comment;
   }
 
-  /**
-   * 是否是有效的评论源
-   */
-  private isValidSource(source: string) {
-    if ([CommentConstants.SourceArticle, CommentConstants.SourceMessage].indexOf(source) >= 0) {
-      return true;
-    }
-    return false;
-  }
 
 }

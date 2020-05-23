@@ -18,21 +18,7 @@
           </v-btn>
           <v-btn color="info" elevation="0" @click="SET_LOGIN_OR_REGISTER_DIALOG" v-if="!user">登录</v-btn>
           <div class="pl-2" v-else>
-            <v-menu :nudge-left="46" :nudge-bottom="10" offset-y>
-              <template v-slot:activator="{ on }">
-                <v-avatar size="36" color="primary" v-on="on" style="cursor: pointer;">
-                  <img :src="user.avatarURL" :alt="user.username" />
-                </v-avatar>
-              </template>
-              <v-list>
-                <v-list-item dense v-for="item in userNavs" :key="item.key">
-                  <v-btn text block class="justify-start" @click="handleSelectAction(item.key)">
-                    <v-icon left>mdi-{{item.icon}}</v-icon>
-                    {{item.title}}
-                  </v-btn>
-                </v-list-item>
-              </v-list>
-            </v-menu>
+            <current-user />
           </div>
         </div>
       </div>
@@ -56,31 +42,10 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import LoginOrRegister from '@/components/LoginOrRegister.vue';
+import CurrentUser from '@/components/CurrentUser.vue';
 export default {
-  components: { LoginOrRegister },
+  components: { LoginOrRegister, CurrentUser },
   data() {
-    this.userNavs = [
-      {
-        icon: 'pencil',
-        title: '写文章',
-        key: 'publish'
-      },
-      {
-        icon: 'account',
-        title: '我的账号',
-        key: 'account'
-      },
-      {
-        icon: 'cog',
-        title: '设置',
-        key: 'setup'
-      },
-      {
-        icon: 'exit-to-app',
-        title: '退出',
-        key: 'exit'
-      }
-    ];
     return {};
   },
   computed: {
@@ -90,9 +55,6 @@ export default {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
     handleChangeTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-    },
-    handleSelectAction(key) {
-      console.log(key);
     }
   }
 };
@@ -142,7 +104,6 @@ export default {
   }
 }
 #app .v-card {
-  border-radius: 8px !important;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
 }
 </style>

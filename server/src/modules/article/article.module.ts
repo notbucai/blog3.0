@@ -5,14 +5,15 @@ import { TypegooseModule } from 'nestjs-typegoose';
 import { Article } from '../../models/article.entity';
 import { Tag } from '../../models/tag.entity';
 import { CommonModule } from '../../common/common.module';
-import { Comment } from '../../models/comment.entity';
+import { ArticleComment } from '../../models/comment.entity';
 
 @Module({
   imports: [
     CommonModule,
-    TypegooseModule.forFeature([Article, Tag, Comment])
+    TypegooseModule.forFeature([Article, Tag, ArticleComment])
   ],
   providers: [ArticleService],
-  controllers: [ArticleController]
+  controllers: [ArticleController],
+  exports: [ArticleService]
 })
 export class ArticleModule { }

@@ -11,6 +11,7 @@ import { ArticleComment, MessageComment } from '../../models/comment.entity';
     TypegooseModule.forFeature([ArticleComment, MessageComment])
   ],
   providers: [CommentService],
-  controllers: [CommentController]
+  controllers: [CommentController],
+  exports: [CommentService]
 })
 export class CommentModule { }

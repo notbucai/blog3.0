@@ -59,7 +59,7 @@ export class CommentService {
     }
     comment.status = CommentStatus.VerifySuccess;
     comment.user = userID;
-    comment.htmlContent = createCommentDto.htmlContent;
+    comment.content = createCommentDto.content;
 
     return commentRepository.create(comment);
   }
@@ -67,6 +67,33 @@ export class CommentService {
   async changeStatus(source: string, id: string, status: CommentStatus = 1) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository.findByIdAndUpdate(id, { $set: { status } });
+  }
+
+  async getListByUserId(source: string, id: ObjectID | string) {
+    const commentRepository = this.getCommentSchema(source);
+    return commentRepository.find({ user: id })
+
+      .populate({
+        path: 'article',
+        select: '-htmlContent -__v -content -tags -summary',
+      })
+      .populate({
+        path: 'parent',
+        select: '-sourceID -__v -rootID',
+        populate: {
+          path: 'user',
+          select: "username avatarURL"
+        },
+      })
+      .populate({
+        path: 'rootID',
+        select: '-sourceID -__v -rootID',
+        populate: {
+          path: 'user',
+          select: "username avatarURL"
+        },
+      })
+      .populate([{ path: 'user', select: "username avatarURL" }]);
   }
 
   async findList(source: string, listDto: AllListDto) {
@@ -81,7 +108,7 @@ export class CommentService {
       const keyRe = new RegExp(listDto.keyword);
       query = {
         $or: [
-          { htmlContent: keyRe },
+          { content: keyRe },
           { 'user.username': keyRe },
         ]
       };
@@ -149,9 +176,9 @@ export class CommentService {
     return commentRepository.deleteOne({ _id: id })
   }
 
-  async updateById(source: string, id: string, htmlContent: string) {
+  async updateById(source: string, id: string, content: string) {
     const commentRepository = this.getCommentSchema(source);
-    return commentRepository.updateOne({ _id: id }, { $set: { htmlContent, updatedAt: Date.now() } });
+    return commentRepository.updateOne({ _id: id }, { $set: { content, updatedAt: Date.now() } });
   }
 
   // 查询子评论
@@ -206,5 +233,14 @@ export class CommentService {
     });
 
     return comments;
+  }
+  /**
+   * 是否是有效的评论源
+   */
+  isValidSource(source: string) {
+    if ([CommentConstants.SourceArticle, CommentConstants.SourceMessage].indexOf(source) >= 0) {
+      return true;
+    }
+    return false;
   }
 }

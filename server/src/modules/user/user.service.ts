@@ -15,16 +15,23 @@ import { ObjectID } from 'mongodb';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'nestjs-typegoose';
 import { ListDto } from './dto/list.dto';
+import { ArticleService } from '../article/article.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly configService: ConfigService,
+    private readonly articleService: ArticleService,
     @InjectModel(User) public readonly userSchema: ReturnModelType<typeof User>,
   ) { };
 
-  getUser(id: string) {
-    return this.userSchema.findById(id).populate({ path: 'role', populate: 'acls' });
+  async getUser(id: string) {
+    const user = await this.userSchema.findById(id).populate({ path: 'role', populate: 'acls' });
+    return user;
+  }
+  async getBasiceUser(id: string) {
+    const user = await this.userSchema.findById(id,'-pass')
+    return user;
   }
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
@@ -179,6 +186,11 @@ export class UserService {
     }
     const salt = hashedPass.substr(0, 10);
     return this.encryptPassword(password, salt, this.configService.server.passSalt) === hashedPass;
+  }
+
+  achievement(id: ObjectID | string) {
+    const oid = new ObjectID(id);
+    return this.articleService.statistics(oid);
   }
 
 }

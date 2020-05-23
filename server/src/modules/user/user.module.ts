@@ -6,11 +6,15 @@ import { User } from '../../models/user.entity';
 import { ConfigService } from '../../config/config.service';
 import { ConfigModule } from '../../config/config.module';
 import { TypegooseModule } from 'nestjs-typegoose';
+import { CommentModule } from '../comment/comment.module';
+import { ArticleModule } from '../article/article.module';
 
 @Module({
   imports: [
     ConfigModule,
     CommonModule,
+    CommentModule,
+    ArticleModule,
     TypegooseModule.forFeature([User])
   ],
   providers: [UserService],

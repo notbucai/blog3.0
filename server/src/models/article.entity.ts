@@ -27,7 +27,10 @@ export class Article extends Base {
   summary: string;
 
   @prop()
-  htmlContent: string;
+  content: string;
+
+  // @prop()
+  // htmlContent: string;
 
   @prop({ default: 0 })
   browseCount: number;

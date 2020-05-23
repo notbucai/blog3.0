@@ -6,7 +6,7 @@ import { InjectModel } from 'nestjs-typegoose';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
 import { ObjectID } from 'mongodb';
 import { ArticleListDto } from './dto/list.dto';
-import { Comment } from '../../models/comment.entity';
+import { Comment, ArticleComment } from '../../models/comment.entity';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
 
@@ -17,8 +17,8 @@ export class ArticleService {
     private readonly articleSchema: ReturnModelType<typeof Article>,
     @InjectModel(Tag)
     private readonly tagSchema: ReturnModelType<typeof Tag>,
-    @InjectModel(Comment)
-    private readonly commentSchema: ReturnModelType<typeof Comment>,
+    @InjectModel(ArticleComment)
+    private readonly commentSchema: ReturnModelType<typeof ArticleComment>,
   ) { }
 
   // 创建
@@ -30,16 +30,17 @@ export class ArticleService {
       tags = (await this.tagSchema.find({ $or: or })).map(item => item._id);
     }
     const article = new Article();
-    article.htmlContent = createDto.htmlContent;
+    // article.htmlContent = createDto.htmlContent;
+    article.content = createDto.content;
     article.title = createDto.title;
-    article.summary = createDto.htmlContent.substring(0, 150);
+    article.summary = createDto.summary || '';
 
     article.coverURL = createDto.coverURL || null;
 
     article.tags = tags;
     article.user = userId;
     article.status = 1;
-    article.wordCount = createDto.htmlContent.replace(/[\s\n\r\t\f\v]+/g, '').length;
+    article.wordCount = createDto.content.replace(/[\s\n\r\t\f\v]+/g, '').length;
     return this.articleSchema.create(article);
   }
 
@@ -54,15 +55,20 @@ export class ArticleService {
   async updateById(id: string, createDto: CreateDto) {
     const article = await this.articleSchema.findById(id);
     if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
-    const htmlContent = createDto.htmlContent || article.htmlContent;
+    // const htmlContent = createDto.htmlContent || article.htmlContent;
     const title = createDto.title || article.title;
     const coverURL = createDto.coverURL || article.coverURL;
+    const summary = createDto.summary || article.summary;
+    const content = createDto.content || article.content;
+    const tags = createDto.tags || article.tags;
     return this.articleSchema.updateOne({ _id: id }, {
       $set: {
-        htmlContent,
-        summary: htmlContent.substring(0, 150),
+        // htmlContent,
+        summary,
         title,
         coverURL,
+        content,
+        tags,
         updatedAt: Date.now()
       }
     });
@@ -71,13 +77,17 @@ export class ArticleService {
   async findById(id: string) {
     return await this.articleSchema
       .findById(id)
+      .select('-htmlContent')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
   }
+  async findBasisById(id: string) {
+    return await this.articleSchema
+      .findById(id).exec();
+  }
 
-  async addViewCount(id: string) {
-    this.articleSchema.updateOne({ _id: id }, { $inc: { browseCount: 1 } })
-    return;
+  async addViewCount(id: ObjectID) {
+    return await this.articleSchema.updateOne({ _id: id }, { $inc: { browseCount: 1 } })
   }
 
   async pageList(listDto: ArticleListDto) {
@@ -92,7 +102,7 @@ export class ArticleService {
     const page_size = Number(listDto.page_size || 10);
 
     const a_list = await this.articleSchema
-      .find(where, '-htmlContent')
+      .find(where, '-htmlContent -content')
       .sort({ _id: -1 })
       .skip(page_index * page_size)
       .limit(page_size)
@@ -102,7 +112,7 @@ export class ArticleService {
 
     const list_p = a_list.map(async item => {
       item = item.toJSON();
-      item.commentCount = await this.commentSchema.countDocuments({ article: item._id });
+      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
       return item;
     });
     // commentSchema
@@ -120,7 +130,7 @@ export class ArticleService {
   async pageHotList() {
 
     const a_list = await this.articleSchema
-      .find({ coverURL: { $ne: null } }, '-htmlContent')
+      .find({ coverURL: { $ne: null } }, '-htmlContent -content')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
       .sort({ browseCount: -1 })
@@ -142,4 +152,41 @@ export class ArticleService {
       total
     }
   }
+
+  async listByUserId(id: ObjectID | string) {
+    const a_list = await this.articleSchema
+      .find({ user: id }, '-htmlContent -content')
+      .sort({ _id: -1 })
+      // .populate([{ path: 'user', select: "-pass" }])
+      .populate([{ path: 'tags' }])
+      .exec();
+
+    const list_p = a_list.map(async item => {
+      item = item.toJSON();
+      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
+      return item;
+    });
+
+    const list = await Promise.all(list_p);
+    return list;
+  }
+
+  async statistics(id: ObjectID) {
+    const data = await this.articleSchema.aggregate([
+      { $match: { user: id } },
+      {
+        $lookup:
+        {
+          from: 'articlecomments',
+          localField: '_id',
+          foreignField: 'sourceID',
+          as: 'comments'
+        },
+      },
+      { $project: { _id: 1, user: 1, wordCount: 1, commentCount: { $size: '$comments' }, browseCount: '$browseCount' } },
+      { $group: { _id: '$user', wordCount: { $sum: '$wordCount' }, browseCount: { $sum: '$browseCount' }, commentCount: { $sum: '$commentCount' }, } },
+    ]).exec();
+    return data[0] || { _id: id, wordCount: 0, browseCount: 0, commentCount: 0 };
+  }
+
 }

@@ -23,6 +23,9 @@ module.exports = {
   ** Global CSS
   */
   css: [
+    '@/assets/common.scss',
+    // { src: "mavon-editor/dist/css/index.css" },
+    // { src: "mavon-editor/dist/markdown/github-markdown.min.css" },
   ],
   /*
   ** Plugins to load before mounting the App
@@ -32,7 +35,11 @@ module.exports = {
     './plugins/constant.js',
     './plugins/global-components',
     './plugins/filters.js',
+    './plugins/utils.js',
+    { src: '@/plugins/vue-mavon-editor', ssr: false },
+    { src: '@/plugins/file.js', ssr: false },
     { src: './plugins/dom.js', ssr: false },
+   
   ],
   /*
   ** Nuxt.js dev-modules

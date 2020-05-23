@@ -49,7 +49,7 @@ export class User extends Base {
     pass: string;
 
     @prop()
-    value: number; // 米粒值
+    value: number; // 值
 
     @prop()
     articleCount: number;

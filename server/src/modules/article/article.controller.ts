@@ -59,15 +59,24 @@ export class ArticleController {
   // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   async updated(@Param('id') id: string, @Body() createDto: CreateDto) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.articleService.updateById(id, createDto);
   }
 
   @Get(':id')
-  @ApiBearerAuth()
   async get(@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    const _id = new ObjectID(id);
+    this.articleService.addViewCount(_id);
     return this.articleService.findById(id);
+  }
+
+  @Get(':id/basis')
+  @UseGuards(ActiveGuard)
+  @ApiBearerAuth()
+  async basis(@Param('id') id: string) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    return this.articleService.findBasisById(id);
   }
 
   @Put(':id/status')

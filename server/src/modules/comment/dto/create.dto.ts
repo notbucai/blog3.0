@@ -37,6 +37,6 @@ export class CreateCommentDto {
     message: '评论不能超过 $constraint1 个字符',
   })
   @IsString()
-  @ApiProperty({ description: "htmlContent" })
-  readonly htmlContent: string;
+  @ApiProperty({ description: "content" })
+  readonly content: string;
 }

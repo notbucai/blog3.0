@@ -8,13 +8,16 @@ import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/core/decorators/roles.decorator';
 import { ActiveGuard } from 'src/core/guards/active.guard';
 import { RolesGuard } from 'src/core/guards/roles.guard';
+import { ArticleService } from '../article/article.service';
+import { ArticleListByTagDto } from '../article/dto/listByTag.dto';
 
 @Controller('tag')
 @ApiTags('标签')
 export class TagController {
 
   constructor(
-    private readonly tagService: TagService
+    private readonly tagService: TagService,
+    private readonly articleService: ArticleService
   ) { }
 
   @Post()
@@ -84,5 +87,18 @@ export class TagController {
     return this.tagService.delete(id);
   }
 
+
+  @Post(':name/article')
+  @ApiOperation({ summary: '通过id获取tag' })
+  async getArticleById(@Param('name') name: string, @Body() articleListByTagDto: ArticleListByTagDto) {
+    if (typeof name !== 'string' || name.length < 1) {
+      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    }
+    const tagList = await this.tagService.findByName(name);
+    if (!tagList.length) {
+      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    }
+    return this.articleService.pageListByTag(tagList[0]._id, articleListByTagDto);
+  }
 
 }

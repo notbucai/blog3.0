@@ -88,5 +88,4 @@ export class ArticleController {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.articleService.changeStatus(id, body.status);
   }
-
 }

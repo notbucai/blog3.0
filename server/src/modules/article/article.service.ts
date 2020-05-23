@@ -6,6 +6,8 @@ import { InjectModel } from 'nestjs-typegoose';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
 import { ObjectID } from 'mongodb';
 import { ArticleListDto } from './dto/list.dto';
+import { ArticleListByTagDto } from './dto/listByTag.dto';
+
 import { Comment, ArticleComment } from '../../models/comment.entity';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
@@ -88,6 +90,33 @@ export class ArticleService {
 
   async addViewCount(id: ObjectID) {
     return await this.articleSchema.updateOne({ _id: id }, { $inc: { browseCount: 1 } })
+  }
+
+  async pageListByTag(tagId: ObjectID, listDto: ArticleListByTagDto) {
+
+    const page_index = Number(listDto.page_index || 1) - 1;
+    const page_size = Number(listDto.page_size || 10);
+    const where = {
+      tags: { $elemMatch: { $eq: tagId } }
+    };
+    const a_list = await this.articleSchema
+      .find(where, '-htmlContent -content')
+      .sort({ _id: -1 })
+      .skip(page_index * page_size)
+      .limit(page_size)
+      .populate([{ path: 'user', select: "-pass" }])
+      .populate([{ path: 'tags' }]);
+    const list_p = a_list.map(async item => {
+      item = item.toJSON();
+      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
+      return item;
+    });
+    const list = await Promise.all(list_p);
+    const total = await this.articleSchema.countDocuments(where);
+    return {
+      list,
+      total
+    }
   }
 
   async pageList(listDto: ArticleListDto) {

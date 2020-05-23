@@ -44,6 +44,7 @@ export class TagService {
     });
     return await Promise.all(p_all);
   }
+  
   async findCountGreaterZero() {
     const tags = await this.findAll();
     console.log('tags', tags);
@@ -59,5 +60,4 @@ export class TagService {
       name: rgx
     });
   }
-
 }

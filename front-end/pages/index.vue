@@ -1,33 +1,6 @@
 <template>
   <v-container>
-    <v-carousel
-      :continuous="false"
-      :cycle="cycle"
-      :show-arrows="false"
-      hide-delimiter-background
-      delimiter-icon="mdi-minus"
-      width="100%"
-      :height="carouselHeight"
-      ref="carousel"
-    >
-      <v-carousel-item v-for="(item, i) in recommendedList" :key="i">
-        <v-img
-          class="align-end carousel-image"
-          :src="item.coverURL"
-          :height="carouselHeight"
-          :lazy-src="item.coverURL+'?imageMogr2/thumbnail/100x'"
-        >
-          <v-container fluid>
-            <v-row align="end">
-              <div class="carousel-info-box">
-                <h1>{{item.title}}</h1>
-                <v-btn color="error" rounded nuxt :to="`/article/${item._id}`">阅读全文</v-btn>
-              </div>
-            </v-row>
-          </v-container>
-        </v-img>
-      </v-carousel-item>
-    </v-carousel>
+    <banner :recommendedList="recommendedList" />
     <!-- class="my-4" -->
     <v-row>
       <v-col cols="8">
@@ -37,32 +10,10 @@
             <v-switch :value="false" inset label="列表"></v-switch>
           </v-row>
         </v-container>
-
-        <article-item v-for="item in articleStore.list" :key="item._id" :article="item" />
-        <div class="d-flex justify-center" v-if="articleStore.list.length < articleStore.total">
-          <v-btn
-            color="error"
-            :elevation="0"
-            rounded
-            :loading="articleLoading"
-            @click="loadData"
-          >加载更多</v-btn>
-        </div>
+        <article-list :articleStore="articleStore" @loadData="loadData" />
       </v-col>
       <v-col cols="4">
-        <v-container fluid class="my-1">
-          <v-row justify="space-between" align="center">
-            <div class="title">标签</div>
-          </v-row>
-        </v-container>
-        <v-card class="mx-auto mb-6 pa-2">
-          <nuxt-link to="/tag/xxx" class="tag-item-link">
-            <v-chip class="ma-2" label v-for="(item, index) in taglist" :key="index">
-              <v-icon left small>mdi-{{item.iconURL}}</v-icon>
-              {{item.name}}
-            </v-chip>
-          </nuxt-link>
-        </v-card>
+        <tag-list :taglist="taglist" />
       </v-col>
     </v-row>
   </v-container>
@@ -70,6 +21,9 @@
 
 <script>
 import ArticleItem from '@/components/article/ArticleItem.vue';
+import Banner from '@/components/Banner.vue';
+import ArticleList from '@/components/ArticleList.vue';
+import TagList from '@/components/TagList.vue';
 export default {
   async asyncData({ $axios }) {
     const promiseList = [];
@@ -83,20 +37,12 @@ export default {
       articleStore: allList || {}
     };
   },
-  mounted() {
-    const el = this.$refs['carousel'].$el;
-    const top = this.$dom.getElementToPageTop(el);
-    console.log(top);
-    const innerHeight = window.innerHeight;
-    this.carouselHeight = innerHeight - top - 10;
-  },
-  components: { ArticleItem },
+  mounted() {},
+  components: { ArticleItem, Banner, ArticleList,TagList },
   data() {
     return {
-      carouselHeight: 0,
       cycle: false,
       page_index: 1,
-      articleLoading: false,
       taglist: [],
       articleStore: {
         list: [],

@@ -21,6 +21,9 @@
             <current-user />
           </div>
         </div>
+        <div class="toolbar-apps">
+          <v-icon @click="handleShowSide">mdi-menu</v-icon>
+        </div>
       </div>
     </v-app-bar>
 
@@ -33,9 +36,25 @@
       </v-container>
     </v-content>
 
-    <v-footer app absolute>123</v-footer>
+    <v-footer app absolute>
+      <v-container>
+        <div class="footer">
+          <p>
+            &copy; 2020
+            <a href="/">不才</a> All Rights Reserved.
+          </p>
+          <a
+            href="http://www.beian.miit.gov.cn/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >赣ICP备15001741号-3</a>
+        </div>
+      </v-container>
+    </v-footer>
 
     <LoginOrRegister />
+    <NavigationDrawer />
+    <ScrollToTop />
   </v-app>
 </template>
 
@@ -43,9 +62,11 @@
 import { mapMutations, mapState } from 'vuex';
 import LoginOrRegister from '@/components/LoginOrRegister.vue';
 import CurrentUser from '@/components/CurrentUser.vue';
+import NavigationDrawer from '@/components/NavigationDrawer.vue';
+import ScrollToTop from '@/components/ScrollToTop.vue';
 export default {
-  components: { LoginOrRegister, CurrentUser },
-  data() {
+  components: { LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop },
+  data () {
     return {};
   },
   computed: {
@@ -53,8 +74,11 @@ export default {
   },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
-    handleChangeTheme() {
+    handleChangeTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    },
+    handleShowSide () {
+      this.$store.commit('SET_SIDE_STATUS', true);
     }
   }
 };
@@ -80,6 +104,19 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 600px) {
+    .toolbar-action,
+    .toolbar-nav {
+      display: none !important;
+    }
+    .toolbar-apps {
+      display: block !important;
+    }
+  }
+  .toolbar-apps {
+    display: none;
+  }
   .toolbar-title {
     .v-btn.v-size--default {
       font-size: 20px;
@@ -101,6 +138,18 @@ export default {
     .v-btn {
       margin-left: 12px;
     }
+  }
+}
+.footer {
+  text-align: center;
+  font-size: 14px;
+  /* color: #333; */
+  line-height: 2;
+  a {
+    /* color: #333; */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
   }
 }
 #app .v-card {

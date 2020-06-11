@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CommonModule } from '../../common/common.module';
 import { UserController } from './user.controller';
+import { AccountController } from './account.controller';
 import { User } from '../../models/user.entity';
 import { ConfigService } from '../../config/config.service';
 import { ConfigModule } from '../../config/config.module';
@@ -19,6 +20,6 @@ import { ArticleModule } from '../article/article.module';
   ],
   providers: [UserService],
   exports: [UserService],
-  controllers: [UserController]
+  controllers: [UserController, AccountController]
 })
 export class UserModule { }

@@ -3,7 +3,7 @@
     <banner :recommendedList="recommendedList" />
     <!-- class="my-4" -->
     <v-row>
-      <v-col cols="8">
+      <v-col :md="8" :sm="12">
         <v-container fluid class="py-0">
           <v-row justify="space-between" align="center">
             <div class="title">全部文章</div>
@@ -12,7 +12,7 @@
         </v-container>
         <article-list :articleStore="articleStore" @loadData="loadData" />
       </v-col>
-      <v-col cols="4">
+      <v-col :md="4" :sm="12">
         <tag-list :taglist="taglist" />
       </v-col>
     </v-row>

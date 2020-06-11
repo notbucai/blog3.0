@@ -45,6 +45,8 @@ export class CommonController {
     type: ImgUploadDto,
   })
   public uploadImage(@UploadedFile() file: FileDto) {
+    console.log('file',file);
+    
     return this.cosService.uploadImage(file);
   }
 

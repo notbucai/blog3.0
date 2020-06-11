@@ -25,18 +25,28 @@ export class UserService {
     @InjectModel(User) public readonly userSchema: ReturnModelType<typeof User>,
   ) { };
 
-  async getUser(id: string) {
+  async getUser (id: string) {
     const user = await this.userSchema.findById(id).populate({ path: 'role', populate: 'acls' });
     return user;
   }
-  async getBasiceUser(id: string) {
-    const user = await this.userSchema.findById(id,'-pass')
+  async getBasiceUser (id: string) {
+    const user = await this.userSchema.findById(id, '-pass')
     return user;
+  }
+  async update (user: User) {
+    return this.userSchema.updateOne({
+      _id: user._id,
+    }, {
+      $set: {
+        ...user,
+        updatedAt: Date.now()
+      }
+    });
   }
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
     */
-  async updateUserInfo(userID: ObjectID | string, updateUserInfoDto: UpdateUserInfoDto) {
+  async updateUserInfo (userID: ObjectID | string, updateUserInfoDto: UpdateUserInfoDto) {
     const updateData: any = {};
     if (typeof updateUserInfoDto.avatarURL !== 'undefined') {
       updateData.avatarURL = updateUserInfoDto.avatarURL;
@@ -76,11 +86,11 @@ export class UserService {
     });
   }
 
-  async changeRole(id: string, role: string) {
+  async changeRole (id: string, role: string) {
     return this.userSchema.findByIdAndUpdate(id, { $set: { role } });
   }
 
-  async findList(listDto: ListDto) {
+  async findList (listDto: ListDto) {
     let query = {};
 
     listDto.page_index = Number(listDto.page_index) || 1;
@@ -105,7 +115,17 @@ export class UserService {
     }
   }
 
-  async findByPhoneOrUsername(phone: string, username: string): Promise<User | undefined> {
+  async findByPhone (phone: string): Promise<User | undefined> {
+    const user: User = await this.userSchema.findOne({
+      phone
+    });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+  async findByPhoneOrUsername (phone: string, username: string): Promise<User | undefined> {
     const user: User = await this.userSchema.findOne({
       $or: [{ phone }, { username }]
     });
@@ -116,7 +136,7 @@ export class UserService {
     return undefined;
   }
 
-  async findByObj(obj: object): Promise<User | undefined> {
+  async findByObj (obj: object): Promise<User | undefined> {
     const user: User = await this.userSchema.findOne(obj);
 
     if (user) {
@@ -125,7 +145,7 @@ export class UserService {
     return undefined;
   }
 
-  async findByGithubId(githubID: number): Promise<User | undefined> {
+  async findByGithubId (githubID: number): Promise<User | undefined> {
     const user: User = await this.userSchema.findOne({
       githubID
     });
@@ -136,7 +156,7 @@ export class UserService {
     return undefined;
   }
 
-  async create(signupDto: SignUpDto) {
+  async create (signupDto: SignUpDto) {
     const newUser = new User();
     newUser.createdAt = Date.now();
     newUser.updatedAt = newUser.createdAt;
@@ -152,26 +172,26 @@ export class UserService {
     return this.userSchema.create(newUser);
   }
 
-  async changeStatus(id: string, status: UserStatus) {
+  async changeStatus (id: string, status: UserStatus) {
     return this.userSchema.findByIdAndUpdate(id, { status });
   }
 
-  async createUser(user: User): Promise<User> {
+  async createUser (user: User): Promise<User> {
     return await this.userSchema.create(user);
   }
-  async repass(userId: ObjectID, pass: string) {
+  async repass (userId: ObjectID, pass: string) {
     pass = this.generateHashPassword(pass);
     return this.userSchema.update({ _id: userId }, { pass, updatedAt: Date.now() });
   }
 
-  generateHashPassword(password: string) {
+  generateHashPassword (password: string) {
     let codeArr = _.shuffle(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']);
     codeArr = codeArr.slice(0, 10);
     const salt: string = codeArr.join('');
     return this.encryptPassword(password, salt, this.configService.server.passSalt);
   }
 
-  private encryptPassword(password: string, salt: string, configSalt: string) {
+  private encryptPassword (password: string, salt: string, configSalt: string) {
     const m1 = crypto.createHash('md5');
     const pass = m1.update(password).digest('hex');
     let hash = salt + pass + configSalt;
@@ -180,7 +200,7 @@ export class UserService {
     return hash;
   }
 
-  verifyPassword(password: string, hashedPass: string) {
+  verifyPassword (password: string, hashedPass: string) {
     if (!password || !hashedPass) {
       return false;
     }
@@ -188,7 +208,7 @@ export class UserService {
     return this.encryptPassword(password, salt, this.configService.server.passSalt) === hashedPass;
   }
 
-  achievement(id: ObjectID | string) {
+  achievement (id: ObjectID | string) {
     const oid = new ObjectID(id);
     return this.articleService.statistics(oid);
   }

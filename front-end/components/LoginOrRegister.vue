@@ -2,11 +2,11 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai
- * @LastEditTime: 2020-05-03 18:26:52
+ * @LastEditTime: 2020-06-11 23:12:14
  * @Description: 
  -->
 <template>
-  <v-dialog persistent v-model="LoginOrRegisterDialog" width="440">
+  <v-dialog :z-index="9999" persistent v-model="LoginOrRegisterDialog" width="440">
     <v-card>
       <div class="back_btn-box">
         <v-btn elevation="0" text @click="SET_LOGIN_OR_REGISTER_DIALOG">
@@ -94,6 +94,12 @@
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
         </div>
+
+        <div class="form-field center mt-4">
+          <v-btn :elevation="0" fab @click="handleAuthLogin('github')">
+            <v-icon large>mdi-github</v-icon>
+          </v-btn>
+        </div>
       </div>
     </v-card>
   </v-dialog>
@@ -102,7 +108,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 export default {
-  data() {
+  data () {
     return {
       type: 1,
       submitIng: false,
@@ -126,36 +132,48 @@ export default {
       }
     };
   },
-  mounted() {},
+  mounted () { },
   computed: {
     ...mapState(['LoginOrRegisterDialog']),
     // 是否是登录
-    isLogin() {
+    isLogin () {
       return this.isType(1);
     },
     // 是否是注册
-    isRegister() {
+    isRegister () {
       return this.isType(2);
     }
   },
   filters: {
-    typeToName(type) {
+    typeToName (type) {
       return type == 1 ? '登录' : '注册';
     },
-    reTypeToName(type) {
+    reTypeToName (type) {
       return type == 1 ? '注册' : '登录';
     }
   },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
     // 验证类型
-    isType(type) {
+    isType (type) {
       return this.type === type;
     },
-    setType(type) {
+    setType (type) {
       this.type = type;
     },
-    async handleGetCode() {
+    handleAuthLogin (type) {
+      console.log('type', type);
+      const url = this.$constant.STATE_LIST['login_' + type];
+      console.log('url',url);
+      
+      const son = window.open(url, '绑定');
+      son.addEventListener('message', (e) => {
+        if (e.data == 'close') {
+          location.reload();
+        }
+      });
+    },
+    async handleGetCode () {
       const phone = this.registerForm.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -188,7 +206,7 @@ export default {
         codeTmp.loading = false;
       }
     },
-    async handleSubmit() {
+    async handleSubmit () {
       const formElName = this.type == 1 ? 'loginForm' : 'registerForm';
       // 验证
       const isValidate = this.$refs[formElName].validate();

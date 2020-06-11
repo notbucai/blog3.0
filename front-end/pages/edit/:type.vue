@@ -95,7 +95,7 @@
 <script>
 import CurrentUser from '@/components/CurrentUser.vue';
 export default {
-  layout: 'emptyLayout',
+  layout: 'empty',
   components: { CurrentUser },
   async asyncData({ params, query, $axios }) {
     if (params.type == 'new') {

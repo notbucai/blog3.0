@@ -38,8 +38,9 @@ module.exports = {
     './plugins/utils.js',
     { src: '@/plugins/vue-mavon-editor', ssr: false },
     { src: '@/plugins/file.js', ssr: false },
+    { src: '@/plugins/vue-cropper.js', ssr: false },
     { src: './plugins/dom.js', ssr: false },
-   
+
   ],
   /*
   ** Nuxt.js dev-modules
@@ -95,10 +96,13 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    vendor: [
+      'vue-cropperjs'
+    ],
     /*
     ** You can extend webpack config here
     */
-    extend(config, ctx) {
+    extend (config, ctx) {
     }
   }
 }

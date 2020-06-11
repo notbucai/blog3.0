@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-04 20:54:03
  * @LastEditors: bucai
- * @LastEditTime: 2020-05-11 11:33:58
+ * @LastEditTime: 2020-06-03 15:12:58
  * @Description: 
  -->
 
@@ -34,7 +34,7 @@ export default {
   computed: {
     ...mapState(['user'])
   },
-  data() {
+  data () {
     this.userNavs = [
       {
         icon: 'pencil',
@@ -59,18 +59,22 @@ export default {
     ];
     return {};
   },
-  created() {
+  created () {
     console.log('create');
   },
-  mounted() {
+  mounted () {
     console.log('mounted');
   },
   methods: {
-    handleSelectAction(key) {
+    handleSelectAction (key) {
       let url = urlMap[key];
       if (!url) {
         if (key == 'account') {
           url = `/user/${this.user._id}`;
+        } else if (key == 'exit') {
+          this.$cookies.removeAll('Authorization')
+          location.reload();
+          return;
         }
       }
       this.$router.push(url);

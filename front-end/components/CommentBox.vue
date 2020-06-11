@@ -12,7 +12,7 @@
     <!-- 评论列表 -->
     <v-card tile :elevation="0">
       <template v-for="(item,index) in comments">
-        <v-divider :key="index"></v-divider>
+        <v-divider color="white" :key="index"></v-divider>
         <comment-item
           :key="item._id"
           :comment="item"
@@ -42,18 +42,18 @@ export default {
   computed: {
     ...mapState(['user'])
   },
-  data() {
+  data () {
     return {
       reply: null,
       submitIng: false
     };
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    handleReply(item) {
+    handleReply (item) {
       this.reply = item;
     },
-    async handleComment(content) {
+    async handleComment (content) {
       this.submitIng = true;
       const source = this.source;
       const id = this.id;
@@ -96,7 +96,7 @@ export default {
       }
       this.submitIng = false;
     },
-    handleDelete(comment) {
+    handleDelete (comment) {
       const index = this.comments.findIndex(item => comment._id == item._id);
       this.comments.splice(index, 1);
     }
@@ -106,5 +106,8 @@ export default {
 <style lang="scss" scoped>
 .CommentBox {
   padding: 30px 40px;
+  @media (max-width: 600px) {
+    padding: 0;
+  }
 }
 </style>

@@ -2,11 +2,11 @@
   <div class="user">
     <v-container>
       <v-row>
-        <v-col cols="8">
+        <v-col :md="8" :sm="12">
           <v-card class="pa-2 mb-6">
             <v-list subheader two-line>
-              <v-list-item>
-                <v-list-item-avatar size="80">
+              <v-list-item class="_user-header">
+                <v-list-item-avatar size="80" class="_user-avatar">
                   <v-img
                     v-if="userInfo.avatarURL"
                     :src="userInfo.avatarURL"
@@ -34,7 +34,7 @@
                 </v-list-item-content>
 
                 <v-list-item-action>
-                  <div class="d-flex align-center">
+                  <div class="d-flex align-center _user-pages">
                     <v-btn icon :disabled="!userInfo.weiboID">
                       <v-icon color="grey lighten-1" size="18">mdi-sina-weibo</v-icon>
                     </v-btn>
@@ -51,7 +51,8 @@
                     elevation="0"
                     v-if="user && user._id == userInfo._id"
                     nuxt
-                    to="edit"
+                    to="settings"
+                    class="_user-setting"
                   >编辑个人资料</v-btn>
                 </v-list-item-action>
               </v-list-item>
@@ -83,7 +84,7 @@
             </v-tab-item>
           </v-tabs-items>
         </v-col>
-        <v-col cols="4">
+        <v-col :md="4" :sm="12">
           <v-card>
             <v-card-title>个人成就</v-card-title>
             <v-list dense subheader>
@@ -123,7 +124,7 @@ import ArticleItem from '@/components/article/ArticleItem.vue';
 import CommentItem from '@/components/CommentItem.vue';
 import { mapState } from 'vuex';
 export default {
-  async asyncData({ $axios, params }) {
+  async asyncData ({ $axios, params }) {
     const id = params.id;
     console.log('id', id);
 
@@ -147,7 +148,7 @@ export default {
   computed: {
     ...mapState(['user'])
   },
-  data() {
+  data () {
     return {
       tab: null,
       userInfo: {},
@@ -156,10 +157,37 @@ export default {
       commentList: []
     };
   },
-  mounted() {},
+  mounted () { },
   methods: {}
 };
 </script>
+<style lang="scss">
+@media (max-width: 600px) {
+  .user {
+    ._user-header {
+      padding-top: 24px !important;
+    }
+    ._user-setting {
+      height: 26px !important;
+      font-size: 12px !important;
+      padding: 8px !important;
+    }
+    ._user-pages {
+      margin-top: -36px;
+    }
+    ._user-avatar {
+      $w: 54px;
+      width: $w !important;
+      min-width: $w !important;
+      height: $w !important;
+      margin: 0 !important;
+      position: absolute;
+      background-color: #fff;
+      top: -($w/2);
+    }
+  }
+}
+</style>
 <style lang="scss" scoped>
 .user {
   .v-tabs-items {

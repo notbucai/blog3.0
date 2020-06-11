@@ -27,11 +27,18 @@
       </mavon-editor>
     </client-only>
     <div class="d-flex justify-end">
-      <v-btn text color="#fa1" :disabled="!content" @click="handleComment" :loading="loading">评论</v-btn>
+      <v-btn
+        text
+        color="#fa1"
+        :disabled="!content"
+        @click="handleComment"
+        :loading="loading"
+      >{{token?'评论':'请登录'}}</v-btn>
     </div>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 export default {
   components: {},
   props: {
@@ -39,13 +46,14 @@ export default {
     loading: Boolean
   },
   computed: {
-    editPlaceholder() {
+    ...mapState(['token']),
+    editPlaceholder () {
       return this.reply && this.reply.user
         ? '回复@' + this.reply.user.username
         : '请输入...';
     }
   },
-  data() {
+  data () {
     return {
       markdownOption: {
         link: true, // 链接
@@ -58,26 +66,42 @@ export default {
       content: ''
     };
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    handleClear(){
+    handleClear () {
       this.content = '';
     },
-    handleUnReply() {
+    handleUnReply () {
       this.$emit('unReply');
     },
-    handleComment() {
+    handleComment () {
+      if (!this.token) {
+        this.$store.commit('SET_LOGIN_OR_REGISTER_DIALOG')
+        return;
+      }
       this.$emit('comment', this.content);
     }
   }
 };
 </script>
+<style lang="scss">
+.comment_edit {
+  .v-note-wrapper .v-note-op .v-left-item,
+  .v-note-wrapper .v-note-op .v-right-item {
+    flex: none;
+  }
+  .op-icon-divider {
+    display: none;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .comment_edit {
   .v-note-wrapper.markdown-body {
     width: 100%;
     min-height: 200px;
     max-height: 320px;
+    z-index: 1;
   }
 
   .close-reply-btn {

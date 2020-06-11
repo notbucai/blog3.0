@@ -1,0 +1,23 @@
+{
+  "name": "blog3.0",
+  "version": "1.0.0",
+  "description": "## 技术选型",
+  "main": "index.js",
+  "scripts": {
+    "dev": "",
+    "dev:admin":"cd admin && npm run serve",
+    "dev:server":"cd server && npm run start:dev",
+    "dev:frontend":"cd front-end && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/notbucai/blog3.0.git"
+  },
+  "keywords": [],
+  "author": "不才 <1450941858@qq.com> (http://blog.ncgame.cc/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/notbucai/blog3.0/issues"
+  },
+  "homepage": "https://github.com/notbucai/blog3.0#readme"
+}

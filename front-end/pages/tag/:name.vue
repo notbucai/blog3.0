@@ -2,23 +2,24 @@
  * @Author: bucai
  * @Date: 2020-05-23 11:19:02
  * @LastEditors: bucai
- * @LastEditTime: 2020-05-23 13:34:50
+ * @LastEditTime: 2020-06-03 21:07:11
  * @Description: 
 --> 
 
 <template>
-  <v-container>
+  <v-container class="py-0">
     <v-row>
-      <v-col cols="8">
-        <div class="title">
-          标签
-          <span>{{name}}</span> 的文章
-        </div>
-
+      <v-col :md="8" :sm="12">
+        <v-container fluid class="py-0">
+          <v-row justify="space-between" align="center">
+            <div class="title">{{name}}</div>
+            <v-switch :value="false" inset label="列表"></v-switch>
+          </v-row>
+        </v-container>
         <article-list :articleStore="articleStore" />
       </v-col>
-      <v-col cols="4">
-        <tag-list :taglist="taglist" />
+      <v-col :md="4" :sm="12">
+        <!-- <tag-list :taglist="taglist" /> -->
       </v-col>
     </v-row>
   </v-container>
@@ -28,7 +29,7 @@ import ArticleList from '@/components/ArticleList.vue';
 import TagList from '@/components/TagList.vue';
 
 export default {
-  async asyncData({ params, $axios }) {
+  async asyncData ({ params, $axios }) {
     const { name } = params;
     const resData = await $axios.post(
       `/api/tag/${encodeURIComponent(name)}/article`,
@@ -44,7 +45,7 @@ export default {
   },
   components: { ArticleList, TagList },
   computed: {},
-  data() {
+  data () {
     return {
       name: '',
       articleStore: {
@@ -53,7 +54,7 @@ export default {
       }
     };
   },
-  mounted() {},
+  mounted () { },
   methods: {}
 };
 </script>

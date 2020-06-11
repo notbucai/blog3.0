@@ -122,13 +122,13 @@ export default {
   border: none;
 }
 .article {
-  .v-note-wrapper .v-note-op .v-left-item,
+  /* .v-note-wrapper .v-note-op .v-left-item,
   .v-note-wrapper .v-note-op .v-right-item {
     flex: none;
   }
   .op-icon-divider {
     display: none;
-  }
+  } */
 }
 </style>
 <style lang="scss" scoped>
@@ -181,6 +181,11 @@ export default {
     border: none;
     background-color: inherit;
     color: inherit;
+  }
+  @media (max-width:600px) {
+    .acticle_content{
+      padding: 20px;
+    }
   }
 }
 </style>

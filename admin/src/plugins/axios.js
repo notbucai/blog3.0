@@ -12,7 +12,7 @@ import router from '../router/index';
 // console.log(process.env.NODE_ENV);
 
 let config = {
-  baseURL: process.env.NODE_ENV === 'development' ? '/api' : 'https://api.notbucai.cc'
+  baseURL: process.env.NODE_ENV === 'development' ? '/api' : 'https://www.notbucai.com/api'
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };

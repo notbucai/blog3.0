@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-23 09:31:46
  * @LastEditors: bucai
- * @LastEditTime: 2020-04-01 21:49:31
+ * @LastEditTime: 2020-06-20 15:12:42
  * @Description: 共用接口
  */
 
@@ -23,6 +23,7 @@ export const userlist = (params) => {
 export const changeRole = (data) => {
   return $post('/users/change/role', data);
 }
+
 
 export const changeUserStatus = (id, data) => {
   return $put(`/users/${id}/status`, data);
@@ -93,4 +94,23 @@ export const roleBind = (id, data) => {
 }
 export const roleAcl = (params) => {
   return $get(`/role/acl/role`, { params });
+}
+
+
+export const linksList = (params) => {
+  return $get(`/links/list`, { params });
+}
+export const linkCreate = (data) => {
+  return $post(`/links`, data);
+}
+export const linkDelete = (id) => {
+  return $del(`/links/${id}`);
+}
+export const linkUpdate = (id, data) => {
+  return $put(`/links/${id}`, data);
+}
+
+
+export const uploadImage = (data) => {
+  return $post('/common/uploadImage', data);
 }

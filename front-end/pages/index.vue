@@ -1,13 +1,13 @@
 <template>
   <v-container>
-    <banner :recommendedList="recommendedList" />
+    <banner :recommendedList="recommendedList" v-if="recommendedList && recommendedList.length"/>
     <!-- class="my-4" -->
     <v-row>
       <v-col :md="8" :sm="12">
         <v-container fluid class="py-0">
           <v-row justify="space-between" align="center">
             <div class="title">全部文章</div>
-            <v-switch :value="false" inset label="列表"></v-switch>
+            <v-switch :value="false" inset label="热门" disabled></v-switch>
           </v-row>
         </v-container>
         <article-list :articleStore="articleStore" @loadData="loadData" />
@@ -25,6 +25,7 @@ import Banner from '@/components/Banner.vue';
 import ArticleList from '@/components/ArticleList.vue';
 import TagList from '@/components/TagList.vue';
 export default {
+  scrollToTop:true,
   async asyncData({ $axios }) {
     const promiseList = [];
     promiseList.push($axios.get('/api/article/list/hot'));

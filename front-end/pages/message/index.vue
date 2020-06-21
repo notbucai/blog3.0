@@ -8,6 +8,7 @@
 <script>
 import CommentBox from '@/components/CommentBox.vue';
 export default {
+  scrollToTop:true,
   async asyncData({ $axios, env, params }) {
     const id = '000000000000000000000000';
     const promiseList = [];

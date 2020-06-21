@@ -68,7 +68,7 @@ export class CommonController {
       throw new MyHttpException({ code: ErrorCode.RequestRepeat.CODE });
     }
 
-    const code: string = "111111" || await this.smsService.sendSMSCode(phone, expire);
+    const code: string = await this.smsService.sendSMSCode(phone, expire);
     this.redisService.setValidationCodeTime(phone, reExpireSecond); // 储存间隔
     this.redisService.setValidationCode(phone, code, expire); // 储存验证码
     return {};

@@ -47,7 +47,7 @@ export class AclService {
     name && (_set['name'] = name);
     parent && (_set['parent'] = parent);
 
-    return this.aclSchema.findByIdAndUpdate({ _id: id }, { $set: { name: aclDto.name, title: aclDto.title, parent: aclDto.parent } });
+    return this.aclSchema.findByIdAndUpdate({ _id: id }, { $set: { name: aclDto.name, title: aclDto.title, parent: new ObjectID(aclDto.parent) } });
   }
 
   /**

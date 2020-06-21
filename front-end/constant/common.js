@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 22:03:18
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-11 23:11:21
+ * @LastEditTime: 2020-06-21 15:57:45
  * @Description: 
  */
 export const valid = {
@@ -11,6 +11,6 @@ export const valid = {
 }
 
 export const STATE_LIST = {
-  bind_github: 'https://github.com/login/oauth/authorize?client_id=121bf37951669bd171d4&state=github&redirect_uri=' + encodeURIComponent('http://127.0.0.1:9907/oauth/bind'),
-  login_github: 'https://github.com/login/oauth/authorize?client_id=121bf37951669bd171d4&state=github&redirect_uri=' + encodeURIComponent('http://127.0.0.1:9907/oauth/login'),
+  bind_github: 'https://github.com/login/oauth/authorize?client_id=121bf37951669bd171d4&state=github&redirect_uri=' + encodeURIComponent('https://www.notbucai.com//oauth/bind'),
+  login_github: 'https://github.com/login/oauth/authorize?client_id=121bf37951669bd171d4&state=github&redirect_uri=' + encodeURIComponent('https://www.notbucai.com/oauth/login'),
 }

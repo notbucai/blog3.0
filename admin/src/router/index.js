@@ -8,6 +8,7 @@ import CommentList from '../views/comment/List.vue';
 import TagList from '../views/tag/List.vue';
 import RoleList from '../views/role/List.vue';
 import AclList from '../views/acl/List.vue';
+import LinksList from '../views/links/List.vue';
 
 Vue.use(VueRouter)
 
@@ -68,6 +69,16 @@ export const navRoutes = [
     meta: {
       role: 'tag_page',
       title: "标签管理",
+      icon: "iconpinglun"
+    }
+  },
+  {
+    path: '/links/list',
+    name: 'linksList',
+    component: LinksList,
+    meta: {
+      role: 'links_page',
+      title: "友邻管理",
       icon: "iconpinglun"
     }
   },

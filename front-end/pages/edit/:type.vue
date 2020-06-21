@@ -86,6 +86,7 @@
           :toolbarsFlag="false"
           :tabSize="2"
           ref="mdeditor"
+          @imgAdd="handleEditAddImg"
           :codeStyle="$vuetify.theme.dark ? 'atom-one-light' : 'atom-one-light'"
         />
       </client-only>
@@ -97,7 +98,7 @@ import CurrentUser from '@/components/CurrentUser.vue';
 export default {
   layout: 'empty',
   components: { CurrentUser },
-  async asyncData({ params, query, $axios }) {
+  async asyncData ({ params, query, $axios }) {
     if (params.type == 'new') {
       return {};
     }
@@ -116,7 +117,7 @@ export default {
     };
   },
   computed: {
-    taglistSelect() {
+    taglistSelect () {
       return this.taglist.map(item => {
         const isSelectd = (this.formData.tags || []).find(
           tag => item._id == tag
@@ -128,7 +129,7 @@ export default {
       });
     }
   },
-  data() {
+  data () {
     return {
       isUpdate: false,
       taglist: [],
@@ -143,12 +144,12 @@ export default {
       }
     };
   },
-  async mounted() {
+  async mounted () {
     const resData = await this.$axios.get('/api/tag/list');
     this.taglist = resData;
   },
   methods: {
-    handleSelectItem(item) {
+    handleSelectItem (item) {
       const tag = this.taglist.find(tag => tag._id == item._id);
       const tagIndex = this.formData.tags.findIndex(tagId => tagId == tag._id);
       this.$set(tag, 'selectd', !item.selectd);
@@ -158,12 +159,12 @@ export default {
         this.formData.tags.push(tag._id);
       }
     },
-    renderHtml(content = '') {
+    renderHtml (content = '') {
       const md = this.$refs['mdeditor'].markdownIt;
       const resRender = md.render(content);
       return resRender;
     },
-    getSummary(content = '') {
+    getSummary (content = '') {
       const resRender = this.renderHtml(content);
       const divEl = document.createElement('div');
       divEl.innerHTML = resRender;
@@ -171,7 +172,7 @@ export default {
       const text = p ? p.innerText : '';
       return text.substring(0, 180);
     },
-    async handlePublish() {
+    async handlePublish () {
       const tagIds = this.taglist
         .filter(item => item.selectd)
         .map(item => item._id);
@@ -197,7 +198,7 @@ export default {
       } else {
         resData = await this.$axios.post('/api/article', formData);
       }
-      
+
       // formData
       // TODO: 跳转成功页面
       this.$router.push('/article/' + (resData._id || formData.id));
@@ -210,10 +211,10 @@ export default {
         title: ''
       };
     },
-    handleUpload() {
+    handleUpload () {
       this.$refs['upload'].click();
     },
-    async handleuploadImg(file) {
+    async handleuploadImg (file) {
       const size = this.$file.fileSize(file);
       if (size > 3) {
         return this.$snackbar.error('文件大小不能超过3m');
@@ -230,15 +231,21 @@ export default {
       }
       this.fileUploading = false;
     },
-    onUpload(e) {
+    onUpload (e) {
       // console.log();
       const files = e.target.files;
       [...files].forEach(file => {
         this.handleuploadImg(file);
       });
     },
-    handleDelImage() {
+    handleDelImage () {
       this.formData.coverURL = '';
+    },
+    async handleEditAddImg (pos, $file) {
+      const formdata = new FormData();
+      formdata.append('file', $file);
+      const fileurl = await this.$axios.post('/api/common/uploadImage', formdata);
+      this.$refs['mdeditor'].$img2Url(pos, fileurl);
     }
   }
 };

@@ -13,6 +13,8 @@
         :toolbars="markdownOption"
         :placeholder="editPlaceholder"
         ref="mdeditor"
+        @imgAdd="handleEditAddImg"
+        :autofocus="false"
         :codeStyle="$vuetify.theme.dark ? 'atom-one-light' : 'atom-one-light'"
       >
         <template slot="right-toolbar-after">
@@ -80,6 +82,12 @@ export default {
         return;
       }
       this.$emit('comment', this.content);
+    },
+    async handleEditAddImg (pos, $file) {
+      const formdata = new FormData();
+      formdata.append('file', $file);
+      const fileurl = await this.$axios.post('/api/common/uploadImage', formdata);
+      this.$refs['mdeditor'].$img2Url(pos, fileurl);
     }
   }
 };

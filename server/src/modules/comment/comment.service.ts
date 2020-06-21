@@ -24,8 +24,7 @@ export class CommentService {
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
   ) { }
 
-  private getCommentSchema(source: string): ReturnModelType<typeof ArticleComment> |
-    ReturnModelType<typeof MessageComment> {
+  private getCommentSchema(source: string): any {
     let commentRepository: ReturnModelType<typeof ArticleComment> |
       ReturnModelType<typeof MessageComment>;
     if (source === CommentConstants.SourceArticle) {

@@ -56,7 +56,7 @@
 import { navRoutes } from './router';
 import { mapState } from 'vuex';
 export default {
-  data() {
+  data () {
     return {
       isCollapse: false
     };
@@ -64,12 +64,14 @@ export default {
   computed: {
     ...mapState(['user']),
     // 对导航权限控制
-    navList() {
+    navList () {
       if (!this.user) return [];
-      if (!this.user.role) return [];
-      const acls = this.user.role.acls;
+      this.user.role = this.user.role || {};
+      // if (!this.user.role && !this.user.isAdmin) return [];
+      const acls = this.user.role.acls || [];
       return navRoutes
         .filter(item => {
+
           if (this.user.isAdmin) return true;
           const roleRoute = item.meta.role;
           const status = acls.find(item => {
@@ -86,13 +88,13 @@ export default {
           };
         });
     },
-    currentNavIndex() {
+    currentNavIndex () {
       // const path = this.$route.path;
       return this.$route.name;
     }
   },
   methods: {
-    handleQuit() {
+    handleQuit () {
       this.$store.dispatch('quit');
       this.$router.replace('/login');
     }

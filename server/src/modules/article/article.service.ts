@@ -24,7 +24,7 @@ export class ArticleService {
   ) { }
 
   // 创建
-  async create(createDto: CreateDto, userId: ObjectID) {
+  async create (createDto: CreateDto, userId: ObjectID) {
     const or = createDto.tags.map(id => ({ _id: new ObjectID(id) }))
     let tags = [];
     if (or.length) {
@@ -46,15 +46,15 @@ export class ArticleService {
     return this.articleSchema.create(article);
   }
 
-  async changeStatus(id: string, status: ArticleStatus = 1) {
+  async changeStatus (id: string, status: ArticleStatus = 1) {
     return this.articleSchema.findByIdAndUpdate(id, { $set: { status } })
   }
 
-  async deleteById(id: string) {
+  async deleteById (id: string) {
     return this.articleSchema.deleteOne({ _id: id });
   }
 
-  async updateById(id: string, createDto: CreateDto) {
+  async updateById (id: string, createDto: CreateDto) {
     const article = await this.articleSchema.findById(id);
     if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     // const htmlContent = createDto.htmlContent || article.htmlContent;
@@ -62,7 +62,8 @@ export class ArticleService {
     const coverURL = createDto.coverURL || article.coverURL;
     const summary = createDto.summary || article.summary;
     const content = createDto.content || article.content;
-    const tags = createDto.tags || article.tags;
+    const _tag = createDto.tags ? createDto.tags.map(item => new ObjectID(item)) : null;
+    const tags: any = _tag || article.tags;
     return this.articleSchema.updateOne({ _id: id }, {
       $set: {
         // htmlContent,
@@ -76,23 +77,23 @@ export class ArticleService {
     });
   }
 
-  async findById(id: string) {
+  async findById (id: string) {
     return await this.articleSchema
       .findById(id)
       .select('-htmlContent')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
   }
-  async findBasisById(id: string) {
+  async findBasisById (id: string) {
     return await this.articleSchema
       .findById(id).exec();
   }
 
-  async addViewCount(id: ObjectID) {
+  async addViewCount (id: ObjectID) {
     return await this.articleSchema.updateOne({ _id: id }, { $inc: { browseCount: 1 } })
   }
 
-  async pageListByTag(tagId: ObjectID, listDto: ArticleListByTagDto) {
+  async pageListByTag (tagId: ObjectID, listDto: ArticleListByTagDto) {
 
     const page_index = Number(listDto.page_index || 1) - 1;
     const page_size = Number(listDto.page_size || 10);
@@ -119,7 +120,7 @@ export class ArticleService {
     }
   }
 
-  async pageList(listDto: ArticleListDto) {
+  async pageList (listDto: ArticleListDto) {
     const where: any = {
     };
     const whereOrKeys = ['title', 'summary'];
@@ -156,7 +157,7 @@ export class ArticleService {
     }
   }
 
-  async pageHotList() {
+  async pageHotList () {
 
     const a_list = await this.articleSchema
       .find({ coverURL: { $ne: null } }, '-htmlContent -content')
@@ -182,7 +183,7 @@ export class ArticleService {
     }
   }
 
-  async listByUserId(id: ObjectID | string) {
+  async listByUserId (id: ObjectID | string) {
     const a_list = await this.articleSchema
       .find({ user: id }, '-htmlContent -content')
       .sort({ _id: -1 })
@@ -200,7 +201,7 @@ export class ArticleService {
     return list;
   }
 
-  async statistics(id: ObjectID) {
+  async statistics (id: ObjectID) {
     const data = await this.articleSchema.aggregate([
       { $match: { user: id } },
       {

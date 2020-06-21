@@ -17,6 +17,7 @@ import { ArticleModule } from './modules/article/article.module';
 import { TagModule } from './modules/tag/tag.module';
 import { RoleService } from './modules/role/role.service';
 import { RoleModule } from './modules/role/role.module';
+import { LinksModule } from './modules/links/links.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { RoleModule } from './modules/role/role.module';
     ArticleModule,
     TagModule,
     RoleModule,
+    LinksModule,
   ],
   controllers: [],
   providers: [],

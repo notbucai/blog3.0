@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-22 21:18:13
  * @LastEditors: bucai
- * @LastEditTime: 2020-04-18 20:39:56
+ * @LastEditTime: 2020-06-20 14:39:28
  * @Description: 路由权限验证
  */
 import { Notification } from 'element-ui';

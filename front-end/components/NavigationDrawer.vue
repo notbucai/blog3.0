@@ -12,7 +12,7 @@
       </div>
       <div class="d-flex flex-column align-center justify-center pa-6">
         <v-avatar size="82">
-          <v-img :src="user&&user.avatarURL || 'https://randomuser.me/api/portraits/men/78.jpg'"></v-img>
+          <v-img :src="user&&user.avatarURL || 'https://image.notbucai.com/logo.png'"></v-img>
         </v-avatar>
         <p class="subtitle-1 pt-5 username">{{user&&user.username || '不才'}}</p>
       </div>
@@ -82,7 +82,7 @@ export default {
       // },
       {
         icon: 'link',
-        title: '友情链接',
+        title: '友邻',
         key: 'link-variant',
         path: '/links',
       }

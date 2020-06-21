@@ -10,7 +10,7 @@ import { RolesGuard } from '../core/guards/roles.guard';
 import { UserService } from '../modules/user/user.service';
 import { StateEnum } from './oauth.constant';
 import { CommonService } from '../common/common.service';
-import { MyHttpException } from 'src/core/exception/my-http.exception';
+import { MyHttpException } from '../core/exception/my-http.exception';
 import { ErrorCode } from '../constants/error';
 import { RedisService } from '../redis/redis.service';
 

@@ -18,7 +18,7 @@ import { CommentService } from "../comment/comment.service";
 import { UnbindPhone, BindPhone } from "./dto/bind.dto";
 import { CurUser } from "../../core/decorators/user.decorator";
 import { User } from "../../models/user.entity";
-import { MyHttpException } from "src/core/exception/my-http.exception";
+import { MyHttpException } from "../../core/exception/my-http.exception";
 import { ErrorCode } from '../../constants/error';
 
 

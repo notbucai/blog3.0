@@ -5,6 +5,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { CreateRoleDto } from './dto/role.dto';
 import { BindAclDto } from './dto/bind.dto';
 import { RoleListDto } from './dto/list.dto';
+import { ObjectID } from 'mongodb';
 
 @Injectable()
 export class RoleService {
@@ -43,7 +44,8 @@ export class RoleService {
    */
   bindAcls(id: string, bindAclDto: BindAclDto) {
     const { acls } = bindAclDto;
-    return this.roleSchema.findByIdAndUpdate({ _id: id }, { $set: { acls: acls } });
+    const _acls = acls.map(item=>new ObjectID(item));
+    return this.roleSchema.findByIdAndUpdate({ _id: id }, { $set: { acls: _acls } });
   }
 
   /**

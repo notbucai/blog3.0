@@ -87,7 +87,7 @@ export class UserService {
   }
 
   async changeRole (id: string, role: string) {
-    return this.userSchema.findByIdAndUpdate(id, { $set: { role } });
+    return this.userSchema.findByIdAndUpdate(id, { $set: { role: new ObjectID(role) } });
   }
 
   async findList (listDto: ListDto) {

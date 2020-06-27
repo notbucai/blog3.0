@@ -94,7 +94,11 @@ export default {
 .theme--dark.v-app-bar.v-toolbar.v-sheet {
   background-color: #151515;
 }
-
+@media (min-width: 960px) {
+ .container{
+   width: 980px!important;
+ } 
+}
 .toolbar-content {
   /* max-width: 1440px;
   width: 100%; */

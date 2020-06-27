@@ -1,3 +1,5 @@
+const isDark = new Date().getHours() > 19 && new Date().getHours() < 7;
+
 module.exports = {
   mode: 'universal',
   /*
@@ -63,7 +65,7 @@ module.exports = {
           },
         },
         // light: true,
-        // dark: false
+        dark: isDark
       }
     }]
   ],
@@ -90,7 +92,7 @@ module.exports = {
 
   },
   proxy: {
-    '/api/': { target: 'http://bucai-blog-server:9905/', pathRewrite: { '^/api/': '' } }
+    '/api/': { target: process.env.NODE_ENV === 'development' ? 'http://localhost:9905/' : 'http://bucai-blog-server:9905/', pathRewrite: { '^/api/': '' } }
   },
   /*
   ** Build configuration

@@ -2,7 +2,7 @@
   <div class="user">
     <v-container>
       <v-row>
-        <v-col :md="8" :sm="12">
+        <v-col :md="8" :sm="12" :cols="12">
           <v-card class="pa-2 mb-6">
             <v-list subheader two-line>
               <v-list-item class="_user-header">
@@ -84,7 +84,7 @@
             </v-tab-item>
           </v-tabs-items>
         </v-col>
-        <v-col :md="4" :sm="12">
+        <v-col :md="4" :sm="12" :cols="12">
           <v-card>
             <v-card-title>个人成就</v-card-title>
             <v-list dense subheader>

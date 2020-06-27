@@ -3,7 +3,7 @@
     <banner :recommendedList="recommendedList" v-if="recommendedList && recommendedList.length"/>
     <!-- class="my-4" -->
     <v-row>
-      <v-col :md="8" :sm="12">
+      <v-col :md="8" :sm="12" :cols="12">
         <v-container fluid class="py-0">
           <v-row justify="space-between" align="center">
             <div class="title">全部文章</div>
@@ -12,7 +12,7 @@
         </v-container>
         <article-list :articleStore="articleStore" @loadData="loadData" />
       </v-col>
-      <v-col :md="4" :sm="12">
+      <v-col :md="4" :sm="12" :cols="12">
         <tag-list :taglist="taglist" />
       </v-col>
     </v-row>

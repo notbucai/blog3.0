@@ -1,7 +1,7 @@
 <template>
   <v-container class="article">
     <v-row>
-      <v-col :md="8" :sm="12">
+      <v-col :md="8" :sm="12" :cols="12">
         <v-card>
           <div class="acticle_pic" v-if="data.coverURL">
             <v-img
@@ -11,6 +11,9 @@
             ></v-img>
           </div>
           <div class="acticle_content">
+            <v-alert type="warning" dense v-if="data.status === 1">审核中</v-alert>
+            <v-alert type="warning" dense v-if="data.status === 3">审核未通过</v-alert>
+
             <h1 class="acticle_title display-1">{{data.title}}</h1>
             <div class="acticle_user d-flex justify-space-between align-center">
               <nuxt-link
@@ -66,7 +69,7 @@
           <Comment-box source="article" :id="id" :comments="comments" />
         </v-card>
       </v-col>
-      <v-col :md="4" :sm="12">
+      <v-col :md="4" :sm="12" :cols="12">
         <v-card class="menus_box">
           <v-card-title>导航</v-card-title>
 
@@ -75,7 +78,7 @@
             <li
               v-for="(item, index) in menus"
               :key="index"
-              :class="'menu menu-'+item.type"
+              :class="'menu menu-'+item.type +' '+ (currentTitleHash==item.target?'active':'')"
               @click="handleGoToScroll(item.target)"
             >{{item.title}}</li>
           </ul>
@@ -121,6 +124,7 @@ export default {
       comments: [],
       menus: [],
       id: null,
+      currentTitleHash: ''
     };
   },
   mounted () {
@@ -130,13 +134,50 @@ export default {
     this.data.content = renderData.html;
     this.menus = renderData.menus;
     const hash = this.$route.hash;
+    this.currentTitleHash = '#' + (hash || '');
     if (hash) {
       this.$nextTick(() => {
         this.handleGoToScroll(hash)
       });
     }
+    this.initMenuScrollListen();
+  },
+  beforeDestroy () {
+    this.removeMenuScrollListen();
   },
   methods: {
+    $scrollListen (e) {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      scrollTop += this.$vuetify.application.top + 40;
+      // console.log('scrollTop', scrollTop);
+
+      const titleList = [...document.querySelectorAll('h2,h3,h4,h5,h6')];
+      const scrollTopList = titleList.map(el => {
+        const elEmentOffsetTop = this.getElementToPageTop(el);
+        return {
+          scrollTop: elEmentOffsetTop,
+          el
+        }
+      });
+      
+      scrollTopList.reverse();
+      for (const item of scrollTopList) {
+        const _scrollTop = scrollTop - item.scrollTop;
+        // console.log('_scrollTop', item.el.id, _scrollTop);
+
+        if (_scrollTop >= 0) {
+          this.currentTitleHash = '#' + item.el.id;
+          break;
+        }
+      }
+
+    },
+    initMenuScrollListen () {
+      window.addEventListener('scroll', this.$scrollListen.bind(this));
+    },
+    removeMenuScrollListen () {
+      window.removeEventListener('scroll', this.$scrollListen.bind(this));
+    },
     getElementToPageTop (el) {
       if (el.parentElement) {
         return this.getElementToPageTop(el.parentElement) + el.offsetTop
@@ -153,7 +194,7 @@ export default {
       location.href = target;
 
       const topSize = this.getElementToPageTop(el);
-      this.$vuetify.goTo(topSize - 50);
+      this.$vuetify.goTo(topSize - this.$vuetify.application.top);
     }
   }
 };
@@ -166,7 +207,7 @@ export default {
   @import '@/assets/markdown/atom-one-dark.scss';
 }
 .article .markdown-body {
-  z-index: 4!important;
+  z-index: 4 !important;
   border: none;
 }
 .article {
@@ -235,7 +276,7 @@ export default {
       padding: 20px;
     }
   }
-  .menus_box{
+  .menus_box {
     position: sticky;
     top: 80px;
   }

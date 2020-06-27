@@ -32,7 +32,7 @@
     <div class="subtitle-2" style="margin: 15px 5px 5px;">朋友们 (默认按添加时间排序)</div>
 
     <v-row>
-      <v-col :md="6" :sm="12" v-for="(item, index) in links" :key="index">
+      <v-col :md="6" :sm="12" :cols="12" v-for="(item, index) in links" :key="index">
         <v-card :href="item.url" target="_blank">
           <div class="d-flex align-center">
             <v-avatar size="60" class="ma-3" style="border-radius:6px" v-if="item.logo">

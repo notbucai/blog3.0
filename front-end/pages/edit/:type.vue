@@ -113,7 +113,7 @@ export default {
         coverURL: data.coverURL,
         content: data.content,
         tags: data.tags
-      }
+      },
     };
   },
   computed: {
@@ -147,6 +147,7 @@ export default {
   async mounted () {
     const resData = await this.$axios.get('/api/tag/list');
     this.taglist = resData;
+    const formData = this.formData;
   },
   methods: {
     handleSelectItem (item) {
@@ -173,11 +174,8 @@ export default {
       return text.substring(0, 180);
     },
     async handlePublish () {
-      const tagIds = this.taglist
-        .filter(item => item.selectd)
-        .map(item => item._id);
       const formData = this.formData;
-      formData.tags = tagIds;
+      formData.tags = this.taglistSelect.filter(item => item.selectd).map(item => item._id);
       formData.summary = this.getSummary(formData.content);
       // formData.htmlContent = this.renderHtml(formData.content);
       // tags
@@ -191,6 +189,8 @@ export default {
       let resData;
 
       if (this.isUpdate) {
+        console.log('formData', formData);
+
         resData = await this.$axios.put(
           `/api/article/${formData.id}`,
           formData

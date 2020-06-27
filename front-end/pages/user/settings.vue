@@ -6,7 +6,7 @@
     </v-tabs>
     <!-- router -->
     <v-row>
-      <v-col :md="9" :sm="12">
+      <v-col :md="9" :sm="12" :cols="12">
         <nuxt-child />
       </v-col>
     </v-row>

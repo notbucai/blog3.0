@@ -8,7 +8,7 @@ import { ObjectID } from 'mongodb';
 import { ArticleListDto } from './dto/list.dto';
 import { ArticleListByTagDto } from './dto/listByTag.dto';
 
-import { Comment, ArticleComment } from '../../models/comment.entity';
+import { Comment, ArticleComment, CommentStatus } from '../../models/comment.entity';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
 
@@ -98,7 +98,8 @@ export class ArticleService {
     const page_index = Number(listDto.page_index || 1) - 1;
     const page_size = Number(listDto.page_size || 10);
     const where = {
-      tags: { $elemMatch: { $eq: tagId } }
+      tags: { $elemMatch: { $eq: tagId } },
+      status: ArticleStatus.VerifySuccess
     };
     const a_list = await this.articleSchema
       .find(where, '-htmlContent -content')
@@ -119,10 +120,12 @@ export class ArticleService {
       total
     }
   }
+  async pageList (listDto: ArticleListDto, status?: ArticleStatus) {
+    const where: any = {};
+    if (status) {
+      where.status = status;
+    }
 
-  async pageList (listDto: ArticleListDto) {
-    const where: any = {
-    };
     const whereOrKeys = ['title', 'summary'];
     if (listDto.keyword) {
       const rx = new RegExp(listDto.keyword);
@@ -142,7 +145,7 @@ export class ArticleService {
 
     const list_p = a_list.map(async item => {
       item = item.toJSON();
-      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
+      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id, status: CommentStatus.VerifySuccess });
       return item;
     });
     // commentSchema
@@ -160,7 +163,7 @@ export class ArticleService {
   async pageHotList () {
 
     const a_list = await this.articleSchema
-      .find({ coverURL: { $ne: null } }, '-htmlContent -content')
+      .find({ coverURL: { $ne: null }, status: ArticleStatus.VerifySuccess }, '-htmlContent -content')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
       .sort({ browseCount: -1 })

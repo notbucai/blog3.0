@@ -32,18 +32,23 @@ export class OauthController {
     this.logger.info({ data: 'login ' + state });
     // 获取用户信息
     const oAuthUserinfo: {
-      id: string
+      id: string | number
     } = await this.oauthService.getOAuthUserInfo(state, code);
 
-    let localUserinfo: User = await this.oauthService.findByUser(state, oAuthUserinfo.id);
+    // console.log('oAuthUserinfo=>', oAuthUserinfo);
+
+
+    let localUserinfo: User = await this.oauthService.findByUser(state, String(oAuthUserinfo.id));
     // 判断是否存在这个用户
     if (!localUserinfo) {
-      // 创建用户
+      // 创建临时用户
       localUserinfo = new User();
-      await this.oauthService.saveUser(state, oAuthUserinfo, localUserinfo);
+      localUserinfo = await this.oauthService.saveUser(state, oAuthUserinfo, localUserinfo);
     }
     const token = await this.commonService.generateToken(localUserinfo);
-    await this.redisService.setUserToken(localUserinfo._id.toString(), token);
+    console.log('localUserinfo', localUserinfo);
+
+    await this.redisService.setUserToken(String(localUserinfo._id), token);
     await this.redisService.setUser(localUserinfo);
     return token;
   }

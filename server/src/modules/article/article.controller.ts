@@ -12,6 +12,7 @@ import { ArticleService } from './article.service';
 import { CurUser } from '../../core/decorators/user.decorator';
 import { ArticleListDto } from './dto/list.dto';
 import { ChangeArticleStatus } from './dto/status.dto';
+import { ArticleStatus } from '../../models/article.entity';
 
 @Controller('article')
 @ApiTags('文章')
@@ -22,34 +23,34 @@ export class ArticleController {
   ) { }
 
   @Get('list/hot')
-  async hotList() {
+  async hotList () {
     return this.articleService.pageHotList();
   }
 
   @Get('list/all')
-  async pageList(@Query() ListDto: ArticleListDto) {
-    return this.articleService.pageList(ListDto);
+  async pageList (@Query() ListDto: ArticleListDto) {
+    return this.articleService.pageList(ListDto, ArticleStatus.VerifySuccess);
   }
 
   @Get('list')
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('ArticleList')
-  async list(@Query() ListDto: ArticleListDto) {
+  async list (@Query() ListDto: ArticleListDto) {
     return this.articleService.pageList(ListDto);
   }
 
   @Post()
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
-  async created(@Body() createDto: CreateDto, @CurUser() user: User) {
+  async created (@Body() createDto: CreateDto, @CurUser() user: User) {
     return this.articleService.create(createDto, user._id);
   }
 
   @Delete(':id')
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
-  async deleted(@Param('id') id: string) {
+  async deleted (@Param('id') id: string) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.articleService.deleteById(id);
   }
@@ -58,13 +59,13 @@ export class ArticleController {
   @UseGuards(ActiveGuard)
   // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
-  async updated(@Param('id') id: string, @Body() createDto: CreateDto) {
+  async updated (@Param('id') id: string, @Body() createDto: CreateDto) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.articleService.updateById(id, createDto);
   }
 
   @Get(':id')
-  async get(@Param('id') id: string) {
+  async get (@Param('id') id: string) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     const _id = new ObjectID(id);
     this.articleService.addViewCount(_id);
@@ -74,7 +75,7 @@ export class ArticleController {
   @Get(':id/basis')
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
-  async basis(@Param('id') id: string) {
+  async basis (@Param('id') id: string) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.articleService.findBasisById(id);
   }
@@ -84,7 +85,7 @@ export class ArticleController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('ChangeArticleStatus')
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
-  async changeStatus(@Param('id') id: string, @Body() body: ChangeArticleStatus) {
+  async changeStatus (@Param('id') id: string, @Body() body: ChangeArticleStatus) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.articleService.changeStatus(id, body.status);
   }

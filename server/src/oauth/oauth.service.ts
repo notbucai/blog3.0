@@ -40,7 +40,7 @@ export class OauthService {
     const userResult = await axios.get(userInfoURL, {
       headers: { Accept: 'application/json', Authorization: 'Bearer ' + result.data.access_token },
     });
-    console.log('userResult=> ', userResult);
+    // console.log('userResult=> ', userResult);
 
     if (!(userResult.status === 200 && !userResult.data.error)) {
       console.log(userResult.data, userResult.status);
@@ -102,7 +102,7 @@ export class OauthService {
     }
 
     const fn = isBindFns[state];
-    console.log('isBindFns',fn, isBindFns, state);
+    console.log('isBindFns', fn, isBindFns, state);
 
     if (typeof fn !== 'function') throw Error('Unauthorized');
     return fn(user)
@@ -123,9 +123,11 @@ export class OauthService {
   public async saveUser (state: StateEnum, OAuthUser: any, user: User) {
     const keys = this.getKeys(state);
     const userInfokeys = this.getUserInfoKey(state);
-    Object.keys({ ...keys, ...userInfokeys }).map(key => {
-      user[key] = OAuthUser[keys[key]];
+    const allKeys = { ...keys, ...userInfokeys };
+    Object.keys(allKeys).map(key => {
+      user[key] = OAuthUser[allKeys[key]];
     });
+
     user.status = UserStatus.Actived;
     return this.userService.createUser(user);
   }

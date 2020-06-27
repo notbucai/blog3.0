@@ -24,7 +24,7 @@ export class CommentService {
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
   ) { }
 
-  private getCommentSchema(source: string): any {
+  private getCommentSchema (source: string): any {
     let commentRepository: ReturnModelType<typeof ArticleComment> |
       ReturnModelType<typeof MessageComment>;
     if (source === CommentConstants.SourceArticle) {
@@ -37,7 +37,7 @@ export class CommentService {
   /**
    * 创建评论
    */
-  async create(source: string, createCommentDto: CreateCommentDto, userID: ObjectID) {
+  async create (source: string, createCommentDto: CreateCommentDto, userID: ObjectID) {
     const commentRepository = this.getCommentSchema(source);
     // sourceID 文章的时候是文章id 
     // parentID 表示父级评论id
@@ -63,12 +63,12 @@ export class CommentService {
     return commentRepository.create(comment);
   }
 
-  async changeStatus(source: string, id: string, status: CommentStatus = 1) {
+  async changeStatus (source: string, id: string, status: CommentStatus = 1) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository.findByIdAndUpdate(id, { $set: { status } });
   }
 
-  async getListByUserId(source: string, id: ObjectID | string) {
+  async getListByUserId (source: string, id: ObjectID | string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository.find({ user: id })
 
@@ -95,7 +95,7 @@ export class CommentService {
       .populate([{ path: 'user', select: "username avatarURL" }]);
   }
 
-  async findList(source: string, listDto: AllListDto) {
+  async findList (source: string, listDto: AllListDto) {
     const commentRepository = this.getCommentSchema(source);
 
     let query = {};
@@ -148,7 +148,7 @@ export class CommentService {
     }
   }
 
-  async getById(source: string, id: string) {
+  async getById (source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
 
     return commentRepository.findById(id).populate({
@@ -170,21 +170,21 @@ export class CommentService {
       .populate([{ path: 'user', select: "username avatarURL" }])
   }
 
-  async delById(source: string, id: string) {
+  async delById (source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository.deleteOne({ _id: id })
   }
 
-  async updateById(source: string, id: string, content: string) {
+  async updateById (source: string, id: string, content: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository.updateOne({ _id: id }, { $set: { content, updatedAt: Date.now() } });
   }
 
   // 查询子评论
-  async getChildCommentList(source: string, rootID: string) {
+  async getChildCommentList (source: string, rootID: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository
-      .find({ rootID }, '-sourceID -__v -rootID')
+      .find({ rootID, status: CommentStatus.VerifySuccess }, '-sourceID -__v -rootID')
       .populate({
         path: 'parent',
         select: '-sourceID -__v -rootID',
@@ -200,11 +200,12 @@ export class CommentService {
   /**
    * 查询一级评论,分页
    */
-  async getRootCommentList(source: string, sourceID: string = CommentConstants.CommonMessageID, lastCommentID?: string, limit: number = 10) {
+  async getRootCommentList (source: string, sourceID: string = CommentConstants.CommonMessageID, lastCommentID?: string, limit: number = 10) {
     const commentRepository = this.getCommentSchema(source);
     const query: any = {
       sourceID: sourceID,
-      rootID: null
+      rootID: null,
+      status: CommentStatus.VerifySuccess
     };
     if (lastCommentID) {
       query._id = {
@@ -219,6 +220,7 @@ export class CommentService {
 
     const counts_p = list.map(item => {
       return commentRepository.countDocuments({
+        status: CommentStatus.VerifySuccess,
         rootID: item._id
       }).exec()
     });
@@ -236,7 +238,7 @@ export class CommentService {
   /**
    * 是否是有效的评论源
    */
-  isValidSource(source: string) {
+  isValidSource (source: string) {
     if ([CommentConstants.SourceArticle, CommentConstants.SourceMessage].indexOf(source) >= 0) {
       return true;
     }

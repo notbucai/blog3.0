@@ -70,7 +70,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="content"
+          prop="htmlContent"
           header-align="center"
           show-overflow-tooltip
           label="内容"

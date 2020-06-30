@@ -16,14 +16,14 @@
               博客地址:
               <a href="https://www.notbucai.com">https://www.notbucai.com</a>
             </div>
-            <div>博客简介: 我喜欢要么极度悲伤要么淡淡温暖。</div>
-            <div style="overflow-wrap: break-word;">博客头像:</div>
+            <div>博客简介: 啥也不会</div>
+            <div style="overflow-wrap: break-word;">博客头像: <a href="https://image.notbucai.com/logo.png" target="_blank">https://image.notbucai.com/logo.png</a></div>
           </div>
           <v-divider></v-divider>
           <div style="margin-top: 10px;">
             <div class="caption font-italic">注① : 希望你的网站非采集以及纯技术站点，且每三个月至少有一次更新。</div>
             <div class="caption font-italic">注② : 为了更快的效率，请提前加上我的友链，我会在一天内尽快给出答复，谢谢！</div>
-            <div class="caption font-italic">2020-06-22</div>
+            <div class="caption font-italic">2020-06-30</div>
           </div>
         </div>
       </v-container>

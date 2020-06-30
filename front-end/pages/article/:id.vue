@@ -159,7 +159,7 @@ export default {
           el
         }
       });
-      
+
       scrollTopList.reverse();
       for (const item of scrollTopList) {
         const _scrollTop = scrollTop - item.scrollTop;
@@ -179,10 +179,10 @@ export default {
       window.removeEventListener('scroll', this.$scrollListen.bind(this));
     },
     getElementToPageTop (el) {
-      if (el.parentElement) {
-        return this.getElementToPageTop(el.parentElement) + el.offsetTop
-      }
-      return el.offsetTop
+      const box = el.getBoundingClientRect();
+      const winElem = el.ownerDocument.defaultView;
+      const top = box.top + winElem.pageYOffset;
+      return top;
     },
     handleEditArticle () {
       const id = this.id;
@@ -194,7 +194,8 @@ export default {
       location.href = target;
 
       const topSize = this.getElementToPageTop(el);
-      this.$vuetify.goTo(topSize - this.$vuetify.application.top);
+      
+      this.$vuetify.goTo(topSize - 20);
     }
   }
 };

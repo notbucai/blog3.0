@@ -15,6 +15,9 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9' }, /*引入百度统计的js*/
     ]
   },
   /*
@@ -38,11 +41,11 @@ module.exports = {
     './plugins/global-components',
     './plugins/filters.js',
     './plugins/utils.js',
-    { src: '@/plugins/vue-mavon-editor', ssr: false },
-    { src: '@/plugins/file.js', ssr: false },
-    { src: '@/plugins/vue-cropper.js', ssr: false },
+    { src: './plugins/baiduGa.js', ssr: false }, /* 百度统计 */
+    { src: './plugins/vue-mavon-editor', ssr: false },
+    { src: './plugins/file.js', ssr: false },
+    { src: './plugins/vue-cropper.js', ssr: false },
     { src: './plugins/dom.js', ssr: false },
-
   ],
   /*
   ** Nuxt.js dev-modules

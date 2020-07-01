@@ -25,9 +25,9 @@
           <v-icon left>mdi-eye</v-icon>
           {{article.browseCount}}
         </v-btn>
-        <v-btn text>
-          <v-icon left>mdi-cards-heart</v-icon>
-          {{article.loveCount}}
+        <v-btn text :color="hasLike(article.likes)?'error':''">
+          <v-icon left :color="hasLike(article.likes)?'error':''">mdi-cards-heart</v-icon>
+          {{article.likes ? article.likes.length : 0}}
         </v-btn>
         <v-btn text>
           <v-icon left>mdi-message</v-icon>
@@ -38,12 +38,14 @@
   </v-card>
 </template>
 <script>
+import mixin from '@/utils/mixin';
 export default {
+  mixins: [mixin],
   components: {},
   props: {
     article: {
       type: Object,
-      default() {
+      default () {
         return {
           _id: null,
           coverURL: null,
@@ -57,11 +59,11 @@ export default {
     }
   },
   computed: {},
-  data() {
+  data () {
     return {};
   },
-  created() {},
-  mounted() {},
+  created () { },
+  mounted () { },
   methods: {}
 };
 </script>

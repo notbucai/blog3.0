@@ -10,6 +10,8 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Article } from '../../models/article.entity';
 import { User } from '../../models/user.entity';
 import { AllListDto } from './dto/allList.dto';
+import { MyHttpException } from '../../core/exception/my-http.exception';
+import { ErrorCode } from '../../constants/error';
 
 
 @Injectable()
@@ -259,5 +261,42 @@ export class CommentService {
       return true;
     }
     return false;
+  }
+
+
+  async hashLikeByUid (source: string, aid: ObjectID, uid: ObjectID) {
+    const commentRepository = this.getCommentSchema(source);
+
+    const article = await commentRepository.findById(aid);
+
+    if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    if (article.likes) {
+      return !!article.likes.find((item: any) => {
+        return uid.equals(item);
+      });
+    }
+    return false;
+  }
+
+  async likeById (source: string, aid: ObjectID, uid: ObjectID) {
+    const commentRepository = this.getCommentSchema(source);
+
+    // $push
+    return commentRepository.updateOne({ _id: aid }, {
+      $addToSet: {
+        likes: uid
+      }
+    });
+  }
+
+  async unlikeById (source: string, aid: ObjectID, uid: ObjectID) {
+    const commentRepository = this.getCommentSchema(source);
+
+    // $push
+    return commentRepository.findByIdAndUpdate(aid, {
+      $pull: {
+        likes: uid
+      }
+    });
   }
 }

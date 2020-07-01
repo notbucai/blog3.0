@@ -31,10 +31,19 @@
         </div>
       </nuxt-link>
       <div class="d-flex flex-column align-center">
-        <v-btn text icon small>
-          <v-icon>mdi-cards-heart</v-icon>
+        <v-btn
+          text
+          icon
+          small
+          :color="hasLike(comment.likes)?'error':''"
+          @click="handleClickLike(comment)"
+        >
+          <v-icon :color="hasLike(comment.likes)?'error':''">mdi-cards-heart</v-icon>
         </v-btn>
-        <span class="body-2 text--secondary">0</span>
+        <span
+          class="body-2"
+          :class="hasLike(comment.likes)?'error--text':'text--secondary'"
+        >{{comment.likes ? comment.likes.length : 0}}</span>
       </div>
     </div>
     <div class="comment-centent">
@@ -46,6 +55,7 @@
         <comment-item
           :comment="_item"
           :key="_item._id"
+          :source="source"
           @reply="handleReply"
           @delete="handleDelete($event,comment)"
         />
@@ -67,7 +77,10 @@
 <script>
 import CommentItem from './CommentItem';
 import { mapState } from 'vuex';
+import mixin from '@/utils/mixin';
+
 export default {
+  mixins: [mixin],
   name: 'CommentItem',
   components: { CommentItem },
   props: {
@@ -77,7 +90,7 @@ export default {
     },
     comment: {
       type: Object,
-      default() {
+      default () {
         return {
           _id: null,
           createdAt: 0,
@@ -93,14 +106,14 @@ export default {
   computed: {
     ...mapState(['user'])
   },
-  data() {
+  data () {
     return {
       deleteIng: false
     };
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    async handleGetCommentReply(comment) {
+    async handleGetCommentReply (comment) {
       if (Array.isArray(comment.replylist) && comment.replylist.length > 0) {
         this.$set(comment, 'replylist', null);
         this.$set(comment, 'isFetReplyIng', false);
@@ -114,7 +127,7 @@ export default {
       );
       this.$set(comment, 'replylist', resData);
     },
-    async handleDelete(comment, parent) {
+    async handleDelete (comment, parent) {
       // 执行删除
       this.deleteIng = true;
       try {
@@ -135,8 +148,14 @@ export default {
       }
       this.deleteIng = false;
     },
-    handleReply(comment) {
+    handleReply (comment) {
       this.$emit('reply', comment);
+    },
+    async handleClickLike (comment) {
+      const id = this.comment._id;
+      await this.$axios.put('/api/comment/' + this.source + '/' + id + '/like');
+      const likes = this.changeLike(comment.likes);
+      this.$set(comment, 'likes', likes);
     }
   }
 };

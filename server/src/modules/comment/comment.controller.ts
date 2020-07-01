@@ -132,6 +132,31 @@ export class CommentController {
     return comment;
   }
 
+
+  @Put(':source/:id/like')
+  @UseGuards(ActiveGuard)
+  // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "点赞" })
+  async like (@Param('source') source: string, @Param('id') id: string, @CurUser() user: User) {
+    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
+      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    }
+
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    const oid = new ObjectID(id);
+
+    const hasLike = await this.commentService.hashLikeByUid(source, oid, user._id);
+    console.log('hasLike', hasLike);
+
+    if (hasLike) {
+      await this.commentService.unlikeById(source, oid, user._id);
+    } else {
+      await this.commentService.likeById(source, oid, user._id);
+    }
+    return "成功";
+  }
+
   @Put(':source/:id/status')
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('ChangeCommentStatus')

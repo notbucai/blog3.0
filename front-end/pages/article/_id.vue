@@ -48,6 +48,11 @@
                   <v-icon left>mdi-eye</v-icon>
                   {{data.browseCount}}
                 </v-btn>
+                <v-btn text :color="hasLike(data.likes)?'error':''" @click="handleClickLike">
+                  <v-icon left :color="hasLike(data.likes)?'error':''">mdi-cards-heart</v-icon>
+                  {{data.likes ? data.likes.length : 0}}
+                </v-btn>
+                <!-- :color="hasLike(article.likes)?'error':''" -->
               </div>
             </div>
             <div class="acticle_htmlContent v-note-wrapper markdown-body" v-html="content"></div>
@@ -92,6 +97,8 @@ import 'mavon-editor/dist/markdown/github-markdown.min.css';
 
 import CommentBox from '@/components/CommentBox';
 import { mapState } from 'vuex';
+import mixin from '@/utils/mixin';
+
 // import 'mavon-editor/dist/highlightjs'
 // import highlightjs from 'mavon-editor/dist/highlightjs/highlight.min.js';
 export default {
@@ -110,6 +117,7 @@ export default {
       id
     };
   },
+  mixins: [mixin],
   components: { CommentBox },
   props: {},
   computed: {
@@ -194,8 +202,14 @@ export default {
       location.href = target;
 
       const topSize = this.getElementToPageTop(el);
-      
+
       this.$vuetify.goTo(topSize - 20);
+    },
+    async handleClickLike () {
+      const aid = this.data._id;
+      await this.$axios.put('/api/article/' + aid + '/like');
+      const likes = this.changeLike(this.data.likes);
+      this.$set(this.data, 'likes', likes);
     }
   }
 };

@@ -41,8 +41,10 @@ export class Comment extends Base {
   @prop({ ref: User })
   user: Ref<User>;
 
-  commentCounts: number; // 子评论数
+  @arrayProp({ itemsRef: User })
+  likes: Array<Ref<User>>
 
+  commentCounts: number; // 子评论数
 }
 @modelOptions({
   schemaOptions: {

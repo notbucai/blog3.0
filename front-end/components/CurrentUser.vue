@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-04 20:54:03
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-03 15:12:58
+ * @LastEditTime: 2020-07-01 15:50:25
  * @Description: 
  -->
 
@@ -60,10 +60,8 @@ export default {
     return {};
   },
   created () {
-    console.log('create');
   },
   mounted () {
-    console.log('mounted');
   },
   methods: {
     handleSelectAction (key) {

@@ -52,4 +52,8 @@ export class Article extends Base {
 
   @prop({ ref: User })
   user: Ref<User>;
+
+  @arrayProp({ itemsRef: User })
+  likes: Array<Ref<User>>
+
 }

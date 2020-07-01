@@ -222,4 +222,33 @@ export class ArticleService {
     return data[0] || { _id: id, wordCount: 0, browseCount: 0, commentCount: 0 };
   }
 
+  async hashLikeByUid (aid: ObjectID, uid: ObjectID) {
+    const article = await this.articleSchema.findById(aid);
+
+    if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    if (article.likes) {
+      return !!article.likes.find((item: any) => {
+        return uid.equals(item);
+      });
+    }
+    return false;
+  }
+
+  async likeById (aid: ObjectID, uid: ObjectID) {
+    // $push
+    return this.articleSchema.updateOne({ _id: aid }, {
+      $addToSet: {
+        likes: uid
+      }
+    });
+  }
+
+  async unlikeById (aid: ObjectID, uid: ObjectID) {
+    // $push
+    return this.articleSchema.findByIdAndUpdate(aid, {
+      $pull: {
+        likes: uid
+      }
+    });
+  }
 }

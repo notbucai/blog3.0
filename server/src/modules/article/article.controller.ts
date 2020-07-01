@@ -47,6 +47,25 @@ export class ArticleController {
     return this.articleService.create(createDto, user._id);
   }
 
+  @Put(':id/like')
+  @UseGuards(ActiveGuard)
+  // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  @ApiBearerAuth()
+  async like (@Param('id') id: string, @CurUser() user: User) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    const oid = new ObjectID(id);
+
+    const hasLike = await this.articleService.hashLikeByUid(oid, user._id);
+    console.log('hasLike',hasLike);
+    
+    if (hasLike) {
+      await this.articleService.unlikeById(oid, user._id);
+    } else {
+      await this.articleService.likeById(oid, user._id);
+    }
+    return "成功";
+  }
+
   @Delete(':id')
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()

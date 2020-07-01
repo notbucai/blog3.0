@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-11 21:06:12
+ * @LastEditTime: 2020-07-01 15:40:02
  * @Description: 
  */
 
@@ -24,9 +24,13 @@ export const mutations = {
   },
   SET_USER (state, payload) {
     state.user = payload;
-  }
+  },
 }
 export const actions = {
+  hasLike ({ commit, state }, likes) {
+    const uId = state.user._id;
+    return Array.isArray(likes) ? likes.find(item => item == uId) : false;
+  },
   // nuxtServerInit，用以初始化数据
   async nuxtServerInit ({ commit }, { app, $axios }) {
     // 从cookie中获取token，并且将其中的数据更新到store

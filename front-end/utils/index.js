@@ -2,12 +2,17 @@
  * @Author: bucai
  * @Date: 2020-05-07 13:05:39
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-27 14:06:08
+ * @LastEditTime: 2020-07-01 09:17:28
  * @Description: 
  */
 
-const md = require('markdown-it')()
-  .use(require('markdown-it-highlightjs'));
+const md = require('markdown-it')({
+  html: true,
+  breaks: true,
+  linkify: true,
+})
+  .use(require('markdown-it-highlightjs'))
+  .use(require('markdown-it-sanitizer'));
 export const markdown = (content) => {
   const resRender = md.render(content || '');
   return resRender;

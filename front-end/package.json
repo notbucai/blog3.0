@@ -22,6 +22,7 @@
     "koa": "^2.6.2",
     "markdown-it": "^10.0.0",
     "markdown-it-highlightjs": "^3.1.0",
+    "markdown-it-sanitizer": "^0.4.3",
     "mavon-editor": "^2.9.0",
     "nuxt": "^2.0.0",
     "vue-meditor": "^2.1.1"

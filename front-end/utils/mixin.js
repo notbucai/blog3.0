@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-07-01 15:48:05
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-01 16:02:45
+ * @LastEditTime: 2020-07-01 16:43:07
  * @Description: 
  */
 export default {
@@ -10,7 +10,7 @@ export default {
     hasLike (likes) {
       if (!Array.isArray(likes)) return false;
       const user = this.$store.state.user;
-      if (!user) false;
+      if (!user) return false;
       const id = user._id;
       return !!likes.find(item => item == id);
     },
@@ -23,8 +23,8 @@ export default {
       likes = Object.assign([], likes);
       const id = user._id;
       const index = likes.findIndex(item => item == id);
-      console.log('index',index);
-      
+      console.log('index', index);
+
       if (index < 0) {
         likes.push(id);
       } else {

@@ -235,6 +235,22 @@ export class CommentService {
 
     return comments;
   }
+
+  getRootNewList (source: string) {
+    const commentRepository = this.getCommentSchema(source);
+    const list = commentRepository
+      .find({})
+      .sort({ _id: -1 })
+      .limit(6)
+      .populate([{ path: 'user', select: "username avatarURL" }])
+      .populate({
+        path: 'article',
+        select: '-htmlContent -__v -content -tags -summary',
+      })
+      .exec()
+    return list;
+  }
+
   /**
    * 是否是有效的评论源
    */

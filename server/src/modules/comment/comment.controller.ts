@@ -30,7 +30,7 @@ export class CommentController {
   @Roles('CommentAllList')
   @ApiBearerAuth()
   @ApiOperation({ summary: "所有的评论列表" })
-  public async alllist(@Param('source') source: string, @Query() listDto: AllListDto) {
+  public async alllist (@Param('source') source: string, @Query() listDto: AllListDto) {
     if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
@@ -42,9 +42,21 @@ export class CommentController {
     return this.commentService.findList(source, listDto);
   }
 
+
+  @Get('list/new/:source')
+  @ApiOperation({ summary: "获取最新评论" })
+  public async newRootList (@Param('source') source: string) {
+    if (!this.commentService.isValidSource(source)) {
+      throw new MyHttpException({
+        code: ErrorCode.ParamsError.CODE,
+      });
+    }
+    return this.commentService.getRootNewList(source);
+  }
+
   @Get('list/:source/:id')
   @ApiOperation({ summary: "一级评论列表" })
-  public async list(@Param('source') source: string, @Param('id') id: string, @Query() listCommentDto: ListCommentDto) {
+  public async list (@Param('source') source: string, @Param('id') id: string, @Query() listCommentDto: ListCommentDto) {
     if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
@@ -58,7 +70,7 @@ export class CommentController {
 
   @Get('list/:source')
   @ApiOperation({ summary: "子评论列表" })
-  public async childList(@Param('source') source: string, @Query('rootID') rootID: string, @CurUser() user: User) {
+  public async childList (@Param('source') source: string, @Query('rootID') rootID: string, @CurUser() user: User) {
     if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
@@ -72,7 +84,7 @@ export class CommentController {
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "发表评论" })
-  public async comment(@Body() createCommentDto: CreateCommentDto, @Param('source') source: string, @CurUser() user: User) {
+  public async comment (@Body() createCommentDto: CreateCommentDto, @Param('source') source: string, @CurUser() user: User) {
     if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
@@ -86,7 +98,7 @@ export class CommentController {
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "删除评论" })
-  public async del(@Param('source') source: string, @Param('id') id: string, @CurUser() user: User) {
+  public async del (@Param('source') source: string, @Param('id') id: string, @CurUser() user: User) {
     if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
@@ -106,7 +118,7 @@ export class CommentController {
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论" })
-  public async update(@Param('source') source: string, @Param('id') id: string, @Body() updateDto: UpdateCommentDto, @CurUser() user: User) {
+  public async update (@Param('source') source: string, @Param('id') id: string, @Body() updateDto: UpdateCommentDto, @CurUser() user: User) {
     if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
@@ -126,7 +138,7 @@ export class CommentController {
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论状态" })
-  public async changeStatus(@Param('source') source: string, @Param('id') id: string, @Body() statusDto: ChangeCommentStatusDto) {
+  public async changeStatus (@Param('source') source: string, @Param('id') id: string, @Body() statusDto: ChangeCommentStatusDto) {
     if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }

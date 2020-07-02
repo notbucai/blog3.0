@@ -152,10 +152,14 @@ export default {
       this.$emit('reply', comment);
     },
     async handleClickLike (comment) {
-      const id = this.comment._id;
-      await this.$axios.put('/api/comment/' + this.source + '/' + id + '/like');
-      const likes = this.changeLike(comment.likes);
-      this.$set(comment, 'likes', likes);
+      const id = comment._id;
+      try {
+        const likes = this.changeLike(comment.likes);
+        await this.$axios.put('/api/comment/' + this.source + '/' + id + '/like');
+        this.$set(comment, 'likes', likes);
+      } catch (error) {
+        console.log('error', error);
+      }
     }
   }
 };

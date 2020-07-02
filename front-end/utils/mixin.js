@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-07-01 15:48:05
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-01 16:43:07
+ * @LastEditTime: 2020-07-02 13:08:47
  * @Description: 
  */
 export default {
@@ -16,11 +16,13 @@ export default {
     },
     changeLike (likes = []) {
       const user = this.$store.state.user;
+      likes = Object.assign([], likes);
+
       if (!user) {
         this.$store.commit('SET_LOGIN_OR_REGISTER_DIALOG');
-        return [];
+        throw new Error('未登陆');
+        return likes;
       }
-      likes = Object.assign([], likes);
       const id = user._id;
       const index = likes.findIndex(item => item == id);
       console.log('index', index);

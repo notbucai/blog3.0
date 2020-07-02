@@ -48,6 +48,7 @@
                   <v-icon left>mdi-eye</v-icon>
                   {{data.browseCount}}
                 </v-btn>
+                <!-- <v-btn color="success">123123123</v-btn> -->
                 <v-btn text :color="hasLike(data.likes)?'error':''" @click="handleClickLike">
                   <v-icon left :color="hasLike(data.likes)?'error':''">mdi-cards-heart</v-icon>
                   {{data.likes ? data.likes.length : 0}}
@@ -157,7 +158,7 @@ export default {
     $scrollListen (e) {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
       scrollTop += this.$vuetify.application.top + 40;
-      // console.log('scrollTop', scrollTop);
+      console.log('scrollTop', scrollTop);
 
       const titleList = [...document.querySelectorAll('h2,h3,h4,h5,h6')];
       const scrollTopList = titleList.map(el => {
@@ -207,9 +208,13 @@ export default {
     },
     async handleClickLike () {
       const aid = this.data._id;
-      await this.$axios.put('/api/article/' + aid + '/like');
-      const likes = this.changeLike(this.data.likes);
-      this.$set(this.data, 'likes', likes);
+      try {
+        const likes = this.changeLike(this.data.likes);
+        await this.$axios.put('/api/article/' + aid + '/like');
+        this.$set(this.data, 'likes', likes);
+      } catch (error) {
+        console.log('error', error);
+      }
     }
   }
 };

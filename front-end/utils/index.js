@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-07 13:05:39
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-01 09:17:28
+ * @LastEditTime: 2020-07-01 17:31:08
  * @Description: 
  */
 
@@ -12,7 +12,9 @@ const md = require('markdown-it')({
   linkify: true,
 })
   .use(require('markdown-it-highlightjs'))
-  .use(require('markdown-it-sanitizer'));
+  .use(require('./markdown-it-sanitizer'),{
+    extraTags:['details','summary']
+  });
 export const markdown = (content) => {
   const resRender = md.render(content || '');
   return resRender;

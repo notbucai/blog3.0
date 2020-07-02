@@ -13,6 +13,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/sitemap": "^2.4.0",
     "@nuxtjs/style-resources": "^1.0.0",
     "browser-image-compression": "^1.0.9",
     "cookie-universal-nuxt": "^2.1.3",

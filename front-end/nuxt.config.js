@@ -81,7 +81,8 @@ module.exports = {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     '@nuxtjs/style-resources',
-    'cookie-universal-nuxt'
+    'cookie-universal-nuxt',
+    
   ],
   styleResources: {
     scss: './assets/variables.scss',

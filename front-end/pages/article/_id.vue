@@ -103,6 +103,16 @@ import mixin from '@/utils/mixin';
 // import 'mavon-editor/dist/highlightjs'
 // import highlightjs from 'mavon-editor/dist/highlightjs/highlight.min.js';
 export default {
+  head () {
+    const { title, summary } = this.data;
+    return {
+      title,
+      meta: [
+        { hid: 'description', name: 'description', content: summary },
+        { hid: 'keywords', name: 'keywords', content: [title, summary].join() }
+      ]
+    }
+  },
   async asyncData ({ $axios, env, params, app }) {
     const id = params.id;
     const promiseList = [];

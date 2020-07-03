@@ -8,14 +8,20 @@
 <script>
 import CommentBox from '@/components/CommentBox.vue';
 export default {
-  scrollToTop:true,
-  async asyncData({ $axios, env, params }) {
+  scrollToTop: true,
+  head () {
+    return {
+      title: '留言',
+      meta: []
+    }
+  },
+  async asyncData ({ $axios, env, params }) {
     const id = '000000000000000000000000';
     const promiseList = [];
     promiseList.push($axios.get(`/api/comment/list/message/${id}`));
     const [comments] = await Promise.all(promiseList);
-    console.log('comments',comments);
-    
+    console.log('comments', comments);
+
     return {
       comments,
       id
@@ -24,10 +30,10 @@ export default {
   components: { CommentBox },
   props: {},
   computed: {},
-  data() {
+  data () {
     return {};
   },
-  mounted() {},
+  mounted () { },
   methods: {}
 };
 </script>

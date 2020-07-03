@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-23 11:19:02
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-03 21:07:11
+ * @LastEditTime: 2020-07-02 20:03:52
  * @Description: 
 --> 
 
@@ -29,6 +29,16 @@ import ArticleList from '@/components/ArticleList.vue';
 import TagList from '@/components/TagList.vue';
 
 export default {
+  head () {
+    const { name } = this;
+    return {
+      title: name,
+      meta: [
+        // { hid: 'description', name: 'description', content: name },
+        // { hid: 'keywords', name: 'keywords', content: [name].join() }
+      ]
+    }
+  },
   async asyncData ({ params, $axios }) {
     const { name } = params;
     const resData = await $axios.post(

@@ -6,7 +6,11 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: '不才的博客',
+    // title: '不才的博客',
+    titleTemplate: (title) => {
+
+      return title ? `${title} - 不才的博客` : '不才的博客'
+    },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },

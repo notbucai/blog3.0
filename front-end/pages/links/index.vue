@@ -17,7 +17,13 @@
               <a href="https://www.notbucai.com">https://www.notbucai.com</a>
             </div>
             <div>博客简介: 啥也不会</div>
-            <div style="overflow-wrap: break-word;">博客头像: <a href="https://image.notbucai.com/logo.png" target="_blank">https://image.notbucai.com/logo.png</a></div>
+            <div style="overflow-wrap: break-word;">
+              博客头像:
+              <a
+                href="https://image.notbucai.com/logo.png"
+                target="_blank"
+              >https://image.notbucai.com/logo.png</a>
+            </div>
           </div>
           <v-divider></v-divider>
           <div style="margin-top: 10px;">
@@ -50,6 +56,12 @@
 </template>
 <script>
 export default {
+  head () {
+    return {
+      title: '友邻',
+      meta: []
+    }
+  },
   async asyncData ({ isDev, route, store, env, params, query, req, res, redirect, error, $axios }) {
     const links = await $axios.get('/api/links/list');
     return {

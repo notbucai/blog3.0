@@ -35,14 +35,24 @@
 
                 <v-list-item-action>
                   <div class="d-flex align-center _user-pages">
-                    <v-btn icon :disabled="!userInfo.weiboID">
-                      <v-icon color="grey lighten-1" size="18">mdi-sina-weibo</v-icon>
+                    <v-btn icon :disabled="!userInfo.weiboID" target="_blank">
+                      <v-icon size="18">mdi-sina-weibo</v-icon>
                     </v-btn>
-                    <v-btn icon :disabled="!userInfo.githubID">
-                      <v-icon color="grey lighten-1" size="18">mdi-github</v-icon>
+                    <v-btn
+                      icon
+                      :disabled="!userInfo.githubID"
+                      :href="'https://github.com/'+userInfo.githubLogin"
+                      target="_blank"
+                    >
+                      <v-icon size="18">mdi-github</v-icon>
                     </v-btn>
-                    <v-btn icon :disabled="!userInfo.personalHomePage">
-                      <v-icon color="grey lighten-1" size="18">mdi-earth</v-icon>
+                    <v-btn
+                      icon
+                      :disabled="!userInfo.personalHomePage"
+                      :href="userInfo.personalHomePage"
+                      target="_blank"
+                    >
+                      <v-icon size="18">mdi-earth</v-icon>
                     </v-btn>
                   </div>
                   <v-btn
@@ -124,9 +134,18 @@ import ArticleItem from '@/components/article/ArticleItem.vue';
 import CommentItem from '@/components/CommentItem.vue';
 import { mapState } from 'vuex';
 export default {
+  head () {
+    const { username, numberroduce } = this.userInfo;
+    return {
+      title: username + '的个人资料',
+      meta: [
+        { hid: 'description', name: 'description', content: numberroduce || (username + '的个人资料') },
+        { hid: 'keywords', name: 'keywords', content: [username, '个人资料', '博客资料', numberroduce].join() }
+      ]
+    }
+  },
   async asyncData ({ $axios, params }) {
     const id = params.id;
-    console.log('id', id);
 
     const promiseList = [];
     promiseList.push($axios.get(`/api/users/${id}`));

@@ -82,7 +82,7 @@ module.exports = {
     '@nuxtjs/dotenv',
     '@nuxtjs/style-resources',
     'cookie-universal-nuxt',
-    
+    '@nuxtjs/sitemap'
   ],
   styleResources: {
     scss: './assets/variables.scss',

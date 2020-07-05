@@ -12,6 +12,9 @@ import { User } from '../../models/user.entity';
 import { AllListDto } from './dto/allList.dto';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
+import { NotifyType } from 'src/models/notify.entiy';
+import { NotifyService } from '../../common/notify.service';
+import { ArticleService } from '../article/article.service';
 
 
 @Injectable()
@@ -24,6 +27,9 @@ export class CommentService {
     // private readonly articleCommentRepository: Repository<ArticleComment>,
     @InjectModel(ArticleComment) public readonly articleCommentSchema: ReturnModelType<typeof ArticleComment>,
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
+    private readonly notifyService: NotifyService,
+    private readonly articleService: ArticleService,
+
   ) { }
 
   private getCommentSchema (source: string): any {
@@ -63,6 +69,48 @@ export class CommentService {
     comment.content = createCommentDto.content;
 
     return commentRepository.create(comment);
+  }
+  async getUserIdBySourceId (source: CommentConstants, id: ObjectID): Promise<ObjectID | null> {
+    // articleService
+
+    let Source: any;
+    if (source === CommentConstants.SourceArticle) {
+      Source = this.articleService.findBasisById(String(id));
+    } else if (source === CommentConstants.SourceMessage) {
+      Source = {
+        user: null
+      };
+    }
+    return Source.user;
+  }
+
+  async notifyComment (source: string, createCommentDto: CreateCommentDto, userID: ObjectID) {
+    let NType: NotifyType;
+
+    if (source == CommentConstants.SourceArticle) {
+      NType = NotifyType.acticleMessage;
+    } else if (source == CommentConstants.SourceMessage) {
+      NType = NotifyType.messagecomment;
+    }
+    // 判断是一级回复，还是二级回复
+    // 一级评论直接给资源用户发布
+    // 二级评论给上级评论的用户
+    let receive: ObjectID;
+    let sourceId: ObjectID;
+    if (createCommentDto.rootID) {
+      // 获取接受用户id
+      const sId = new ObjectID(createCommentDto.sourceID);
+      receive = await this.getUserIdBySourceId(source, sId);
+      sourceId = sId;
+    } else {
+      sourceId = new ObjectID(createCommentDto.sourceID);
+      // 判断是文章还是留言
+      // receive
+    }
+
+    if (NType) {
+      await this.notifyService.publish(NType, userID, receive, '评论了', sourceId);
+    }
   }
 
   async changeStatus (source: string, id: string, status: CommentStatus = 1) {
@@ -267,26 +315,29 @@ export class CommentService {
   async hashLikeByUid (source: string, aid: ObjectID, uid: ObjectID) {
     const commentRepository = this.getCommentSchema(source);
 
-    const article = await commentRepository.findById(aid);
+    const sourceObj = await commentRepository.findById(aid);
 
-    if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
-    if (article.likes) {
-      return !!article.likes.find((item: any) => {
+    if (!sourceObj) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+    if (sourceObj.likes) {
+      return !!sourceObj.likes.find((item: any) => {
         return uid.equals(item);
       });
     }
     return false;
   }
 
-  async likeById (source: string, aid: ObjectID, uid: ObjectID) {
+  async likeById (source: string, cid: ObjectID, uid: ObjectID) {
     const commentRepository = this.getCommentSchema(source);
-
-    // $push
-    return commentRepository.updateOne({ _id: aid }, {
+    const like = await commentRepository.updateOne({ _id: cid }, {
       $addToSet: {
         likes: uid
       }
     });
+    const article: Comment = await commentRepository.findById(cid);
+
+    await this.notifyService.publish(NotifyType.like, uid, article.user as ObjectID, '点赞了你的评论', cid);
+    // $push
+    return like;
   }
 
   async unlikeById (source: string, aid: ObjectID, uid: ObjectID) {

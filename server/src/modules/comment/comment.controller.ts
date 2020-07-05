@@ -21,7 +21,7 @@ import { ChangeCommentStatusDto } from './dto/status.dto';
 export class CommentController {
 
   constructor(
-    private readonly commentService: CommentService
+    private readonly commentService: CommentService,
   ) { }
 
 
@@ -91,6 +91,7 @@ export class CommentController {
       });
     }
     const comment = await this.commentService.create(source, createCommentDto, user._id);
+    await this.commentService.notifyComment(source, createCommentDto, user._id);
     return comment;
   }
 

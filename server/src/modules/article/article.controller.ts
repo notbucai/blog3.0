@@ -13,6 +13,8 @@ import { CurUser } from '../../core/decorators/user.decorator';
 import { ArticleListDto } from './dto/list.dto';
 import { ChangeArticleStatus } from './dto/status.dto';
 import { ArticleStatus } from '../../models/article.entity';
+import { NotifyService } from '../../common/notify.service';
+import { NotifyType } from 'src/models/notify.entiy';
 
 @Controller('article')
 @ApiTags('文章')
@@ -20,6 +22,7 @@ export class ArticleController {
 
   constructor(
     private readonly articleService: ArticleService,
+    private readonly notifyService: NotifyService,
   ) { }
 
   @Get('list/hot')
@@ -54,14 +57,15 @@ export class ArticleController {
   async like (@Param('id') id: string, @CurUser() user: User) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     const oid = new ObjectID(id);
-
+    const currentArticle = await this.articleService.findBasisById(id);
     const hasLike = await this.articleService.hashLikeByUid(oid, user._id);
-    console.log('hasLike',hasLike);
-    
+    console.log('hasLike', hasLike);
+
     if (hasLike) {
       await this.articleService.unlikeById(oid, user._id);
     } else {
       await this.articleService.likeById(oid, user._id);
+      await this.notifyService.publish(NotifyType.like, user._id, currentArticle.user as ObjectID, '点赞了你的文章', oid);
     }
     return "成功";
   }

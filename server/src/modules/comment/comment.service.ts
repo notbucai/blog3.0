@@ -343,7 +343,7 @@ export class CommentService {
       nType = NotifyType.messageCommentlike;
     }
     if (nType) {
-      await this.notifyService.publish(nType, uid, article.user as ObjectID, '点赞了你的评论', cid);
+      await this.notifyService.publish(nType, uid, article.user as ObjectID, '点赞了', cid);
     }
     // $push
     return like;

@@ -80,7 +80,7 @@ export default {
           let replyObj = reply;
           if (rootID) {
             const curr = this.comments.find(item => item._id == rootID);
-            console.log('curr', rootID, curr);
+            console.log('curr',reply, rootID, curr,this.comments);
 
             replyObj = curr;
           }

@@ -105,11 +105,11 @@ export default {
     async loadUserMessageCount () {
       const user = this.user;
       if (!user) return;
-      const count = await this.$axios.get('/api/users/notify/count');
-      this.messageCount = count;
+      const resData = await this.$axios.get('/api/users/notify/count');
+      this.messageCount = resData;
     },
     handleGoMessage () {
-
+      this.$router.push('/user/notice')
     }
   }
 };

@@ -6,8 +6,15 @@
     </v-tabs>
     <!-- router -->
     <v-row>
-      <v-col :md="9" :sm="12" :cols="12" v-show="tabIndex == '1'">
-        <v-card>123</v-card>
+      <v-col :md="9" :sm="12" :cols="12" v-show="tabIndex == 0">
+        <div class="mb-4" v-for="(item, index) in list" :key="index">
+          <v-card>
+            <v-card-title>
+              {{item.user?item.user.username:'有人'}}{{item.content}}你的
+              <nuxt-link :to="getPath(item)">{{item.type|notifyType}}</nuxt-link>
+            </v-card-title>
+          </v-card>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -15,7 +22,27 @@
 <script>
 export default {
   middleware: 'auth',
-  components: {},
+  async asyncData ({ $axios }) {
+    const list = await $axios.get('/api/users/notify/list');
+    return {
+      list
+    }
+  },
+  filters: {
+    notifyType (type) {
+
+      return {
+        1: "文章",
+        2: "评论",
+        3: "留言",
+        4: "系统",
+        5: "用户",
+        61: "文章",
+        62: "评论",
+        7: "文章",
+      }[type];
+    }
+  },
   computed: {
     tabIndex () {
       return 0;
@@ -23,6 +50,7 @@ export default {
   },
   data () {
     return {
+      list: [],
       tabRoutes: [
         {
           path: '1',
@@ -34,7 +62,39 @@ export default {
 
   mounted () { },
   methods: {
+    getPath ({ type, source }) {
 
+      // item.type
+      const itemGen = {
+        1: {
+          key: "_id",
+          url: "/article/"
+        },
+        2: {
+          key: "sourceID",
+          url: "/article/"
+        },
+        3: {
+          key: null,
+          url: "/message"
+        },
+        61: {
+          key: "sourceID",
+          url: "/article/"
+        },
+        62: {
+          key: null,
+          url: "/message"
+        },
+        7: {
+          key: "_id",
+          url: "/article/"
+        },
+      }[type];
+      if (!itemGen || !source) return '';
+
+      return itemGen.url + (source[itemGen.key] || '');
+    }
   }
 };
 </script>

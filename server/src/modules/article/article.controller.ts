@@ -64,7 +64,7 @@ export class ArticleController {
       await this.articleService.unlikeById(oid, user._id);
     } else {
       await this.articleService.likeById(oid, user._id);
-      await this.notifyService.publish(NotifyType.articlelike, user._id, currentArticle.user as ObjectID, '点赞了你的文章', oid);
+      await this.notifyService.publish(NotifyType.articlelike, user._id, currentArticle.user as ObjectID, '点赞了', oid);
     }
     return "成功";
   }

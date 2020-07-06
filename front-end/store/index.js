@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-01 15:40:02
+ * @LastEditTime: 2020-07-06 17:12:23
  * @Description: 
  */
 
@@ -49,5 +49,5 @@ export const actions = {
     const user = Object.assign({}, state.user);
     user[key] = value;
     commit('SET_USER', user);
-  }
+  },
 }

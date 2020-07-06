@@ -16,6 +16,18 @@
             <v-icon v-if="$vuetify.theme.dark">mdi-white-balance-sunny</v-icon>
             <v-icon v-if="!$vuetify.theme.dark">mdi-weather-night</v-icon>
           </v-btn>
+          <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
+            <v-badge
+              color="error"
+              :content="messageCount"
+              :value="messageCount"
+              small
+              overlap
+              @click="handleChangeTheme"
+            >
+              <v-icon>mdi-bell</v-icon>
+            </v-badge>
+          </v-btn>
           <v-btn color="info" elevation="0" @click="SET_LOGIN_OR_REGISTER_DIALOG" v-if="!user">登录</v-btn>
           <div class="pl-2" v-else>
             <current-user />
@@ -67,10 +79,20 @@ import ScrollToTop from '@/components/ScrollToTop.vue';
 export default {
   components: { LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop },
   data () {
-    return {};
+    return {
+      messageCount: 0
+    };
   },
   computed: {
     ...mapState(['user'])
+  },
+  watch: {
+    user () {
+      this.loadUserMessageCount();
+    }
+  },
+  mounted () {
+    this.loadUserMessageCount();
   },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
@@ -79,6 +101,15 @@ export default {
     },
     handleShowSide () {
       this.$store.commit('SET_SIDE_STATUS', true);
+    },
+    async loadUserMessageCount () {
+      const user = this.user;
+      if (!user) return;
+      const count = await this.$axios.get('/api/users/notify/count');
+      this.messageCount = count;
+    },
+    handleGoMessage () {
+
     }
   }
 };
@@ -95,9 +126,9 @@ export default {
   background-color: #151515;
 }
 @media (min-width: 960px) {
- .container{
-   width: 980px!important;
- } 
+  .container {
+    width: 980px !important;
+  }
 }
 .toolbar-content {
   /* max-width: 1440px;
@@ -140,7 +171,7 @@ export default {
     display: flex;
     align-items: center;
     .v-btn {
-      margin-left: 12px;
+      margin-right: 12px;
     }
   }
 }

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-03 11:21:49
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-03 14:10:10
+ * @LastEditTime: 2020-07-06 16:34:56
  * @Description: 
  */
 import { Controller, Post, UseGuards, Body } from "@nestjs/common";
@@ -65,7 +65,6 @@ export class AccountController {
     // 判断手机号验证码是否匹配
     // TODO: 验证验证码
     const code = await this.redisService.getValidationCode(bindDto.phone);
-    console.log('code', bindDto.phone, code);
 
     let isVerification = true;
     if (code !== bindDto.code) {

@@ -73,7 +73,6 @@ export class RoleController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('role', true)
   async bindAcls(@Param('id') id: string, @Body() bindAclDto: BindAclDto) {
-    console.log(id);
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ERROR.CODE })
     return this.roleService.bindAcls(id, bindAclDto);
   }

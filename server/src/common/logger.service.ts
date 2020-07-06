@@ -1,7 +1,9 @@
 import * as pino from 'pino';
 import * as moment from 'moment';
 
-const logger = pino();
+const logger = pino({
+    prettyPrint: process.env.NODE_ENV === 'development'
+});
 
 class LogData {
     public message?: string;
@@ -10,29 +12,29 @@ class LogData {
 
 export class LoggerService {
 
-    private writeLog(logMethod: string, logData: LogData) {
+    private writeLog (logMethod: string, logData: LogData) {
         logData = logData || { message: '', data: {} };
         (logData as any).timeLocal = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
         logger[logMethod](logData);
     }
 
-    debug(logData: LogData) {
+    debug (logData: LogData) {
         this.writeLog('debug', logData);
     }
 
-    info(logData: LogData) {
+    info (logData: LogData) {
         this.writeLog('info', logData);
     }
 
-    error(logData: LogData) {
+    error (logData: LogData) {
         this.writeLog('error', logData);
     }
 
-    warn(logData: LogData) {
+    warn (logData: LogData) {
         this.writeLog('warn', logData);
     }
 
-    fatal(logData: LogData) {
+    fatal (logData: LogData) {
         this.writeLog('fatal', logData);
     }
 }

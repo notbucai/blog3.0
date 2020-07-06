@@ -45,8 +45,6 @@ export class CommonController {
     type: ImgUploadDto,
   })
   public uploadImage(@UploadedFile() file: FileDto) {
-    console.log('file',file);
-    
     return this.cosService.uploadImage(file);
   }
 
@@ -62,7 +60,6 @@ export class CommonController {
     const reExpireSecond = CodeConstants.CODE_REREPEAT; // 重复请求 间隔 60 second
     // 判断间隔
     const oldCodeTime = await this.redisService.getValidationCodeTime(phone);
-    console.log('oldCodeTime:', oldCodeTime);
 
     if (oldCodeTime) {
       throw new MyHttpException({ code: ErrorCode.RequestRepeat.CODE });

@@ -8,10 +8,13 @@ import { EmailService } from './email.service';
 import { NotifyService } from './notify.service';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { Notify } from '../models/notify.entiy';
+import { Article } from '../models/article.entity';
+import { ArticleComment, MessageComment } from '../models/comment.entity';
+import { User } from '../models/user.entity';
 
 @Module({
   imports: [
-    TypegooseModule.forFeature([Notify]),
+    TypegooseModule.forFeature([Notify, Article, ArticleComment, MessageComment,User]),
   ],
   controllers: [
     CommonController

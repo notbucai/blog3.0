@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-18 20:34:46
  * @LastEditors: bucai
- * @LastEditTime: 2020-03-18 21:12:44
+ * @LastEditTime: 2020-07-06 16:34:12
  * @Description: 短信
  */
 import * as QcloudSms from 'qcloudsms_js'
@@ -27,11 +27,8 @@ export default class SMS {
     return new Promise((resolve: (value?: unknown) => void, reject: (reason?: any) => void) => {
       function callback(err, res, resData) {
         if (err) {
-          // console.log("err: ", err);
           reject(err.errmsg || err.message || err.toString());
         } else {
-          // console.log("request data: ", res.req);
-          // console.log("response data: ", resData);
           if (resData.result !== 0) {
             reject(resData.errmsg);
           } else {

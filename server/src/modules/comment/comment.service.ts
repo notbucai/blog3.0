@@ -50,7 +50,6 @@ export class CommentService {
     // sourceID 文章的时候是文章id 
     // parentID 表示父级评论id
     // rootID 表示一级评论  不填为一级
-    console.log(CommentConstants.CommonMessageID);
 
     const comment = new Comment();
     if (ObjectID.isValid(createCommentDto.rootID)) {
@@ -72,14 +71,11 @@ export class CommentService {
   }
   async getUserIdBySourceId (source: CommentConstants, id: ObjectID): Promise<ObjectID | null> {
     // articleService
-
     let Source: any;
     if (source === CommentConstants.SourceArticle) {
-      Source = this.articleService.findBasisById(String(id));
+      Source = await this.articleCommentSchema.findById(id);
     } else if (source === CommentConstants.SourceMessage) {
-      Source = {
-        user: null
-      };
+      Source = await this.messageCommentSchema.findById(id);
     }
     return Source.user;
   }
@@ -99,15 +95,21 @@ export class CommentService {
     let sourceId: ObjectID;
     if (createCommentDto.rootID) {
       // 获取接受用户id
-      const sId = new ObjectID(createCommentDto.sourceID);
+      const sId = new ObjectID(createCommentDto.parentID);
       receive = await this.getUserIdBySourceId(source, sId);
       sourceId = sId;
     } else {
       sourceId = new ObjectID(createCommentDto.sourceID);
       // 判断是文章还是留言
-      // receive
+      if (sourceId.equals(CommentConstants.CommonMessageID)) {
+        receive = null;
+      } else {
+        const article = await this.articleService.findById(String(sourceId));
+        if (article) {
+          receive = article.user as ObjectID;
+        }
+      }
     }
-
     if (NType) {
       await this.notifyService.publish(NType, userID, receive, '评论了', sourceId);
     }
@@ -334,8 +336,15 @@ export class CommentService {
       }
     });
     const article: Comment = await commentRepository.findById(cid);
-
-    await this.notifyService.publish(NotifyType.like, uid, article.user as ObjectID, '点赞了你的评论', cid);
+    let nType: NotifyType;
+    if (source == CommentConstants.SourceArticle) {
+      nType = NotifyType.articleCommentlike;
+    } else {
+      nType = NotifyType.messageCommentlike;
+    }
+    if (nType) {
+      await this.notifyService.publish(nType, uid, article.user as ObjectID, '点赞了你的评论', cid);
+    }
     // $push
     return like;
   }

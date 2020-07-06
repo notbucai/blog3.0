@@ -34,16 +34,12 @@ export class OauthService {
       throw Error('Unauthorized');
     }
 
-    console.log('result=> ', result.data);
-
     const userInfoURL = this.configService.github.userInfoURL;
     const userResult = await axios.get(userInfoURL, {
       headers: { Accept: 'application/json', Authorization: 'Bearer ' + result.data.access_token },
     });
-    // console.log('userResult=> ', userResult);
 
     if (!(userResult.status === 200 && !userResult.data.error)) {
-      console.log(userResult.data, userResult.status);
 
       throw Error('Unauthorized');
     }
@@ -102,7 +98,6 @@ export class OauthService {
     }
 
     const fn = isBindFns[state];
-    console.log('isBindFns', fn, isBindFns, state);
 
     if (typeof fn !== 'function') throw Error('Unauthorized');
     return fn(user)
@@ -115,7 +110,6 @@ export class OauthService {
     Object.keys(keys).map(key => {
       _user[key] = OAuthUser[keys[key]];
     });
-    console.log('user', _user);
 
     return this.userService.update(_user);
   }

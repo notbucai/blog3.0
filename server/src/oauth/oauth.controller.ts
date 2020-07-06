@@ -35,8 +35,6 @@ export class OauthController {
       id: string | number
     } = await this.oauthService.getOAuthUserInfo(state, code);
 
-    // console.log('oAuthUserinfo=>', oAuthUserinfo);
-
 
     let localUserinfo: User = await this.oauthService.findByUser(state, String(oAuthUserinfo.id));
     // 判断是否存在这个用户
@@ -46,7 +44,6 @@ export class OauthController {
       localUserinfo = await this.oauthService.saveUser(state, oAuthUserinfo, localUserinfo);
     }
     const token = await this.commonService.generateToken(localUserinfo);
-    console.log('localUserinfo', localUserinfo);
 
     await this.redisService.setUserToken(String(localUserinfo._id), token);
     await this.redisService.setUser(localUserinfo);

@@ -37,8 +37,6 @@ export class TagService {
     const tags = await this.tagSchema.find();
     const p_all = tags.map(async (item) => {
       item = item.toJSON()
-      console.log('item._id', item._id);
-
       item.articleCount = await this.articleSchema.countDocuments({ tags: { $elemMatch: { $eq: item._id } } });
       return item;
     });
@@ -47,7 +45,6 @@ export class TagService {
   
   async findCountGreaterZero() {
     const tags = await this.findAll();
-    console.log('tags', tags);
 
     return tags.filter(item => item.articleCount);
   }

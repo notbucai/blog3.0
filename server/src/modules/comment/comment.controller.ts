@@ -148,7 +148,6 @@ export class CommentController {
     const oid = new ObjectID(id);
 
     const hasLike = await this.commentService.hashLikeByUid(source, oid, user._id);
-    console.log('hasLike', hasLike);
 
     if (hasLike) {
       await this.commentService.unlikeById(source, oid, user._id);

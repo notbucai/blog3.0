@@ -59,13 +59,12 @@ export class ArticleController {
     const oid = new ObjectID(id);
     const currentArticle = await this.articleService.findBasisById(id);
     const hasLike = await this.articleService.hashLikeByUid(oid, user._id);
-    console.log('hasLike', hasLike);
 
     if (hasLike) {
       await this.articleService.unlikeById(oid, user._id);
     } else {
       await this.articleService.likeById(oid, user._id);
-      await this.notifyService.publish(NotifyType.like, user._id, currentArticle.user as ObjectID, '点赞了你的文章', oid);
+      await this.notifyService.publish(NotifyType.articlelike, user._id, currentArticle.user as ObjectID, '点赞了你的文章', oid);
     }
     return "成功";
   }

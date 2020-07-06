@@ -6,15 +6,17 @@ import { ErrorCode } from '../../constants/error';
 import { MyHttpException } from '../exception/my-http.exception';
 import { Role } from '../../models/role.entity';
 import { Acl } from '../../models/acl.entity';
+import { LoggerService } from 'src/common/logger.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(
         private readonly reflector: Reflector,
         private readonly configService: ConfigService,
+        private readonly loggerService: LoggerService,
     ) { }
 
-    canActivate(context: ExecutionContext): boolean {
+    canActivate (context: ExecutionContext): boolean {
         const _role = this.reflector.get<any>('roles', context.getHandler());
         if (!_role || !_role.name) {
             return true;
@@ -29,8 +31,12 @@ export class RolesGuard implements CanActivate {
         if (_role.isAdmin) {
             return user.isAdmin;
         }
-
-        console.log(user.role.acls, _role.name);
+        this.loggerService.info({
+            data: {
+                acls: user.role.acls, name: _role.name
+            },
+            message: "canActivate"
+        });
 
         if (user.role && user.role.acls) {
             const hasRoleFn = (acl: Acl) => acl.name == _role.name;

@@ -42,14 +42,15 @@ export class UserController {
   @Post('/signup')
   @ApiOperation({ summary: "注册" })
   public async signup (@Body() signupDto: SignUpDto) {
-    this.logger.info({
-      data: signupDto
-    });
 
     // TODO: 验证验证码
     const code = await this.redisService.getValidationCode(signupDto.phone);
-    console.log('code', signupDto.phone, code);
-
+    this.logger.info({
+      data: {
+        signupDto,
+        code
+      },
+    });
     let isVerification = true;
     if (code !== signupDto.code) {
       isVerification = false;

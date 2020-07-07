@@ -148,7 +148,9 @@ export class UserController {
   @ApiBearerAuth()
   async notifyCount (@CurUser() user: User) {
     const count = await this.notifyService.getNoReadNotifyConuntByUId(user._id);
-    return count || 0;
+    return {
+      unread: count || 0
+    };
   }
 
   /**

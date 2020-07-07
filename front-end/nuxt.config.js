@@ -88,6 +88,9 @@ module.exports = {
     'cookie-universal-nuxt',
     '@nuxtjs/sitemap'
   ],
+  sitemap: {
+
+  },
   styleResources: {
     scss: './assets/variables.scss',
   },

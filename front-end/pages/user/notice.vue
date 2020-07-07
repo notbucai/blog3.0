@@ -60,7 +60,9 @@ export default {
     };
   },
 
-  mounted () { },
+  mounted () {
+    this.$store.dispatch('loadNoticeStatus');
+  },
   methods: {
     getPath ({ type, source }) {
 

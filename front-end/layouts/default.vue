@@ -19,11 +19,10 @@
           <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
             <v-badge
               color="error"
-              :content="messageCount"
-              :value="messageCount"
+              :content="noticeStatus.unread"
+              :value="noticeStatus&&noticeStatus.unread"
               small
               overlap
-              @click="handleChangeTheme"
             >
               <v-icon>mdi-bell</v-icon>
             </v-badge>
@@ -71,7 +70,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState, mapActions } from 'vuex';
 import LoginOrRegister from '@/components/LoginOrRegister.vue';
 import CurrentUser from '@/components/CurrentUser.vue';
 import NavigationDrawer from '@/components/NavigationDrawer.vue';
@@ -80,19 +79,19 @@ export default {
   components: { LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop },
   data () {
     return {
-      messageCount: 0
+
     };
   },
   computed: {
-    ...mapState(['user'])
+    ...mapState(['user', 'noticeStatus'])
   },
   watch: {
     user () {
-      this.loadUserMessageCount();
+      // this.loadUserMessageCount();
     }
   },
   mounted () {
-    this.loadUserMessageCount();
+    this.handleLoadNoticeStatus();
   },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
@@ -102,14 +101,21 @@ export default {
     handleShowSide () {
       this.$store.commit('SET_SIDE_STATUS', true);
     },
-    async loadUserMessageCount () {
-      const user = this.user;
-      if (!user) return;
-      const resData = await this.$axios.get('/api/users/notify/count');
-      this.messageCount = resData;
-    },
+    // async loadUserMessageCount () {
+    //   const user = this.user;
+    //   if (!user) return;
+    //   const resData = await this.$axios.get('/api/users/notify/count');
+    //   this.messageCount = resData;
+    // },
     handleGoMessage () {
       this.$router.push('/user/notice')
+    },
+    async handleLoadNoticeStatus () {
+      await this.$store.dispatch('loadNoticeStatus');
+
+      setTimeout(() => {
+        this.handleLoadNoticeStatus();
+      }, 3000);
     }
   }
 };

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-06 17:12:23
+ * @LastEditTime: 2020-07-07 10:20:50
  * @Description: 
  */
 
@@ -11,6 +11,9 @@ export const state = () => ({
   token: '',
   user: null,
   sideStatus: false,
+  noticeStatus: {
+    unread: 0
+  }
 });
 export const mutations = {
   SET_SIDE_STATUS (state, val) {
@@ -24,6 +27,9 @@ export const mutations = {
   },
   SET_USER (state, payload) {
     state.user = payload;
+  },
+  SET_NOTICE_STATUS (state, payload) {
+    state.noticeStatus = payload;
   },
 }
 export const actions = {
@@ -50,4 +56,9 @@ export const actions = {
     user[key] = value;
     commit('SET_USER', user);
   },
+  async loadNoticeStatus ({ commit, state }) {
+    if (!state.user) return;
+    const resData = await this.$axios.get('/api/users/notify/count');
+    commit('SET_NOTICE_STATUS', resData);
+  }
 }

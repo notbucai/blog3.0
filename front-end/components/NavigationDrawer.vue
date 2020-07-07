@@ -6,8 +6,16 @@
           <v-icon v-if="$vuetify.theme.dark">mdi-white-balance-sunny</v-icon>
           <v-icon v-if="!$vuetify.theme.dark">mdi-weather-night</v-icon>
         </v-btn>
-        <v-btn elevation="0" @click="handleChangeTheme" text small>
-          <v-icon>mdi-white-balance-sunny</v-icon>
+        <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
+          <v-badge
+            color="error"
+            :content="noticeStatus.unread"
+            :value="noticeStatus&&noticeStatus.unread"
+            small
+            overlap
+          >
+            <v-icon>mdi-bell</v-icon>
+          </v-badge>
         </v-btn>
       </div>
       <div class="d-flex flex-column align-center justify-center pa-6">
@@ -51,7 +59,7 @@
 import { mapState, mapMutations } from 'vuex';
 export default {
   computed: {
-    ...mapState(['sideStatus', 'user']),
+    ...mapState(['sideStatus', 'user', 'noticeStatus']),
     sideStatusComputed: {
       get () {
         return this.sideStatus;
@@ -92,6 +100,9 @@ export default {
     }
   },
   methods: {
+    handleGoMessage () {
+      this.$router.push('/user/notice')
+    },
     handleLogin () {
       this.$store.commit('SET_LOGIN_OR_REGISTER_DIALOG');
       this.$store.commit('SET_SIDE_STATUS', false);

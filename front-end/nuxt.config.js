@@ -1,4 +1,5 @@
 const isDark = new Date().getHours() > 19 && new Date().getHours() < 7;
+const axios = require('axios');
 
 module.exports = {
   mode: 'universal',
@@ -89,7 +90,18 @@ module.exports = {
     '@nuxtjs/sitemap'
   ],
   sitemap: {
-
+    hostname: "https://www.notbucai.com/",
+    gzip: true,
+    routes: async () => {
+      const list = [];
+      const res = await axios.get('https://www.notbucai.com/api/article/list/all?page_index=1&page_size=100000000')
+      const resData = res.data;
+      if (resData.code === 0) {
+        const a_list = resData.data.list.map((item) => `/article/${item._id}`);
+        list.push(...a_list);
+      }
+      return list;
+    }
   },
   styleResources: {
     scss: './assets/variables.scss',

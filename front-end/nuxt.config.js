@@ -1,5 +1,6 @@
 const isDark = new Date().getHours() > 19 && new Date().getHours() < 7;
 const axios = require('axios');
+const minifyTheme = require('minify-css-string');
 
 module.exports = {
   mode: 'universal',
@@ -24,6 +25,15 @@ module.exports = {
     script: [
       { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9' }, /*引入百度统计的js*/
     ]
+  },
+  extractCSS: true,
+  optimizeCSS: {
+    assetNameRegExp: /\.optimize\.css$/g,
+    // cssProcessor: require('cssnano'),
+    cssProcessorPluginOptions: {
+      preset: ['default', { discardComments: { removeAll: true } }],
+    },
+    canPrint: true
   },
   /*
   ** Customize the progress-bar color
@@ -55,9 +65,24 @@ module.exports = {
   /*
   ** Nuxt.js dev-modules
   */
-  buildModules: [
+  //  modules: [
+
+  //   ],
+  /*
+  ** Nuxt.js modules
+  */
+  modules: [
+    // Doc: https://axios.nuxtjs.org/usage
+    '@nuxtjs/axios',
+    // Doc: https://github.com/nuxt-community/dotenv-module
+    '@nuxtjs/dotenv',
+    '@nuxtjs/style-resources',
+    'cookie-universal-nuxt',
+    '@nuxtjs/sitemap',
     ['@nuxtjs/vuetify', {
+
       theme: {
+        options: { minifyTheme: minifyTheme.default },
         icons: {
           iconfont: 'mdi',
         },
@@ -76,18 +101,6 @@ module.exports = {
         dark: isDark
       }
     }]
-  ],
-  /*
-  ** Nuxt.js modules
-  */
-  modules: [
-    // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
-    // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv',
-    '@nuxtjs/style-resources',
-    'cookie-universal-nuxt',
-    '@nuxtjs/sitemap'
   ],
   sitemap: {
     hostname: "https://www.notbucai.com/",
@@ -124,6 +137,10 @@ module.exports = {
     vendor: [
       'vue-cropperjs'
     ],
+    extractCSS: true,
+    splitChunks: {
+      // layouts: true
+    },
     /*
     ** You can extend webpack config here
     */

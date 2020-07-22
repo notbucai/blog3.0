@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-23 09:31:46
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-20 15:12:42
+ * @LastEditTime: 2020-07-22 15:52:32
  * @Description: 共用接口
  */
 
@@ -35,6 +35,10 @@ export const articleList = (params) => {
 
 export const changeArticleStatus = (id, data) => {
   return $put(`/article/${id}/status`, data);
+}
+
+export const changeArticleUpStatus = (id, data) => {
+  return $put(`/article/${id}/upstatus`, data);
 }
 
 export const commentList = (source, params) => {

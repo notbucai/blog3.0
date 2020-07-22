@@ -48,13 +48,7 @@
           max-width="200"
         ></el-table-column>
 
-        <el-table-column
-          prop="user"
-          align="center"
-          show-overflow-tooltip
-          label="作者"
-          max-width="100"
-        >
+        <el-table-column prop="user" align="center" show-overflow-tooltip label="作者" max-width="50">
           <template slot-scope="scope">
             <div v-if="scope.row.user">{{scope.row.user.username}}</div>
           </template>
@@ -74,7 +68,7 @@
           align="center"
           show-overflow-tooltip
           label="评论数量"
-          max-width="100"
+          max-width="20"
         ></el-table-column>
 
         <el-table-column
@@ -82,7 +76,7 @@
           align="center"
           show-overflow-tooltip
           label="浏览数量"
-          max-width="100"
+          max-width="20"
         ></el-table-column>
 
         <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
@@ -97,9 +91,19 @@
             <el-tag type="info">{{scope.row.status | articleStatus}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="100">
+        <el-table-column label="操作" min-width="180">
           <template slot-scope="scope">
             <el-button size="mini" plain @click="handleChangeStatus(scope.row)">改变状态</el-button>
+            <template v-if="scope.row.status == 2">
+              <el-button
+                size="mini"
+                type="primary"
+                v-if="scope.row.up != 1"
+                plain
+                @click="handleChangeUpStatus(scope.row,1)"
+              >设为置顶</el-button>
+              <el-button size="mini" v-else plain @click="handleChangeUpStatus(scope.row,0)">取消置顶</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -141,7 +145,7 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  data() {
+  data () {
     return {
       current: null,
       dialogFormVisible: false,
@@ -158,16 +162,16 @@ export default {
   computed: {
     ...mapState(['user']),
 
-    statusList() {
+    statusList () {
       return ['审核中', '审核通过', '审核未通过'];
     }
   },
-  created() {
+  created () {
     this.loadData();
   },
   filters: {},
   methods: {
-    async loadData() {
+    async loadData () {
       this.loading = true;
       const { page_size, page_index, keyword } = this;
       const query = {
@@ -183,27 +187,33 @@ export default {
       this.tableData = data.list;
       this.total = data.total;
     },
-    handleSearch() {
+    handleSearch () {
       // const keyword;
       this.page_index = 1;
       this.loadData();
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(`每页 ${val} 条`);
       this.page_size = val;
       this.loadData();
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       console.log(`当前页: ${val}`);
       this.page_index = val;
       this.loadData();
     },
-    handleChangeStatus(item) {
+    handleChangeStatus (item) {
       this.dialogFormVisible = true;
       this.currentRadio = item.status || 1;
       this.current = item;
     },
-    async handleChangeRoleCofirm() {
+    async  handleChangeUpStatus (item, status) {
+      const id = item._id;
+      const [err, data] = await this.$http.changeArticleUpStatus(id, { status });
+      this.$notify.success({ title: '操作成功' });
+      this.$set(item, 'up', status);
+    },
+    async handleChangeRoleCofirm () {
       this.changStatusLoading = true;
       // TODO: 发送AJAX
       const id = this.current._id;

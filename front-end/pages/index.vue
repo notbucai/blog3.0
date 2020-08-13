@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <banner :recommendedList="recommendedList" v-if="recommendedList && recommendedList.length"/>
+    <banner :recommendedList="recommendedList" v-if="recommendedList && recommendedList.length" />
     <!-- class="my-4" -->
     <v-row>
       <v-col :md="8" :sm="12" :cols="12">
@@ -14,6 +14,8 @@
       </v-col>
       <v-col :md="4" :sm="12" :cols="12">
         <tag-list :taglist="taglist" />
+        <side-random-article :list="randomList" />
+        <side-comment-list :list="commentlist" />
       </v-col>
     </v-row>
   </v-container>
@@ -22,25 +24,32 @@
 <script>
 import ArticleItem from '@/components/article/ArticleItem.vue';
 import Banner from '@/components/Banner.vue';
+import SideRandomArticle from '@/components/SideRandomArticle.vue';
+import SideCommentList from '@/components/SideCommentList.vue';
 import ArticleList from '@/components/ArticleList.vue';
 import TagList from '@/components/TagList.vue';
 export default {
-  scrollToTop:true,
-  async asyncData({ $axios }) {
+  scrollToTop: true,
+  async asyncData ({ $axios }) {
     const promiseList = [];
     promiseList.push($axios.get('/api/article/list/hot'));
     promiseList.push($axios.get('/api/article/list/all'));
     promiseList.push($axios.get('/api/tag/list/effect'));
-    const [hotList, allList, taglist] = await Promise.all(promiseList);
+    promiseList.push($axios.get('/api/article/list/random'));
+    promiseList.push($axios.get('/api//comment/list/new/article'));
+
+    const [hotList, allList, taglist, randomList, commentlist] = await Promise.all(promiseList);
     return {
       taglist: taglist || [],
       recommendedList: hotList.list || [],
-      articleStore: allList || {}
+      articleStore: allList || {},
+      randomList: randomList || [],
+      commentlist: commentlist || []
     };
   },
-  mounted() {},
-  components: { ArticleItem, Banner, ArticleList,TagList },
-  data() {
+  mounted () { },
+  components: { ArticleItem, Banner, ArticleList, TagList, SideRandomArticle, SideCommentList },
+  data () {
     return {
       cycle: false,
       page_index: 1,
@@ -49,11 +58,13 @@ export default {
         list: [],
         total: 999
       },
-      recommendedList: []
+      randomList: [],
+      recommendedList: [],
+      commentlist: [],
     };
   },
   methods: {
-    async loadData() {
+    async loadData () {
       const { total, list } = this.articleStore;
       if (total <= list.length) return;
       this.page_index++;

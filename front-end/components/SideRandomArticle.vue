@@ -1,25 +1,25 @@
 <template>
-  <div class="SideCommentList">
+  <div class="SideRandomArticle">
     <v-container fluid class="my-1">
       <v-row justify="space-between" align="center">
-        <div class="title">最新评论</div>
+        <div class="title">随机文章</div>
       </v-row>
     </v-container>
     <v-card class="mx-auto mb-6 pa-2">
       <nuxt-link
-        :to="'/article/'+item.sourceID+'#comment'"
-        v-for="(item, index) in cList"
+        :to="'/article/'+item._id"
+        v-for="(item, index) in list"
         :key="index"
         v-ripple
         class="article-item"
       >
         <div class="article-item-left rounded-sm">
-          <div class="left-month">User</div>
-          <div class="left-day">{{item.user ? item.user.username : '匿名'}}</div>
+          <div class="left-month">View</div>
+          <div class="left-day">{{item.browseCount}}</div>
         </div>
         <div class="article-item-right">
-          <div class="right-name">{{item.content}}</div>
-          <div class="right-user">{{item.updatedAt | format}}</div>
+          <div class="right-name">{{item.title}}</div>
+          <div class="right-user">{{item.summary}}</div>
         </div>
       </nuxt-link>
     </v-card>
@@ -28,11 +28,7 @@
 <script>
 export default {
 
-  computed: {
-    cList () {
-      return this.list.slice(0, 5);
-    }
-  },
+  computed: {},
   props: {
     list: Array
   },
@@ -45,7 +41,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.SideCommentList {
+.SideRandomArticle {
   ::v-deep {
     .nuxt-link-active {
       color: inherit;
@@ -77,31 +73,31 @@ export default {
       box-shadow: 0 0 12px rgba($color: #000, $alpha: 0.04);
     }
     &-left {
+
       min-width: 70px;
       max-width: 70px;
+
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       /* padding: 12px; */
-      background-color: #ffeeec;
+      background-color: #eef8ff;
       border-radius: 4px;
       overflow: hidden;
       .left-month {
         width: 100%;
         text-align: center;
-        color: #f96150;
+        color: #2096f3;
         overflow: hidden;
-        background-color: #fed0cb;
+        background-color: #bde3ff;
         border-radius: 4px 4px 0 0;
         font-size: 12px;
         padding: 2px 8px;
       }
       .left-day {
         flex: 1;
-        font-size: 12px;
-        padding: 6px 0;
-        color: #ff351e;
+        color: #008fff;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -130,7 +126,6 @@ export default {
         text-overflow: ellipsis;
         overflow: hidden;
         word-break: break-all;
-        color: #888;
       }
     }
   }

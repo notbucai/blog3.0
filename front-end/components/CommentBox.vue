@@ -37,7 +37,7 @@ export default {
       type: String,
       default: 'article'
     },
-    id: String
+    cid: String
   },
   computed: {
     ...mapState(['user'])
@@ -56,7 +56,7 @@ export default {
     async handleComment (content) {
       this.submitIng = true;
       const source = this.source;
-      const id = this.id;
+      const id = this.cid;
       const reply = this.reply;
       const formData = {
         sourceID: id,

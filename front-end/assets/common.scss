@@ -2,7 +2,9 @@ html,
 body {
   font-size: 16px;
 }
-
+.v-application a{
+  color: initial;
+}
 .theme--light.v-btn .theme--light.v-icon {
   color: #666;
 }

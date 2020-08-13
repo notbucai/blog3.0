@@ -6,7 +6,7 @@
           <div class="acticle_pic" v-if="data.coverURL">
             <v-img
               :aspect-ratio="16/9"
-              :src="data.coverURL"
+              :src="data.coverURL+'?imageMogr2/thumbnail/800x'"
               :lazy-src="data.coverURL+'?imageMogr2/thumbnail/100x'"
             ></v-img>
           </div>
@@ -72,7 +72,7 @@
             </nuxt-link>
           </div>
           <v-divider></v-divider>
-          <Comment-box source="article" :id="id" :comments="comments" />
+          <comment-box source="article" id="comment" :cid="id" :comments="comments" />
         </v-card>
       </v-col>
       <v-col :md="4" :sm="12" :cols="12">

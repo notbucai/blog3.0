@@ -12,7 +12,7 @@
     <v-carousel-item v-for="(item, i) in recommendedList" :key="i">
       <v-img
         class="align-end carousel-image"
-        :src="item.coverURL"
+        :src="item.coverURL+'?imageMogr2/thumbnail/800x'"
         :height="carouselHeight"
         :lazy-src="item.coverURL+'?imageMogr2/thumbnail/100x'"
       >
@@ -35,12 +35,12 @@ export default {
     recommendedList: Array
   },
   computed: {},
-  data() {
+  data () {
     return {
       carouselHeight: 800
     };
   },
-  mounted() {
+  mounted () {
     const el = this.$refs['carousel'].$el;
     const top = this.$dom.getElementToPageTop(el);
     console.log(top);

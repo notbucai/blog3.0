@@ -172,6 +172,36 @@ export class ArticleService {
     }
   }
 
+  async randomList (len: number) {
+    return await this.articleSchema
+      .aggregate([
+        {
+          $match: {
+            status: ArticleStatus.VerifySuccess
+          }
+        },
+        { $sample: { size: len } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user"
+          }
+        },
+        { $unwind: "$user" },
+        {
+          $project: {
+            // _id: 1,
+            htmlContent: 0,
+            content: 0,
+            pass: 0,
+            // "user": "$user"
+          }
+        },
+      ]);
+  }
+
   async pageHotList () {
 
     const a_list = await this.articleSchema

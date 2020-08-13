@@ -36,6 +36,13 @@ export class ArticleController {
     return this.articleService.pageList(ListDto, ArticleStatus.VerifySuccess, true);
   }
 
+  @Get('list/random')
+  async randomList (@Query('len') len: string = '3') {
+    const size = parseInt(len);
+    if (Number.isNaN(size)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.articleService.randomList(size);
+  }
+
   @Get('list')
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)

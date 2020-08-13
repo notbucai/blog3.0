@@ -159,6 +159,7 @@ export default {
         this.handleGoToScroll(hash)
       });
     }
+    this.$scrollListenCallback = this.$scrollListen.bind(this);
     this.initMenuScrollListen();
   },
   beforeDestroy () {
@@ -192,10 +193,10 @@ export default {
 
     },
     initMenuScrollListen () {
-      window.addEventListener('scroll', this.$scrollListen.bind(this));
+      window.addEventListener('scroll', this.$scrollListenCallback);
     },
     removeMenuScrollListen () {
-      window.removeEventListener('scroll', this.$scrollListen.bind(this));
+      window.removeEventListener('scroll', this.$scrollListenCallback);
     },
     getElementToPageTop (el) {
       const box = el.getBoundingClientRect();

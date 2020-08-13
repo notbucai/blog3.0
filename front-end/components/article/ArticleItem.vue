@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto mb-6 article-item">
+  <v-card class="mx-auto mb-6 article-item" :shaped="article.up == 1">
     <v-lazy>
       <v-img
         :aspect-ratio="18/9"
@@ -10,7 +10,10 @@
     </v-lazy>
 
     <v-card-title>
-      <nuxt-link :to="`/article/${article._id}`" class="title_a">{{article.title}}</nuxt-link>
+      <nuxt-link :to="`/article/${article._id}`" class="title_a">
+        <span v-if="article.up == 1" class="body-2">[置顶]</span>
+        {{article.title}}
+      </nuxt-link>
     </v-card-title>
     <v-card-subtitle>{{article.createdAt | format}}</v-card-subtitle>
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { Article, ArticleStatus } from '../../models/article.entity';
+import { Article, ArticleStatus, ArticleUpStatus } from '../../models/article.entity';
 import { Tag } from '../../models/tag.entity';
 import { InjectModel } from 'nestjs-typegoose';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
@@ -48,6 +48,11 @@ export class ArticleService {
 
   async changeStatus (id: string, status: ArticleStatus = 1) {
     return this.articleSchema.findByIdAndUpdate(id, { $set: { status } })
+  }
+
+
+  async changeUpStatus (id: string, status: ArticleUpStatus) {
+    return this.articleSchema.findByIdAndUpdate(id, { $set: { up: status } })
   }
 
   async deleteById (id: string) {
@@ -120,10 +125,16 @@ export class ArticleService {
       total
     }
   }
-  async pageList (listDto: ArticleListDto, status?: ArticleStatus) {
+
+  async pageList (listDto: ArticleListDto, status?: ArticleStatus, up?: boolean) {
     const where: any = {};
+    const sort1: any = { _id: -1, };
+    const sort2: any = {};
     if (status) {
       where.status = status;
+    }
+    if (up) {
+      sort2.up = -1;
     }
 
     const whereOrKeys = ['title', 'summary'];
@@ -136,7 +147,8 @@ export class ArticleService {
 
     const a_list = await this.articleSchema
       .find(where, '-htmlContent -content')
-      .sort({ _id: -1 })
+      .sort(sort2)
+      .sort(sort1)
       .skip(page_index * page_size)
       .limit(page_size)
       .populate([{ path: 'user', select: "-pass" }])

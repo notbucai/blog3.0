@@ -15,6 +15,7 @@ import { ChangeArticleStatus } from './dto/status.dto';
 import { ArticleStatus } from '../../models/article.entity';
 import { NotifyService } from '../../common/notify.service';
 import { NotifyType } from 'src/models/notify.entiy';
+import { ChangeArticleUpStatus } from './dto/upStatus.dto';
 
 @Controller('article')
 @ApiTags('文章')
@@ -32,7 +33,7 @@ export class ArticleController {
 
   @Get('list/all')
   async pageList (@Query() ListDto: ArticleListDto) {
-    return this.articleService.pageList(ListDto, ArticleStatus.VerifySuccess);
+    return this.articleService.pageList(ListDto, ArticleStatus.VerifySuccess, true);
   }
 
   @Get('list')
@@ -110,5 +111,15 @@ export class ArticleController {
   async changeStatus (@Param('id') id: string, @Body() body: ChangeArticleStatus) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.articleService.changeStatus(id, body.status);
+  }
+
+  @Put(':id/upstatus')
+  @ApiBearerAuth()
+  @UseGuards(ActiveGuard, RolesGuard)
+  @Roles('ChangeArticleUpStatus')
+  // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
+  async ChangeUpStatus (@Param('id') id: string, @Body() body: ChangeArticleUpStatus) {
+    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.articleService.changeUpStatus(id, body.status);
   }
 }

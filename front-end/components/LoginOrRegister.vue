@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-11 23:12:14
+ * @LastEditTime: 2020-08-13 11:28:32
  * @Description: 
  -->
 <template>
@@ -164,8 +164,8 @@ export default {
     handleAuthLogin (type) {
       console.log('type', type);
       const url = this.$constant.STATE_LIST['login_' + type];
-      console.log('url',url);
-      
+      console.log('url', url);
+
       const son = window.open(url, '绑定');
       son.addEventListener('message', (e) => {
         if (e.data == 'close') {
@@ -217,7 +217,9 @@ export default {
         this.submitIng = true;
         const resData = await this.$axios.post(apiAddr, form);
         console.log('resData', resData);
-        this.$cookies.set('Authorization', resData);
+        this.$cookies.set('Authorization', resData, {
+          maxAge: 1 * 60 * 60
+        });
 
         this.$store.commit('SET_TOKEN', resData);
         this.$store.commit('SET_LOGIN_OR_REGISTER_DIALOG');

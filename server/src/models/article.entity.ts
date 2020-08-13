@@ -8,6 +8,10 @@ export enum ArticleStatus {
   VerifySuccess = 2, // 审核通过
   VerifyFail = 3, // 审核未通过
 }
+export enum ArticleUpStatus {
+  Default = 0, // 默认
+  Up = 1, // 置顶
+}
 
 export class Article extends Base {
 
@@ -55,5 +59,8 @@ export class Article extends Base {
 
   @arrayProp({ itemsRef: User })
   likes: Array<Ref<User>>
+
+  @prop({ enum: ArticleUpStatus, default: ArticleUpStatus.Default })
+  up?: ArticleUpStatus
 
 }

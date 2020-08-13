@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 17:13:09
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-11 23:33:57
+ * @LastEditTime: 2020-08-13 11:28:39
  * @Description: 
 --> 
 <template>
@@ -12,7 +12,7 @@
 </template>
 <script>
 export default {
-  async asyncData ({ route, app, $axios,store }) {
+  async asyncData ({ route, app, $axios, store }) {
 
     const res = {
       message: "失败",
@@ -26,7 +26,9 @@ export default {
           code, state
         }
       });
-      app.$cookies.set('Authorization', ''+resData);
+      app.$cookies.set('Authorization', '' + resData, {
+        maxAge: 1 * 60 * 60
+      });
       store.commit('SET_TOKEN', resData);
       res.message = "成功";
       res.status = true;

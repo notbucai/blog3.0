@@ -4,7 +4,7 @@
       <v-img
         :aspect-ratio="18/9"
         v-if="article.coverURL"
-        :src="article.coverURL"
+        :src="article.coverURL+'?imageMogr2/thumbnail/800x'"
         :lazy-src="article.coverURL+'?imageMogr2/thumbnail/100x'"
       />
     </v-lazy>

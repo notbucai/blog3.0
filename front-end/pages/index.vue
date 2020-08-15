@@ -1,24 +1,33 @@
 <template>
-  <v-container>
-    <banner :recommendedList="recommendedList" v-if="recommendedList && recommendedList.length" />
-    <!-- class="my-4" -->
-    <v-row>
-      <v-col :md="8" :sm="12" :cols="12">
-        <v-container fluid class="py-0">
-          <v-row justify="space-between" align="center">
-            <div class="title">全部文章</div>
-            <v-switch :value="false" inset label="热门" disabled></v-switch>
-          </v-row>
-        </v-container>
-        <article-list :articleStore="articleStore" @loadData="loadData" />
-      </v-col>
-      <v-col :md="4" :sm="12" :cols="12">
-        <tag-list :taglist="taglist" />
-        <side-random-article :list="randomList" />
-        <side-comment-list :list="commentlist" />
+  <div>
+    <v-row align="center" justify="center">
+      <v-col xl="7" lg="8" md="9" sm="11" xs="12">
+        <banner
+          :recommendedList="recommendedList"
+          v-if="recommendedList && recommendedList.length"
+        />
       </v-col>
     </v-row>
-  </v-container>
+    <v-container class="content-container">
+      <!-- class="my-4" -->
+      <v-row>
+        <v-col :md="8" :sm="12" :cols="12">
+          <v-container fluid class="py-0">
+            <v-row justify="space-between" align="center">
+              <div class="title">全部文章</div>
+              <v-switch :value="false" inset label="热门" disabled></v-switch>
+            </v-row>
+          </v-container>
+          <article-list :articleStore="articleStore" @loadData="loadData" />
+        </v-col>
+        <v-col :md="4" :sm="12" :cols="12">
+          <tag-list :taglist="taglist" />
+          <side-random-article :list="randomList" />
+          <side-comment-list :list="commentlist" />
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -84,6 +93,11 @@ export default {
 </script>
 
 <style lang="scss">
+@media (min-width: 960px) {
+  .content-container {
+    width: 980px !important;
+  }
+}
 .carousel-info-box {
   margin-bottom: 60px;
   padding: 0 40px;

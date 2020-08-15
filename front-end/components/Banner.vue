@@ -7,6 +7,7 @@
     delimiter-icon="mdi-minus"
     width="100%"
     :height="carouselHeight"
+    v-resize="onResize"
     ref="carousel"
   >
     <v-carousel-item v-for="(item, i) in recommendedList" :key="i">
@@ -37,17 +38,20 @@ export default {
   computed: {},
   data () {
     return {
-      carouselHeight: 800
+      carouselHeight: 0
     };
   },
   mounted () {
-    const el = this.$refs['carousel'].$el;
-    const top = this.$dom.getElementToPageTop(el);
-    console.log(top);
-    const innerHeight = window.innerHeight;
-    this.carouselHeight = innerHeight - top - 10;
+    this.onResize();
   },
-  methods: {}
+  methods: {
+    onResize () {
+      const el = this.$refs['carousel'].$el;
+      const top = this.$dom.getElementToPageTop(el);
+      const innerHeight = window.innerHeight;
+      this.carouselHeight = innerHeight - top - 10;
+    },
+  }
 };
 </script>
 <style lang="scss" scoped>

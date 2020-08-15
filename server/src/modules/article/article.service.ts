@@ -77,6 +77,7 @@ export class ArticleService {
         coverURL,
         content,
         tags,
+        status: ArticleStatus.Verifying,
         updatedAt: Date.now()
       }
     });

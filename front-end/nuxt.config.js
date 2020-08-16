@@ -99,7 +99,8 @@ module.exports = {
         },
         // light: true,
         dark: isDark
-      }
+      },
+      // treeShake: true
     }]
   ],
   sitemap: {
@@ -153,6 +154,7 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+      
     }
   }
 }

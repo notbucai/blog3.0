@@ -94,7 +94,7 @@
   </v-container>
 </template>
 <script>
-import 'mavon-editor/dist/markdown/github-markdown.min.css';
+// import 'mavon-editor/dist/markdown/github-markdown.min.css';
 
 import CommentBox from '@/components/CommentBox';
 import { mapState } from 'vuex';

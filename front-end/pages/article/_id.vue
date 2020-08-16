@@ -120,10 +120,9 @@ export default {
     promiseList.push($axios.get(`/api/comment/list/article/${id}`));
     const [resData, comments] = await Promise.all(promiseList);
 
-    resData.content = app.$utils.markdown(resData.content)
-
     return {
       data: resData,
+      menus: resData.menus,
       comments,
       id
     };
@@ -134,7 +133,7 @@ export default {
   computed: {
     ...mapState(['user']),
     content () {
-      return this.data.content;
+      return this.data.htmlContent;
     },
   },
   data () {
@@ -147,11 +146,7 @@ export default {
     };
   },
   mounted () {
-    // console.log('this.data.content', this.data.content);
-    const renderData = this.$utils.markdownRender(this.data.content);
-    // console.log('renderData', renderData);
-    this.data.content = renderData.html;
-    this.menus = renderData.menus;
+    console.log(this.menus);
     const hash = this.$route.hash;
     this.currentTitleHash = '#' + (hash || '');
     if (hash) {
@@ -169,7 +164,6 @@ export default {
     $scrollListen (e) {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
       scrollTop += this.$vuetify.application.top + 40;
-      console.log('scrollTop', scrollTop);
 
       const titleList = [...document.querySelectorAll('h2,h3,h4,h5,h6')];
       const scrollTopList = titleList.map(el => {

@@ -15,7 +15,7 @@ import { ErrorCode } from '../../constants/error';
 import { NotifyType } from 'src/models/notify.entiy';
 import { NotifyService } from '../../common/notify.service';
 import { ArticleService } from '../article/article.service';
-
+import MarkDownUtils from '../../utils/markdown'
 
 @Injectable()
 export class CommentService {
@@ -63,9 +63,13 @@ export class CommentService {
     } else {
       comment.sourceID = new ObjectID(CommentConstants.CommonMessageID);
     }
+
+    const htmlContent = MarkDownUtils.markdown(createCommentDto.content);
+
     comment.status = CommentStatus.VerifySuccess;
     comment.user = userID;
     comment.content = createCommentDto.content;
+    comment.htmlContent = htmlContent;
 
     return commentRepository.create(comment);
   }
@@ -229,7 +233,8 @@ export class CommentService {
 
   async updateById (source: string, id: string, content: string) {
     const commentRepository = this.getCommentSchema(source);
-    return commentRepository.updateOne({ _id: id }, { $set: { content, updatedAt: Date.now() } });
+    const htmlContent = MarkDownUtils.markdown(content);
+    return commentRepository.updateOne({ _id: id }, { $set: { content, htmlContent, updatedAt: Date.now() } });
   }
 
   // 查询子评论
@@ -358,5 +363,16 @@ export class CommentService {
         likes: uid
       }
     });
+  }
+
+  async allMarkdownContentToHtmlContent (source: string) {
+
+    const commentSchema = this.getCommentSchema(source);
+    const list: any[] = await commentSchema.find({});
+
+    list.forEach(item => {
+      this.updateById(source, item._id, item.content);
+    });
+    
   }
 }

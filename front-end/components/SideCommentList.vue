@@ -18,7 +18,7 @@
           <div class="left-day">{{item.user ? item.user.username : '匿名'}}</div>
         </div>
         <div class="article-item-right">
-          <div class="right-name">{{item.content}}</div>
+          <div class="right-name">{{item.htmlContent | htmlFilter}}</div>
           <div class="right-user">{{item.updatedAt | format}}</div>
         </div>
       </nuxt-link>
@@ -35,6 +35,12 @@ export default {
   },
   props: {
     list: Array
+  },
+  filters: {
+    htmlFilter (htmlStr) {
+
+      return htmlStr.replace(/[\r\n]/ig, '').replace(/<[^>]+>/ig, '').substr(0, 30);
+    }
   },
   data () {
     return {

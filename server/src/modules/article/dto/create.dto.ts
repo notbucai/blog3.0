@@ -17,9 +17,9 @@ export class CreateArticleDto {
   @ApiProperty({ description: "coverURL" })
   coverURL: string
 
-  @ApiProperty({ description: "summary" })
-  @Length(0, 200, { message: ErrorCode.ParamsError.MESSAGE })
-  summary: string
+  // @ApiProperty({ description: "summary" })
+  // @Length(0, 200, { message: ErrorCode.ParamsError.MESSAGE })
+  // summary: string
 
   @IsString({ message: ErrorCode.ParamsError.MESSAGE })
   @MinLength(1, { message: ErrorCode.ParamsError.MESSAGE })

@@ -11,6 +11,7 @@ import { ArticleListByTagDto } from './dto/listByTag.dto';
 import { Comment, ArticleComment, CommentStatus } from '../../models/comment.entity';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
+import MarkdownUtils from '../../utils/markdown';
 
 @Injectable()
 export class ArticleService {
@@ -23,6 +24,21 @@ export class ArticleService {
     private readonly commentSchema: ReturnModelType<typeof ArticleComment>,
   ) { }
 
+  // 解析一些对象
+  contentToArticleAttr (content: string) {
+    const htmlStr = MarkdownUtils.markdown(content);
+    const { html: menusHtml, menus } = MarkdownUtils.markdownRender(htmlStr);
+    const markText = MarkdownUtils.htmlStrToText(htmlStr);
+
+    return {
+      htmlStr,
+      menusHtml,
+      menus,
+      markText,
+      summary: markText.substr(0, 150).replace(/[\r\n]/g, '')
+    }
+  }
+
   // 创建
   async create (createDto: CreateDto, userId: ObjectID) {
     const or = createDto.tags.map(id => ({ _id: new ObjectID(id) }))
@@ -31,18 +47,22 @@ export class ArticleService {
       // 只选有用的tag
       tags = (await this.tagSchema.find({ $or: or })).map(item => item._id);
     }
+    // 解析一些对象
+    const { menus, menusHtml, summary, markText } = this.contentToArticleAttr(createDto.content);
+
     const article = new Article();
-    // article.htmlContent = createDto.htmlContent;
-    article.content = createDto.content;
     article.title = createDto.title;
-    article.summary = createDto.summary || '';
+    article.summary = summary;
+    article.content = createDto.content;
+    article.htmlContent = menusHtml;
+    article.menus = menus;
 
     article.coverURL = createDto.coverURL || null;
 
     article.tags = tags;
     article.user = userId;
     article.status = 1;
-    article.wordCount = createDto.content.replace(/[\s\n\r\t\f\v]+/g, '').length;
+    article.wordCount = markText.replace(/[\s\n\r\t\f\v]+/g, '').length;
     return this.articleSchema.create(article);
   }
 
@@ -59,14 +79,18 @@ export class ArticleService {
     return this.articleSchema.deleteOne({ _id: id });
   }
 
-  async updateById (id: string, createDto: CreateDto) {
+  async updateById (id: string, createDto: CreateDto, status: ArticleStatus = ArticleStatus.Verifying) {
     const article = await this.articleSchema.findById(id);
     if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     // const htmlContent = createDto.htmlContent || article.htmlContent;
+
+    // 解析一些对象
+    const { menus, menusHtml, summary } = this.contentToArticleAttr(createDto.content);
+
     const title = createDto.title || article.title;
     const coverURL = createDto.coverURL || article.coverURL;
-    const summary = createDto.summary || article.summary;
     const content = createDto.content || article.content;
+
     const _tag = createDto.tags ? createDto.tags.map(item => new ObjectID(item)) : null;
     const tags: any = _tag || article.tags;
     return this.articleSchema.updateOne({ _id: id }, {
@@ -77,7 +101,9 @@ export class ArticleService {
         coverURL,
         content,
         tags,
-        status: ArticleStatus.Verifying,
+        menus,
+        htmlContent: menusHtml,
+        status,
         updatedAt: Date.now()
       }
     });
@@ -86,7 +112,6 @@ export class ArticleService {
   async findById (id: string) {
     return await this.articleSchema
       .findById(id)
-      .select('-htmlContent')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
   }
@@ -293,5 +318,20 @@ export class ArticleService {
         likes: uid
       }
     });
+  }
+
+  async allArticleMarkdownContentToHtmlContent () {
+
+    const alist = await this.articleSchema.find({});
+
+    alist.forEach(article => {
+      this.updateById(String(article._id), {
+        tags: article.tags as any,
+        title: article.title,
+        content: article.content,
+        coverURL: article.coverURL
+      }, article.status);
+    })
+
   }
 }

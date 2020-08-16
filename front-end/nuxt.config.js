@@ -130,17 +130,25 @@ module.exports = {
   proxy: {
     '/api/': { target: process.env.NODE_ENV === 'development' ? 'http://localhost:9905/' : 'http://bucai-blog-server:9905/', pathRewrite: { '^/api/': '' } }
   },
+
   /*
   ** Build configuration
   */
   build: {
+    plugins: [
+    ],
     vendor: [
-      'vue-cropperjs'
+      'vue-cropperjs',
+      'mavon-editor',
+      'highlight.js',
     ],
     extractCSS: true,
     splitChunks: {
       // layouts: true
     },
+    minimize: true,
+    // quiet: true,
+    analyze: process.env.ENV_ANALYZE == 'analyze',
     /*
     ** You can extend webpack config here
     */

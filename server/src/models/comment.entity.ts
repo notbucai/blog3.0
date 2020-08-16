@@ -21,8 +21,13 @@ export class Comment extends Base {
   @prop({ default: null })
   deletedAt: number;
 
+  // markdown文本
   @prop()
   content: string;
+
+  // html 对象
+  @prop()
+  htmlContent: string;
 
   @prop({ enum: CommentStatus, default: CommentStatus.VerifySuccess })
   status: CommentStatus;

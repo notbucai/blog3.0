@@ -30,11 +30,16 @@ export class Article extends Base {
   @prop()
   summary: string;
 
+
+  @prop()
+  menus: any[];
+
   @prop()
   content: string;
 
-  // @prop()
-  // htmlContent: string;
+  // html 对象
+  @prop()
+  htmlContent: string;
 
   @prop({ default: 0 })
   browseCount: number;

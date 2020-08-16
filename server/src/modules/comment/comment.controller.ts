@@ -25,6 +25,14 @@ export class CommentController {
   ) { }
 
 
+  @Get('reset')
+  @ApiOperation({ summary: "重置" })
+  public async reset () {
+    this.commentService.allMarkdownContentToHtmlContent(CommentConstants.SourceArticle);
+    this.commentService.allMarkdownContentToHtmlContent(CommentConstants.SourceMessage);
+    return "调用成功"
+  }
+
   @Get('alllist/:source')
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('CommentAllList')

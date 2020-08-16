@@ -176,7 +176,7 @@ export default {
     async handlePublish () {
       const formData = this.formData;
       formData.tags = this.taglistSelect.filter(item => item.selectd).map(item => item._id);
-      formData.summary = this.getSummary(formData.content);
+      // formData.summary = this.getSummary(formData.content);
       // formData.htmlContent = this.renderHtml(formData.content);
       // tags
       if (formData.title.length < 1 || formData.title.length > 100) {

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-07 10:20:50
+ * @LastEditTime: 2020-08-15 17:27:28
  * @Description: 
  */
 
@@ -13,6 +13,12 @@ export const state = () => ({
   sideStatus: false,
   noticeStatus: {
     unread: 0
+  },
+  website: {
+    startTime: new Date(),
+    buildTime: new Date('2020-06-02'),
+    viewCount: 999999999,
+    
   }
 });
 export const mutations = {

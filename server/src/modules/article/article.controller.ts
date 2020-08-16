@@ -51,6 +51,13 @@ export class ArticleController {
     return this.articleService.pageList(ListDto);
   }
 
+  @Get('reset')
+  @Roles('ArticleList')
+  async reset () {
+    this.articleService.allArticleMarkdownContentToHtmlContent();
+    return "调用成功"
+  }
+
   @Post()
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()

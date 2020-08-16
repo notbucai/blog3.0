@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="comment-centent">
-      <div v-html="$utils.markdown(comment.content)" class="markdown-body text--secondary"></div>
+      <div v-html="comment.htmlContent" class="markdown-body text--secondary"></div>
     </div>
 
     <div class="comment-item-reply-box mt-3 pl-3" v-if="comment.replylist">
@@ -94,7 +94,7 @@ export default {
         return {
           _id: null,
           createdAt: 0,
-          content: ''
+          htmlContent: ''
         };
       }
     },

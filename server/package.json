@@ -30,7 +30,7 @@
     "@types/mongoose": "^5.7.27",
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.3.1",
     "class-validator": "^0.11.0",
     "cos-nodejs-sdk-v5": "^2.5.20",
     "ejs": "^3.0.1",

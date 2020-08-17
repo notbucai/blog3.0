@@ -66,6 +66,9 @@
     <LoginOrRegister />
     <NavigationDrawer />
     <ScrollToTop />
+    <client-only>
+      <svg-walle />
+    </client-only>
   </v-app>
 </template>
 
@@ -75,8 +78,10 @@ import LoginOrRegister from '@/components/LoginOrRegister.vue';
 import CurrentUser from '@/components/CurrentUser.vue';
 import NavigationDrawer from '@/components/NavigationDrawer.vue';
 import ScrollToTop from '@/components/ScrollToTop.vue';
+import SvgWalle from '@/components/svg/Walle.vue';
+
 export default {
-  components: { LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop },
+  components: { LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop, SvgWalle },
   data () {
     return {
 
@@ -90,11 +95,10 @@ export default {
       // this.loadUserMessageCount();
     }
   },
-  created () {
+  mounted () {
     const h = new Date().getHours();
     this.$vuetify.theme.dark = (h >= 19 && h <= 24) || (h >= 0 && h <= 7);
-  },
-  mounted () {
+
     this.handleLoadNoticeStatus();
   },
   methods: {

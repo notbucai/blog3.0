@@ -146,7 +146,7 @@ export default {
     };
   },
   mounted () {
-    console.log(this.menus);
+    // console.log(this.menus);
     const hash = this.$route.hash;
     this.currentTitleHash = '#' + (hash || '');
     if (hash) {

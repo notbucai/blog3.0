@@ -136,8 +136,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    plugins: [
-    ],
+    plugins: [],
     vendor: [
       'vue-cropperjs',
       'mavon-editor',

@@ -79,6 +79,7 @@ module.exports = {
     '@nuxtjs/style-resources',
     'cookie-universal-nuxt',
     '@nuxtjs/sitemap',
+    '@nuxtjs/pwa',
     ['@nuxtjs/vuetify', {
 
       theme: {

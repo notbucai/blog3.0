@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 17:13:09
  * @LastEditors: bucai
- * @LastEditTime: 2020-08-13 11:28:39
+ * @LastEditTime: 2020-08-20 09:27:31
  * @Description: 
 --> 
 <template>
@@ -17,6 +17,7 @@ export default {
     const res = {
       message: "失败",
       status: false,
+
     };
     const { code, state } = route.query;
     try {
@@ -26,11 +27,11 @@ export default {
           code, state
         }
       });
-      app.$cookies.set('Authorization', '' + resData, {
-        maxAge: 1 * 60 * 60
-      });
-      store.commit('SET_TOKEN', resData);
+      // {
+      //   maxAge: 1 * 60 * 60
+      // }
       res.message = "成功";
+      res.token = resData;
       res.status = true;
     } catch (error) {
       res.message = error.message || error.errMsg || error.toString();
@@ -43,6 +44,7 @@ export default {
   computed: {},
   data () {
     return {
+      token: '',
       message: "",
       status: false,
       timeCount: 5000
@@ -50,6 +52,11 @@ export default {
   },
   mounted () {
     if (this.status) {
+      // 放在这里比较安全
+      this.$cookies.set('Authorization', this.token, {
+        maxAge: 1 * 60 * 60
+      });
+      this.$store.commit('SET_TOKEN', this.token);
       this.timeCount = 500;
     }
     setTimeout(() => {

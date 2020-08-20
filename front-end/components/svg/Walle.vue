@@ -448,11 +448,6 @@ export default {
   },
   mounted () {
     window.addEventListener('mousemove', this.$coordinates);
-    TweenMax.to('p', 0.5, {
-      opacity: 0,
-      delay: 2,
-      ease: Sine.easeIn
-    });
     let tl = new TimelineMax({
       repeat: -1,
       repeatDelay: 2

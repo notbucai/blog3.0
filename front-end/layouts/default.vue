@@ -68,6 +68,7 @@
     <ScrollToTop />
     <client-only>
       <svg-walle />
+      <Qixi />
     </client-only>
   </v-app>
 </template>
@@ -79,9 +80,10 @@ import CurrentUser from '@/components/CurrentUser.vue';
 import NavigationDrawer from '@/components/NavigationDrawer.vue';
 import ScrollToTop from '@/components/ScrollToTop.vue';
 import SvgWalle from '@/components/svg/Walle.vue';
+import Qixi from '@/components/Qixi/Index.vue';
 
 export default {
-  components: { LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop, SvgWalle },
+  components: { Qixi, LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop, SvgWalle },
   data () {
     return {
 

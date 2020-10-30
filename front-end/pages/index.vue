@@ -45,7 +45,7 @@ export default {
     promiseList.push($axios.get('/api/article/list/all'));
     promiseList.push($axios.get('/api/tag/list/effect'));
     promiseList.push($axios.get('/api/article/list/random'));
-    promiseList.push($axios.get('/api//comment/list/new/article'));
+    promiseList.push($axios.get('/api/comment/list/new/article'));
 
     const [hotList, allList, taglist, randomList, commentlist] = await Promise.all(promiseList);
     return {

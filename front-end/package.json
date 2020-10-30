@@ -11,6 +11,11 @@
     "start": "cross-env PORT=9907 NODE_ENV=production node server/index.js",
     "generate": "nuxt generate"
   },
+  "config": {
+    "nuxt": {
+      "host": "0.0.0.0"
+    }
+  },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",

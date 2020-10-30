@@ -10,20 +10,22 @@ module.exports = {
   head: {
     // title: '不才的博客',
     titleTemplate: (title) => {
-
       return title ? `${title} - 不才的博客` : '不才的博客'
+    },
+    htmlAttrs: {
+      lang: "zh-CN"
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '这是不才的博客，用于记录生活、学习笔记。专注WEB前端，全面发展，做一个有梦想又憨憨的咸鱼。网站内容不定期更新，欢迎大家关注，共同交流进步。' },
-      { hid: 'keywords', name: 'keywords', content: "个人博客,不才,不才的博客,前端,web,javascript,vue,react,nodejs,个人博客,不才 Blog,bucai,bucai Blog,blog" }
+      { hid: 'keywords', name: 'keywords', content: "个人博客,不才,不才的博客,前端,web,javascript,vue,react,nodejs,不才 Blog,bucai,blog" }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
     script: [
-      { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9' }, /*引入百度统计的js*/
+      { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', async: true }, /*引入百度统计的js*/
     ]
   },
   extractCSS: true,
@@ -104,6 +106,14 @@ module.exports = {
       // treeShake: true
     }]
   ],
+  vuetify: {
+    treeShake: true,
+    defaultAssets: {
+      // nuxt.config.js
+      font: false,
+      icons: 'mdi'
+    }
+  },
   sitemap: {
     hostname: "https://www.notbucai.com/",
     gzip: true,
@@ -154,7 +164,7 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
-      
+
     }
   }
 }

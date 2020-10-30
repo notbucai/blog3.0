@@ -2,12 +2,12 @@
  * @Author: bucai
  * @Date: 2020-06-02 17:13:09
  * @LastEditors: bucai
- * @LastEditTime: 2020-08-20 09:27:31
+ * @LastEditTime: 2020-10-30 15:12:48
  * @Description: 
 --> 
 <template>
   <div class="bind">
-    <p>{{message}}</p>
+    <p>{{ message }}</p>
   </div>
 </template>
 <script>
@@ -27,9 +27,6 @@ export default {
           code, state
         }
       });
-      // {
-      //   maxAge: 1 * 60 * 60
-      // }
       res.message = "成功";
       res.token = resData;
       res.status = true;
@@ -54,7 +51,8 @@ export default {
     if (this.status) {
       // 放在这里比较安全
       this.$cookies.set('Authorization', this.token, {
-        maxAge: 1 * 60 * 60
+        maxAge: 5 * 24 * 60 * 60,
+        path: '/',
       });
       this.$store.commit('SET_TOKEN', this.token);
       this.timeCount = 500;

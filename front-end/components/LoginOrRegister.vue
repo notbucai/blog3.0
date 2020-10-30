@@ -2,11 +2,16 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai
- * @LastEditTime: 2020-08-13 11:28:32
+ * @LastEditTime: 2020-10-30 15:12:35
  * @Description: 
  -->
 <template>
-  <v-dialog :z-index="9999" persistent v-model="LoginOrRegisterDialog" width="440">
+  <v-dialog
+    :z-index="9999"
+    persistent
+    v-model="LoginOrRegisterDialog"
+    width="440"
+  >
     <v-card>
       <div class="back_btn-box">
         <v-btn elevation="0" text @click="SET_LOGIN_OR_REGISTER_DIALOG">
@@ -20,16 +25,26 @@
             <v-btn
               text
               class="header_action-btn"
-              @click="setType(type==1?2:1)"
-            >{{type | reTypeToName}}</v-btn>
+              @click="setType(type == 1 ? 2 : 1)"
+              >{{ type | reTypeToName }}</v-btn
+            >
           </h2>
-          <h3>请填写以下信息进行{{type | typeToName}}</h3>
+          <h3>请填写以下信息进行{{ type | typeToName }}</h3>
         </header>
         <!-- 登录 -->
-        <v-form v-show="isLogin" ref="loginForm" v-model="loginValid" lazy-validation>
+        <v-form
+          v-show="isLogin"
+          ref="loginForm"
+          v-model="loginValid"
+          lazy-validation
+        >
           <div class="form-field required">
             <label>用户名/手机号/邮箱</label>
-            <v-text-field v-model="loginForm.login" :rules="$constant.valid.REQUIRED" required></v-text-field>
+            <v-text-field
+              v-model="loginForm.login"
+              :rules="$constant.valid.REQUIRED"
+              required
+            ></v-text-field>
           </div>
           <div class="form-field required">
             <label>密码</label>
@@ -42,7 +57,12 @@
           </div>
         </v-form>
         <!-- 注册 -->
-        <v-form v-show="isRegister" ref="registerForm" v-model="registerValid" lazy-validation>
+        <v-form
+          v-show="isRegister"
+          ref="registerForm"
+          v-model="registerValid"
+          lazy-validation
+        >
           <div class="form-field required">
             <label>用户名</label>
             <v-text-field
@@ -53,11 +73,19 @@
           </div>
           <div class="form-field required">
             <label>手机号</label>
-            <v-text-field v-model="registerForm.phone" :rules="$constant.valid.PHONE" required></v-text-field>
+            <v-text-field
+              v-model="registerForm.phone"
+              :rules="$constant.valid.PHONE"
+              required
+            ></v-text-field>
           </div>
           <div class="form-field required">
             <label>验证码</label>
-            <v-text-field v-model="registerForm.code" :rules="$constant.valid.REQUIRED" required>
+            <v-text-field
+              v-model="registerForm.code"
+              :rules="$constant.valid.REQUIRED"
+              required
+            >
               <div class="sms_box" slot="append">
                 <v-btn
                   text
@@ -66,7 +94,7 @@
                   @click="handleGetCode"
                 >
                   <v-icon v-if="!codeTmp.isSend">mdi-message-processing</v-icon>
-                  <span v-else>{{codeTmp.num}}</span>
+                  <span v-else>{{ codeTmp.num }}</span>
                 </v-btn>
               </div>
             </v-text-field>
@@ -218,7 +246,8 @@ export default {
         const resData = await this.$axios.post(apiAddr, form);
         console.log('resData', resData);
         this.$cookies.set('Authorization', resData, {
-          maxAge: 1 * 60 * 60
+          path: '/',
+          maxAge: 5 * 24 * 60 * 60
         });
 
         this.$store.commit('SET_TOKEN', resData);

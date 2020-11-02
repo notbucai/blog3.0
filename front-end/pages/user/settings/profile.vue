@@ -12,16 +12,24 @@
                 <img :src="user.avatarURL" alt="alt" />
               </v-avatar>
               <div class="pl-3">
-                <p class="caption text--secondary">支持 jpg、png 格式大小 5M 以内的图片</p>
-                <v-btn color="primary" :elevation="0" small @click="handleOpenFile">点击上传</v-btn>
+                <p class="caption text--secondary">
+                  支持 jpg、png 格式大小 5M 以内的图片
+                </p>
+                <v-btn
+                  color="primary"
+                  :elevation="0"
+                  small
+                  @click="handleOpenFile"
+                  >点击上传</v-btn
+                >
               </div>
             </div>
           </v-col>
         </v-row>
-        <template v-for="(item,index) in formShowJson">
+        <template v-for="(item, index) in formShowJson">
           <v-divider :key="index"></v-divider>
           <v-row align="center" class="pa-2" :key="item.key">
-            <v-col :cols="2">{{item.label}}</v-col>
+            <v-col :cols="2">{{ item.label }}</v-col>
             <v-col>
               <input
                 type="text"
@@ -32,35 +40,54 @@
                 :placeholder="item.placeholder"
               />
             </v-col>
-            <v-col :cols="!selectObj[item.key]?1:2">
+            <v-col :cols="!selectObj[item.key] ? 1 : 2">
               <v-icon
                 @click="handleAllowEdit(item.key)"
                 small
                 color="primary"
                 v-if="!selectObj[item.key]"
-              >mdi-pencil</v-icon>
+                >mdi-pencil</v-icon
+              >
               <div v-else class="d-flex align-center">
-                <v-btn color="primary" x-small text @click="handleSaveItem(item.key)">保存</v-btn>
-                <v-btn text x-small @click="handleSaveClose(item.key)">取消</v-btn>
+                <v-btn
+                  color="primary"
+                  x-small
+                  text
+                  @click="handleSaveItem(item.key)"
+                  >保存</v-btn
+                >
+                <v-btn text x-small @click="handleSaveClose(item.key)"
+                  >取消</v-btn
+                >
               </div>
             </v-col>
           </v-row>
         </template>
       </div>
     </v-card>
-    <input type="file" accept="image/*" ref="fileRef" hidden @change="handleUploadFileChange" />
+    <input
+      type="file"
+      accept="image/*"
+      ref="fileRef"
+      hidden
+      @change="handleUploadFileChange"
+    />
     <client-only>
       <v-dialog v-model="cropperDialog" width="500px">
         <v-card>
           <v-card-title primary-title>
-            <div class="d-flex align-center justify-space-between" style="width:100%">
+            <div
+              class="d-flex align-center justify-space-between"
+              style="width: 100%"
+            >
               <span>图片</span>
               <v-icon @click="cropperDialog = false">mdi-close</v-icon>
             </div>
           </v-card-title>
-          <div style="height:400px;width:500px">
+          <div style="height: 400px; width: 500px">
             <vueCropper
               ref="cropper"
+              v-if="cropperDialog"
               :autoCrop="cropperOption.autoCrop"
               :img="cropperOption.img"
               :fixed="cropperOption.fixed"
@@ -71,7 +98,9 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn :elevation="0" @click="cropperDialog = false">取消</v-btn>
-            <v-btn :elevation="0" color="primary" @click="handleCropper">确定</v-btn>
+            <v-btn :elevation="0" color="primary" @click="handleCropper"
+              >确定</v-btn
+            >
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -86,7 +115,9 @@
 import { mapState } from 'vuex';
 export default {
   middleware: 'auth',
-  components: {},
+  components: {
+    'vueCropper': async () => (await import('vue-cropper')).VueCropper
+  },
   props: {},
   computed: {
     ...mapState(['user'])

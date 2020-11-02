@@ -47,7 +47,7 @@ module.exports = {
   css: [
     '@/assets/common.scss',
     // { src: "mavon-editor/dist/css/index.css" },
-    // { src: "mavon-editor/dist/markdown/github-markdown.min.css" },
+    { src: "mavon-editor/dist/markdown/github-markdown.min.css" },
   ],
   /*
   ** Plugins to load before mounting the App
@@ -59,9 +59,9 @@ module.exports = {
     './plugins/filters.js',
     './plugins/utils.js',
     { src: './plugins/baiduGa.js', ssr: false }, /* 百度统计 */
-    { src: './plugins/vue-mavon-editor', ssr: false },
+    // { src: './plugins/vue-mavon-editor', ssr: false },
     { src: './plugins/file.js', ssr: false },
-    { src: './plugins/vue-cropper.js', ssr: false },
+    // { src: './plugins/vue-cropper.js', ssr: false },
     { src: './plugins/dom.js', ssr: false },
   ],
   /*
@@ -149,8 +149,8 @@ module.exports = {
   build: {
     plugins: [],
     vendor: [
-      'vue-cropperjs',
-      'mavon-editor',
+      // 'vue-cropperjs',
+      // 'mavon-editor',
       'highlight.js',
     ],
     extractCSS: true,

@@ -38,7 +38,7 @@ export default {
   computed: {},
   data () {
     return {
-      carouselHeight: 0
+      carouselHeight: 1200
     };
   },
   mounted () {

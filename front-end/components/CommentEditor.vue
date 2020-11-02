@@ -1,7 +1,9 @@
 <template>
   <div class="comment_edit mb-5">
     <client-only>
+      <!-- 这里计算一下 高度 -->
       <mavon-editor
+        v-if="showEdit"
         v-model="content"
         :boxShadow="false"
         :subfield="false"
@@ -24,7 +26,8 @@
             class="close-reply-btn"
             @click.stop="handleUnReply"
             v-if="this.reply"
-          >取消回复</v-btn>
+            >取消回复</v-btn
+          >
         </template>
       </mavon-editor>
     </client-only>
@@ -35,14 +38,18 @@
         :disabled="!content"
         @click="handleComment"
         :loading="loading"
-      >{{token?'评论':'请登录'}}</v-btn>
+        >{{ token ? '评论' : '请登录' }}</v-btn
+      >
     </div>
   </div>
 </template>
 <script>
 import { mapState } from 'vuex';
+
 export default {
-  components: {},
+  components: {
+    'mavon-editor': async () => (await import('mavon-editor')).mavonEditor
+  },
   props: {
     reply: Object,
     loading: Boolean
@@ -57,6 +64,7 @@ export default {
   },
   data () {
     return {
+      showEdit: false,
       markdownOption: {
         link: true, // 链接
         imagelink: true, // 图片链接
@@ -68,7 +76,19 @@ export default {
       content: ''
     };
   },
-  mounted () { },
+  mounted () {
+    const io = new IntersectionObserver((entries) => {
+      const [change] = entries;
+      if (change && change.intersectionRatio > 0 && change.intersectionRatio) {
+        this.showEdit = true;
+        // 异步加载css
+        import('mavon-editor/dist/css/index.css');
+        // io.unobserve();
+        io.disconnect();
+      }
+    });
+    io.observe(document.querySelector('.comment_edit'));
+  },
   methods: {
     handleClear () {
       this.content = '';

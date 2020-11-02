@@ -1,16 +1,30 @@
 <template>
   <div class="Index">
     <div class="height">
-      <input type="text" class="a_title" placeholder="请输入标题..." v-model="formData.title" />
+      <input
+        type="text"
+        class="a_title"
+        placeholder="请输入标题..."
+        v-model="formData.title"
+      />
       <div class="action pr-2">
         <div class="mr-2">
-          <v-menu offset-y :close-on-content-click="false" :nudge-bottom="10" left>
+          <v-menu
+            offset-y
+            :close-on-content-click="false"
+            :nudge-bottom="10"
+            left
+          >
             <template v-slot:activator="{ on }">
               <v-btn text v-on="on">
                 <v-icon size="20">mdi-image-size-select-actual</v-icon>
               </v-btn>
             </template>
-            <v-card :width="260" :min-height="140" class="d-flex align-center justify-center pa-3">
+            <v-card
+              :width="260"
+              :min-height="140"
+              class="d-flex align-center justify-center pa-3"
+            >
               <v-btn
                 text
                 v-if="!formData.coverURL"
@@ -19,7 +33,13 @@
                 :loading="fileUploading"
               >
                 <v-icon x-large>mdi-cloud-upload-outline</v-icon>
-                <input type="file" hidden ref="upload" accept="image/*" @change="onUpload" />
+                <input
+                  type="file"
+                  hidden
+                  ref="upload"
+                  accept="image/*"
+                  @change="onUpload"
+                />
               </v-btn>
               <div v-else>
                 <v-img :src="formData.coverURL" :width="240">
@@ -52,8 +72,8 @@
                   @click="handleSelectItem(item)"
                   color="primary"
                 >
-                  <v-icon x-small left>mdi-{{item.iconURL}}</v-icon>
-                  {{item.name}}
+                  <v-icon x-small left>mdi-{{ item.iconURL }}</v-icon>
+                  {{ item.name }}
                 </v-chip>
               </div>
               <v-card-actions>
@@ -65,7 +85,8 @@
                     outlined
                     @click="handlePublish"
                     :loading="loading"
-                  >发布</v-btn>
+                    >发布</v-btn
+                  >
                 </div>
               </v-card-actions>
             </v-card>
@@ -97,7 +118,10 @@
 import CurrentUser from '@/components/CurrentUser.vue';
 export default {
   layout: 'empty',
-  components: { CurrentUser },
+  components: {
+    CurrentUser,
+    'mavon-editor': async ()=> (await import('mavon-editor')).mavonEditor
+  },
   async asyncData ({ params, query, $axios }) {
     if (params.type == 'new') {
       return {};

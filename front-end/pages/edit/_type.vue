@@ -116,11 +116,12 @@
 </template>
 <script>
 import CurrentUser from '@/components/CurrentUser.vue';
+import { fileSize } from '@/utils/file'
 export default {
   layout: 'empty',
   components: {
     CurrentUser,
-    'mavon-editor': async ()=> (await import('mavon-editor')).mavonEditor
+    'mavon-editor': async () => (await import('mavon-editor')).mavonEditor
   },
   async asyncData ({ params, query, $axios }) {
     if (params.type == 'new') {
@@ -239,7 +240,7 @@ export default {
       this.$refs['upload'].click();
     },
     async handleuploadImg (file) {
-      const size = this.$file.fileSize(file);
+      const size = $file_fileSize(file);
       if (size > 3) {
         return this.$snackbar.error('文件大小不能超过3m');
       }

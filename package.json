@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "",
-    "dev:admin":"cd admin && npm run serve",
-    "dev:server":"cd server && npm run start:dev",
-    "dev:frontend":"cd front-end && npm run dev"
+    "dev:admin": "cd admin && npm run serve",
+    "dev:server": "cd server && npm run start:dev",
+    "dev:frontend": "cd front-end && npm run dev"
   },
   "repository": {
     "type": "git",

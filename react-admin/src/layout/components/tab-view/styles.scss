@@ -1,0 +1,42 @@
+.tab-view {
+  background-color: #fff;
+  border-top: 1px solid #f4f5f6;
+  height: 40px;
+  display: flex;
+  align-items: flex-end;
+
+  .tab-view-item {
+    padding: 0 10px;
+    margin: 0 6px;
+    padding-bottom: 8px;
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    color: #999;
+    transition: all .2s;
+    font-size: 12px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30%;
+      height: 4px;
+      background-color: #fff;
+      border-radius: 1px;
+    }
+
+    &:hover,
+    &.active {
+      color: $primary-color;
+      // background-color: #f4f5f6;
+
+      &::before {
+        background-color: $primary-color;
+      }
+    }
+  }
+}

@@ -2,20 +2,22 @@
  * @Author: bucai
  * @Date: 2021-02-26 12:48:15
  * @LastEditors: bucai
- * @LastEditTime: 2021-02-26 19:34:26
+ * @LastEditTime: 2021-02-28 23:27:19
  * @Description:
  */
 import { createBrowserHistory } from "history";
-import { changeRoute } from "../store/app/actions";
+import { changeBreadcrumb, changeRoute } from "../store/app/actions";
 
 export const history = createBrowserHistory();
 
 const initHistory = (store) => {
 
   store.dispatch(changeRoute(history.location));
+  store.dispatch(changeBreadcrumb(history.location));
 
   history.listen((location, actions) => {
     store.dispatch(changeRoute(location));
+    store.dispatch(changeBreadcrumb(location));
   });
   return history;
 }

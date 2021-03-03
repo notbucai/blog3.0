@@ -2,21 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 
-import './index.scss';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import store from './store';
-import { Router } from 'react-router-dom';
-import initHistory from './router/history';
 
-const customHistory = initHistory(store);
+import store from './store';
+
+import './index.scss';
+import './locale';
 
 ReactDOM.render(
   // <React.StrictMode>
   <Provider store={store}>
-    <Router history={customHistory}>
-      <App />
-    </Router>
+    <App />
   </Provider>
   // </React.StrictMode>
   ,

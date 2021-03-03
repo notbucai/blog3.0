@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-26 10:34:58
  * @LastEditors: bucai
- * @LastEditTime: 2021-02-27 22:19:12
+ * @LastEditTime: 2021-03-02 15:34:49
  * @Description: 
  */
 import { cloneDeep } from 'loadsh'
@@ -129,10 +129,53 @@ export const getRouteIcon = (route = {}) => {
 }
 
 /**
- * 获取路由icon
+ * 是否是固定
  * @param {any} route
  */
 export const isAffix = (route = {}) => {
   if (!route.layout) return false;
   return route.layout.affix;
+}
+
+/**
+ * 是否不在tab显示
+ * @param {any} route
+ */
+export const isHiddenTab = (route = {}) => {
+  if (!route.layout) return true;
+  return route.layout.hiddenTab || route.layout.full;
+}
+
+/**
+ * 获取路由调用链条
+ * @param {any} route
+ */
+export const getListByChildrenRoutePath = (routes = [], routePath = '') => {
+
+  const list = [];
+
+  const find = (routes = []) => {
+    const index = routes.findIndex(item => {
+
+      if (Array.isArray(item.children) && item.children.length) {
+        const _index = find(item.children);
+        return _index !== -1;
+      }
+
+      if (item.path === routePath) {
+        return true;
+      }
+
+      return false;
+    });
+    if (index !== -1) {
+      console.log('routes', routes, index);
+      list.unshift(routes[index]);
+    }
+    return index;
+
+  }
+  find(routes);
+
+  return list
 }

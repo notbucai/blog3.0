@@ -10,7 +10,7 @@ function MenuItem (props) {
   const menuOptions = menu.menu || {};
   if (!children || !children.length) {
     return (<Menu.Item key={menu.path} icon={menuOptions && menuOptions.icon} {...props}>
-      <Link to={menu.path + '?xxx=123'}>{menuOptions && (menuOptions.title || menu.title)}</Link>
+      <Link to={menu.path}>{menuOptions && (menuOptions.title || menu.title)}</Link>
     </Menu.Item>);
   }
 

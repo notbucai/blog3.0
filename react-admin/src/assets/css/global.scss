@@ -1,0 +1,115 @@
+.tc {
+  text-align: center;
+}
+
+.tr {
+  text-align: right;
+}
+
+.fb {
+  font-weight: bold;
+}
+
+.me-container {
+  width: 1260px;
+  margin: 0 auto;
+}
+
+.df {
+  display: flex;
+}
+
+.dfc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.aic {
+  align-items: center;
+}
+
+.aie {
+  align-items: flex-end;
+}
+
+.jcc {
+  justify-content: center;
+}
+
+.jcsb {
+  justify-content: space-between;
+}
+
+.jcsa {
+  justify-content: space-around;
+}
+
+.jce {
+  justify-content: flex-end;
+}
+
+.f1 {
+  flex: 1;
+}
+
+.fdc {
+  flex-direction: column;
+}
+
+.otw {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.otw2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.w1 {
+  width: 100%;
+}
+
+// 封装常用边距
+$listKey:t,
+b,
+l,
+r;
+
+$listVal:top,
+bottom,
+left,
+right;
+$mp-size: 8px;
+
+@for $size from 0 to 4 {
+  .p#{$size} {
+    padding: $size * $mp-size;
+  }
+
+  @for $i from 1 to length($listKey)+1 {
+    .p#{nth($listKey,$i)}#{$size} {
+      padding-#{nth($listVal,$i)}: $size * $mp-size;
+    }
+  }
+
+  .m#{$size} {
+    margin: $size * $mp-size;
+  }
+
+  @for $i from 1 to length($listKey)+1 {
+    .m#{nth($listKey,$i)}#{$size} {
+      margin-#{nth($listVal,$i)}: $size * $mp-size;
+    }
+  }
+}
+
+.text-default {
+  color: $text-color;
+  font-size: 13px;
+}

@@ -51,4 +51,12 @@
   affix: false, // 是否固定 固定将不允许关闭
   activeTime: 222222, // 激活时间
 }
+
+// breadcrumb
+{
+  title: "", // 标题
+  path: "", // key or 基础路径
+  fullPath: "", // 路径
+  icon: "", // 图标 字符串 or 组件
+}
 ```

@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Switch, Route } from 'react-router-dom';
-
+import KeepAlive from 'react-activation'
 /**
  * 渲染路由
  * @param {{routes: {path:string,component:any,children:any[]}[]}} param0 props
@@ -20,19 +20,29 @@ function Router ({ routes }) {
 
             const LazyComponent = React.lazy(() => item.component)
             Component = ({ children }) => {
-              return (<Suspense fallback={<div>loading....</div>}>
-                <LazyComponent>
-                  {children}
-                </LazyComponent>
-              </Suspense>);
+              return (
+                <Suspense fallback={<div>loading....</div>}>
+                  <LazyComponent>
+                    {children}
+                  </LazyComponent>
+                </Suspense>
+              );
             };
           }
           return <Route exact={exact} key={item.path} path={item.path} render={() => (<Component>
-            <Router routes={item.children} />
-          </Component>)}></Route>
+            {
+              item.noCache ?
+                <KeepAlive name={item.path}>
+                  <Router routes={item.children} />
+                </KeepAlive>
+                :
+                <Router routes={item.children} />
+            }
+          </Component>)
+          }></Route >
         })
       }
-    </Switch>
+    </Switch >
   );
 }
 

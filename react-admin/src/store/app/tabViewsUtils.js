@@ -2,17 +2,18 @@
  * @Author: bucai
  * @Date: 2021-02-27 22:01:45
  * @LastEditors: bucai
- * @LastEditTime: 2021-02-27 22:53:35
+ * @LastEditTime: 2021-03-03 08:52:42
  * @Description:
  */
 import { cloneDeep } from 'loadsh'
 
-import { getRouteTitle, isAffix, getRouteIcon } from '@/router/utils'
+import { getRouteTitle, isAffix, getRouteIcon, isHiddenTab } from '@/router/utils'
 
 export const getTabViewsByRoutes = (routes) => {
 
   const newRoutes = cloneDeep(routes).map(item => {
     const { path } = item;
+    if (isHiddenTab(item)) return null;
     return {
       title: getRouteTitle(item), // 标题
       path: path, // key or 基础路径
@@ -25,25 +26,28 @@ export const getTabViewsByRoutes = (routes) => {
       location: {
         pathname: item.path
       },
-      route: item
+      route: item,
+      isMenu: typeof item.menu !== 'undefined'
     }
-  });
+  }).filter(item => item);
 
   return newRoutes;
 };
 
 export const genOneTabViewByLocationAndRoute = (location, route) => {
   const { pathname, search } = location;
-  console.log('location', location);
   const newRoute = {
     title: getRouteTitle(route), // 标题
     path: pathname, // key or 基础路径
-    fullPath: pathname + search, // 路径
+    fullPath: pathname + (search || ''), // 路径
     icon: getRouteIcon(route), // 图标 字符串 or 组件
     affix: isAffix(route), // 是否固定 固定将不允许关闭
     activeTime: Date.now(), // 激活时间
     location,
-    route
+    route,
+    hiddenTab: isHiddenTab(route),
+    full: route.layout ? route.layout.full : false,
+    isMenu: typeof route.menu !== 'undefined'
   }
 
   return newRoute;

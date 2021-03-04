@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@loadable/component": "^5.14.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -12,6 +13,7 @@
     "i18next": "^19.9.1",
     "less": "^4.1.1",
     "loadsh": "0.0.4",
+    "nprogress": "^0.2.0",
     "react": "^17.0.1",
     "react-activation": "^0.8.0",
     "react-dom": "^17.0.1",

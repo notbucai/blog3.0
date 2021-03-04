@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-27 22:01:45
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-03 08:52:42
+ * @LastEditTime: 2021-03-04 10:37:52
  * @Description:
  */
 import { cloneDeep } from 'loadsh'
@@ -59,9 +59,9 @@ export const updateTabViews = (tabViews, routes) => {
     const route = routes.find(route => route.path === item.path) || {};
     const title = getRouteTitle(route);
     item.title = title;
-
+    item.hiddenTab = isHiddenTab(route)
     return item;
-  });
+  }).filter(item => !item.hiddenTab);
 
   return newTableViews;
 };

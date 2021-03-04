@@ -14,7 +14,7 @@ const TabItem = ({ data, active }) => {
 function Component ({ list = [], choose }) {
   return (
     <div className="tab-view">
-      {list.map((item, index) => <TabItem key={item.path} data={item} active={choose === item.path} />)}
+      {list.map((item, index) => <TabItem key={item.path} data={item} active={choose && choose.path === item.path} />)}
     </div>
   );
 }

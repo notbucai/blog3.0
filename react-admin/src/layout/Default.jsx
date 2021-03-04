@@ -27,11 +27,18 @@ const DefaultLayout = ({ menuState, changeMenuState, menus, routes, tabViews, cu
   const { i18n, t } = useTranslation();
 
   const menu = (
-    <Menu>
+    <Menu onClick={e => {
+      const type = e.key;
+      if (type === 'exit') {
+        // TODO: 这都属于业务块了，不做详细处理
+        localStorage.removeItem('token');
+        window.location.replace('/login')
+      }
+    }}>
       <Menu.Item className="p1 pl2 pr2">
         <span>个人信息</span>
       </Menu.Item>
-      <Menu.Item className="p1 pl2 pr2">
+      <Menu.Item key="exit" className="p1 pl2 pr2">
         <span>退出系统</span>
       </Menu.Item>
     </Menu>

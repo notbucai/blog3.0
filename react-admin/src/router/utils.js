@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-26 10:34:58
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-02 15:34:49
+ * @LastEditTime: 2021-03-03 16:50:53
  * @Description: 
  */
 import { cloneDeep } from 'loadsh'
@@ -142,7 +142,7 @@ export const isAffix = (route = {}) => {
  * @param {any} route
  */
 export const isHiddenTab = (route = {}) => {
-  if (!route.layout) return true;
+  if (!route.layout) return false;
   return route.layout.hiddenTab || route.layout.full;
 }
 

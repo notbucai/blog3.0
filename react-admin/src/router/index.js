@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-25 16:36:47
  * @LastEditors: bucai
- * @LastEditTime: 2021-02-27 11:45:36
+ * @LastEditTime: 2021-03-04 10:30:51
  * @Description:
  */
 
@@ -134,6 +134,9 @@ export const authRoutes = [
     path: '/role', // 路径
     component: import('../pages/role'), // 路由
     // -- 布局 不存在就是普通页面  默认不配置
+    layout: {
+      hiddenTab: true
+    },
     menu: {
       title: '角色管理',  // 标题
       icon: <SmileOutlined />, // 图标

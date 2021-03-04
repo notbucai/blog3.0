@@ -1,0 +1,39 @@
+.login-wrap {
+  // background-image: url('../../../assets/image/admin-bgc.jpg');
+  // background-position: center center;
+  // background-repeat: no-repeat;
+  // background-size: cover;
+  // background-image: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background-color: #f8f8f8;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 24px;
+
+    img {
+      height: 68px;
+    }
+  }
+
+  .login-form-wrap {
+    // max-width: 50%;
+    width: 360px;
+    margin: 200px auto 60px;
+    // background-color: rgba($color: #FFF, $alpha: .9);
+    box-shadow: 0 0 100px rgb(0 0 0 / 8%);
+
+    // box-shadow: 0 0 6px #eee;
+    padding: 36px;
+    border-radius: 2px;
+    box-sizing: border-box;
+
+  }
+  .login-footer{
+    text-align: center;
+    color: #999;
+  }
+}

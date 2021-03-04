@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-25 15:20:54
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-03 09:59:17
+ * @LastEditTime: 2021-03-03 11:24:02
  * @Description:
  */
 import { cloneDeep, uniqBy } from 'loadsh'
@@ -98,7 +98,8 @@ const reducers = (state = defaultState, action) => {
       const currentIndex = tabViews.findIndex(item => item.path === tabView.path);
       const currentTabView = tabViews[currentIndex] || {};
       if (!tabView) return state;
-
+      console.log('currentRoute',currentRoute);
+      console.log('tabView',tabView);
       if (currentRoute && currentRoute.path === tabView.path) {
         if (currentTabView.fullPath === tabView.fullPath) return state;
       }

@@ -14,5 +14,9 @@
 
   span {
     padding-left: 8px;
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }

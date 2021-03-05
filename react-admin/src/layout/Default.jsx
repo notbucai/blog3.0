@@ -70,7 +70,7 @@ const DefaultLayout = ({ menuState, changeMenuState, menus, routes, tabViews, cu
         {/* LOGO */}
         <AppLogo collapsed={menuState} />
         {/* MENU */}
-        <AppMenu menus={menus} menuState={menuState} currentRoute={currentRoute ? currentRoute.path : ''} />
+        <AppMenu menus={menus} currentRoute={currentRoute ? currentRoute.path : ''} />
       </Layout.Sider>
       {/* RIGHT */}
       <Layout style={{ height: '100vh' }}>

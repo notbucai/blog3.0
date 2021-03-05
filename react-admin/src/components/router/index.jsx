@@ -8,7 +8,7 @@ import 'nprogress/nprogress.css'
 
 class LoadingPage extends React.Component {
   //类似github页面加载的那个加载条
-  componentWillMount () {
+  componentDidMount () {
     NProgress.start()
   }
   componentWillUnmount () {

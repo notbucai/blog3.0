@@ -35,7 +35,6 @@ function AppMenu ({ menuState, menus, currentRoute }) {
       selectedKeys={defaultSelectedKeys}
       mode="inline"
       theme="dark"
-      inlineCollapsed={menuState}
     >
       {menus.map(item => {
         return <MenuItem key={item.path} menu={item} />

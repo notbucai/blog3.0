@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-25 15:20:49
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-03 11:12:41
+ * @LastEditTime: 2021-03-05 11:01:47
  * @Description:
  */
 import { CHANGE_MENU_STATE, INIT_PERMISSION_ROUTERS, CHANGE_ROUTE, UPDATE_TAB_VIEWS, UPDATE_BREADCRUMBS, UPDATE_BREADCRUMB, CHANGE_LANGUAGE } from "./types"
@@ -59,7 +59,6 @@ export const initPermissionRouters = () => {
       }
       // 2. 通过权限信息过滤路由
       const filterRouters = getUserRoutesByPermissions(routes, pList);
-      console.log('filterRouters', filterRouters);
       // 3. 从过滤后的路由中获取菜单
       const menuRoutes = getMenuRoutesByRoutes(filterRouters);
       // 4. 扁平化路由
@@ -81,7 +80,6 @@ export const initPermissionRouters = () => {
 export const initBasicRouters = () => {
 
   const filterRouters = noAuthRoutes;
-  console.log('filterRouters', filterRouters);
   // 3. 从过滤后的路由中获取菜单
   const menuRoutes = getMenuRoutesByRoutes(filterRouters);
   // 4. 扁平化路由

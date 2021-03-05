@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-25 14:55:19
  * @LastEditors: bucai
- * @LastEditTime: 2021-02-25 17:25:53
+ * @LastEditTime: 2021-03-05 11:01:38
  * @Description:
  */
 
@@ -14,7 +14,6 @@ import store from 'store2';
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-// console.log(process.env.NODE_ENV);
 
 let config = {
   baseURL: process.env.NODE_ENV === 'development' ? '/api' : '/api',
@@ -56,7 +55,6 @@ _axios.interceptors.response.use(
       }
       // resData.message && Message.error(resData.message);
     }
-    console.log('resData', resData);
     return Promise.reject(resData);
   },
   function (error) {

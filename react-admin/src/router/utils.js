@@ -169,7 +169,6 @@ export const getListByChildrenRoutePath = (routes = [], routePath = '') => {
       return false;
     });
     if (index !== -1) {
-      console.log('routes', routes, index);
       list.unshift(routes[index]);
     }
     return index;

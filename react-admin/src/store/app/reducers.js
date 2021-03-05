@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-25 15:20:54
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-03 11:24:02
+ * @LastEditTime: 2021-03-05 11:01:57
  * @Description:
  */
 import { cloneDeep, uniqBy } from 'loadsh'
@@ -50,7 +50,6 @@ const reducers = (state = defaultState, action) => {
         const route = flatRoutes.find(item => item.path === currentRoute.path) || {};
         const tabView = genOneTabViewByLocationAndRoute({ pathname: currentRoute.path }, route);
         newState.currentRoute = tabView;
-        console.log(1);
       }
 
       return newState;
@@ -98,8 +97,6 @@ const reducers = (state = defaultState, action) => {
       const currentIndex = tabViews.findIndex(item => item.path === tabView.path);
       const currentTabView = tabViews[currentIndex] || {};
       if (!tabView) return state;
-      console.log('currentRoute',currentRoute);
-      console.log('tabView',tabView);
       if (currentRoute && currentRoute.path === tabView.path) {
         if (currentTabView.fullPath === tabView.fullPath) return state;
       }

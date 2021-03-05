@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { DefaultLayout } from './layout';
 import { Router } from 'react-router-dom';
-import { AliveScope } from 'react-activation'
+import { Provider as AliveProvider } from 'react-keep-alive'
 import initHistory from './router/history';
 import { ConfigProvider } from 'antd';
 
@@ -21,9 +21,9 @@ function App ({ init, language }) {
   return (
     <ConfigProvider locale={locale}>
       <Router history={customHistory}>
-        <AliveScope>
+        <AliveProvider>
           <DefaultLayout />
-        </AliveScope>
+        </AliveProvider>
       </Router>
     </ConfigProvider>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import KeepAlive from 'react-activation'
+import { KeepAlive } from 'react-keep-alive'
 import loadable from '@loadable/component'
 
 import NProgress from 'nprogress'
@@ -36,32 +36,36 @@ function Router ({ routes }) {
 
           // 判断是否是promise
           // TODO: 后面抽离成帮助类
-          if (!!Component && (typeof Component === 'object' || typeof Component === 'function') && typeof Component.then === 'function') {
+          if (typeof Component === 'function') {
 
-            const LazyComponent = loadable(() => item.component, {
-              fallback: <LoadingPage />
+            const LazyComponent = loadable(item.component, {
+              fallback: <LoadingPage />,
+              cacheKey () {
+                return item.path
+              }
             });
             Component = ({ children }) => {
               return (
-                // <Suspense fallback={<div>loading....</div>}>
                 <LazyComponent>
                   {children}
                 </LazyComponent>
-                // </Suspense>
               );
             };
           }
-          return <Route exact={exact} key={item.path} path={item.path} render={() => (<Component>
-            {
-              item.noCache ?
-                <KeepAlive name={item.path}>
-                  <Router routes={item.children} />
-                </KeepAlive>
-                :
-                <Router routes={item.children} />
-            }
-          </Component>)
-          }></Route >
+
+          const ComponentRoute = (<Component>
+            <Router routes={item.children} />
+          </Component>);
+
+          return <Route exact={exact} key={item.path} path={item.path} render={() => (
+            item.noCache ?
+              ComponentRoute :
+              <KeepAlive name={item.path}>
+                <div>
+                  {ComponentRoute}
+                </div>
+              </KeepAlive>
+          )}></Route>
         })
       }
     </Switch >

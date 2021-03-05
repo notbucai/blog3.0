@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-25 16:36:47
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-04 10:30:51
+ * @LastEditTime: 2021-03-05 09:58:12
  * @Description:
  */
 
@@ -16,7 +16,7 @@ export const noAuthRoutes = [
   {
     path: '/login', // 路径
     title: '登录',
-    component: import('../pages/auth/login'), // 路由
+    component: () => import('../pages/auth/login'), // 路由
     noCache: true, // 是否不缓存  默认 false
     // -- 布局 不存在就是普通页面  默认不配置
     layout: {
@@ -26,7 +26,7 @@ export const noAuthRoutes = [
   },
   {
     path: '*', // 路径
-    component: import('../pages/error/not-found'), // 路由
+    component: () => import('../pages/error/not-found'), // 路由
     layout: {
       hiddenTab: true, // 不在tabView中展示
     }
@@ -38,7 +38,7 @@ export const authRoutes = [
 
   {
     path: '/', // 路径
-    component: import('../pages/comment'), // 路由
+    component: () => import('../pages/comment'), // 路由
     // -- 布局 不存在就是普通页面  默认不配置
     menu: {
       title: '首页',  // 标题
@@ -52,7 +52,7 @@ export const authRoutes = [
   {
     path: '/article', // 路径
     title: '文章管理',
-    component: import('../layout/Empty'), // 路由
+    component: () => import('../layout/Empty'), // 路由
     // -- 布局 不存在就是普通页面  默认不配置
     menu: {
       icon: <HomeOutlined />, // 图标
@@ -64,7 +64,7 @@ export const authRoutes = [
       {
         title: '文章详情',
         path: '/article/detail', // 路径
-        component: import('../pages/article/detail'), // 路由
+        component: () => import('../pages/article/detail'), // 路由
         // -- 布局 不存在就是普通页面  默认不配置
         auth: {
           permissions: ['user_page']
@@ -73,7 +73,7 @@ export const authRoutes = [
       {
         title: '文章测试',
         path: '/article/test4', // 路径
-        component: import('../pages/article/edit'),
+        component: () => import('../pages/article/edit'),
         menu: {
           icon: <HomeOutlined />, // 图标
         },
@@ -84,7 +84,7 @@ export const authRoutes = [
       {
         title: '文章测试2',
         path: '/article/tes22t', // 路径
-        component: import('../layout/Empty'), // 路由
+        component: () => import('../layout/Empty'), // 路由
         menu: {
           icon: <HomeOutlined />, // 图标
         },
@@ -95,7 +95,8 @@ export const authRoutes = [
           {
             title: '文章测试222',
             path: '/article/tes22t/tes1t', // 路径
-            component: import('../pages/article/edit'),
+            component: () => import('../pages/article/edit'),
+            noCache: true,
             menu: {
               icon: <HomeOutlined />, // 图标
             },
@@ -106,7 +107,7 @@ export const authRoutes = [
           {
             title: '文章测333试2',
             path: '/article/test2', // 路径
-            component: import('../pages/article/index'),
+            component: () => import('../pages/article/index'),
             menu: {
               icon: <HomeOutlined />, // 图标
             },
@@ -120,7 +121,7 @@ export const authRoutes = [
   },
   {
     path: '/comment', // 路径
-    component: import('../pages/comment'), // 路由
+    component: () => import('../pages/comment'), // 路由
     // -- 布局 不存在就是普通页面  默认不配置
     menu: {
       title: '评论管理',  // 标题
@@ -132,7 +133,7 @@ export const authRoutes = [
   },
   {
     path: '/role', // 路径
-    component: import('../pages/role'), // 路由
+    component: () => import('../pages/role'), // 路由
     // -- 布局 不存在就是普通页面  默认不配置
     layout: {
       hiddenTab: true

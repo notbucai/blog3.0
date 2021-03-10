@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import { connect } from 'react-redux';
 
+import store from "store2";
 import { useTranslation } from 'react-i18next';
 
 import { changeMenuState, changeLanguage } from '../store/app/actions';
@@ -31,7 +32,7 @@ const DefaultLayout = ({ menuState, changeMenuState, menus, routes, tabViews, cu
       const type = e.key;
       if (type === 'exit') {
         // TODO: 这都属于业务块了，不做详细处理
-        localStorage.removeItem('token');
+        store.remove('token');
         window.location.replace('/login')
       }
     }}>
@@ -116,7 +117,7 @@ const DefaultLayout = ({ menuState, changeMenuState, menus, routes, tabViews, cu
         {/* RIGHT -  BREADCRUMB */}
         <Breadcrumb breadcrumbs={breadcrumbs} />
         {/* RIGHT - CONTENT */}
-        <Layout.Content>
+        <Layout.Content style={{ maxHeight: 'calc(100vh - 170px)', overflow: 'hidden', overflowY: 'auto' }}>
           <div style={{ margin: '0 14px', padding: '14px', backgroundColor: '#fff' }}>
             <Router routes={routes} />
           </div>

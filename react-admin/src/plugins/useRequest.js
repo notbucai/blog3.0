@@ -2,16 +2,16 @@
  * @Author: bucai
  * @Date: 2021-02-25 16:01:49
  * @LastEditors: bucai
- * @LastEditTime: 2021-02-25 16:01:50
- * @Description: 
+ * @LastEditTime: 2021-03-05 19:51:34
+ * @Description:
  */
-
-import { makeUseAxios } from 'axios-hooks'
-import LRU from 'lru-cache'
+import { useRequest as aUseRequest } from 'ahooks';
+import { merge } from 'loadsh'
 import axios from './request';
 
-const cache = new LRU({ max: 10 })
-
-const useRequest = makeUseAxios({ axios, cache });
-
+const useRequest = (options, config = {}) => {
+  return aUseRequest(options, merge(config, {
+    requestMethod: param => axios(param),
+  }));
+}
 export default useRequest;

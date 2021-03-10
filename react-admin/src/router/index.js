@@ -2,13 +2,17 @@
  * @Author: bucai
  * @Date: 2021-02-25 16:36:47
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-05 09:58:12
+ * @LastEditTime: 2021-03-09 19:01:56
  * @Description:
  */
 
 import {
   HomeOutlined,
-  SmileOutlined
+  SmileOutlined,
+  MessageOutlined,
+  TagsOutlined,
+  ProfileOutlined,
+  UserOutlined
 } from '@ant-design/icons';
 
 // 无需鉴权路由列表
@@ -38,7 +42,7 @@ export const authRoutes = [
 
   {
     path: '/', // 路径
-    component: () => import('../pages/comment'), // 路由
+    component: () => import('../pages/home'), // 路由
     // -- 布局 不存在就是普通页面  默认不配置
     menu: {
       title: '首页',  // 标题
@@ -50,86 +54,52 @@ export const authRoutes = [
     auth: null // 只需要登录即可
   },
   {
-    path: '/article', // 路径
     title: '文章管理',
-    component: () => import('../layout/Empty'), // 路由
-    // -- 布局 不存在就是普通页面  默认不配置
+    path: '/article', // 路径
+    component: () => import('../pages/article'), // 路由
     menu: {
-      icon: <HomeOutlined />, // 图标
+      icon: <ProfileOutlined />, // 图标
     },
+    // noCache: true, // 是否不缓存  默认 false
     auth: {
-      permissions: ['user_page', 'article_page']
+      permissions: ['article_page']
     },
-    children: [
-      {
-        title: '文章详情',
-        path: '/article/detail', // 路径
-        component: () => import('../pages/article/detail'), // 路由
-        // -- 布局 不存在就是普通页面  默认不配置
-        auth: {
-          permissions: ['user_page']
-        },
-      },
-      {
-        title: '文章测试',
-        path: '/article/test4', // 路径
-        component: () => import('../pages/article/edit'),
-        menu: {
-          icon: <HomeOutlined />, // 图标
-        },
-        auth: {
-          permissions: ['article_page']
-        },
-      },
-      {
-        title: '文章测试2',
-        path: '/article/tes22t', // 路径
-        component: () => import('../layout/Empty'), // 路由
-        menu: {
-          icon: <HomeOutlined />, // 图标
-        },
-        auth: {
-          permissions: ['article_page']
-        },
-        children: [
-          {
-            title: '文章测试222',
-            path: '/article/tes22t/tes1t', // 路径
-            component: () => import('../pages/article/edit'),
-            noCache: true,
-            menu: {
-              icon: <HomeOutlined />, // 图标
-            },
-            auth: {
-              permissions: ['article_page']
-            },
-          },
-          {
-            title: '文章测333试2',
-            path: '/article/test2', // 路径
-            component: () => import('../pages/article/index'),
-            menu: {
-              icon: <HomeOutlined />, // 图标
-            },
-            auth: {
-              permissions: ['xxx']
-            },
-          }
-        ]
-      }
-    ]
   },
   {
+    title: '评论管理',
     path: '/comment', // 路径
     component: () => import('../pages/comment'), // 路由
-    // -- 布局 不存在就是普通页面  默认不配置
     menu: {
-      title: '评论管理',  // 标题
-      icon: <HomeOutlined />, // 图标
+      icon: <MessageOutlined />, // 图标
     },
+    // -- 布局 不存在就是普通页面  默认不配置
     auth: {
-      permissions: ['aaa']
-    }
+      permissions: ['comment_page']
+    },
+  },
+  {
+    title: '标签管理',
+    path: '/tag', // 路径
+    component: () => import('../pages/tag'), // 路由
+    menu: {
+      icon: <TagsOutlined />, // 图标
+    },
+    // -- 布局 不存在就是普通页面  默认不配置
+    auth: {
+      permissions: ['tag_page']
+    },
+  },
+  {
+    title: '用户管理',
+    path: '/user', // 路径
+    component: () => import('../pages/user'), // 路由
+    menu: {
+      icon: <UserOutlined />, // 图标
+    },
+    // -- 布局 不存在就是普通页面  默认不配置
+    auth: {
+      permissions: ['user_page']
+    },
   },
   {
     path: '/role', // 路径
@@ -143,7 +113,7 @@ export const authRoutes = [
       icon: <SmileOutlined />, // 图标
     },
     auth: {
-      permissions: ['article_page']
+      permissions: ['role_page']
     }
   },
 ];

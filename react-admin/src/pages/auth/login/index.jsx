@@ -1,27 +1,42 @@
 import React from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button } from 'antd';
+
+import store from "store2";
 
 import './styles.scss';
 
 import logo from '@/assets/image/logo.png'
 import { withRouter } from 'react-router';
+import useRequest from '../../../plugins/useRequest';
 
 const tailLayout = {
 };
 
 const Login = ({ history, location }) => {
-  const onFinish = ({ username, password }) => {
-    // TODO: 验证 调用接口
-    if (!(username === 'admin' && password === 'admin') && !(username === 'test' && password === 'test') ) {
-      message.error('账户密码错误');
-      return;
+  const { loading, run } = useRequest(({ login, pass } = {}) => {
+    return {
+      method: 'POST',
+      url: '/users/signin',
+      data: {
+        login, pass
+      }
     }
-    localStorage.setItem('token', username)
+  }, {
+    manual: true
+  });
+
+  const handleLogin = async (login, pass) => {
+    const data = await run({ login, pass });
+    store.set('token', data);
     // TODO: 这里简单匹配
     const search = location.search || '';
     const url = new URLSearchParams(search.replace(/^\?/, ''));
     // 这里直接刷新页面跳转到指定页面 间接完成路由更新问题
     window.location.replace(url.get('redirect') || '/');
+  }
+  const onFinish = async ({ username, password }) => {
+    // TODO: 验证 调用接口
+    await handleLogin(username, password);
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -65,7 +80,7 @@ const Login = ({ history, location }) => {
           </Form.Item> */}
 
           <Form.Item {...tailLayout}>
-            <Button type="primary" block htmlType="submit">
+            <Button type="primary" block htmlType="submit" loading={loading}>
               登录
         </Button>
           </Form.Item>

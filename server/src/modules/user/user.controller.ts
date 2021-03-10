@@ -127,6 +127,14 @@ export class UserController {
     return user;
   }
 
+  @Get('/role')
+  @UseGuards(ActiveGuard)
+  @ApiOperation({ summary: "当前用户角色权限信息" })
+  @ApiBearerAuth()
+  public async permissions (@CurUser() user: User) {
+    return user ? user.role : null;
+  }
+
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
     */

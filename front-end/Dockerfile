@@ -8,6 +8,8 @@ ADD . /app/
 
 WORKDIR /app
 
+RUN rm -rf node_modules
+
 RUN npm install --registry=https://registry.npm.taobao.org
 
 RUN npm run build

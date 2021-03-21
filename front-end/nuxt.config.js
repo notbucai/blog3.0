@@ -28,15 +28,6 @@ module.exports = {
       { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', async: true }, /*引入百度统计的js*/
     ]
   },
-  extractCSS: true,
-  optimizeCSS: {
-    assetNameRegExp: /\.optimize\.css$/g,
-    // cssProcessor: require('cssnano'),
-    cssProcessorPluginOptions: {
-      preset: ['default', { discardComments: { removeAll: true } }],
-    },
-    canPrint: true
-  },
   /*
   ** Customize the progress-bar color
   */
@@ -55,7 +46,7 @@ module.exports = {
   plugins: [
     './plugins/axios.js',
     './plugins/constant.js',
-    './plugins/global-components',
+    // './plugins/global-components',
     './plugins/filters.js',
     './plugins/utils.js',
     { src: './plugins/baiduGa.js', ssr: false }, /* 百度统计 */
@@ -81,9 +72,9 @@ module.exports = {
     '@nuxtjs/style-resources',
     'cookie-universal-nuxt',
     '@nuxtjs/sitemap',
-    '@nuxtjs/pwa',
+    // '@nuxtjs/pwa',
     ['@nuxtjs/vuetify', {
-
+      treeShake: true,
       theme: {
         options: { minifyTheme: minifyTheme.default },
         icons: {
@@ -107,7 +98,7 @@ module.exports = {
     }]
   ],
   vuetify: {
-    treeShake: true,
+    treeShake: false,
     defaultAssets: {
       // nuxt.config.js
       font: false,
@@ -143,6 +134,10 @@ module.exports = {
     '/api/': { target: process.env.NODE_ENV === 'development' ? 'http://localhost:9905/' : 'http://bucai-blog-server:9905/', pathRewrite: { '^/api/': '' } }
   },
 
+
+  optimization: {
+    minimize: true,
+  },
   /*
   ** Build configuration
   */
@@ -157,14 +152,30 @@ module.exports = {
     splitChunks: {
       // layouts: true
     },
-    minimize: true,
+
     // quiet: true,
     analyze: process.env.ENV_ANALYZE == 'analyze',
+
+    optimization: {
+      minimize: true,
+      splitChunks: {
+        maxInitialRequests: 20,
+        maxAsyncRequests: 20
+      }
+    },
+    optimizeCSS: {
+      assetNameRegExp: /\.optimize\.css$/g,
+      // cssProcessor: require('cssnano'),
+      cssProcessorPluginOptions: {
+        preset: ['default', { discardComments: { removeAll: true } }],
+      },
+      canPrint: true
+    },
     /*
     ** You can extend webpack config here
     */
     extend (config, ctx) {
 
     }
-  }
+  },
 }

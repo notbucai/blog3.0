@@ -5,7 +5,7 @@
  * @LastEditTime: 2021-03-05 11:01:57
  * @Description:
  */
-import { cloneDeep, uniqBy } from 'loadsh'
+import { cloneDeep, uniqBy } from 'lodash'
 import { getListByChildrenRoutePath } from '../../router/utils';
 
 import defaultState from "./state";

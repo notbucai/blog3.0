@@ -5,7 +5,7 @@
  * @LastEditTime: 2021-03-02 14:16:54
  * @Description:
  */
-import { cloneDeep } from 'loadsh'
+import { cloneDeep } from 'lodash'
 import defaultState from "./state";
 import { UPDATE_USER } from "./types";
 /**

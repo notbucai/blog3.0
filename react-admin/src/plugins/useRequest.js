@@ -6,7 +6,7 @@
  * @Description:
  */
 import { useRequest as aUseRequest } from 'ahooks';
-import { merge } from 'loadsh'
+import { merge } from 'lodash'
 import axios from './request';
 
 const useRequest = (options, config = {}) => {

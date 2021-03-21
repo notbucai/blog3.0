@@ -41,6 +41,7 @@ export default {
   scrollToTop: true,
   async asyncData ({ $axios }) {
     const promiseList = [];
+    console.time('INDEX__ASYNC_DATA')
     promiseList.push($axios.get('/api/article/list/hot'));
     promiseList.push($axios.get('/api/article/list/all'));
     promiseList.push($axios.get('/api/tag/list/effect'));
@@ -48,18 +49,23 @@ export default {
     promiseList.push($axios.get('/api/comment/list/new/article'));
 
     const [hotList, allList, taglist, randomList, commentlist] = await Promise.all(promiseList);
+    console.timeEnd('INDEX__ASYNC_DATA');
+
     return {
       taglist: taglist || [],
       recommendedList: hotList.list || [],
       articleStore: allList || {},
       randomList: randomList || [],
-      commentlist: commentlist || []
+      commentlist: commentlist || [],
+      timed: Date.now(),
     };
   },
-  mounted () { },
+  mounted () {
+  },
   components: { ArticleItem, Banner, ArticleList, TagList, SideRandomArticle, SideCommentList },
   data () {
     return {
+      timed: 0,
       cycle: false,
       page_index: 1,
       taglist: [],
@@ -74,6 +80,7 @@ export default {
   },
   methods: {
     async loadData () {
+
       const { total, list } = this.articleStore;
       if (total <= list.length) return;
       this.page_index++;

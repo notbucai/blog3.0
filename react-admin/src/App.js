@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import { DefaultLayout } from './layout';
-import { Router } from 'react-router-dom';
-import { Provider as AliveProvider } from 'react-keep-alive'
+import { Router } from 'react-router';
 import initHistory from './router/history';
 import { ConfigProvider } from 'antd';
 
@@ -21,16 +20,14 @@ function App ({ init, language }) {
   return (
     <ConfigProvider locale={locale}>
       <Router history={customHistory}>
-        <AliveProvider>
-          <DefaultLayout />
-        </AliveProvider>
+        <DefaultLayout />
       </Router>
     </ConfigProvider>
   );
 }
 
 export default connect((state) => ({
-  language: state.app.language
+  language: state.app.language,
 }), dispatch => {
   return {
     async init () {

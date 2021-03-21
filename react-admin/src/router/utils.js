@@ -5,7 +5,7 @@
  * @LastEditTime: 2021-03-03 16:50:53
  * @Description: 
  */
-import { cloneDeep } from 'loadsh'
+import { cloneDeep } from 'lodash'
 /**
  * 通过权限获取用户路由
  * @param {[]} routes 

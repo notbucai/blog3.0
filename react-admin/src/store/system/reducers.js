@@ -5,7 +5,7 @@
  * @LastEditTime: 2021-03-02 15:04:35
  * @Description:
  */
-import { cloneDeep } from 'loadsh'
+import { cloneDeep } from 'lodash'
 import defaultState from "./state";
 import { SET_TOKEN } from "./types";
 /**

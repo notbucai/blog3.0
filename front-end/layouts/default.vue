@@ -79,11 +79,13 @@ import LoginOrRegister from '@/components/LoginOrRegister.vue';
 import CurrentUser from '@/components/CurrentUser.vue';
 import NavigationDrawer from '@/components/NavigationDrawer.vue';
 import ScrollToTop from '@/components/ScrollToTop.vue';
-import SvgWalle from '@/components/svg/Walle.vue';
 import Qixi from '@/components/Qixi/Index.vue';
 
 export default {
-  components: { Qixi, LoginOrRegister, CurrentUser, NavigationDrawer, ScrollToTop, SvgWalle },
+  components: { Qixi, LoginOrRegister, CurrentUser, NavigationDrawer,
+  ScrollToTop,
+  SvgWalle:()=>import( '@/components/svg/Walle.vue')
+  },
   data () {
     return {
 

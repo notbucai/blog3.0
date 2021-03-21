@@ -5,7 +5,7 @@
  * @LastEditTime: 2021-03-04 10:37:52
  * @Description:
  */
-import { cloneDeep } from 'loadsh'
+import { cloneDeep } from 'lodash'
 
 import { getRouteTitle, isAffix, getRouteIcon, isHiddenTab } from '@/router/utils'
 

@@ -28,7 +28,7 @@
     "@nestjs/typeorm": "^7.0.0",
     "@typegoose/typegoose": "^6.4.0",
     "@types/mongoose": "^5.7.27",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.3",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.11.0",

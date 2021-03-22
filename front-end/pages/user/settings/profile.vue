@@ -81,7 +81,7 @@
               style="width: 100%"
             >
               <span>图片</span>
-              <v-icon @click="cropperDialog = false">mdi-close</v-icon>
+              <v-icon @click="cropperDialog = false">{{$icons['mdi-close']}}</v-icon>
             </div>
           </v-card-title>
           <div style="height: 400px; width: 500px">

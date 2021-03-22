@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai
- * @LastEditTime: 2020-10-30 15:12:35
+ * @LastEditTime: 2021-03-21 21:37:59
  * @Description: 
  -->
 <template>
@@ -15,7 +15,7 @@
     <v-card>
       <div class="back_btn-box">
         <v-btn elevation="0" text @click="SET_LOGIN_OR_REGISTER_DIALOG">
-          <v-icon>mdi-arrow-left</v-icon>
+          <v-icon>{{$icons['mdi-arrow-left']}}</v-icon>
         </v-btn>
       </div>
       <div class="login-box">
@@ -93,7 +93,7 @@
                   :disabled="codeTmp.isSend"
                   @click="handleGetCode"
                 >
-                  <v-icon v-if="!codeTmp.isSend">mdi-message-processing</v-icon>
+                  <v-icon v-if="!codeTmp.isSend">{{$icons['mdi-message-processing']}}</v-icon>
                   <span v-else>{{ codeTmp.num }}</span>
                 </v-btn>
               </div>
@@ -119,13 +119,13 @@
             :loading="submitIng"
           >
             继续
-            <v-icon>mdi-arrow-right</v-icon>
+            <v-icon>{{$icons['mdi-arrow-right']}}</v-icon>
           </v-btn>
         </div>
 
         <div class="form-field center mt-4">
           <v-btn :elevation="0" fab @click="handleAuthLogin('github')">
-            <v-icon large>mdi-github</v-icon>
+            <v-icon large>{{$icons['mdi-github']}}</v-icon>
           </v-btn>
         </div>
       </div>

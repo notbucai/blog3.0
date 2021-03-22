@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 16:29:03
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-03 15:55:33
+ * @LastEditTime: 2021-03-21 22:11:26
  * @Description: 
 --> 
 <template>
@@ -42,7 +42,7 @@
       <v-card>
         <div class="back_btn-box">
           <v-btn elevation="0" text @click="showPhoneBindDialog = false">
-            <v-icon>mdi-arrow-left</v-icon>
+            <v-icon>{{$icons['mdi-arrow-left']}}</v-icon>
           </v-btn>
         </div>
         <div class="card-box">
@@ -64,7 +64,7 @@
                     :disabled="codeTmp.isSend"
                     @click="handleGetCode"
                   >
-                    <v-icon v-if="!codeTmp.isSend">mdi-message-processing</v-icon>
+                    <v-icon v-if="!codeTmp.isSend">{{$icons['mdi-message-processing']}}</v-icon>
                     <span v-else>{{codeTmp.num}}</span>
                   </v-btn>
                 </div>
@@ -81,7 +81,7 @@
               :loading="submitIng"
             >
               继续
-              <v-icon>mdi-arrow-right</v-icon>
+              <v-icon>{{$icons['mdi-arrow-right']}}</v-icon>
             </v-btn>
           </div>
         </div>

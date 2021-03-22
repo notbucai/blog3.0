@@ -45,12 +45,12 @@
               </nuxt-link>
               <div class="acticle_user-right">
                 <v-btn text>
-                  <v-icon left>mdi-eye</v-icon>
+                  <v-icon left>{{$icons['mdi-eye']}}</v-icon>
                   {{data.browseCount}}
                 </v-btn>
                 <!-- <v-btn color="success">123123123</v-btn> -->
                 <v-btn text :color="hasLike(data.likes)?'error':''" @click="handleClickLike">
-                  <v-icon left :color="hasLike(data.likes)?'error':''">mdi-cards-heart</v-icon>
+                  <v-icon left :color="hasLike(data.likes)?'error':''">{{$icons['mdi-cards-heart']}}</v-icon>
                   {{data.likes ? data.likes.length : 0}}
                 </v-btn>
                 <!-- :color="hasLike(article.likes)?'error':''" -->

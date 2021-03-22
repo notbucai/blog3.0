@@ -13,8 +13,8 @@
         </div>
         <div class="toolbar-action">
           <v-btn elevation="0" @click="handleChangeTheme" text small>
-            <v-icon v-if="$vuetify.theme.dark">mdi-white-balance-sunny</v-icon>
-            <v-icon v-if="!$vuetify.theme.dark">mdi-weather-night</v-icon>
+            <v-icon v-if="$vuetify.theme.dark">{{$icons['mdi-white-balance-sunny']}}</v-icon>
+            <v-icon v-if="!$vuetify.theme.dark">{{$icons['mdi-weather-night']}}</v-icon>
           </v-btn>
           <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
             <v-badge
@@ -24,7 +24,7 @@
               small
               overlap
             >
-              <v-icon>mdi-bell</v-icon>
+              <v-icon>{{$icons['mdi-bell']}}</v-icon>
             </v-badge>
           </v-btn>
           <v-btn color="info" elevation="0" @click="SET_LOGIN_OR_REGISTER_DIALOG" v-if="!user">登录</v-btn>
@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="toolbar-apps">
-          <v-icon @click="handleShowSide">mdi-menu</v-icon>
+          <v-icon @click="handleShowSide">{{$icons['mdi-menu']}}</v-icon>
         </div>
       </div>
     </v-app-bar>

@@ -17,7 +17,7 @@
           >
             <template v-slot:activator="{ on }">
               <v-btn text v-on="on">
-                <v-icon size="20">mdi-image-size-select-actual</v-icon>
+                <v-icon size="20">{{$icons['mdi-image-size-select-actual']}}</v-icon>
               </v-btn>
             </template>
             <v-card
@@ -32,7 +32,7 @@
                 @click="handleUpload"
                 :loading="fileUploading"
               >
-                <v-icon x-large>mdi-cloud-upload-outline</v-icon>
+                <v-icon x-large>{{$icons['mdi-cloud-upload-outline']}}</v-icon>
                 <input
                   type="file"
                   hidden
@@ -45,7 +45,7 @@
                 <v-img :src="formData.coverURL" :width="240">
                   <div class="d-flex flex-end justify-end">
                     <v-btn :elevation="0" small dark @click="handleDelImage">
-                      <v-icon small>mdi-trash-can</v-icon>
+                      <v-icon small>{{$icons['mdi-trash-can']}}</v-icon>
                     </v-btn>
                   </div>
                 </v-img>

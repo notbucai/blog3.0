@@ -2,22 +2,27 @@
  * @Author: bucai
  * @Date: 2020-05-04 20:54:03
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-01 15:50:25
+ * @LastEditTime: 2021-03-21 21:33:44
  * @Description: 
  -->
 
 <template>
   <v-menu :nudge-left="46" :nudge-bottom="10" offset-y>
     <template v-slot:activator="{ on }">
-      <v-avatar size="36" color="primary" v-on="on" style="cursor: pointer;">
+      <v-avatar size="36" color="primary" v-on="on" style="cursor: pointer">
         <img :src="user.avatarURL" :alt="user.username" />
       </v-avatar>
     </template>
     <v-list>
       <v-list-item dense v-for="item in userNavs" :key="item.key">
-        <v-btn text block class="justify-start" @click="handleSelectAction(item.key)">
-          <v-icon left>mdi-{{item.icon}}</v-icon>
-          {{item.title}}
+        <v-btn
+          text
+          block
+          class="justify-start"
+          @click="handleSelectAction(item.key)"
+        >
+          <v-icon left>{{ $icons['mdi-' + item.icon] }}</v-icon>
+          {{ item.title }}
         </v-btn>
       </v-list-item>
     </v-list>

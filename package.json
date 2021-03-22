@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/notbucai/blog3.0/issues"
   },
-  "homepage": "https://github.com/notbucai/blog3.0#readme"
+  "homepage": "https://github.com/notbucai/blog3.0#readme",
+  "dependencies": {
+    "@mdi/js": "^5.9.55"
+  }
 }

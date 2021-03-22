@@ -3,8 +3,8 @@
     <div class="nd_header">
       <div class="d-flex align-center justify-space-between pa-3">
         <v-btn elevation="0" @click="handleChangeTheme" text small>
-          <v-icon v-if="$vuetify.theme.dark">mdi-white-balance-sunny</v-icon>
-          <v-icon v-if="!$vuetify.theme.dark">mdi-weather-night</v-icon>
+          <v-icon v-if="$vuetify.theme.dark">{{$icons['mdi-white-balance-sunny']}}</v-icon>
+          <v-icon v-if="!$vuetify.theme.dark">{{$icons['mdi-weather-night']}}</v-icon>
         </v-btn>
         <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
           <v-badge
@@ -14,7 +14,7 @@
             small
             overlap
           >
-            <v-icon>mdi-bell</v-icon>
+            <v-icon>{{$icons['mdi-bell']}}</v-icon>
           </v-badge>
         </v-btn>
       </div>

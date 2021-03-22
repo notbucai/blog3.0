@@ -21,13 +21,13 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     <div class="d-flex align-center mt-1">
-                      <v-icon size="18" class="grey--text text--darken-2">mdi-briefcase-account</v-icon>
+                      <v-icon size="18" class="grey--text text--darken-2">{{$icons['mdi-briefcase-account']}}</v-icon>
                       <span
                         class="grey--text text--darken-2 pl-2"
                       >{{userInfo.job}} | {{userInfo.company}}</span>
                     </div>
                     <div class="d-flex align-center mt-1">
-                      <v-icon size="16" class="grey--text text--darken-2">mdi-card-account-details</v-icon>
+                      <v-icon size="16" class="grey--text text--darken-2">{{$icons['mdi-card-account-details']}}</v-icon>
                       <span class="grey--text text--darken-2 pl-2">{{userInfo.numberroduce}}</span>
                     </div>
                   </v-list-item-subtitle>
@@ -36,7 +36,7 @@
                 <v-list-item-action>
                   <div class="d-flex align-center _user-pages">
                     <v-btn icon :disabled="!userInfo.weiboID" target="_blank">
-                      <v-icon size="18">mdi-sina-weibo</v-icon>
+                      <v-icon size="18">{{$icons['mdi-sina-weibo']}}</v-icon>
                     </v-btn>
                     <v-btn
                       icon
@@ -44,7 +44,7 @@
                       :href="'https://github.com/'+userInfo.githubLogin"
                       target="_blank"
                     >
-                      <v-icon size="18">mdi-github</v-icon>
+                      <v-icon size="18">{{$icons['mdi-github']}}</v-icon>
                     </v-btn>
                     <v-btn
                       icon
@@ -52,7 +52,7 @@
                       :href="userInfo.personalHomePage"
                       target="_blank"
                     >
-                      <v-icon size="18">mdi-earth</v-icon>
+                      <v-icon size="18">{{$icons['mdi-earth']}}</v-icon>
                     </v-btn>
                   </div>
                   <v-btn
@@ -100,25 +100,25 @@
             <v-list dense subheader>
               <v-list-item dense>
                 <v-list-item-avatar>
-                  <v-icon small>mdi-cards-heart</v-icon>
+                  <v-icon small>{{$icons['mdi-cards-heart']}}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>获得点赞 {{achievement.likeConunt||0}}</v-list-item-content>
               </v-list-item>
               <v-list-item dense>
                 <v-list-item-avatar>
-                  <v-icon small>mdi-cards-heart</v-icon>
+                  <v-icon small>{{$icons['mdi-cards-heart']}}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>评论数量 {{achievement.commentCount}}</v-list-item-content>
               </v-list-item>
               <v-list-item dense>
                 <v-list-item-avatar>
-                  <v-icon small>mdi-cards-heart</v-icon>
+                  <v-icon small>{{$icons['mdi-cards-heart']}}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>总字数 {{achievement.wordCount}}</v-list-item-content>
               </v-list-item>
               <v-list-item dense>
                 <v-list-item-avatar>
-                  <v-icon small>mdi-eye</v-icon>
+                  <v-icon small>{{$icons['mdi-eye']}}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>文章被阅读 {{achievement.browseCount}}</v-list-item-content>
               </v-list-item>

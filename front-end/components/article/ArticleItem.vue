@@ -25,15 +25,15 @@
       <v-btn text color="error" nuxt :to="`/article/${article._id}`">开始阅读</v-btn>
       <div>
         <v-btn text>
-          <v-icon left>mdi-eye</v-icon>
+          <v-icon left>{{$icons['mdi-eye']}}</v-icon>
           {{article.browseCount}}
         </v-btn>
         <v-btn text :color="hasLike(article.likes)?'error':''">
-          <v-icon left :color="hasLike(article.likes)?'error':''">mdi-cards-heart</v-icon>
+          <v-icon left :color="hasLike(article.likes)?'error':''">{{$icons['mdi-cards-heart']}}</v-icon>
           {{article.likes ? article.likes.length : 0}}
         </v-btn>
         <v-btn text>
-          <v-icon left>mdi-message</v-icon>
+          <v-icon left>{{$icons['mdi-message']}}</v-icon>
           {{article.commentCount}}
         </v-btn>
       </div>

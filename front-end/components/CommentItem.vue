@@ -10,13 +10,21 @@
       >
         <div class="mr-2" v-if="comment.user.avatarURL">
           <v-avatar size="36">
-            <v-img :src="comment.user.avatarURL+'?imageMogr2/thumbnail/100x100'"></v-img>
+            <v-img
+              :src="comment.user.avatarURL + '?imageMogr2/thumbnail/100x100'"
+            ></v-img>
           </v-avatar>
         </div>
         <div v-if="type !== 'user'">
           <div class="body-2 d-flex align-center">
-            <span class="pr-2">{{comment.user.username}}</span>
-            <v-btn color="primary" :elevation="0" x-small @click.stop="handleReply(comment)">回复</v-btn>
+            <span class="pr-2">{{ comment.user.username }}</span>
+            <v-btn
+              color="primary"
+              :elevation="0"
+              x-small
+              @click.stop="handleReply(comment)"
+              >回复</v-btn
+            >
             <v-btn
               class="ml-2"
               color="error"
@@ -25,9 +33,12 @@
               @click.stop="handleDelete(comment)"
               :loading="deleteIng"
               v-if="user && comment.user._id == user._id"
-            >删除</v-btn>
+              >删除</v-btn
+            >
           </div>
-          <div class="caption text--secondary">{{comment.createdAt | format}}</div>
+          <div class="caption text--secondary">
+            {{ comment.createdAt | format }}
+          </div>
         </div>
       </nuxt-link>
       <div class="d-flex flex-column align-center">
@@ -35,29 +46,35 @@
           text
           icon
           small
-          :color="hasLike(comment.likes)?'error':''"
+          :color="hasLike(comment.likes) ? 'error' : ''"
           @click="handleClickLike(comment)"
         >
-          <v-icon :color="hasLike(comment.likes)?'error':''">mdi-cards-heart</v-icon>
+          <v-icon :color="hasLike(comment.likes) ? 'error' : ''"
+            >{{$icons['mdi-cards-heart']}}</v-icon
+          >
         </v-btn>
         <span
           class="body-2"
-          :class="hasLike(comment.likes)?'error--text':'text--secondary'"
-        >{{comment.likes ? comment.likes.length : 0}}</span>
+          :class="hasLike(comment.likes) ? 'error--text' : 'text--secondary'"
+          >{{ comment.likes ? comment.likes.length : 0 }}</span
+        >
       </div>
     </div>
     <div class="comment-centent">
-      <div v-html="comment.htmlContent" class="markdown-body text--secondary"></div>
+      <div
+        v-html="comment.htmlContent"
+        class="markdown-body text--secondary"
+      ></div>
     </div>
 
     <div class="comment-item-reply-box mt-3 pl-3" v-if="comment.replylist">
-      <template v-for="(_item) in comment.replylist">
+      <template v-for="_item in comment.replylist">
         <comment-item
           :comment="_item"
           :key="_item._id"
           :source="source"
           @reply="handleReply"
-          @delete="handleDelete($event,comment)"
+          @delete="handleDelete($event, comment)"
         />
       </template>
     </div>
@@ -69,8 +86,11 @@
         @click="handleGetCommentReply(comment)"
         :loading="comment.isFetReplyIng"
         v-if="!comment.replylist"
-      >展开{{comment.commentCounts}}条回复</v-btn>
-      <v-btn text small @click="handleGetCommentReply(comment)" v-else>收起</v-btn>
+        >展开{{ comment.commentCounts }}条回复</v-btn
+      >
+      <v-btn text small @click="handleGetCommentReply(comment)" v-else
+        >收起</v-btn
+      >
     </div>
   </div>
 </template>
@@ -108,7 +128,7 @@ export default {
   },
   data () {
     return {
-      deleteIng: false
+      deleteIng: false,
     };
   },
   mounted () { },

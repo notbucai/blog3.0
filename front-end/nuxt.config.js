@@ -46,6 +46,7 @@ module.exports = {
   plugins: [
     './plugins/axios.js',
     './plugins/constant.js',
+    './plugins/icons.js',
     // './plugins/global-components',
     './plugins/filters.js',
     './plugins/utils.js',
@@ -75,11 +76,11 @@ module.exports = {
     // '@nuxtjs/pwa',
     ['@nuxtjs/vuetify', {
       treeShake: true,
+      defaultAssets: {
+        icons: false
+      },
       theme: {
         options: { minifyTheme: minifyTheme.default },
-        icons: {
-          iconfont: 'mdi',
-        },
         themes: {
           light: {
             // primary: "#ffeb3b",
@@ -137,6 +138,9 @@ module.exports = {
 
   optimization: {
     minimize: true,
+  },
+  render: {
+    resourceHints: false
   },
   /*
   ** Build configuration

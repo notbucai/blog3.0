@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-03-21 21:20:08
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-21 22:18:21
+ * @LastEditTime: 2021-03-25 19:28:24
  * @Description: 
  */
 import {
@@ -21,6 +21,10 @@ import {
   mdiPencil,
   mdiClose,
   mdiEarth,
+  mdiAccount,
+  mdiExitToApp,
+  mdiArrowUpThick,
+  mdiChevronUp
 } from '@mdi/js'
 import Vue from 'vue';
 
@@ -44,4 +48,8 @@ Vue.prototype.$icons = {
   'mdi-pencil': mdiPencil,
   'mdi-close': mdiClose,
   'mdi-earth': mdiEarth,
+  'mdi-account': mdiAccount,
+  'mdi-exit-to-app': mdiExitToApp,
+  'mdi-arrow-up-thick': mdiArrowUpThick,
+  'mdi-chevron-up': mdiChevronUp
 };

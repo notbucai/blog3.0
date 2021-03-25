@@ -49,9 +49,9 @@
           :color="hasLike(comment.likes) ? 'error' : ''"
           @click="handleClickLike(comment)"
         >
-          <v-icon :color="hasLike(comment.likes) ? 'error' : ''"
-            >{{$icons['mdi-cards-heart']}}</v-icon
-          >
+          <v-icon :color="hasLike(comment.likes) ? 'error' : ''">{{
+            $icons['mdi-cards-heart']
+          }}</v-icon>
         </v-btn>
         <span
           class="body-2"

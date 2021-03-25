@@ -13,7 +13,7 @@ module.exports = {
       return title ? `${title} - 不才的博客` : '不才的博客'
     },
     htmlAttrs: {
-      lang: "zh-CN"
+      lang: undefined
     },
     meta: [
       { charset: 'utf-8' },

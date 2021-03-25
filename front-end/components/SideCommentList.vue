@@ -6,22 +6,32 @@
       </v-row>
     </v-container>
     <v-card class="mx-auto mb-6 pa-2">
-      <nuxt-link
-        :to="'/article/'+item.sourceID+'#comment'"
+      <div
+        class="article-item"
         v-for="(item, index) in cList"
         :key="index"
-        v-ripple
-        class="article-item"
+        @click.prevent="$router.push('/article/' + item.sourceID + '#comment')"
       >
-        <div class="article-item-left rounded-sm">
+        <nuxt-link
+          class="article-item-left rounded-sm"
+          :to="item.user ? '/user/' + item.user._id : ''"
+          @click.native.stop
+        >
           <div class="left-month">User</div>
-          <div class="left-day">{{item.user ? item.user.username : '匿名'}}</div>
-        </div>
-        <div class="article-item-right">
-          <div class="right-name">{{item.htmlContent | htmlFilter}}</div>
-          <div class="right-user">{{item.updatedAt | format}}</div>
-        </div>
-      </nuxt-link>
+          <div class="left-day">
+            {{ item.user ? item.user.username : '匿名' }}
+          </div>
+        </nuxt-link>
+        <nuxt-link
+          :to="'/article/' + item.sourceID + '#comment'"
+          v-ripple
+          class="article-item-right"
+          @click.stop
+        >
+          <div class="right-name">{{ item.htmlContent | htmlFilter }}</div>
+          <div class="right-user">{{ item.updatedAt | format }}</div>
+        </nuxt-link>
+      </div>
     </v-card>
   </div>
 </template>
@@ -75,12 +85,16 @@ export default {
   .article-item {
     display: flex;
     /* margin-bottom: 14px; */
-    text-decoration: none;
+    cursor: pointer;
     transition: all 0.1s;
     padding: 10px;
     border-radius: 2px;
     &:hover {
       box-shadow: 0 0 12px rgba($color: #000, $alpha: 0.04);
+    }
+
+    a {
+      text-decoration: none;
     }
     &-left {
       min-width: 70px;

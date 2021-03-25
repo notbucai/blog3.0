@@ -109,6 +109,7 @@ export default {
     },
     handleChangeTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      this.$cookies.set('theme',this.$vuetify.theme.dark ? 'dark' : 'white');
     }
   },
 }

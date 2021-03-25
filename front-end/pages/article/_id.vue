@@ -5,16 +5,20 @@
         <v-card>
           <div class="acticle_pic" v-if="data.coverURL">
             <v-img
-              :aspect-ratio="16/9"
-              :src="data.coverURL+'?imageMogr2/thumbnail/800x'"
-              :lazy-src="data.coverURL+'?imageMogr2/thumbnail/100x'"
+              :aspect-ratio="16 / 9"
+              :src="data.coverURL + '?imageMogr2/thumbnail/800x'"
+              :lazy-src="data.coverURL + '?imageMogr2/thumbnail/100x'"
             ></v-img>
           </div>
           <div class="acticle_content">
-            <v-alert type="warning" dense v-if="data.status === 1">审核中</v-alert>
-            <v-alert type="warning" dense v-if="data.status === 3">审核未通过</v-alert>
+            <v-alert type="warning" dense v-if="data.status === 1"
+              >审核中</v-alert
+            >
+            <v-alert type="warning" dense v-if="data.status === 3"
+              >审核未通过</v-alert
+            >
 
-            <h1 class="acticle_title display-1">{{data.title}}</h1>
+            <h1 class="acticle_title display-1">{{ data.title }}</h1>
             <div class="acticle_user d-flex justify-space-between align-center">
               <nuxt-link
                 v-ripple
@@ -23,15 +27,24 @@
                 class="acticle_user-left d-flex align-center"
                 v-if="data.user"
               >
-                <div class="acticle_user-avatar mr-2" v-if="data.user.avatarURL">
+                <div
+                  class="acticle_user-avatar mr-2"
+                  v-if="data.user.avatarURL"
+                >
                   <v-avatar size="48">
-                    <v-img :src="data.user.avatarURL+'?imageMogr2/thumbnail/100x100'"></v-img>
+                    <v-img
+                      :src="
+                        data.user.avatarURL + '?imageMogr2/thumbnail/100x100'
+                      "
+                    ></v-img>
                   </v-avatar>
                 </div>
                 <div class="acticle_info">
-                  <div class="acticle_info-username">{{data.user.username}}</div>
+                  <div class="acticle_info-username">
+                    {{ data.user.username }}
+                  </div>
                   <div class="acticle_info-date">
-                    <span>{{data.createdAt | format}}</span>
+                    <span>{{ data.createdAt | format }}</span>
                     <v-btn
                       text
                       color="primary"
@@ -39,40 +52,55 @@
                       class="overline"
                       v-if="user && user._id == data.user._id"
                       @click.stop="handleEditArticle"
-                    >编辑</v-btn>
+                      >编辑</v-btn
+                    >
                   </div>
                 </div>
               </nuxt-link>
               <div class="acticle_user-right">
                 <v-btn text>
-                  <v-icon left>{{$icons['mdi-eye']}}</v-icon>
-                  {{data.browseCount}}
+                  <v-icon left>{{ $icons['mdi-eye'] }}</v-icon>
+                  {{ data.browseCount }}
                 </v-btn>
                 <!-- <v-btn color="success">123123123</v-btn> -->
-                <v-btn text :color="hasLike(data.likes)?'error':''" @click="handleClickLike">
-                  <v-icon left :color="hasLike(data.likes)?'error':''">{{$icons['mdi-cards-heart']}}</v-icon>
-                  {{data.likes ? data.likes.length : 0}}
+                <v-btn
+                  text
+                  :color="hasLike(data.likes) ? 'error' : ''"
+                  @click="handleClickLike"
+                >
+                  <v-icon left :color="hasLike(data.likes) ? 'error' : ''">{{
+                    $icons['mdi-cards-heart']
+                  }}</v-icon>
+                  {{ data.likes ? data.likes.length : 0 }}
                 </v-btn>
                 <!-- :color="hasLike(article.likes)?'error':''" -->
               </div>
             </div>
-            <div class="acticle_htmlContent v-note-wrapper markdown-body" v-html="content"></div>
+            <div
+              class="acticle_htmlContent v-note-wrapper markdown-body"
+              v-html="content"
+            ></div>
           </div>
           <div class="acticle_tags">
             <nuxt-link
               :to="`/tag/${item.name}`"
               class="tag-item-link"
-              v-for="(item) in data.tags"
+              v-for="item in data.tags"
               :key="item.name"
             >
               <v-chip class="ma-2" label>
-                <v-icon left small>mdi-{{item.iconURL}}</v-icon>
-                {{item.name}}
+                <v-icon left small>mdi-{{ item.iconURL }}</v-icon>
+                {{ item.name }}
               </v-chip>
             </nuxt-link>
           </div>
           <v-divider></v-divider>
-          <comment-box source="article" id="comment" :cid="id" :comments="comments" />
+          <comment-box
+            source="article"
+            id="comment"
+            :cid="id"
+            :comments="comments"
+          />
         </v-card>
       </v-col>
       <v-col :md="4" :sm="12" :cols="12">
@@ -80,13 +108,20 @@
           <v-card-title>导航</v-card-title>
 
           <ul class="menus">
-            <li class="menu menu-h1">{{data.title}}</li>
+            <li class="menu menu-h1">{{ data.title }}</li>
             <li
               v-for="(item, index) in menus"
               :key="index"
-              :class="'menu menu-'+item.type +' '+ (currentTitleHash==item.target?'active':'')"
+              :class="
+                'menu menu-' +
+                item.type +
+                ' ' +
+                (currentTitleHash == item.target ? 'active' : '')
+              "
               @click="handleGoToScroll(item.target)"
-            >{{item.title}}</li>
+            >
+              {{ item.title }}
+            </li>
           </ul>
         </v-card>
       </v-col>
@@ -235,14 +270,19 @@ export default {
   z-index: 4 !important;
   border: none;
 }
-.article {
-  /* .v-note-wrapper .v-note-op .v-left-item,
+/* .v-note-wrapper .v-note-op .v-left-item,
   .v-note-wrapper .v-note-op .v-right-item {
     flex: none;
   }
   .op-icon-divider {
     display: none;
   } */
+.theme--dark {
+  .article {
+    &.v-divider {
+      border-top-color: #000 !important;
+    }
+  }
 }
 </style>
 <style lang="scss" scoped>
@@ -304,6 +344,29 @@ export default {
   .menus_box {
     position: sticky;
     top: 80px;
+    &.theme--dark {
+      .menus {
+        &::before {
+          background-color: #000 !important;
+        }
+        .menu {
+          $color: #666;
+          color: $color !important;
+
+          &:hover,
+          &.active {
+            $color1: rgb(66, 154, 255);
+            color: $color1 !important;
+            &::before {
+              background-color: $color1;
+            }
+          }
+          &:hover {
+            background-color: rgba($color: #000, $alpha: 0.6);
+          }
+        }
+      }
+    }
   }
   .menus {
     padding: 0 12px 12px;
@@ -331,6 +394,7 @@ export default {
       align-items: center;
       $color: #444;
       color: $color;
+      transition: all 0.2s;
 
       &:hover,
       &.active {
@@ -352,6 +416,7 @@ export default {
         background-color: $color;
         margin-right: 10px;
         margin-left: 10px;
+        transition: all 0.2s;
       }
       &.menu-h1 {
         &::before {

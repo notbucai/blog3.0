@@ -13,27 +13,37 @@
         </div>
         <div class="toolbar-action">
           <v-btn elevation="0" @click="handleChangeTheme" text small>
-            <v-icon v-if="$vuetify.theme.dark">{{$icons['mdi-white-balance-sunny']}}</v-icon>
-            <v-icon v-if="!$vuetify.theme.dark">{{$icons['mdi-weather-night']}}</v-icon>
+            <v-icon v-if="$vuetify.theme.dark">{{
+              $icons['mdi-white-balance-sunny']
+            }}</v-icon>
+            <v-icon v-if="!$vuetify.theme.dark">{{
+              $icons['mdi-weather-night']
+            }}</v-icon>
           </v-btn>
           <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
             <v-badge
               color="error"
               :content="noticeStatus.unread"
-              :value="noticeStatus&&noticeStatus.unread"
+              :value="noticeStatus && noticeStatus.unread"
               small
               overlap
             >
-              <v-icon>{{$icons['mdi-bell']}}</v-icon>
+              <v-icon>{{ $icons['mdi-bell'] }}</v-icon>
             </v-badge>
           </v-btn>
-          <v-btn color="info" elevation="0" @click="SET_LOGIN_OR_REGISTER_DIALOG" v-if="!user">登录</v-btn>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="SET_LOGIN_OR_REGISTER_DIALOG"
+            v-if="!user"
+            >登录</v-btn
+          >
           <div class="pl-2" v-else>
             <current-user />
           </div>
         </div>
         <div class="toolbar-apps">
-          <v-icon @click="handleShowSide">{{$icons['mdi-menu']}}</v-icon>
+          <v-icon @click="handleShowSide">{{ $icons['mdi-menu'] }}</v-icon>
         </div>
       </div>
     </v-app-bar>
@@ -58,7 +68,8 @@
             href="http://www.beian.miit.gov.cn/"
             target="_blank"
             rel="noopener noreferrer"
-          >赣ICP备15001741号-3</a>
+            >赣ICP备15001741号-3</a
+          >
         </div>
       </v-container>
     </v-footer>
@@ -82,9 +93,13 @@ import ScrollToTop from '@/components/ScrollToTop.vue';
 import Qixi from '@/components/Qixi/Index.vue';
 
 export default {
-  components: { Qixi, LoginOrRegister, CurrentUser, NavigationDrawer,
-  ScrollToTop,
-  SvgWalle:()=>import( '@/components/svg/Walle.vue')
+  components: {
+    Qixi,
+    LoginOrRegister,
+    CurrentUser,
+    NavigationDrawer,
+    ScrollToTop,
+    SvgWalle: () => import('@/components/svg/Walle.vue')
   },
   data () {
     return {
@@ -101,14 +116,19 @@ export default {
   },
   mounted () {
     const h = new Date().getHours();
-    this.$vuetify.theme.dark = (h >= 19 && h <= 24) || (h >= 0 && h <= 7);
-
+    const theme = this.$cookies.get('theme');
+    let isDark= (h >= 19 && h <= 24) || (h >= 0 && h <= 7);
+    if (theme) {
+      isDark = theme === 'dark';
+    }
+    this.$vuetify.theme.dark = isDark;
     this.handleLoadNoticeStatus();
   },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
     handleChangeTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      this.$cookies.set('theme',this.$vuetify.theme.dark ? 'dark' : 'white');
     },
     handleShowSide () {
       this.$store.commit('SET_SIDE_STATUS', true);

@@ -12,7 +12,7 @@
     <!-- 评论列表 -->
     <v-card tile :elevation="0">
       <template v-for="(item,index) in comments">
-        <v-divider color="white" :key="index"></v-divider>
+        <v-divider :key="index"></v-divider>
         <comment-item
           :key="item._id"
           :comment="item"

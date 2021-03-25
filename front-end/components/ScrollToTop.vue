@@ -1,7 +1,7 @@
 <template>
   <div class="ScrollToTop" v-show="isShow" v-scroll="onScroll">
     <v-btn color="error" small fab @click="handleTo">
-      <v-icon dark>{{$icons['mdi-weather-night']}}</v-icon>
+      <v-icon dark>{{$icons['mdi-chevron-up']}}</v-icon>
     </v-btn>
   </div>
 </template>

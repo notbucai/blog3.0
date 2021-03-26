@@ -10,7 +10,9 @@ WORKDIR /app
 
 RUN rm -rf node_modules
 
-RUN npm install --registry=https://registry.npm.taobao.org
+RUN rm -rf dist
+
+RUN npm install
 
 RUN npm run build
 

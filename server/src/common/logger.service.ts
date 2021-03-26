@@ -2,7 +2,7 @@ import * as pino from 'pino';
 import * as moment from 'moment';
 
 const logger = pino({
-    prettyPrint: process.env.NODE_ENV === 'development'
+    prettyPrint: true
 });
 
 class LogData {

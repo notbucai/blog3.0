@@ -1,40 +1,60 @@
 <template>
-  <v-card class="mx-auto mb-6 article-item" :shaped="article.up == 1">
+  <v-card
+    class="mx-auto mb-6 article-item"
+    :class="{ transition: istransition }"
+    v-intersect="{
+      handler: onIntersect,
+      options: {
+        threshold: [0.5],
+      },
+    }"
+    :shaped="article.up == 1"
+  >
     <v-lazy>
       <v-img
-        :aspect-ratio="18/9"
+        :aspect-ratio="18 / 9"
         v-if="article.coverURL"
-        :src="article.coverURL+'?imageMogr2/thumbnail/800x'"
-        :lazy-src="article.coverURL+'?imageMogr2/thumbnail/100x'"
+        class="article-pic"
+        :src="article.coverURL + '?imageMogr2/thumbnail/800x'"
+        :lazy-src="article.coverURL + '?imageMogr2/thumbnail/100x'"
       />
     </v-lazy>
 
     <v-card-title>
       <nuxt-link :to="`/article/${article._id}`" class="title_a">
         <span v-if="article.up == 1" class="body-2">[置顶]</span>
-        {{article.title}}
+        {{ article.title }}
       </nuxt-link>
     </v-card-title>
-    <v-card-subtitle>{{article.createdAt | format}}</v-card-subtitle>
+    <v-card-subtitle>
+      <span>{{ article.createdAt | format }}</span>
+    </v-card-subtitle>
 
     <v-card-text class="text--primary">
-      <div>{{article.summary}}</div>
+      <p>{{ article.summary }}</p>
     </v-card-text>
 
     <v-card-actions class="d-flex align-center justify-space-between">
-      <v-btn text color="error" nuxt :to="`/article/${article._id}`">开始阅读</v-btn>
+      <v-btn text color="error" nuxt :to="`/article/${article._id}`"
+        >开始阅读</v-btn
+      >
       <div>
         <v-btn text>
-          <v-icon left>{{$icons['mdi-eye']}}</v-icon>
-          {{article.browseCount}}
+          <v-icon left>{{ $icons['mdi-eye'] }}</v-icon>
+          {{ article.browseCount }}
         </v-btn>
-        <v-btn text :color="hasLike(article.likes)?'error':''">
-          <v-icon left :color="hasLike(article.likes)?'error':''">{{$icons['mdi-cards-heart']}}</v-icon>
-          {{article.likes ? article.likes.length : 0}}
+        <v-btn text :color="hasLike(article.likes) ? 'error' : ''">
+          <v-icon
+            left
+            class="heart-icon"
+            :color="hasLike(article.likes) ? 'error' : ''"
+            >{{ $icons['mdi-cards-heart'] }}</v-icon
+          >
+          {{ article.likes ? article.likes.length : 0 }}
         </v-btn>
         <v-btn text>
-          <v-icon left>{{$icons['mdi-message']}}</v-icon>
-          {{article.commentCount}}
+          <v-icon left>{{ $icons['mdi-message'] }}</v-icon>
+          {{ article.commentCount }}
         </v-btn>
       </div>
     </v-card-actions>
@@ -63,16 +83,77 @@ export default {
   },
   computed: {},
   data () {
-    return {};
+    return {
+      istransition: false,
+    };
   },
   created () { },
   mounted () { },
-  methods: {}
+  methods: {
+    onIntersect (entries, observer) {
+      if (entries[0].isIntersecting) {
+        this.istransition = true;
+      }
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
-.article-item .title_a {
-  color: inherit;
-  text-decoration: none;
+.article-item {
+  transition: background-size 0.2s;
+  overflow: hidden;
+  .title_a {
+    color: inherit;
+    text-decoration: none;
+  }
+  a,
+  span,
+  i,
+  p {
+    transform: translateY(50%);
+    opacity: 0.4;
+    transition: transform 0.7s, opacity 1.2s;
+    transition-timing-function: ease-out;
+  }
+  &.transition {
+    a,
+    span,
+    i,
+    p {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  ::v-deep {
+    .v-image__image {
+      transition: transform 0.5s;
+    }
+  }
+  &:hover {
+    .article-pic {
+      ::v-deep {
+        .v-image__image {
+          transform: scale(1.2);
+        }
+      }
+    }
+    .heart-icon {
+      @keyframes heartbeat {
+        0% {
+          transform: scale(1, 1);
+          opacity: 1;
+        }
+        25% {
+          transform: scale(1.3, 1.3);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1, 1);
+          opacity: 1;
+        }
+      }
+      animation: heartbeat 1s infinite;
+    }
+  }
 }
 </style>

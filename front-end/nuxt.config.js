@@ -47,8 +47,9 @@ module.exports = {
     './plugins/axios.js',
     './plugins/constant.js',
     './plugins/icons.js',
-    // './plugins/global-components',
+    './plugins/global-components',
     './plugins/filters.js',
+    './plugins/router.js',
     './plugins/utils.js',
     { src: './plugins/baiduGa.js', ssr: false }, /* 百度统计 */
     // { src: './plugins/vue-mavon-editor', ssr: false },

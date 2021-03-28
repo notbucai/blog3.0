@@ -9,19 +9,22 @@
     :height="carouselHeight"
     v-resize="onResize"
     ref="carousel"
+    class="bc-banner"
   >
     <v-carousel-item v-for="(item, i) in recommendedList" :key="i">
       <v-img
         class="align-end carousel-image"
-        :src="item.coverURL+'?imageMogr2/thumbnail/800x'"
+        :src="item.coverURL + '?imageMogr2/thumbnail/800x'"
         :height="carouselHeight"
-        :lazy-src="item.coverURL+'?imageMogr2/thumbnail/100x'"
+        :lazy-src="item.coverURL + '?imageMogr2/thumbnail/100x'"
       >
         <v-container fluid>
           <v-row align="end">
             <div class="carousel-info-box">
-              <h1>{{item.title}}</h1>
-              <v-btn color="error" rounded nuxt :to="`/article/${item._id}`">阅读全文</v-btn>
+              <h1>{{ item.title }}</h1>
+              <v-btn color="error" rounded nuxt :to="`/article/${item._id}`"
+                >阅读全文</v-btn
+              >
             </div>
           </v-row>
         </v-container>
@@ -38,7 +41,7 @@ export default {
   computed: {},
   data () {
     return {
-      carouselHeight: 1200
+      carouselHeight: 980
     };
   },
   mounted () {
@@ -50,9 +53,16 @@ export default {
       const top = this.$dom.getElementToPageTop(el);
       const innerHeight = window.innerHeight;
       this.carouselHeight = innerHeight - top - 10;
+      // this.$vuetify.goTo(0, 0);
     },
   }
 };
 </script>
 <style lang="scss" scoped>
+.bc-banner {
+  transition: height 0.2s;
+  .carousel-image {
+    transition: height 0.2s;
+  }
+}
 </style>

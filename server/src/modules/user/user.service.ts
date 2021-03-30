@@ -145,9 +145,53 @@ export class UserService {
     return undefined;
   }
 
-  async findByGithubId (githubID: number): Promise<User | undefined> {
+  async findByGithubId (githubID: string): Promise<User | undefined> {
     const user: User = await this.userSchema.findOne({
       githubID
+    });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+
+  async findByBaiduId (baiduID: string): Promise<User | undefined> {
+    const user: User = await this.userSchema.findOne({
+      baiduID
+    });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+
+  async findByWeiboId (weiboID: string): Promise<User | undefined> {
+    const user: User = await this.userSchema.findOne({
+      weiboID
+    });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+
+  async findByQQId (qqID: string): Promise<User | undefined> {
+    const user: User = await this.userSchema.findOne({
+      qqID
+    });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+
+  async findByGiteeId (giteeID: string): Promise<User | undefined> {
+    const user: User = await this.userSchema.findOne({
+      giteeID
     });
 
     if (user) {

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 16:29:03
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-21 22:11:26
+ * @LastEditTime: 2021-03-30 13:48:14
  * @Description: 
 --> 
 <template>
@@ -16,7 +16,7 @@
           <v-row align="center" class="pa-2" :key="item.key">
             <v-col :cols="2">{{item.label}}</v-col>
             <v-col>
-              <input type="text" :value="user[item.key]" disabled />
+              <input style="width:100%" type="text" :value="user[item.key]" disabled />
             </v-col>
             <v-col :cols="2">
               <v-btn
@@ -114,17 +114,41 @@ export default {
       },
       formShowJson: [
         {
+          label: "手机",
+          key: "phone",
+          state: "phone",
+          type: "phone"
+        },
+        {
           label: "GitHub",
           key: "githubLogin",
           state: "github",
           type: "oauth2"
         },
         {
-          label: "手机",
-          key: "phone",
-          state: "phone",
-          type: "phone"
-        }
+          label: "百度",
+          key: "baiduName",
+          state: "baidu",
+          type: "oauth2"
+        },
+        {
+          label: "微博",
+          key: "weiboScreenName",
+          state: "weibo",
+          type: "oauth2"
+        },
+        {
+          label: "QQ",
+          key: "qqName",
+          state: "qq",
+          type: "oauth2"
+        },
+        {
+          label: "GITEE",
+          key: "giteeLogin",
+          state: "gitee",
+          type: "oauth2"
+        },
       ]
     }
   },
@@ -182,13 +206,14 @@ export default {
 
     async handleOauthBind (state) {
       console.log(state);
-      const url = this.$constant.STATE_LIST['bind_'+state];
-      const son = window.open(url, '绑定');
-      son.addEventListener('message', (e) => {
-        if (e.data == 'close') {
+      const url = this.$constant.STATE_LIST['bind_' + state];
+      const sonWin = window.open(url, '绑定');
+      const loop = setInterval(function () {
+        if (sonWin.closed) {
+          clearInterval(loop);
           location.reload();
         }
-      });
+      }, 100);
     },
     async handleOauthUnBind (state) {
       const isUnBind = confirm("是否解绑?");

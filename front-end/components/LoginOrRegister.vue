@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-25 19:11:53
+ * @LastEditTime: 2021-03-30 14:04:26
  * @Description:
  -->
 <template>
@@ -126,8 +126,35 @@
         </div>
 
         <div class="form-field center mt-4">
-          <v-btn :elevation="0" fab @click="handleAuthLogin('github')">
-            <v-icon large>{{ $icons['mdi-github'] }}</v-icon>
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('github')">
+            <!-- <i class="symbol-icon" >&#xea0a;</i> -->
+            <svg class="symbol-icon" aria-hidden="true">
+              <use xlink:href="#iconGitHub"></use>
+            </svg>
+          </v-btn>
+
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('qq')">
+            <svg class="symbol-icon" aria-hidden="true">
+              <use xlink:href="#iconQQ1"></use>
+            </svg>
+          </v-btn>
+
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('baidu')">
+            <svg class="symbol-icon" aria-hidden="true">
+              <use xlink:href="#iconbaidu"></use>
+            </svg>
+          </v-btn>
+
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('weibo')">
+            <svg class="symbol-icon" aria-hidden="true">
+              <use xlink:href="#iconweibo"></use>
+            </svg>
+          </v-btn>
+
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('gitee')">
+            <svg class="symbol-icon" aria-hidden="true">
+              <use xlink:href="#icongitee"></use>
+            </svg>
           </v-btn>
         </div>
       </div>
@@ -196,12 +223,13 @@ export default {
       const url = this.$constant.STATE_LIST['login_' + type];
       console.log('url', url);
 
-      const son = window.open(url, '绑定');
-      son.addEventListener('message', (e) => {
-        if (e.data == 'close') {
+      const sonWin = window.open(url, '绑定');
+      const loop = setInterval(function () {
+        if (sonWin.closed) {
+          clearInterval(loop);
           location.reload();
         }
-      });
+      }, 100);
     },
     async handleGetCode () {
       const phone = this.registerForm.phone;
@@ -287,6 +315,10 @@ export default {
 }
 .login-box {
   padding: 12px 28px 34px;
+  .symbol-icon {
+    font-size: 2em;
+    opacity: 0.8;
+  }
   .login_header-box {
     overflow: hidden;
     h2 {

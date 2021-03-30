@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 17:13:09
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-03 14:55:58
+ * @LastEditTime: 2021-03-29 19:40:14
  * @Description: 
 --> 
 <template>
@@ -25,7 +25,8 @@ export default {
         // 发送ajax
         const resData = await $axios.get('/api/oauth/bind', {
           params: {
-            code, state
+            code, state,
+            redirect_uri: app.$constant.redirect_uris.bind
           }
         });
         console.log('resData', resData);
@@ -64,5 +65,7 @@ export default {
 <style lang="scss" scoped>
 .bind {
   text-align: center;
+  font-size: 20px;
+  padding: 24px;
 }
 </style>

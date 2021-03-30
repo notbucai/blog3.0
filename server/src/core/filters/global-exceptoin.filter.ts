@@ -16,7 +16,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         private readonly logger: LoggerService,
     ) { }
 
-    catch(exception: any, host: ArgumentsHost) {
+    catch (exception: any, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         // const request = ctx.getRequest();
         const response = ctx.getResponse();
@@ -51,6 +51,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             message = ErrorCode.ERROR.MESSAGE;
             this.logger.error({
                 message: [exception.message, exception.stack].join('\n'),
+                data: exception
             });
         }
         // NOTE: 权限不足跳转由前端判定

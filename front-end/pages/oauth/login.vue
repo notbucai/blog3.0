@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 17:13:09
  * @LastEditors: bucai
- * @LastEditTime: 2020-10-30 15:12:48
+ * @LastEditTime: 2021-03-29 19:39:53
  * @Description: 
 --> 
 <template>
@@ -22,9 +22,11 @@ export default {
     const { code, state } = route.query;
     try {
       // 发送ajax
+
       const resData = await $axios.get('/api/oauth/login', {
         params: {
-          code, state
+          code, state,
+          redirect_uri: app.$constant.redirect_uris.login
         }
       });
       res.message = "成功";
@@ -69,5 +71,7 @@ export default {
 <style lang="scss" scoped>
 .bind {
   text-align: center;
+  font-size: 20px;
+  padding: 24px;
 }
 </style>

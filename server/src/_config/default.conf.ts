@@ -108,4 +108,14 @@ export default {
         accessTokenURL: 'https://github.com/login/oauth/access_token',
         userInfoURL: 'https://api.github.com/user',
     },
+    /**
+     * github oauth2登陆配置
+     */
+    baidu: {
+        clientID: '',
+        clientSecret: '',
+        // authorizeURL: 'https://github.com/login/oauth/authorize?scope=user&client_id=%s',
+        accessTokenURL: 'https://openapi.baidu.com/oauth/2.0/token',
+        userInfoURL: 'https://openapi.baidu.com/passport/users/getLoggedInUser',
+    },
 };

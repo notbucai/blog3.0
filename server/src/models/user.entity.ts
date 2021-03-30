@@ -88,7 +88,10 @@ export class User extends Base {
     personalHomePage: string; // 个人主页
 
     @prop()
-    githubID: number;
+    location: string;
+
+    @prop()
+    githubID: string;
 
     @prop()
     githubAvatarURL: string;
@@ -100,10 +103,13 @@ export class User extends Base {
     githubName: string;
 
     @prop()
-    weiboID: number;
+    weiboID: string;
 
     @prop()
     weiboScreenName: string;
+
+    @prop()
+    weiboAvatarURL: string;
 
     @prop()
     weiboName: string;
@@ -112,5 +118,42 @@ export class User extends Base {
     weiboAvatarLarge: string;
 
     @prop()
-    location: string;
+    qqID: string;
+
+    @prop()
+    qqName: string;
+
+    @prop()
+    qqAvatar: string;
+
+    @prop()
+    baiduID: string;
+
+    @prop()
+    bucaiScreenName: string;
+
+    @prop()
+    baiduName: string;
+
+    @prop()
+    baiduAvatarLarge: string;
+
+    @prop()
+    giteeID: string;
+
+    @prop()
+    giteeLogin: string;
+
+    @prop()
+    giteeName: string;
+
+    @prop()
+    giteeAvatar: string;
+
+    @prop()
+    giteeEmail: string;
+
+    @prop()
+    giteeUrl: string;
+
 }

@@ -25,7 +25,8 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
     script: [
-      { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', async: true }, /*引入百度统计的js*/
+      { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', defer: true }, /*引入百度统计的js*/
+      { src: '//at.alicdn.com/t/font_2451840_j4ka5sv6fwo.js', defer: true }, /*引入百度统计的js*/
     ]
   },
   /*

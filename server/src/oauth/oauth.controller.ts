@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Headers, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { OauthService } from './oauth.service';
 import { LoggerService } from '../common/logger.service';
@@ -28,14 +28,13 @@ export class OauthController {
   // https://github.com/login/oauth/authorize?client_id=121bf37951669bd171d4&state=github
   @Get('login')
   @ApiOperation({ summary: 'oauth登录' })
-  public async login (@Query('code') code: string, @Query('state') state: StateEnum) {
-    this.logger.info({ data: 'login ' + state });
+  public async login (@Query('code') code: string, @Query('redirect_uri') redirect_uri: string, @Query('state') state: StateEnum) {
+    this.logger.info({ data: { state, code, redirect_uri } });
+
     // 获取用户信息
     const oAuthUserinfo: {
       id: string | number
-    } = await this.oauthService.getOAuthUserInfo(state, code);
-
-
+    } = await this.oauthService.getOAuthUserInfo(state, code, redirect_uri);
     let localUserinfo: User = await this.oauthService.findByUser(state, String(oAuthUserinfo.id));
     // 判断是否存在这个用户
     if (!localUserinfo) {
@@ -53,7 +52,8 @@ export class OauthController {
   @Get('bind')
   @UseGuards(ActiveGuard)
   @ApiOperation({ summary: 'oauth绑定' })
-  public async bind (@CurUser() user: User, @Query('code') code: string, @Query('state') state: StateEnum) {
+  public async bind (@CurUser() user: User, @Query('code') code: string, @Query('redirect_uri') redirect_uri: string, @Query('state') state: StateEnum) {
+    this.logger.info({ data: { state, code, redirect_uri } });
     // 判断用户是否已经绑定
     const isBind = this.oauthService.isBind(state, user);
     if (isBind) {
@@ -62,7 +62,7 @@ export class OauthController {
     // 获取用户信息
     const oAuthUserinfo: {
       id: string
-    } = await this.oauthService.getOAuthUserInfo(state, code);
+    } = await this.oauthService.getOAuthUserInfo(state, code, redirect_uri);
 
     let localUserinfo: User = await this.oauthService.findByUser(state, oAuthUserinfo.id);
 

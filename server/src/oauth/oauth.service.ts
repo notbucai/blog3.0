@@ -47,19 +47,189 @@ export class OauthService {
     return userResult.data;
   }
 
-  public async getOAuthUserInfo (state: StateEnum, code: string) {
+  public async baiduUserData (code: string, redirect_uri: string) {
+
+    const result = await axios.get(this.configService.baidu.accessTokenURL, {
+      params: {
+        code,
+        redirect_uri,
+        grant_type: 'authorization_code',
+        client_id: this.configService.baidu.clientID,
+        client_secret: this.configService.baidu.clientSecret,
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!(result.status === 200 && !result.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const userInfoURL = this.configService.baidu.userInfoURL;
+    const userResult = await axios.get(userInfoURL, {
+      params: {
+        access_token: result.data.access_token
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!(userResult.status === 200 && !userResult.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const resData = {
+      ...userResult.data,
+      id: userResult.data.openid,
+      uname: userResult.data.uname || userResult.data.openid,
+      portrait: 'http://tb.himg.baidu.com/sys/portrait/item/' + userResult.data.portrait
+    }
+
+    return resData;
+  }
+
+  public async weiboUserData (code: string, redirect_uri: string) {
+    const result = await axios.post(this.configService.weibo.accessTokenURL, {}, {
+      params: {
+        code,
+        redirect_uri,
+        grant_type: 'authorization_code',
+        client_id: this.configService.weibo.clientID,
+        client_secret: this.configService.weibo.clientSecret,
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!(result.status === 200 && !result.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const userInfoURL = this.configService.weibo.userInfoURL;
+    const userResult = await axios.get(userInfoURL, {
+      params: {
+        access_token: result.data.access_token,
+        uid: result.data.uid
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!(userResult.status === 200 && !userResult.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const resData = {
+      ...userResult.data
+    }
+
+    return resData;
+  }
+
+  public async qqUserData (code: string, redirect_uri: string) {
+    const result = await axios.get(this.configService.qq.accessTokenURL, {
+      params: {
+        code,
+        redirect_uri,
+        fmt: 'json',
+        grant_type: 'authorization_code',
+        client_id: this.configService.qq.clientID,
+        client_secret: this.configService.qq.clientSecret,
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!(result.status === 200 && !result.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const userOpenIdUrl = this.configService.qq.getTokenInfo;
+    const userOpenIdResult = await axios.get(userOpenIdUrl, {
+      params: {
+        fmt: 'json',
+        access_token: result.data.access_token,
+      },
+      headers: { Accept: 'application/json' },
+    });
+    if (!(userOpenIdResult.status === 200 && !result.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const userInfoURL = this.configService.qq.userInfoURL;
+    const userResult = await axios.get(userInfoURL, {
+      params: {
+        format: 'json',
+        access_token: result.data.access_token,
+        oauth_consumer_key: userOpenIdResult.data.client_id,
+        openid: userOpenIdResult.data.openid,
+      },
+      headers: { Accept: 'application/json' },
+    });
+    console.log('userResult.data', userResult.data, userOpenIdResult.data);
+    if (!(userResult.status === 200 && userResult.data.ret == 0)) {
+      throw Error('Unauthorized');
+    }
+
+    const resData = {
+      id: userOpenIdResult.data.openid,
+      ...userResult.data,
+      figureurl: userResult.data.figureurl_qq_2 || userResult.data.figureurl_2 || userResult.data.figureurl_1 || userResult.data.figureurl_qq_1 || userResult.data.figureurl
+    }
+
+    return resData;
+  }
+
+  public async giteeUserData (code: string, redirect_uri: string) {
+    const result = await axios.post(this.configService.gitee.accessTokenURL, {}, {
+      params: {
+        code,
+        redirect_uri,
+        grant_type: 'authorization_code',
+        client_id: this.configService.gitee.clientID,
+        client_secret: this.configService.gitee.clientSecret,
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!(result.status === 200 && !result.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const userInfoURL = this.configService.gitee.userInfoURL;
+    const userResult = await axios.get(userInfoURL, {
+      params: {
+        access_token: result.data.access_token,
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    if (!(userResult.status === 200 && !userResult.data.error)) {
+      throw Error('Unauthorized');
+    }
+    const resData = {
+      ...userResult.data
+    }
+
+    return resData;
+  }
+
+  public async getOAuthUserInfo (state: StateEnum, code: string, redirect_uri: string) {
     const UserInfoMap = {
-      [StateEnum.github]: this.githubUserData.bind(this)
+      [StateEnum.github]: this.githubUserData.bind(this),
+      [StateEnum.baidu]: this.baiduUserData.bind(this),
+      [StateEnum.weibo]: this.weiboUserData.bind(this),
+      [StateEnum.qq]: this.qqUserData.bind(this),
+      [StateEnum.gitee]: this.giteeUserData.bind(this),
     }
     const fn = UserInfoMap[state];
     if (typeof fn !== 'function') throw Error('Unauthorized');
-    return fn(code);
+    return fn(code, redirect_uri);
   }
 
   public async findByUser (state: StateEnum, id: string) {
     // let newUser: User = await this.userService.findByGithubId(githubUser.id);
     const UserInfoMap = {
-      [StateEnum.github]: this.userService.findByGithubId.bind(this.userService)
+      [StateEnum.github]: this.userService.findByGithubId.bind(this.userService),
+      [StateEnum.baidu]: this.userService.findByBaiduId.bind(this.userService),
+      [StateEnum.weibo]: this.userService.findByWeiboId.bind(this.userService),
+      [StateEnum.gitee]: this.userService.findByGiteeId.bind(this.userService),
+      [StateEnum.qq]: this.userService.findByQQId.bind(this.userService),
     }
     const fn = UserInfoMap[state];
     if (typeof fn !== 'function') throw Error('Unauthorized');
@@ -73,6 +243,26 @@ export class OauthService {
         username: "login",
         personalHomePage: "blog",
         numberroduce: "bio",
+      },
+      [StateEnum.baidu]: {
+        avatarURL: "portrait",
+        username: "uname"
+      },
+      [StateEnum.weibo]: {
+        avatarURL: "profile_image_url",
+        username: "screen_name",
+        personalHomePage: "url",
+        numberroduce: "remark"
+      },
+      [StateEnum.qq]: {
+        avatarURL: "figureurl",
+        username: "nickname",
+      },
+      [StateEnum.gitee]: {
+        avatarURL: "avatar_url",
+        username: "login",
+        personalHomePage: "url",
+        numberroduce: "bio"
       }
     }
     const keys = keysMap[state];
@@ -85,6 +275,30 @@ export class OauthService {
         githubAvatarURL: 'avatar_url',
         githubLogin: 'login',
         githubName: 'name',
+      },
+      [StateEnum.baidu]: {
+        baiduID: 'openid',
+        baiduAvatarURL: 'portrait',
+        baiduName: 'uname',
+      },
+      [StateEnum.weibo]: {
+        weiboID: 'id',
+        weiboAvatarURL: 'profile_image_url',
+        weiboName: 'name',
+        weiboScreenName: "screen_name",
+        weiboAvatarLarge: "avatar_large",
+      },
+      [StateEnum.qq]: {
+        qqID: 'id',
+        qqAvatar: 'figureurl',
+        qqName: 'nickname',
+      },
+      [StateEnum.gitee]: {
+        giteeID: 'id',
+        giteeAvatar: 'avatar_url',
+        giteeName: 'name',
+        giteeLogin: 'login',
+        giteeUrl: 'url',
       }
     }
     const keys = keysMap[state];
@@ -94,6 +308,18 @@ export class OauthService {
     const isBindFns = {
       [StateEnum.github]: (user: User) => {
         return user.githubID
+      },
+      [StateEnum.qq]: (user: User) => {
+        return user.qqID
+      },
+      [StateEnum.gitee]: (user: User) => {
+        return user.giteeID
+      },
+      [StateEnum.baidu]: (user: User) => {
+        return user.baiduID
+      },
+      [StateEnum.weibo]: (user: User) => {
+        return user.weiboID
       }
     }
 
@@ -126,38 +352,38 @@ export class OauthService {
     return this.userService.createUser(user);
   }
 
-  public async github (code: string) {
+  // public async github (code: string) {
 
-    const githubUser = await this.githubUserData(code);
+  //   const githubUser = await this.githubUserData(code);
 
-    let token: string;
+  //   let token: string;
 
-    let newUser: User = await this.userService.findByGithubId(githubUser.id);
-    // NOTE: 1. 通过github登录名 查询数据库是否绑定 
-    if (newUser) {
-      // NOTE: 1.1 已绑定生成token
-      this.logger.info({ message: "GITHUB已绑定用户", data: newUser })
-      token = await this.commonService.generateToken(newUser);
-    } else {
-      // NOTE: 1.2 未绑定添加数据库
-      this.logger.info({ message: "GITHUB未绑定用户", data: { githubID: githubUser.id } })
-      const user = new User();
-      user.githubID = githubUser.id;
-      user.githubAvatarURL = githubUser.avatar_url;
-      user.githubLogin = githubUser.login;
-      user.githubName = githubUser.name;
-      user.avatarURL = githubUser.avatar_url;
-      user.username = githubUser.login;
-      user.personalHomePage = githubUser.blog;
-      user.numberroduce = githubUser.bio;
-      user.status = UserStatus.Actived;
+  //   let newUser: User = await this.userService.findByGithubId(githubUser.id);
+  //   // NOTE: 1. 通过github登录名 查询数据库是否绑定 
+  //   if (newUser) {
+  //     // NOTE: 1.1 已绑定生成token
+  //     this.logger.info({ message: "GITHUB已绑定用户", data: newUser })
+  //     token = await this.commonService.generateToken(newUser);
+  //   } else {
+  //     // NOTE: 1.2 未绑定添加数据库
+  //     this.logger.info({ message: "GITHUB未绑定用户", data: { githubID: githubUser.id } })
+  //     const user = new User();
+  //     user.githubID = githubUser.id;
+  //     user.githubAvatarURL = githubUser.avatar_url;
+  //     user.githubLogin = githubUser.login;
+  //     user.githubName = githubUser.name;
+  //     user.avatarURL = githubUser.avatar_url;
+  //     user.username = githubUser.login;
+  //     user.personalHomePage = githubUser.blog;
+  //     user.numberroduce = githubUser.bio;
+  //     user.status = UserStatus.Actived;
 
-      newUser = await this.userService.createUser(user);
+  //     newUser = await this.userService.createUser(user);
 
-    }
-    token = await this.commonService.generateToken(newUser)
-    await this.redisService.setUserToken(newUser._id.toString(), token);
-    await this.redisService.setUser(newUser);
-    return token;
-  }
+  //   }
+  //   token = await this.commonService.generateToken(newUser)
+  //   await this.redisService.setUserToken(newUser._id.toString(), token);
+  //   await this.redisService.setUser(newUser);
+  //   return token;
+  // }
 }

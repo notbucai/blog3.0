@@ -61,7 +61,7 @@
       <v-container>
         <div class="footer">
           <p>
-            &copy; 2020
+            &copy; 2021
             <a href="/">不才</a> All Rights Reserved.
           </p>
           <a

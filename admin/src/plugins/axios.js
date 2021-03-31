@@ -46,6 +46,7 @@ _axios.interceptors.response.use(
     } else {
 
       if (resData.code === 403 || resData.code > 1000 && resData.code <= 1010) {
+        store.remove('token');
         router.replace({ path: '/login', query: { redirect: router.currentRoute.path } })
       }
       resData.message && Message.error(resData.message);

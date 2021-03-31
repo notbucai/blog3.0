@@ -1,8 +1,21 @@
 <template>
   <div class="ArticleList">
-    <article-item v-for="item in articleStore.list" :key="item._id" :article="item" />
-    <div class="d-flex justify-center" v-if="articleStore.list.length < articleStore.total">
-      <v-btn color="error" :elevation="0" rounded :loading="articleLoading" @click="loadData">加载更多</v-btn>
+
+      <article-item v-for="item in articleStore.list"
+      :key="item._id"
+      transition="scale-transition" :article="item" />
+    <div
+      class="d-flex justify-center"
+      v-if="articleStore.list && articleStore.list.length < articleStore.total"
+    >
+      <v-btn
+        color="error"
+        :elevation="0"
+        rounded
+        :loading="articleLoading"
+        @click="loadData"
+        >加载更多</v-btn
+      >
     </div>
   </div>
 </template>
@@ -14,7 +27,7 @@ export default {
     articleStore: {
       required: true,
       type: Object,
-      default() {
+      default () {
         return {
           list: [],
           total: 999
@@ -23,19 +36,20 @@ export default {
     }
   },
   computed: {},
-  data() {
+  data () {
     return {
       articleLoading: false
     };
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    loadData() {
+    loadData () {
       this.$emit('loadData');
     }
   }
 };
 </script>
 <style lang="scss" scoped>
-.ArticleList {}
+.ArticleList {
+}
 </style>

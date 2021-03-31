@@ -296,7 +296,9 @@ export class CommentService {
   getRootNewList (source: string) {
     const commentRepository = this.getCommentSchema(source);
     const list = commentRepository
-      .find({})
+      .find({
+        status: CommentStatus.VerifySuccess
+      })
       .sort({ _id: -1 })
       .limit(6)
       .populate([{ path: 'user', select: "username avatarURL" }])
@@ -373,6 +375,6 @@ export class CommentService {
     list.forEach(item => {
       this.updateById(source, item._id, item.content);
     });
-    
+
   }
 }

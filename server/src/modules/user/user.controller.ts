@@ -82,7 +82,8 @@ export class UserController {
     }
     const user = await this.userService.create(signupDto);
     const token = await this.commonService.generateToken(user);
-
+    // 更新登录时间,异步即可
+    this.userService.updateLoginTime(user._id);
     await this.redisService.setUserToken(user._id.toString(), token);
     await this.redisService.setUser(user);
     return token;
@@ -114,6 +115,8 @@ export class UserController {
       throw new MyHttpException({ code: ErrorCode.LoginError.CODE })
     }
     const token = await this.commonService.generateToken(user);
+    // 更新登录时间
+    this.userService.updateLoginTime(user._id);
     await this.redisService.setUserToken(user._id.toString(), token);
     await this.redisService.setUser(user);
     return token;
@@ -211,6 +214,16 @@ export class UserController {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     }
     return this.userService.findList(listDto);
+  }
+
+  /**
+    * 列表
+    */
+  @Get(`/list/show`)
+  @ApiOperation({ summary: "用户圈子列表" })
+  async listForShow () {
+    const list = await this.userService.findNowLoginList();
+    return list;
   }
 
   @Get('/:id')

@@ -2,18 +2,19 @@
  * @Author: bucai
  * @Date: 2020-05-03 21:01:51
  * @LastEditors: bucai
- * @LastEditTime: 2020-05-03 21:03:02
+ * @LastEditTime: 2021-03-30 22:10:34
  * @Description: 
  */
-import { format } from 'date-fns';
+import { format,formatDistanceToNow } from 'date-fns';
 
+import * as zhCNLocale from 'date-fns/locale/zh-CN/index.js'
 /**
  * @desc 函数防抖
  * @param func 函数
  * @param wait 延迟执行毫秒数
  * @param immediate true 表立即执行，false 表非立即执行
  */
-function debounce(func, wait, immediate) {
+function debounce (func, wait, immediate) {
   let timeout;
 
   return function () {
@@ -41,7 +42,7 @@ function debounce(func, wait, immediate) {
  * @param wait 延迟执行毫秒数
  * @param type 1 表时间戳版，2 表定时器版
  */
-function throttle(func, wait, type) {
+function throttle (func, wait, type) {
   let previous = 0;
   let timeout;
   return function () {
@@ -69,7 +70,7 @@ function throttle(func, wait, type) {
  * @param {Array} currentArr 
  * @param {String} keyName 
  */
-function flatTreeList(currentArr, keyName = 'children') {
+function flatTreeList (currentArr, keyName = 'children') {
   let _list = [];
   for (let i = 0; i < currentArr.length; i++) {
     _list.push(currentArr[i])
@@ -80,11 +81,18 @@ function flatTreeList(currentArr, keyName = 'children') {
   return _list;
 };
 
-function formatDate(date = new Date(), formatStr = 'yyyy-MM-dd hh:mm:ss') {
+function formatDate (date = new Date(), formatStr = 'yyyy-MM-dd hh:mm:ss') {
   return format(date, formatStr);
 }
 
-async function fileToBase64(file) {
+function fromNowDate (date = new Date()) {
+  if(!date) {
+    date = new Date()
+  }
+  return formatDistanceToNow(date, { addSuffix: true, locale: zhCNLocale });
+}
+
+async function fileToBase64 (file) {
   const reader = new FileReader();
   reader.readAsDataURL(file);
   return new Promise((ok, gg) => {
@@ -101,7 +109,7 @@ async function fileToBase64(file) {
   })
 }
 
-function getFileSuffix(file) {
+function getFileSuffix (file) {
   var filename = file.name;
   var index1 = filename.lastIndexOf(".");
   var index2 = filename.length;
@@ -109,7 +117,7 @@ function getFileSuffix(file) {
   return type;
 }
 
-function randomString(len) {
+function randomString (len) {
   len = len || 32;
   let $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';    /****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
   let maxPos = $chars.length;
@@ -120,7 +128,7 @@ function randomString(len) {
   return pwd;
 }
 
-function date2timeStamp(date) {
+function date2timeStamp (date) {
   if (Number.isNaN(Number(date))) {
     return new Date(date).getTime()
   } else {
@@ -133,6 +141,7 @@ export default {
   throttle,
   flatTreeList,
   formatDate,
+  fromNowDate,
   fileToBase64,
   getFileSuffix,
   randomString,

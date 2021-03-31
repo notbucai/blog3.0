@@ -184,8 +184,18 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.theme--dark {
+  .comment-item {
+    border-top-color: #111 !important;
+    background-color: #1f1f1f!important;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .comment-item {
+  border-top: 1px solid #f4f5f6;
+  background-color: #fff;
   .comment-item-reply-btn {
     margin-top: 12px;
     display: flex;

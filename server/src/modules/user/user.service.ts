@@ -43,6 +43,15 @@ export class UserService {
       }
     });
   }
+  async updateLoginTime (id: ObjectID) {
+    return this.userSchema.updateOne({
+      _id: id,
+    }, {
+      $set: {
+        loginAt: Date.now()
+      }
+    });
+  }
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
     */
@@ -90,7 +99,7 @@ export class UserService {
     return this.userSchema.findByIdAndUpdate(id, { $set: { role: new ObjectID(role) } });
   }
 
-  async findList (listDto: ListDto) {
+  async findList (listDto: ListDto, sort: any = {}) {
     let query = {};
 
     listDto.page_index = Number(listDto.page_index) || 1;
@@ -107,12 +116,23 @@ export class UserService {
         ]
       };
     }
-    const list = await this.userSchema.find(query).skip((listDto.page_index - 1) * listDto.page_size).limit(listDto.page_size).populate({ path: 'role' });
+    const list = await this.userSchema.find(query).sort(sort).skip((listDto.page_index - 1) * listDto.page_size).limit(listDto.page_size).populate({ path: 'role' });
     const total = await this.userSchema.countDocuments(query);
     return {
       list,
-      total
+      total,
     }
+  }
+
+  async findNowLoginList () {
+    const list = await this.userSchema.find({
+      loginAt: {
+        $ne: null
+      },
+    }).sort({
+      loginAt: -1
+    }).skip(0).limit(60).select(['_id', 'username', 'loginAt', 'avatarURL']);
+    return list;
   }
 
   async findByPhone (phone: string): Promise<User | undefined> {

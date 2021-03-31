@@ -44,7 +44,12 @@ export default {
     }
   },
   props: {
-    list: Array
+    list: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
   },
   filters: {
     htmlFilter (htmlStr) {

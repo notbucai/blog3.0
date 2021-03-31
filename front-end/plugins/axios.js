@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-04-19 14:39:55
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-06 21:07:17
+ * @LastEditTime: 2021-03-30 17:47:37
  * @Description: axios配置
  */
 import Snackbar from '../components/snackbar';
@@ -13,10 +13,11 @@ export default function ({ $axios, app, redirect, error: _error }) {
 
   const errorHandle = (error) => {
     const message = error.message;
-    console.log('error', error.code);
+    console.log('errorHandle=> error', error.code);
     if ([403, 1001, 1002, 1003, 1004].includes(error.code)) {
       app.$cookies.remove('Authorization');
-      return redirect('/');
+      redirect('/');
+      return true;
     }
     if (process.client) {
       Snackbar.error(message);
@@ -34,7 +35,6 @@ export default function ({ $axios, app, redirect, error: _error }) {
   $axios.onResponse(res => {
     // console.log('$axios', res.data);
     const resData = res.data;
-    
     if (typeof resData === 'object') {
       if (resData.code === 0) {
         return resData.data;

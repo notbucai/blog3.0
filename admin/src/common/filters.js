@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-23 20:55:27
  * @LastEditors: bucai
- * @LastEditTime: 2020-03-24 14:49:13
+ * @LastEditTime: 2021-03-30 21:05:11
  * @Description: 
  */
 
@@ -10,6 +10,7 @@ import Vue from 'vue';
 import { formatDate } from './utils';
 
 Vue.filter('format', formatDate);
+
 Vue.filter('sex', (sex = 2) => {
   return ['男', '女', '未知'][sex];
 });

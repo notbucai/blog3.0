@@ -43,6 +43,8 @@ export class OauthController {
       localUserinfo = await this.oauthService.saveUser(state, oAuthUserinfo, localUserinfo);
     }
     const token = await this.commonService.generateToken(localUserinfo);
+    // 更新登录时间
+    this.userService.updateLoginTime(localUserinfo._id);
 
     await this.redisService.setUserToken(String(localUserinfo._id), token);
     await this.redisService.setUser(localUserinfo);

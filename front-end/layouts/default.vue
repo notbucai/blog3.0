@@ -10,6 +10,7 @@
           <v-btn to="/" elevation="0" tile text nuxt>首页</v-btn>
           <v-btn to="/message" elevation="0" tile text nuxt>留言</v-btn>
           <v-btn to="/links" elevation="0" tile text nuxt>友邻</v-btn>
+          <v-btn to="/friends" elevation="0" tile text nuxt>圈子</v-btn>
         </div>
         <div class="toolbar-action">
           <v-btn elevation="0" @click="handleChangeTheme" text small>

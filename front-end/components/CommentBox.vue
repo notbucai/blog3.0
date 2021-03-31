@@ -10,17 +10,25 @@
       :source="source"
     />
     <!-- 评论列表 -->
-    <v-card tile :elevation="0">
-      <template v-for="(item,index) in comments">
-        <v-divider :key="index"></v-divider>
-        <comment-item
-          :key="item._id"
-          :comment="item"
-          :source="source"
-          @reply="handleReply"
-          @delete="handleDelete"
-        />
-      </template>
+    <v-card tile :elevation="0" style="overflow: hidden">
+      <div>
+        <transition-group
+          tag="div"
+          appear
+          :duration="1000"
+          enter-active-class="animate__animated animate__zoomInDown"
+          leave-active-class="animate__animated animate__bounceOutRight"
+        >
+          <comment-item
+            :comment="item"
+            :source="source"
+            @reply="handleReply"
+            @delete="handleDelete"
+            v-for="item in comments"
+            :key="item._id"
+          />
+        </transition-group>
+      </div>
     </v-card>
   </div>
 </template>
@@ -80,7 +88,7 @@ export default {
           let replyObj = reply;
           if (rootID) {
             const curr = this.comments.find(item => item._id == rootID);
-            console.log('curr',reply, rootID, curr,this.comments);
+            console.log('curr', reply, rootID, curr, this.comments);
 
             replyObj = curr;
           }

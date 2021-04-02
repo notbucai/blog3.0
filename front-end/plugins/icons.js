@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-03-21 21:20:08
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-26 21:00:44
+ * @LastEditTime: 2021-04-01 16:16:05
  * @Description: 
  */
 import {
@@ -27,7 +27,8 @@ import {
   mdiChevronUp,
   mdiYoutubeGaming,
   mdiCodeTags,
-  mdiMicrosoftOnenote
+  mdiMicrosoftOnenote,
+  mdiAccountSupervisorCircleOutline
 } from '@mdi/js'
 import Vue from 'vue';
 
@@ -55,7 +56,8 @@ Vue.prototype.$icons = {
   'mdi-exit-to-app': mdiExitToApp,
   'mdi-arrow-up-thick': mdiArrowUpThick,
   'mdi-chevron-up': mdiChevronUp,
-  'mdi-youtube-gaming':mdiYoutubeGaming,
-  'mdi-code-tags':mdiCodeTags,
-  'mdi-microsoft-onenote':mdiMicrosoftOnenote
+  'mdi-youtube-gaming': mdiYoutubeGaming,
+  'mdi-code-tags': mdiCodeTags,
+  'mdi-microsoft-onenote': mdiMicrosoftOnenote,
+  'mdi-account-supervisor-circle-outline': mdiAccountSupervisorCircleOutline,
 };

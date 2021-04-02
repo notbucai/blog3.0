@@ -6,8 +6,8 @@
           <div class="acticle_pic" v-if="data.coverURL">
             <v-img
               :aspect-ratio="16 / 9"
-              :src="data.coverURL + '?imageMogr2/thumbnail/800x'"
-              :lazy-src="data.coverURL + '?imageMogr2/thumbnail/100x'"
+              :src="data.coverURL | imageMogr2(800)"
+              :lazy-src="data.coverURL | imageMogr2(100)"
             ></v-img>
           </div>
           <div class="acticle_content">
@@ -34,7 +34,7 @@
                   <v-avatar size="48">
                     <v-img
                       :src="
-                        data.user.avatarURL + '?imageMogr2/thumbnail/100x100'
+                        data.user.avatarURL | imageMogr2(100,100)
                       "
                     ></v-img>
                   </v-avatar>

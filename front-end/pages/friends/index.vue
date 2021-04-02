@@ -17,7 +17,7 @@
           <v-card class="rounded-lg" :href="'/user/' + item._id" elevation="0">
             <div class="friend-item">
               <v-avatar color="primary" size="48">
-                <img :src="item.avatarURL + '?imageMogr2/thumbnail/60x'" />
+                <img :src="item.avatarURL | imageMogr2(60)" />
               </v-avatar>
               <v-card-title primary-title class="friend-name">{{
                 item.username

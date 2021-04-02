@@ -36,7 +36,7 @@
           link
         >
           <v-list-item-icon>
-            <v-icon>mdi-{{ item.icon }}</v-icon>
+            <v-icon>{{$icons['mdi-'+item.icon]}}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
@@ -83,6 +83,7 @@ export default {
         key: 'message',
         path: '/message',
       },
+
       // {
       //   icon: 'cog',
       //   title: '设置',
@@ -93,7 +94,13 @@ export default {
         title: '友邻',
         key: 'link-variant',
         path: '/links',
-      }
+      },
+      {
+        icon: 'account-supervisor-circle-outline',
+        title: '圈子',
+        key: 'friends',
+        path: '/friends',
+      },
     ];
     return {
       drawer: true,

@@ -1,62 +1,62 @@
 <template>
-    <v-card
-      class="mx-auto mb-6 article-item"
-      v-intersect="{
-        handler: onIntersect,
-        options: {
-          threshold: [0, 0.5, 1.0],
-        },
-      }"
-      :shaped="article.up == 1"
-    >
-      <!-- threshold: [0.5, 0.75, 1], -->
-      <v-img
-        :aspect-ratio="18 / 9"
-        v-if="article.coverURL"
-        class="article-pic"
-        :src="article.coverURL + '?imageMogr2/thumbnail/800x'"
-        :lazy-src="article.coverURL + '?imageMogr2/thumbnail/100x'"
-      />
+  <v-card
+    class="mx-auto mb-6 article-item"
+    v-intersect="{
+      handler: onIntersect,
+      options: {
+        threshold: [0, 0.5, 1.0],
+      },
+    }"
+    :shaped="article.up == 1"
+  >
+    <!-- threshold: [0.5, 0.75, 1], -->
+    <v-img
+      :aspect-ratio="18 / 9"
+      v-if="article.coverURL"
+      class="article-pic"
+      :src="article.coverURL | imageMogr2(800)"
+      :lazy-src="article.coverURL | imageMogr2(100)"
+    />
 
-      <v-card-title>
-        <nuxt-link :to="`/article/${article._id}`" class="title_a">
-          <span v-if="article.up == 1" class="body-2">[置顶]</span>
-          {{ article.title }}
-        </nuxt-link>
-      </v-card-title>
-      <v-card-subtitle>
-        <span>{{ article.createdAt | format }}</span>
-      </v-card-subtitle>
+    <v-card-title>
+      <nuxt-link :to="`/article/${article._id}`" class="title_a">
+        <span v-if="article.up == 1" class="body-2">[置顶]</span>
+        {{ article.title }}
+      </nuxt-link>
+    </v-card-title>
+    <v-card-subtitle>
+      <span>{{ article.createdAt | format }}</span>
+    </v-card-subtitle>
 
-      <v-card-text class="text--primary">
-        <p>{{ article.summary }}</p>
-      </v-card-text>
+    <v-card-text class="text--primary">
+      <p>{{ article.summary }}</p>
+    </v-card-text>
 
-      <v-card-actions class="d-flex align-center justify-space-between">
-        <v-btn text color="error" nuxt :to="`/article/${article._id}`"
-          >开始阅读</v-btn
-        >
-        <div>
-          <v-btn text>
-            <v-icon left>{{ $icons['mdi-eye'] }}</v-icon>
-            {{ article.browseCount }}
-          </v-btn>
-          <v-btn text :color="hasLike(article.likes) ? 'error' : ''">
-            <v-icon
-              left
-              class="heart-icon"
-              :color="hasLike(article.likes) ? 'error' : ''"
-              >{{ $icons['mdi-cards-heart'] }}</v-icon
-            >
-            {{ article.likes ? article.likes.length : 0 }}
-          </v-btn>
-          <v-btn text>
-            <v-icon left>{{ $icons['mdi-message'] }}</v-icon>
-            {{ article.commentCount }}
-          </v-btn>
-        </div>
-      </v-card-actions>
-    </v-card>
+    <v-card-actions class="d-flex align-center justify-space-between">
+      <v-btn text color="error" nuxt :to="`/article/${article._id}`"
+        >开始阅读</v-btn
+      >
+      <div>
+        <v-btn text>
+          <v-icon left>{{ $icons['mdi-eye'] }}</v-icon>
+          {{ article.browseCount }}
+        </v-btn>
+        <v-btn text :color="hasLike(article.likes) ? 'error' : ''">
+          <v-icon
+            left
+            class="heart-icon"
+            :color="hasLike(article.likes) ? 'error' : ''"
+            >{{ $icons['mdi-cards-heart'] }}</v-icon
+          >
+          {{ article.likes ? article.likes.length : 0 }}
+        </v-btn>
+        <v-btn text>
+          <v-icon left>{{ $icons['mdi-message'] }}</v-icon>
+          {{ article.commentCount }}
+        </v-btn>
+      </div>
+    </v-card-actions>
+  </v-card>
 </template>
 <script>
 import mixin from '@/utils/mixin';

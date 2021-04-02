@@ -45,10 +45,11 @@
 </template>
 <script>
 import { mapState } from 'vuex';
+import { mavonEditor } from 'mavon-editor';
 
 export default {
   components: {
-    'mavon-editor': async () => (await import('mavon-editor')).mavonEditor
+    'mavon-editor':mavonEditor
   },
   props: {
     reply: Object,

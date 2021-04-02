@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 16:29:03
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-30 13:48:14
+ * @LastEditTime: 2021-04-02 00:12:46
  * @Description: 
 --> 
 <template>
@@ -11,12 +11,17 @@
       <v-card-title>账号关联</v-card-title>
       <div class="content body-2">
         <v-divider></v-divider>
-        <template v-for="(item,index) in formShowJson">
+        <template v-for="(item, index) in formShowJson">
           <v-divider :key="index"></v-divider>
           <v-row align="center" class="pa-2" :key="item.key">
-            <v-col :cols="2">{{item.label}}</v-col>
+            <v-col :cols="2">{{ item.label }}</v-col>
             <v-col>
-              <input style="width:100%" type="text" :value="user[item.key]" disabled />
+              <input
+                style="width: 100%"
+                type="text"
+                :value="user[item.key]"
+                disabled
+              />
             </v-col>
             <v-col :cols="2">
               <v-btn
@@ -24,15 +29,17 @@
                 color="primary"
                 x-small
                 text
-                @click="handleBind(item.type,item.state)"
-              >绑定</v-btn>
+                @click="handleBind(item.type, item.state)"
+                >绑定</v-btn
+              >
               <v-btn
                 v-else
                 color="primary"
                 x-small
                 text
-                @click="handleUnbind(item.type,item.state)"
-              >解除绑定</v-btn>
+                @click="handleUnbind(item.type, item.state)"
+                >解除绑定</v-btn
+              >
             </v-col>
           </v-row>
         </template>
@@ -42,7 +49,7 @@
       <v-card>
         <div class="back_btn-box">
           <v-btn elevation="0" text @click="showPhoneBindDialog = false">
-            <v-icon>{{$icons['mdi-arrow-left']}}</v-icon>
+            <v-icon>{{ $icons['mdi-arrow-left'] }}</v-icon>
           </v-btn>
         </div>
         <div class="card-box">
@@ -52,20 +59,30 @@
           <v-form ref="phoneForm" lazy-validation>
             <div class="form-field required">
               <label>手机号</label>
-              <v-text-field v-model="formData.phone" :rules="$constant.valid.PHONE" required></v-text-field>
+              <v-text-field
+                v-model="formData.phone"
+                :rules="$constant.valid.PHONE"
+                required
+              ></v-text-field>
             </div>
             <div class="form-field required">
               <label>验证码</label>
-              <v-text-field v-model="formData.code" :rules="$constant.valid.REQUIRED" required>
+              <v-text-field
+                v-model="formData.code"
+                :rules="$constant.valid.REQUIRED"
+                required
+              >
                 <div class="sms_box" slot="append">
                   <v-btn
                     text
                     :loading="codeTmp.loading"
                     :disabled="codeTmp.isSend"
-                    @click="handleGetCode"
+                    @click="handleShowVCodeForGetCode"
                   >
-                    <v-icon v-if="!codeTmp.isSend">{{$icons['mdi-message-processing']}}</v-icon>
-                    <span v-else>{{codeTmp.num}}</span>
+                    <v-icon v-if="!codeTmp.isSend">{{
+                      $icons['mdi-message-processing']
+                    }}</v-icon>
+                    <span v-else>{{ codeTmp.num }}</span>
                   </v-btn>
                 </div>
               </v-text-field>
@@ -81,7 +98,7 @@
               :loading="submitIng"
             >
               继续
-              <v-icon>{{$icons['mdi-arrow-right']}}</v-icon>
+              <v-icon>{{ $icons['mdi-arrow-right'] }}</v-icon>
             </v-btn>
           </div>
         </div>
@@ -91,6 +108,7 @@
 </template>
 <script>
 import { mapState } from 'vuex';
+let scriptError=fasle, scriptSuccesful=fasle;
 export default {
   middleware: 'auth',
   computed: {
@@ -149,12 +167,67 @@ export default {
           state: "gitee",
           type: "oauth2"
         },
-      ]
+      ],
+      // 验证码
+      loadScriptIng: false,
     }
   },
   methods: {
+    handleLoadVImageCode () {
+      if (!this.showPhoneBindDialog) return;
+      if (this.loadScriptIng) return;
+      if (scriptSuccesful) return;
+      if (scriptError) return;
+      this.loadScriptIng = true;
+
+      const scriptEl = document.createElement('script');
+      scriptEl.src = "https://ssl.captcha.qq.com/TCaptcha.js";
+      scriptEl.onload = () => {
+        this.loadScriptIng = false;
+        scriptSuccesful = true;
+        // 执行逻辑
+        this.captcha = new window.TencentCaptcha("2035186935", (res) => {
+          if (res.ret === 0) {
+            this.captchaSuccesful(res);
+          } else {
+            console.log(res);
+            // this.$snackbar.error('');
+          }
+        }, {});
+      }
+      scriptEl.onerror = () => {
+        this.loadScriptIng = false;
+        scriptError = true;
+        // 错误提示
+        this.$snackbar.error('加载资源失败，请刷新页面重试。');
+      }
+      document.querySelector('body').appendChild(scriptEl);
+    },
+    captchaSuccesful (data) {
+      console.log('data', data);
+      // 调用接口验证数据
+      // 调用发送验证码
+      this.handleGetCode(data);
+    },
+    handleShowVCodeForGetCode () {
+      if (this.loadScriptIng) return;
+      if (this.scriptError) {
+        return this.$snackbar.error('加载资源失败，请刷新页面重试。');
+      }
+      if (!this.captcha) {
+        return this.$snackbar.error('无验证码实例！！！');
+      }
+      const phone = this.formData.phone;
+      const errlist = this.$constant.valid.PHONE.filter(item => {
+        return !(typeof item(phone) == 'boolean');
+      });
+      if (errlist.length) {
+        return this.$snackbar.error('手机号不能为空');
+      }
+      this.captcha.show();
+    },
     // 获取验证码
-    async handleGetCode () {
+    async handleGetCode (catpcha) {
       const phone = this.formData.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -167,10 +240,9 @@ export default {
 
       try {
         // 发送ajax
-        await this.$axios.get('api/common/sendPhoneCode', {
-          params: {
-            phone
-          }
+        await this.$axios.post('api/common/sendPhoneCode', {
+            phone,
+            catpcha
         });
         codeTmp.loading = false; // 发送完毕
         // 开始倒计时
@@ -229,6 +301,7 @@ export default {
 
     showBindPhoneDialog () {
       this.showPhoneBindDialog = true;
+      this.handleLoadVImageCode();
     },
     async unbindPhone () {
       const isUnBind = confirm("是否解绑?");

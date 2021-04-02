@@ -6,7 +6,7 @@
       <!-- 插画 -->
       <div class="login-pic">
         <img
-          :src="`https://image.notbucai.com/pixiv/${pixivIndex}.jpg?imageMogr2/thumbnail/600x`"
+          :src="`https://image.notbucai.com/pixiv/${pixivIndex}.jpg` | imageMogr2(600)"
           alt="pic"
         />
       </div>

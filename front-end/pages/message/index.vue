@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <v-container>
+    <v-container class="content-container">
       <Comment-box source="message" :id="id" :comments="comments" />
     </v-container>
   </div>

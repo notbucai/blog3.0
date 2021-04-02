@@ -16,8 +16,8 @@
           tag="div"
           appear
           :duration="1000"
-          enter-active-class="animate__animated animate__zoomInDown"
-          leave-active-class="animate__animated animate__bounceOutRight"
+          enter-active-class="animate__animated animate__bounceIn"
+          leave-active-class="animate__animated animate__bounceOut"
         >
           <comment-item
             :comment="item"
@@ -33,12 +33,22 @@
   </div>
 </template>
 <script>
-import CommentEditor from './CommentEditor';
 import CommentItem from './CommentItem';
 import { mapState } from 'vuex';
+import ComponetLoading from '@/components/common/Loading.vue';
 
 export default {
-  components: { CommentItem, CommentEditor },
+  components: {
+    CommentItem,
+    CommentEditor: () => {
+      return {
+        component: import('./CommentEditor.vue'),
+        loading: ComponetLoading,
+        delay: 100,
+        timeout: 3000
+      }
+    }
+  },
   props: {
     comments: Array,
     source: {

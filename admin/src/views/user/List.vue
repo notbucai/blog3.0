@@ -36,7 +36,7 @@
             <el-image
               class="avatarURL"
               v-if="scope.row.avatarURL"
-              :src="scope.row.avatarURL+'?imageMogr2/thumbnail/60x'"
+              :src="scope.row.avatarURL | imageMogr2(60)"
             ></el-image>
           </template>
         </el-table-column>

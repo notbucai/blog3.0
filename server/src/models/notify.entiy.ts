@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-07-05 18:24:48
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-06 15:59:11
+ * @LastEditTime: 2021-03-31 17:41:03
  * @Description: 
  */
 import { prop, Ref } from '@typegoose/typegoose';
@@ -13,13 +13,13 @@ import { User } from './user.entity';
 
 export enum NotifyType {
   acticle = 1,
-  acticleMessage = 2,
-  messagecomment = 3,
-  system = 4,
-  user = 5,
-  articleCommentlike = 61,
-  messageCommentlike = 62,
-  articlelike = 7,
+  acticleMessage = 2, // 
+  messagecomment = 3, // 
+  system = 4, // 1
+  user = 5, // 1
+  articleCommentlike = 61, // 1
+  messageCommentlike = 62, // 1
+  articlelike = 7, //
 }
 
 export class Notify extends Base {

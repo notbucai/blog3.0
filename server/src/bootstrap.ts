@@ -6,6 +6,7 @@ import { GlobalExceptionFilter } from './core/filters/global-exceptoin.filter';
 import { ValidateDtoPipe } from './core/pipes/validate-dto.pipe';
 import { LoggerService } from './common/logger.service';
 import { INestApplication } from '@nestjs/common';
+import * as requestIp from 'request-ip';
 
 // api文档插件
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -47,7 +48,7 @@ export default async function bootstrap(app: INestApplication, listening: boolea
             port: configService.server.port,
         },
     });
-
+    app.use(requestIp.mw());
     app.useGlobalPipes(new ValidateDtoPipe(configService));
     app.useGlobalInterceptors(new TransformResInterceptor(configService, myLoggerService));
     app.useGlobalFilters(new GlobalExceptionFilter(configService, myLoggerService));

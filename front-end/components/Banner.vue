@@ -4,7 +4,7 @@
     :cycle="false"
     :show-arrows="false"
     hide-delimiter-background
-    delimiter-icon="mdi-minus"
+    :delimiter-icon="$icons['mdi-minus']"
     width="100%"
     :height="carouselHeight"
     v-resize="onResize"
@@ -14,9 +14,9 @@
     <v-carousel-item v-for="(item, i) in recommendedList" :key="i">
       <v-img
         class="align-end carousel-image"
-        :src="item.coverURL + '?imageMogr2/thumbnail/800x'"
+        :src="item.coverURL | imageMogr2(700)"
         :height="carouselHeight"
-        :lazy-src="item.coverURL + '?imageMogr2/thumbnail/100x'"
+        :lazy-src="item.coverURL | imageMogr2(100)"
       >
         <v-container fluid>
           <v-row align="end">

@@ -101,3 +101,9 @@ body {
 .page-enter, .page-leave-active {
   opacity: 0;
 }
+
+@media (min-width: 960px) {
+  .content-container {
+    width: 980px !important;
+  }
+}

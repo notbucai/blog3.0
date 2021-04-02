@@ -100,11 +100,6 @@ export default {
 </script>
 
 <style lang="scss">
-@media (min-width: 960px) {
-  .content-container {
-    width: 980px !important;
-  }
-}
 .carousel-info-box {
   margin-bottom: 60px;
   padding: 0 40px;

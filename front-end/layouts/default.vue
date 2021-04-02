@@ -75,7 +75,7 @@
       </v-container>
     </v-footer>
 
-    <LoginOrRegister />
+    <LoginOrRegister v-if="LoginOrRegisterDialog" />
     <NavigationDrawer />
     <ScrollToTop />
     <client-only>
@@ -87,16 +87,23 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
-import LoginOrRegister from '@/components/LoginOrRegister.vue';
 import CurrentUser from '@/components/CurrentUser.vue';
 import NavigationDrawer from '@/components/NavigationDrawer.vue';
 import ScrollToTop from '@/components/ScrollToTop.vue';
 import Qixi from '@/components/Qixi/Index.vue';
+import ComponetLoading from '@/components/common/Loading.vue';
 
 export default {
   components: {
     Qixi,
-    LoginOrRegister,
+    LoginOrRegister: () => {
+      return {
+        component: import('@/components/LoginOrRegister.vue'),
+        loading: ComponetLoading,
+        delay: 100,
+        timeout: 3000
+      };
+    },
     CurrentUser,
     NavigationDrawer,
     ScrollToTop,
@@ -108,7 +115,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['user', 'noticeStatus'])
+    ...mapState(['user', 'noticeStatus', 'LoginOrRegisterDialog'])
   },
   watch: {
     user () {
@@ -118,7 +125,7 @@ export default {
   mounted () {
     const h = new Date().getHours();
     const theme = this.$cookies.get('theme');
-    let isDark= (h >= 19 && h <= 24) || (h >= 0 && h <= 7);
+    let isDark = (h >= 19 && h <= 24) || (h >= 0 && h <= 7);
     if (theme) {
       isDark = theme === 'dark';
     }
@@ -129,7 +136,7 @@ export default {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
     handleChangeTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      this.$cookies.set('theme',this.$vuetify.theme.dark ? 'dark' : 'white');
+      this.$cookies.set('theme', this.$vuetify.theme.dark ? 'dark' : 'white');
     },
     handleShowSide () {
       this.$store.commit('SET_SIDE_STATUS', true);

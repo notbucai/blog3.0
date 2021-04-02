@@ -2,9 +2,9 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-30 14:04:26
+ * @LastEditTime: 2021-04-01 22:26:36
  * @Description:
- -->
+-->
 <template>
   <v-dialog
     :z-index="9999"
@@ -89,9 +89,9 @@
               <div class="sms_box" slot="append">
                 <v-btn
                   text
-                  :loading="codeTmp.loading"
+                  :loading="loadScriptIng || codeTmp.loading"
                   :disabled="codeTmp.isSend"
-                  @click="handleGetCode"
+                  @click="handleShowVCodeForGetCode"
                 >
                   <v-icon v-if="!codeTmp.isSend">{{
                     $icons['mdi-message-processing']
@@ -164,6 +164,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex';
+let scriptError = false, scriptSuccesful = false;
 export default {
   data () {
     return {
@@ -186,7 +187,10 @@ export default {
         loading: false, // 是否在获取中
         isSend: false,
         num: -1 // 进度
-      }
+      },
+      // 验证码
+      loadScriptIng: false,
+      // scriptSuccesful: false,
     };
   },
   mounted () { },
@@ -217,6 +221,44 @@ export default {
     },
     setType (type) {
       this.type = type;
+      // 注册
+      this.handleLoadVImageCode();
+    },
+    handleLoadVImageCode () {
+      if (!this.isType(2)) return;
+      if (this.loadScriptIng) return;
+      if (scriptSuccesful) return;
+      if (scriptError) return;
+      this.loadScriptIng = true;
+
+      const scriptEl = document.createElement('script');
+      scriptEl.src = "https://ssl.captcha.qq.com/TCaptcha.js";
+      scriptEl.onload = () => {
+        this.loadScriptIng = false;
+        scriptSuccesful = true;
+        // 执行逻辑
+        this.captcha = new window.TencentCaptcha("2035186935", (res) => {
+          if (res.ret === 0) {
+            this.captchaSuccesful(res);
+          } else {
+            console.log(res);
+            // this.$snackbar.error('');
+          }
+        }, {});
+      }
+      scriptEl.onerror = () => {
+        this.loadScriptIng = false;
+        scriptError = true;
+        // 错误提示
+        this.$snackbar.error('加载资源失败，请刷新页面重试。');
+      }
+      document.querySelector('body').appendChild(scriptEl);
+    },
+    captchaSuccesful (data) {
+      console.log('data', data);
+      // 调用接口验证数据
+      // 调用发送验证码
+      this.handleGetCode(data);
     },
     handleAuthLogin (type) {
       console.log('type', type);
@@ -231,7 +273,15 @@ export default {
         }
       }, 100);
     },
-    async handleGetCode () {
+    handleShowVCodeForGetCode () {
+      
+      if (this.loadScriptIng) return;
+      if (scriptError) {
+        return this.$snackbar.error('加载资源失败，请刷新页面重试。');
+      }
+      if (!this.captcha) {
+        return this.$snackbar.error('无验证码实例！！！');
+      }
       const phone = this.registerForm.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -239,15 +289,26 @@ export default {
       if (errlist.length) {
         return this.$snackbar.error('手机号不能为空');
       }
+      
+      this.captcha.show();
+    },
+    async handleGetCode (captcha) {
+      const phone = this.registerForm.phone;
+      const errlist = this.$constant.valid.PHONE.filter(item => {
+        return !(typeof item(phone) == 'boolean');
+      });
+      if (errlist.length) {
+        return this.$snackbar.error('手机号不能为空');
+      }
+
       const codeTmp = this.codeTmp;
       codeTmp.loading = true; // 开始发送
 
       try {
         // 发送ajax
-        await this.$axios.get('api/common/sendPhoneCode', {
-          params: {
-            phone
-          }
+        await this.$axios.post('api/common/sendPhoneCode', {
+          phone,
+          captcha
         });
         codeTmp.loading = false; // 发送完毕
         // 开始倒计时

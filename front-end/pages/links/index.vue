@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="content-container">
     <div class="title" style="margin: 0px 0px 5px 6px;">友邻</div>
     <div class="subtitle-2 red--text text--lighten-1" style="margin: 10px 5px;">申请规则</div>
 

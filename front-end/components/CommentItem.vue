@@ -11,7 +11,7 @@
         <div class="mr-2" v-if="comment.user.avatarURL">
           <v-avatar size="36">
             <v-img
-              :src="comment.user.avatarURL + '?imageMogr2/thumbnail/100x100'"
+              :src="comment.user.avatarURL | imageMogr2(100,100)"
             ></v-img>
           </v-avatar>
         </div>

@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/config.service';
 import SMS from '../utils/sms';
 import * as _ from 'lodash';
+import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 
 @Injectable()
 export class SMSService {
   private readonly sms: SMS
   constructor(
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     this.sms = new SMS(configService.sms);
   }
@@ -21,7 +22,7 @@ export class SMSService {
     const code: string = codeArr.join('');
 
     await this.sms.sendSMS(this.configService.sms.templateIds.code, phone, [code, timeout]);
-    
+
     return code;
   }
 

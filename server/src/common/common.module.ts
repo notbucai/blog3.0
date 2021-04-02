@@ -11,6 +11,7 @@ import { Notify } from '../models/notify.entiy';
 import { Article } from '../models/article.entity';
 import { ArticleComment, MessageComment } from '../models/comment.entity';
 import { User } from '../models/user.entity';
+import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { User } from '../models/user.entity';
     CommonService,
     EmailService,
     LoggerService,
-    NotifyService
+    NotifyService,
+    TencentCloudService
   ],
   exports: [
     LoggerService,

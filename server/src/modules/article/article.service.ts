@@ -265,6 +265,7 @@ export class ArticleService {
       {
         $group: { _id: "$year", count: { $sum: 1 } }
       },
+      { $sort: { _id : -1 } }
     ]);
   }
 

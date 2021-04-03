@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 16:29:03
  * @LastEditors: bucai
- * @LastEditTime: 2021-04-02 00:12:46
+ * @LastEditTime: 2021-04-03 20:13:02
  * @Description: 
 --> 
 <template>
@@ -108,7 +108,8 @@
 </template>
 <script>
 import { mapState } from 'vuex';
-let scriptError=fasle, scriptSuccesful=fasle;
+let scriptError = false, scriptSuccesful = false;
+
 export default {
   middleware: 'auth',
   computed: {
@@ -227,7 +228,7 @@ export default {
       this.captcha.show();
     },
     // 获取验证码
-    async handleGetCode (catpcha) {
+    async handleGetCode (captcha) {
       const phone = this.formData.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -241,8 +242,8 @@ export default {
       try {
         // 发送ajax
         await this.$axios.post('api/common/sendPhoneCode', {
-            phone,
-            catpcha
+          phone,
+          captcha
         });
         codeTmp.loading = false; // 发送完毕
         // 开始倒计时

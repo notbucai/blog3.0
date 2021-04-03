@@ -1,9 +1,15 @@
 <template>
   <div class="ArticleList">
-
-      <article-item v-for="item in articleStore.list"
+    <v-lazy
+      transition="scale-transition"
+      min-height="160"
+      v-for="item in articleStore.list"
       :key="item._id"
-      transition="scale-transition" :article="item" />
+    >
+      <div>
+        <article-item :article="item" />
+      </div>
+    </v-lazy>
     <div
       class="d-flex justify-center"
       v-if="articleStore.list && articleStore.list.length < articleStore.total"

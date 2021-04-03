@@ -1,28 +1,43 @@
 <template>
-  <v-navigation-drawer v-model="sideStatusComputed" app temporary id="navigation-drawer">
+  <v-navigation-drawer
+    v-model="sideStatusComputed"
+    app
+    temporary
+    id="navigation-drawer"
+  >
     <div class="nd_header">
       <div class="d-flex align-center justify-space-between pa-3">
         <v-btn elevation="0" @click="handleChangeTheme" text small>
-          <v-icon v-if="$vuetify.theme.dark">{{$icons['mdi-white-balance-sunny']}}</v-icon>
-          <v-icon v-if="!$vuetify.theme.dark">{{$icons['mdi-weather-night']}}</v-icon>
+          <v-icon v-if="$vuetify.theme.dark">{{
+            $icons['mdi-white-balance-sunny']
+          }}</v-icon>
+          <v-icon v-if="!$vuetify.theme.dark">{{
+            $icons['mdi-weather-night']
+          }}</v-icon>
         </v-btn>
         <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
           <v-badge
             color="error"
             :content="noticeStatus.unread"
-            :value="noticeStatus&&noticeStatus.unread"
+            :value="noticeStatus && noticeStatus.unread"
             small
             overlap
           >
-            <v-icon>{{$icons['mdi-bell']}}</v-icon>
+            <v-icon>{{ $icons['mdi-bell'] }}</v-icon>
           </v-badge>
         </v-btn>
       </div>
       <div class="d-flex flex-column align-center justify-center pa-6">
         <v-avatar size="82">
-          <v-img :src="user&&user.avatarURL || 'https://image.notbucai.com/logo.png'"></v-img>
+          <v-img
+            :src="
+              (user && user.avatarURL) || 'https://image.notbucai.com/logo.png'
+            "
+          ></v-img>
         </v-avatar>
-        <p class="subtitle-1 pt-5 username">{{user&&user.username || '不才'}}</p>
+        <p class="subtitle-1 pt-5 username">
+          {{ (user && user.username) || '不才' }}
+        </p>
       </div>
     </div>
 
@@ -36,7 +51,7 @@
           link
         >
           <v-list-item-icon>
-            <v-icon>{{$icons['mdi-'+item.icon]}}</v-icon>
+            <v-icon>{{ $icons['mdi-' + item.icon] }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
@@ -48,8 +63,12 @@
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block color="primary" @click="handleLogin" v-if="!user">Login</v-btn>
-        <v-btn block color="primary" :to="`/user/${user._id}`" v-else>我的账号</v-btn>
+        <v-btn block color="primary" @click="handleLogin" v-if="!user"
+          >Login</v-btn
+        >
+        <v-btn block color="primary" :to="`/user/${user._id}`" v-else
+          >我的账号</v-btn
+        >
       </div>
     </template>
   </v-navigation-drawer>
@@ -101,6 +120,12 @@ export default {
         key: 'friends',
         path: '/friends',
       },
+      {
+        title: "归档",
+        icon: 'timeline-clock',
+        key: 'timelines',
+        path: '/timelines',
+      }
     ];
     return {
       drawer: true,
@@ -116,7 +141,7 @@ export default {
     },
     handleChangeTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      this.$cookies.set('theme',this.$vuetify.theme.dark ? 'dark' : 'white');
+      this.$cookies.set('theme', this.$vuetify.theme.dark ? 'dark' : 'white');
     }
   },
 }

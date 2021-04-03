@@ -11,6 +11,7 @@
           <v-btn to="/message" elevation="0" tile text nuxt>留言</v-btn>
           <v-btn to="/links" elevation="0" tile text nuxt>友邻</v-btn>
           <v-btn to="/friends" elevation="0" tile text nuxt>圈子</v-btn>
+          <v-btn to="/timelines" elevation="0" tile text nuxt>归档</v-btn>
         </div>
         <div class="toolbar-action">
           <v-btn elevation="0" @click="handleChangeTheme" text small>
@@ -58,44 +59,39 @@
       </v-container>
     </v-content>
 
-    <v-footer app absolute>
-      <v-container>
-        <div class="footer">
-          <p>
-            &copy; 2021
-            <a href="/">不才</a> All Rights Reserved.
-          </p>
-          <a
-            href="http://www.beian.miit.gov.cn/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >赣ICP备15001741号-3</a
-          >
-        </div>
-      </v-container>
-    </v-footer>
-
+    <v-lazy transition="scale-transition" min-height="100px">
+      <v-footer app absolute>
+        <v-container>
+          <div class="footer">
+            <p>
+              &copy; 2021
+              <a href="/">不才</a> All Rights Reserved.
+            </p>
+            <a
+              href="http://www.beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >赣ICP备15001741号-3</a
+            >
+          </div>
+        </v-container>
+      </v-footer>
+    </v-lazy>
     <LoginOrRegister v-if="LoginOrRegisterDialog" />
-    <NavigationDrawer />
+    <NavigationDrawer v-if="sideStatus" />
     <ScrollToTop />
-    <client-only>
-      <svg-walle />
-      <Qixi />
-    </client-only>
   </v-app>
 </template>
 
 <script>
 import { mapMutations, mapState, mapActions } from 'vuex';
 import CurrentUser from '@/components/CurrentUser.vue';
-import NavigationDrawer from '@/components/NavigationDrawer.vue';
+// import NavigationDrawer from '@/components/NavigationDrawer.vue';
 import ScrollToTop from '@/components/ScrollToTop.vue';
-import Qixi from '@/components/Qixi/Index.vue';
 import ComponetLoading from '@/components/common/Loading.vue';
 
 export default {
   components: {
-    Qixi,
     LoginOrRegister: () => {
       return {
         component: import('@/components/LoginOrRegister.vue'),
@@ -105,7 +101,7 @@ export default {
       };
     },
     CurrentUser,
-    NavigationDrawer,
+    NavigationDrawer: () => import('@/components/NavigationDrawer.vue'),
     ScrollToTop,
     SvgWalle: () => import('@/components/svg/Walle.vue')
   },
@@ -115,7 +111,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['user', 'noticeStatus', 'LoginOrRegisterDialog'])
+    ...mapState(['user', 'noticeStatus', 'LoginOrRegisterDialog', 'sideStatus'])
   },
   watch: {
     user () {

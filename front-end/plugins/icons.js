@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-03-21 21:20:08
  * @LastEditors: bucai
- * @LastEditTime: 2021-04-01 16:16:05
+ * @LastEditTime: 2021-04-03 17:59:25
  * @Description: 
  */
 import {
@@ -28,7 +28,14 @@ import {
   mdiYoutubeGaming,
   mdiCodeTags,
   mdiMicrosoftOnenote,
-  mdiAccountSupervisorCircleOutline
+  mdiAccountSupervisorCircleOutline,
+  mdiAllInclusive,
+  mdiDotsHorizontal,
+  mdiTimelineClock,
+  mdiLinkVariant,
+  mdiApps,
+  mdiLink,
+  mdiMessageText
 } from '@mdi/js'
 import Vue from 'vue';
 
@@ -60,4 +67,11 @@ Vue.prototype.$icons = {
   'mdi-code-tags': mdiCodeTags,
   'mdi-microsoft-onenote': mdiMicrosoftOnenote,
   'mdi-account-supervisor-circle-outline': mdiAccountSupervisorCircleOutline,
+  'mdi-all-inclusive': mdiAllInclusive,
+  'mdi-dots-horizontal':mdiDotsHorizontal,
+  'mdi-timeline-clock':mdiTimelineClock,
+  'mdi-link-variant':mdiLinkVariant,
+  'mdi-link':mdiLink,
+  'mdi-message-text':mdiMessageText,
+  'mdi-apps':mdiApps,
 };

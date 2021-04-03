@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-04-19 14:39:55
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-30 17:47:37
+ * @LastEditTime: 2021-04-03 17:09:55
  * @Description: axios配置
  */
 import Snackbar from '../components/snackbar';

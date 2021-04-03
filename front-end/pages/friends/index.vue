@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-03-30 19:47:48
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-31 12:25:59
+ * @LastEditTime: 2021-04-02 20:44:41
  * @Description:
 -->
 <template>
@@ -35,6 +35,11 @@
 
 <script>
 export default {
+  head () {
+    return {
+      title: '圈子'
+    }
+  },
   async asyncData ({ $axios }) {
     const data = await $axios.get('/api/users/list/show')
     return { list: data };

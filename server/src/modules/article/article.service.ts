@@ -254,6 +254,38 @@ export class ArticleService {
     }
   }
 
+  async getAllYearAndCount () {
+    return this.articleSchema.aggregate([
+      {
+        $match: { status: ArticleStatus.VerifySuccess }
+      },
+      {
+        $project: { year: { $year: '$createdAt' } }
+      },
+      {
+        $group: { _id: "$year", count: { $sum: 1 } }
+      },
+    ]);
+  }
+
+  async getByYear (year: number) {
+    return this.articleSchema.aggregate([
+      { $match: { status: ArticleStatus.VerifySuccess } },
+      { $project: { title: 1, summary: 1, user: 1, createdAt: 1, year: { $year: '$createdAt' } } },
+      { $match: { year } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "user",
+        }
+      },
+      { $unwind: "$user" },
+      { $project: { user: { _id: 1, username: 1, avatarURL: 1 }, title: 1, summary: 1, _id: 1, createdAt: 1 } }
+    ]);
+  }
+
   async listByUserId (id: ObjectID | string) {
     const a_list = await this.articleSchema
       .find({ user: id }, '-htmlContent -content')

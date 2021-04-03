@@ -31,6 +31,17 @@ export class ArticleController {
     return this.articleService.pageHotList();
   }
 
+  @Get('years')
+  async years () {
+    return this.articleService.getAllYearAndCount();
+  }
+
+  @Get('year/list/:year')
+  async byYear (@Param('year') year: string) {
+    if (!year || year.length != 4) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    return this.articleService.getByYear(parseInt(year));
+  }
+
   @Get('list/all')
   async pageList (@Query() ListDto: ArticleListDto) {
     return this.articleService.pageList(ListDto, ArticleStatus.VerifySuccess, true);

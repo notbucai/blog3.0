@@ -46,7 +46,7 @@
                 small
                 color="primary"
                 v-if="!selectObj[item.key]"
-                >mdi-pencil</v-icon
+                >{{$icons['mdi-pencil']}}</v-icon
               >
               <div v-else class="d-flex align-center">
                 <v-btn

@@ -7,6 +7,7 @@ import { ValidateDtoPipe } from './core/pipes/validate-dto.pipe';
 import { LoggerService } from './common/logger.service';
 import { INestApplication } from '@nestjs/common';
 import * as requestIp from 'request-ip';
+import * as cookieParser from 'cookie-parser'
 
 // api文档插件
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -49,6 +50,7 @@ export default async function bootstrap(app: INestApplication, listening: boolea
         },
     });
     app.use(requestIp.mw());
+    app.use(cookieParser());
     app.useGlobalPipes(new ValidateDtoPipe(configService));
     app.useGlobalInterceptors(new TransformResInterceptor(configService, myLoggerService));
     app.useGlobalFilters(new GlobalExceptionFilter(configService, myLoggerService));

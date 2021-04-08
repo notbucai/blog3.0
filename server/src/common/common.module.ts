@@ -12,6 +12,7 @@ import { Article } from '../models/article.entity';
 import { ArticleComment, MessageComment } from '../models/comment.entity';
 import { User } from '../models/user.entity';
 import { TencentCloudService } from './tencentcloud/tencentCloud.service';
+import { WechatService } from './wechat/wechat.service';
 
 @Module({
   imports: [
@@ -27,12 +28,14 @@ import { TencentCloudService } from './tencentcloud/tencentCloud.service';
     EmailService,
     LoggerService,
     NotifyService,
-    TencentCloudService
+    TencentCloudService,
+    WechatService
   ],
   exports: [
     LoggerService,
     CommonService,
-    NotifyService
+    NotifyService,
+    WechatService
   ],
 })
 export class CommonModule { }

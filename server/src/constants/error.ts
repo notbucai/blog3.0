@@ -45,7 +45,12 @@ export class ErrorCode {
 
     static readonly ImageTypeError: CodeAndMsg = { CODE: 1020, MESSAGE: '图片格式不正确' };
 
-    static CodeToMessage(code: number): string {
+    static readonly WeChatLoginQrUseLessError: CodeAndMsg = { CODE: 1101, MESSAGE: '二维码已失效' };
+
+    static readonly OpenClientNoExists: CodeAndMsg = { CODE: 1110, MESSAGE: '客户端不存在' };
+    static readonly OpenClientRedirectUriMatch: CodeAndMsg = { CODE: 1111, MESSAGE: '客户端重定向地址匹配失败' };
+
+    static CodeToMessage (code: number): string {
         for (const key of Object.keys(this)) {
             if (this[key].CODE === code) {
                 return this[key].MESSAGE;
@@ -54,7 +59,7 @@ export class ErrorCode {
         return '';
     }
 
-    static HasCode(code: number): boolean {
+    static HasCode (code: number): boolean {
         for (const key of Object.keys(this)) {
             if (this[key].CODE === code) {
                 return true;

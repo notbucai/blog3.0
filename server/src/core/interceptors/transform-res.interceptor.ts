@@ -18,7 +18,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
         private readonly logger: LoggerService,
     ) { }
 
-    intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    intercept (context: ExecutionContext, next: CallHandler): Observable<any> {
         return next.handle().pipe(map(async (data) => {
             const req = context.switchToHttp().getRequest<MyRequest>();
             const reqEndTime = Date.now();
@@ -39,8 +39,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
             // const statsD: StatsD = this.getStatsD();
             // statsD.timing(this.getStat(req), responseTime, () => {
             // });
-
-            if (typeof data === 'undefined') {
+            if (typeof data === 'undefined' || data === null) {
                 // 请求页面时进入这里
                 return data;
             }
@@ -75,7 +74,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
         }));
     }
 
-    getStatsD() {
+    getStatsD () {
         // if (!localStatsD) {
         //     localStatsD = {};
         //     // new StatsD({
@@ -90,7 +89,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
         // return localStatsD;
     }
 
-    getStat(req: MyRequest) {
+    getStat (req: MyRequest) {
         const pathname = url.parse(req.originalUrl).pathname;
         if (pathname === '/') {
             return req.method.toLocaleLowerCase() + '_' + '/';
@@ -104,6 +103,6 @@ export class TransformResInterceptor<T> implements NestInterceptor {
         return pathStr;
     }
 
-    onStatsDError() {
+    onStatsDError () {
     }
 }

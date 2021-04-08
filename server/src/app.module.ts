@@ -18,6 +18,7 @@ import { TagModule } from './modules/tag/tag.module';
 import { RoleService } from './modules/role/role.service';
 import { RoleModule } from './modules/role/role.module';
 import { LinksModule } from './modules/links/links.module';
+import { OpenapiModule } from './openapi/openapi.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { LinksModule } from './modules/links/links.module';
     TagModule,
     RoleModule,
     LinksModule,
+    OpenapiModule,
   ],
   controllers: [],
   providers: [],

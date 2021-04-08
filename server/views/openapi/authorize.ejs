@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #error {
+      text-align: center;
+      color: rgb(216, 96, 96);
+      font-size: 24px;
+      font-weight: bold;
+      padding: 24px;
+    }
+
+    #app {
+      background-color: #333;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+    }
+
+    #qrcode {
+      min-width: 240px;
+      min-height: 240px;
+      /* overflow:hidden; */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* margin: 50% auto 0; */
+      transform: translate(-50%, -50%);
+      margin-top: -100px;
+    }
+
+    #qrcode img {
+      width: 100%;
+      height: 100%;
+      width: 240px;
+      height: 240px;
+      border: 8px solid #999;
+      border-radius: 50%;
+    }
+
+    #qrcode:after {
+      content: '请先扫码';
+      position: absolute;
+      left: 0;
+      bottom: -68px;
+      background-color: #000;
+      border-radius: 24px;
+      width: 100%;
+      height: 48px;
+      color: #aaa;
+      text-align: center;
+      line-height: 48px;
+    }
+
+    #qrcode.dead:after {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, .9);
+      border-radius: 50%;
+      color: #fff;
+      content: '码已过期，点击刷新';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    #qrcode.active:after {
+      content: '已扫码，等待操作';
+    }
+
+    #qrcode.reject:after {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, .9);
+      border-radius: 50%;
+      color: #f00;
+      content: '用户拒绝';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <% if(data.error){ %>
+    <div id="error">
+      <%= data.error.message%>
+    </div>
+    <% } else { %>
+      <div id="app">
+        <div id="qrcode"></div>
+      </div>
+      <%}%>
+</body>
+<% if(!data.error){ %>
+  <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <script>
+    function init() {
+      axios.get('/api/openapi/authorize/image', {}).then(res => {
+        if (res.data.code !== 0) {
+          throw res
+        }
+        document.querySelector('#qrcode').innerHTML = '<img src="data:image/jpg;base64,' + res.data.data + '"/>';
+        setTimeout(() => {
+          document.querySelector('#qrcode').className = 'dead';
+        }, 4 * 60 * 1000);
+        getStatus();
+      }).catch(e => {
+        console.error(e);
+      })
+    }
+    function refresh() {
+
+    }
+    function getStatus() {
+
+      axios.get('/api/openapi/authorize/status', {}).then(res => {
+        if (res.data.code !== 0) {
+          throw res
+        }
+        // 拒绝授权
+        if (res.data.data.status === 2) {
+          document.querySelector('#qrcode').className = ('reject')
+        }
+        // 授权成功
+        if (res.data.data.status === 1) {
+          // document.querySelector('#qrcode').className = ('resolve')
+          // 重定向，交给前台感觉有点不稳
+
+          const usp = new URLSearchParams(location.search)
+          const newUsp = new URLSearchParams()
+          const redirect_uri = usp.get('redirect_uri');
+          newUsp.set('state',usp.get('state'));
+          newUsp.set('code',res.data.data.code);
+
+          location.replace(redirect_uri +'?'+newUsp.toString());
+        }
+        // 已激活
+        if (res.data.data.status === 0) {
+          document.querySelector('#qrcode').className = ('active')
+        }
+        setTimeout(() => {
+          getStatus();
+        }, 1000)
+      }).catch(e => {
+        console.error(e);
+        setTimeout(() => {
+          getStatus();
+        }, 1000)
+      })
+
+    }
+    init();
+  </script>
+  <% } %>
+
+</html>

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-02 16:29:03
  * @LastEditors: bucai
- * @LastEditTime: 2021-04-03 20:13:02
+ * @LastEditTime: 2021-04-09 20:32:00
  * @Description: 
 --> 
 <template>
@@ -170,7 +170,7 @@ export default {
         },
         {
           label: "小程序绑定",
-          key: "motbucaiNickname",
+          key: "notbucaiNickname",
           state: "notbucai",
           type: "oauth2"
         },

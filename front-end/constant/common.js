@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 22:03:18
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-30 14:12:02
+ * @LastEditTime: 2021-04-09 15:44:19
  * @Description: 
  */
 export const valid = {
@@ -15,6 +15,7 @@ const BAIDU_CLIENT_ID = process.env.NODE_ENV === 'production' ? "uY7uKdaHNdKKzoS
 const QQ_CLIENT_ID = process.env.NODE_ENV === 'production' ? "101862792" : '101862792';
 const WEIBO_CLIENT_ID = process.env.NODE_ENV === 'production' ? "42171906" : '42171906';
 const GITEE_CLIENT_ID = process.env.NODE_ENV === 'production' ? "d208b7476ff8f79010ff026b7487b400bc6bdf4690450b9deaa57f2d35fe1cc5" : 'd208b7476ff8f79010ff026b7487b400bc6bdf4690450b9deaa57f2d35fe1cc5';
+const NOTBUCAI_CLIENT_ID = process.env.NODE_ENV === 'production' ? "e3afc612ee3d46df5405aff7de410b2b" : 'e3afc612ee3d46df5405aff7de410b2b';
 const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://www.notbucai.com' : 'https://www.notbucai.com';
 
 const urls = {
@@ -23,6 +24,7 @@ const urls = {
   qq: 'https://graph.qq.com/oauth2.0/authorize',
   weibo: 'https://api.weibo.com/oauth2/authorize',
   gitee: 'https://gitee.com/oauth/authorize',
+  notbucai: 'https://www.notbucai.com/api/openapi/authorize',
 }
 
 export const redirect_uris = {
@@ -129,5 +131,22 @@ export const STATE_LIST = {
     response_type: 'code',
     redirect_uri: redirect_uris.login
   }),
+
+
+  bind_notbucai: getOAuthUrl({
+    url: urls.notbucai,
+    client_id: NOTBUCAI_CLIENT_ID,
+    state: 'notbucai',
+    response_type: 'code',
+    redirect_uri: redirect_uris.bind
+  }),
+  login_notbucai: getOAuthUrl({
+    url: urls.notbucai,
+    client_id: NOTBUCAI_CLIENT_ID,
+    state: 'notbucai',
+    response_type: 'code',
+    redirect_uri: redirect_uris.login
+  }),
+
 
 }

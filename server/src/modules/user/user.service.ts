@@ -209,6 +209,17 @@ export class UserService {
     return undefined;
   }
 
+  async findByNotbucaiId (notbucaiId: string): Promise<User | undefined> {
+    const user: User = await this.userSchema.findOne({
+      notbucaiId
+    });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+
   async findByGiteeId (giteeID: string): Promise<User | undefined> {
     const user: User = await this.userSchema.findOne({
       giteeID

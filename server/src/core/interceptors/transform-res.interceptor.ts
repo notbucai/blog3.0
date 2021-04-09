@@ -5,7 +5,7 @@ import { map, throttleTime } from 'rxjs/operators';
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
 import { StatsD } from 'hot-shots';
-import { MyRequest } from '../types/net';
+import { MyRequest, MyResponse } from '../types/net';
 import { LoggerService } from '../../common/logger.service';
 
 // let localStatsD: StatsD;
@@ -21,6 +21,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
     intercept (context: ExecutionContext, next: CallHandler): Observable<any> {
         return next.handle().pipe(map(async (data) => {
             const req = context.switchToHttp().getRequest<MyRequest>();
+            const res = context.switchToHttp().getResponse<MyResponse>();
             const reqEndTime = Date.now();
             const responseTime = reqEndTime - req.reqStartTime;
             this.logger.info({
@@ -36,6 +37,9 @@ export class TransformResInterceptor<T> implements NestInterceptor {
                     responseTime,
                 },
             });
+            if (res.isOrigin) {
+                return data;
+            }
             // const statsD: StatsD = this.getStatsD();
             // statsD.timing(this.getStat(req), responseTime, () => {
             // });
@@ -44,7 +48,6 @@ export class TransformResInterceptor<T> implements NestInterceptor {
                 return data;
             }
             const newData = data as any;
-
             // if (req.query && req.query.json === this.configService.server.viewDataSecret) {
             //     return newData;
             // }
@@ -56,7 +59,7 @@ export class TransformResInterceptor<T> implements NestInterceptor {
                     message: 'success',
                 };
             }
-            let code, message;
+            let code: number, message: string;
             if (ErrorCode.HasCode(newData.statusCode)) {
                 code = newData.statusCode;
                 message = ErrorCode.CodeToMessage(code);

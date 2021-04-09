@@ -168,6 +168,12 @@ export default {
           state: "gitee",
           type: "oauth2"
         },
+        {
+          label: "小程序绑定",
+          key: "motbucaiNickname",
+          state: "notbucai",
+          type: "oauth2"
+        },
       ],
       // 验证码
       loadScriptIng: false,

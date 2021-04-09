@@ -1,4 +1,5 @@
 import * as url from 'url';
+import * as crypto from 'crypto';
 
 export const strToPage = (pageStr: string) => {
     let page: number = parseInt(pageStr, 10);
@@ -40,4 +41,10 @@ export const getContentTypeFromHeaders = (headers): string => {
         }
     }
     return '';
+};
+
+export const md5 = (str: string): string => {
+    const _md5 = crypto.createHash('md5');
+    const key = _md5.update(str).digest('hex');
+    return key;
 };

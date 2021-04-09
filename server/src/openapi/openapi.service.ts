@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
-import * as crypto from 'crypto';
 import { WechatService } from '../common/wechat/wechat.service';
 import { MyHttpException } from '../core/exception/my-http.exception';
 import { ErrorCode } from '../constants/error';
@@ -13,6 +12,7 @@ import { ObjectID } from 'mongodb';
 import * as urlUtils from 'url';
 import { ChangeStatus } from './dto/changeStatus.dto';
 import { LoggerService } from '../common/logger.service';
+import { md5 } from '../utils/common';
 
 export enum AuthStatus {
   RESOLVE = 1,
@@ -51,9 +51,8 @@ export class OpenapiService {
 
   async genTmpCode (client_id: string, redirect_uri: string, state: string) {
     const tokenToken = Math.random().toString() + Date.now().toString() + client_id + redirect_uri;
-    const md5 = crypto.createHash('md5');
 
-    const key = md5.update(tokenToken).digest('hex');
+    const key = md5(tokenToken);
 
     return key;
   }
@@ -68,14 +67,14 @@ export class OpenapiService {
 
   async getDataByQrCode (code: string) {
     const tmpCode = await this.redisService.getCache(code);
-    if(!tmpCode){
+    if (!tmpCode) {
       throw new MyHttpException({
         code: ErrorCode.WeChatLoginQrUseLessError.CODE,
         message: ErrorCode.WeChatLoginQrUseLessError.MESSAGE,
       })
     }
     const data = await this.redisService.getJson(tmpCode);
-    if(!data){
+    if (!data) {
       throw new MyHttpException({
         code: ErrorCode.WeChatLoginQrUseLessError.CODE,
         message: ErrorCode.WeChatLoginQrUseLessError.MESSAGE,
@@ -106,11 +105,11 @@ export class OpenapiService {
 
   async genQrCode (temCode: string) {
     const temp = Math.random().toString() + Date.now().toString();
-    const md5 = crypto.createHash('md5');
-    let key = md5.update(temp).digest('hex');
 
-    key = [...key].filter((_,index)=>{
-      return index%2;
+    let key = md5(temp)
+
+    key = [...key].filter((_, index) => {
+      return index % 2;
     }).join('');
 
     await this.redisService.setCache(key, temCode, 5 * 60);
@@ -120,15 +119,19 @@ export class OpenapiService {
     return key;
   }
 
-  async genAuthorizeCode (qrToken: string) {
+  async genAuthorizeCode (qrToken: string, user: OpenMpUser) {
     const tmpCode = await this.redisService.getCache(qrToken);
 
     // qrToken
-    const md5 = crypto.createHash('md5');
-    const code = md5.update(qrToken + tmpCode).digest('hex');
+    const code = md5(tmpCode);
     // const data = await this.getDataByTmpCode(tmpCode);
     const data = await this.getDataByTmpCode(tmpCode);
-    await this.redisService.setJson(code, data, 5 * 60 * 60);
+    console.log('genAuthorizeCode=>data', data);
+
+    await this.redisService.setJson(code, {
+      client: data,
+      user
+    }, 5 * 60 * 60);
     await this.redisService.setCache(tmpCode + '_auth_code', code, 5 * 60 * 60);
 
     return code;
@@ -137,9 +140,9 @@ export class OpenapiService {
   async getStatus (tempCode: string) {
     const status = await this.redisService.getCache(tempCode + '_status')
     const _int = parseInt(status);
-    console.log('_int',_int,Number.isNaN(_int) ? status  : _int);
-    
-    return Number.isNaN(_int) ? status  : _int;
+    console.log('_int', _int, Number.isNaN(_int) ? status : _int);
+
+    return Number.isNaN(_int) ? status : _int;
   }
   async getAuthCode (tempCode: string) {
     return await this.redisService.getCache(tempCode + '_auth_code');
@@ -169,6 +172,8 @@ export class OpenapiService {
   }
 
   public async saveOrUpdateMpUser (code: string, user: MpUserType) {
+    // hack
+    user.nickname = user.nickname || (user as any).nickName;
     const data = await this.wechatService.code2Session(code);
     const openid = data.openid;
     return await this.userSchema.findOneAndUpdate({
@@ -255,7 +260,7 @@ export class OpenapiService {
         // 修改状态
         await this.setStatus(dto.token, AuthStatus.RESOLVE);
         // 生成code并缓存
-        await this.genAuthorizeCode(dto.token);
+        await this.genAuthorizeCode(dto.token, user);
         // 清空
         await this.clearDataByQrToken(dto.token);
         return true;
@@ -284,4 +289,29 @@ export class OpenapiService {
       throw error;
     }
   }
+
+  async findClientByIdAndSecret (clientId: string, clientSecret: string) {
+    return this.clientSchema.findOne({
+      clientId, clientSecret
+    });
+  }
+
+  async findOauth2CacheByCode (code: string) {
+    return this.redisService.getJson(code);
+  }
+
+  async genTokenByClientAndUserId (client: OpenOauth2Client, userId: string) {
+    const tokenTmp = client.clientId + client.clientSecret + userId + Date.now().toString() + Math.random().toString();
+    const token = md5(tokenTmp);
+    return token;
+  }
+
+  async saveDataOfToken (token: string, data: object) {
+    this.redisService.setJson(token, data, 7200);
+  }
+
+  async getDataOfToken (token: string) {
+    return this.redisService.getJson(token);
+  }
+
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Render, Query, Request, Response, Body } from '@nestjs/common';
+import { Controller, Get, Post, Render, Query, Request, Response, Body, Headers } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ErrorCode } from '../constants/error';
 import { MyHttpException } from '../core/exception/my-http.exception';
@@ -7,6 +7,8 @@ import { AuthStatus, OpenapiService } from './openapi.service';
 import { WechatService } from '../common/wechat/wechat.service';
 import { ChangeStatus } from './dto/changeStatus.dto';
 import { LoggerService } from '../common/logger.service';
+import { AccessTokenDto } from './dto/accessToken.dto';
+import { MyResponse } from 'src/core/types/net';
 
 @ApiTags('开发API')
 @Controller('openapi')
@@ -114,26 +116,77 @@ export class OpenapiController {
   @Post('authorize/login/agree')
   async agreeLogin (@Body() dto: ChangeStatus) {
     // 修改状态
-      await this.openApiService.agreeAuthorize(dto);
+    await this.openApiService.agreeAuthorize(dto);
     return "成功";
   }
 
   @Post('authorize/login/cancel')
-  async cancelLogin (@Body('token') token:string) {
+  async cancelLogin (@Body('token') token: string) {
     await this.openApiService.setStatus(token, AuthStatus.REJECT);
     await this.openApiService.clearDataByQrToken(token);
     return "成功";
   }
 
-  @Post('token')
-  token () {
+  @Post('access_token')
+  async token (
+    @Body() accessTokenDto: AccessTokenDto,
+  ) {
     // 获取token
-    return 1;
+    // 1. 验证client
+    const client = await this.openApiService.findClientByIdAndSecret(accessTokenDto.client_id, accessTokenDto.client_secret);
+    if (!client) throw new MyHttpException({
+      code: ErrorCode.OpenClientNoExists.CODE,
+      message: ErrorCode.OpenClientNoExists.MESSAGE,
+    });
+    // 2. 验证code是否存在
+    const oauthData = await this.openApiService.findOauth2CacheByCode(accessTokenDto.code);
+    if (!oauthData || !oauthData.user || !oauthData.client) {
+      throw new MyHttpException({
+        code: ErrorCode.OpenCodeFail.CODE,
+        message: ErrorCode.OpenCodeFail.MESSAGE,
+      });
+    }
+    console.log('oauthData', oauthData);
+    // 3. 验证code与redirect_uri是否匹配
+    const { user: cacheUser, client: cacheClient } = oauthData;
+    if (cacheClient.client_id !== accessTokenDto.client_id || cacheClient.redirect_uri !== accessTokenDto.redirect_uri) {
+      throw new MyHttpException({
+        code: ErrorCode.OpenClientRedirectUriMatch.CODE,
+        message: ErrorCode.OpenClientRedirectUriMatch.MESSAGE,
+      });
+    }
+    // 4. 获取当前登录用户信息
+    // cacheUser._id
+    // 5. 生成token并保存用户信息
+    const token = await this.openApiService.genTokenByClientAndUserId(client, cacheUser._id);
+    await this.openApiService.saveDataOfToken(token, cacheUser);
+    // 4. 返回 token 以及有效期
+    return {
+      access_token: token,
+      expires_in: 7200,
+    };
   }
 
   @Get('userinfo')
-  getUserInfo () {
-    return 1;
+  async getUserInfo (@Query('access_token') access_token: string) {
+
+    if (!access_token) {
+      throw new MyHttpException({
+        code: ErrorCode.ParamsError.CODE,
+        message: ErrorCode.ParamsError.MESSAGE,
+      });
+    }
+
+    const user = await this.openApiService.getDataOfToken(access_token);
+
+    if (!user) {
+      throw new MyHttpException({
+        code: ErrorCode.OpenAccessTokenExists.CODE,
+        message: ErrorCode.OpenAccessTokenExists.MESSAGE,
+      });
+    }
+
+    return user;
   }
 
 }

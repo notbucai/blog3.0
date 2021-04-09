@@ -159,4 +159,15 @@ export class User extends Base {
     @prop()
     giteeUrl: string;
 
+    @prop()
+    notbucaiID: string;
+
+    @prop()
+    notbucaiOpenid: string;
+
+    @prop()
+    notbucaiNickname: string;
+    @prop()
+    notbucaiAvatarUrl: string;
+
 }

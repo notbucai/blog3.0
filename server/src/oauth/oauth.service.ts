@@ -175,6 +175,52 @@ export class OauthService {
     return resData;
   }
 
+  public async notbucaiUserData (code: string, redirect_uri: string) {
+    const result = await axios.post(this.configService.wxmp.accessTokenURL, {
+      code,
+      redirect_uri,
+      grant_type: 'authorization_code',
+      client_id: this.configService.wxmp.clientID,
+      client_secret: this.configService.wxmp.clientSecret,
+    }, {
+      headers: { Accept: 'application/json' },
+    });
+    console.log('result', result);
+    if (!(result.status < 400 && !result.data.error)) {
+      throw Error('Unauthorized');
+    }
+
+    const _resData = result.data;
+
+    if (_resData.code !== 0) {
+      throw Error('Unauthorized' + _resData.message);
+    }
+
+    const userInfoURL = this.configService.wxmp.userInfoURL;
+    const userResult = await axios.get(userInfoURL, {
+      params: {
+        access_token: _resData.data.access_token,
+      },
+      headers: { Accept: 'application/json' },
+    });
+
+    console.log('userResult', userResult);
+    if (!(userResult.status === 200 && !userResult.data.error)) {
+      throw Error('Unauthorized');
+    }
+    const _resUserData = result.data;
+
+    if (_resUserData.code !== 0) {
+      throw Error('Unauthorized' + _resUserData.message);
+    }
+    const resData = {
+      ..._resUserData.data,
+      id: _resUserData.data._id
+    }
+
+    return resData;
+  }
+
   public async giteeUserData (code: string, redirect_uri: string) {
     const result = await axios.post(this.configService.gitee.accessTokenURL, {}, {
       params: {
@@ -216,6 +262,7 @@ export class OauthService {
       [StateEnum.weibo]: this.weiboUserData.bind(this),
       [StateEnum.qq]: this.qqUserData.bind(this),
       [StateEnum.gitee]: this.giteeUserData.bind(this),
+      [StateEnum.notbucai]: this.notbucaiUserData.bind(this),
     }
     const fn = UserInfoMap[state];
     if (typeof fn !== 'function') throw Error('Unauthorized');
@@ -230,6 +277,7 @@ export class OauthService {
       [StateEnum.weibo]: this.userService.findByWeiboId.bind(this.userService),
       [StateEnum.gitee]: this.userService.findByGiteeId.bind(this.userService),
       [StateEnum.qq]: this.userService.findByQQId.bind(this.userService),
+      [StateEnum.notbucai]: this.userService.findByNotbucaiId.bind(this.userService),
     }
     const fn = UserInfoMap[state];
     if (typeof fn !== 'function') throw Error('Unauthorized');
@@ -263,6 +311,10 @@ export class OauthService {
         username: "login",
         personalHomePage: "url",
         numberroduce: "bio"
+      },
+      [StateEnum.notbucai]: {
+        avatarURL: "avatarUrl",
+        username: "nickname",
       }
     }
     const keys = keysMap[state];
@@ -299,6 +351,12 @@ export class OauthService {
         giteeName: 'name',
         giteeLogin: 'login',
         giteeUrl: 'url',
+      },
+      [StateEnum.notbucai]: {
+        notbucaiID: 'id',
+        notbucaiOpenid: 'openid',
+        notbucaiNickname: 'nickname',
+        notbucaiAvatarUrl: 'avatarUrl',
       }
     }
     const keys = keysMap[state];
@@ -320,6 +378,9 @@ export class OauthService {
       },
       [StateEnum.weibo]: (user: User) => {
         return user.weiboID
+      },
+      [StateEnum.notbucai]: (user: User) => {
+        return user.notbucaiID
       }
     }
 

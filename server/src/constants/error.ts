@@ -49,6 +49,8 @@ export class ErrorCode {
 
     static readonly OpenClientNoExists: CodeAndMsg = { CODE: 1110, MESSAGE: '客户端不存在' };
     static readonly OpenClientRedirectUriMatch: CodeAndMsg = { CODE: 1111, MESSAGE: '客户端重定向地址匹配失败' };
+    static readonly OpenCodeFail: CodeAndMsg = { CODE: 1112, MESSAGE: 'code失效或找不到' };
+    static readonly OpenAccessTokenExists: CodeAndMsg = { CODE: 1112, MESSAGE: 'access_token 失效' };
 
     static CodeToMessage (code: number): string {
         for (const key of Object.keys(this)) {

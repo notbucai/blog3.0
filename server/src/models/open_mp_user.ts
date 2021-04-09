@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-04-05 12:14:59
  * @LastEditors: bucai
- * @LastEditTime: 2021-04-06 11:17:44
+ * @LastEditTime: 2021-04-09 15:24:58
  * @Description:
  */
 import { prop, arrayProp, Ref } from '@typegoose/typegoose';

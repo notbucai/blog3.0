@@ -65,14 +65,14 @@ export class WechatService {
         }
       });
       let resData = res.data;
-     try {
+      try {
         resData = JSON.parse(res.data.toString());
-             } catch (error) {
-       console.log('error',error);
-     }
-     if (resData.errcode) {
-          throw new Error(resData.errcode + ': ' + resData.errmsg);
-        }
+      } catch (error) {
+        console.log('error', error);
+      }
+      if (resData.errcode) {
+        throw new Error(resData.errcode + ': ' + resData.errmsg);
+      }
 
       const buffer = res.data as any;
       return buffer.toString('base64');
@@ -107,7 +107,7 @@ export class WechatService {
     if (!resData.access_token) {
       setTimeout(() => {
         this._getAccessToken();
-      }, 3000);
+      }, 30 * 1000);
       throw new Error(resData.errcode + ': ' + resData.errmsg);
     }
     this.accessToken = resData.access_token;
@@ -118,7 +118,7 @@ export class WechatService {
 
     this.timer = setTimeout(() => {
       this._getAccessToken();
-    }, Math.floor(resData.expires_in / 1.5));
+    }, Math.floor(resData.expires_in / 1.5) * 1000);
 
     return resData.access_token;
   }

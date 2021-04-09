@@ -156,6 +156,12 @@
               <use xlink:href="#icongitee"></use>
             </svg>
           </v-btn>
+
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('notbucai')">
+            <svg class="symbol-icon" aria-hidden="true">
+              <use xlink:href="#iconxiaochengxu"></use>
+            </svg>
+          </v-btn>
         </div>
       </div>
     </v-card>

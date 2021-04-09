@@ -10,4 +10,5 @@ export abstract class MyRequest {
 
 export class MyResponse {
     public locals: any;
+    public isOrigin: boolean;
 }

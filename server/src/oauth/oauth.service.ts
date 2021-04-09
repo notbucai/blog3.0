@@ -208,7 +208,8 @@ export class OauthService {
     if (!(userResult.status === 200 && !userResult.data.error)) {
       throw Error('Unauthorized');
     }
-    const _resUserData = result.data;
+
+    const _resUserData = userResult.data;
 
     if (_resUserData.code !== 0) {
       throw Error('Unauthorized' + _resUserData.message);

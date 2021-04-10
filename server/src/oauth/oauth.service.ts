@@ -384,7 +384,7 @@ export class OauthService {
         return user.notbucaiID
       }
     }
-
+    console.log('isbind user', user);
     const fn = isBindFns[state];
 
     if (typeof fn !== 'function') throw Error('Unauthorized');

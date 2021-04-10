@@ -209,9 +209,9 @@ export class UserService {
     return undefined;
   }
 
-  async findByNotbucaiId (notbucaiId: string): Promise<User | undefined> {
+  async findByNotbucaiId (notbucaiID: string): Promise<User | undefined> {
     const user: User = await this.userSchema.findOne({
-      notbucaiId
+      notbucaiID
     });
 
     if (user) {

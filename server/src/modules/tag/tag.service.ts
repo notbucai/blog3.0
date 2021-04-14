@@ -29,7 +29,7 @@ export class TagService {
       $set: {
         name: tagDto.name,
         iconURL: tagDto.iconURL,
-        updatedAt: Date.now()
+        updatedAt: new Date()
       }
     })
   }

@@ -13,13 +13,13 @@ export enum CommentStatus {
 export class Comment extends Base {
 
   @prop({ default: Date.now() })
-  createdAt: number;
+  createdAt: Date;
 
   @prop({ default: Date.now() })
-  updatedAt: number;
+  updatedAt: Date;
 
   @prop({ default: null })
-  deletedAt: number;
+  deletedAt: Date;
 
   // markdown文本
   @prop()

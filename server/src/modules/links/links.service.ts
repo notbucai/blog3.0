@@ -27,7 +27,7 @@ export class LinksService {
 
   updateById (id: ObjectID, link: CreateLinkDto) {
     const { logo, title, intro, type, url } = link;
-    return this.linkSchema.findByIdAndUpdate(id, { $set: { logo, title, intro, type, url, updatedAt: Date.now() } });
+    return this.linkSchema.findByIdAndUpdate(id, { $set: { logo, title, intro, type, url, updatedAt: new Date() } });
   }
 
   deleteById (id: ObjectID) {

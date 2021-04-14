@@ -12,10 +12,10 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 export class Acl extends Base {
 
   @prop({ default: Date.now() })
-  createdAt: number;
+  createdAt: Date;
 
   @prop({ default: Date.now() })
-  updatedAt: number;
+  updatedAt: Date;
 
   @prop({ unique: true, required: true })
   name: string; // 唯一

@@ -24,19 +24,19 @@ export enum UserSex {
 export class User extends Base {
 
     @prop({ default: Date.now() })
-    createdAt: number;
+    createdAt: Date;
 
     @prop({ default: Date.now() })
-    updatedAt: number;
+    updatedAt: Date;
 
     @prop({ default: null })
-    deletedAt: number;
+    deletedAt: Date;
 
     @prop({ default: null })
-    loginAt: number;
+    loginAt: Date;
 
     @prop()
-    activatedAt: number; // 账号激活时间
+    activatedAt: Date; // 账号激活时间
 
     @prop()
     username: string;

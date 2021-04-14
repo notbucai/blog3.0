@@ -39,7 +39,7 @@ export class UserService {
     }, {
       $set: {
         ...user,
-        updatedAt: Date.now()
+        updatedAt: new Date()
       }
     });
   }
@@ -48,7 +48,7 @@ export class UserService {
       _id: id,
     }, {
       $set: {
-        loginAt: Date.now()
+        loginAt: new Date()
       }
     });
   }
@@ -233,7 +233,7 @@ export class UserService {
 
   async create (signupDto: SignUpDto) {
     const newUser = new User();
-    newUser.createdAt = Date.now();
+    newUser.createdAt = new Date();
     newUser.updatedAt = newUser.createdAt;
     newUser.activatedAt = newUser.createdAt;
     newUser.phone = signupDto.phone;
@@ -256,7 +256,7 @@ export class UserService {
   }
   async repass (userId: ObjectID, pass: string) {
     pass = this.generateHashPassword(pass);
-    return this.userSchema.update({ _id: userId }, { pass, updatedAt: Date.now() });
+    return this.userSchema.update({ _id: userId }, { pass, updatedAt: new Date() });
   }
 
   generateHashPassword (password: string) {

@@ -25,10 +25,10 @@ export enum NotifyType {
 export class Notify extends Base {
 
   @prop({ default: Date.now() })
-  createdAt: number;
+  createdAt: Date;
 
   @prop({ default: Date.now() })
-  updatedAt: number;
+  updatedAt: Date;
 
   @prop({ default: null })
   readAt: number;

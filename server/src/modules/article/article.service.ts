@@ -104,7 +104,7 @@ export class ArticleService {
         menus,
         htmlContent: menusHtml,
         status,
-        updatedAt: Date.now()
+        updatedAt: new Date()
       }
     });
   }

@@ -13,10 +13,10 @@ import { OpenOauth2Client } from './open_oauth2_client.entity';
 export class OpenUserAndClientMap extends Base {
 
   @prop({ default: Date.now() })
-  createdAt: number;
+  createdAt: Date;
 
   @prop({ default: Date.now() })
-  updatedAt: number;
+  updatedAt: Date;
 
   @prop({ ref: OpenOauth2Client })
   client: Ref<OpenOauth2Client>;

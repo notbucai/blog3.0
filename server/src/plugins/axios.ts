@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-06-07 12:53:55
  * @LastEditors: bucai
- * @LastEditTime: 2021-06-07 13:05:58
+ * @LastEditTime: 2021-06-07 16:31:09
  * @Description: 
  */
 import axios from 'axios';
@@ -13,7 +13,7 @@ const logger = pino({
 });
 
 const http = axios.create({
-  timeout: 5000
+  timeout: 5000,
 });
 
 http.interceptors.request.use((config) => {

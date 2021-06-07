@@ -34,7 +34,11 @@ export class OauthController {
     // 获取用户信息
     const oAuthUserinfo: {
       id: string | number
-    } = await this.oauthService.getOAuthUserInfo(state, code, redirect_uri);
+    } = await this.oauthService.getOAuthUserInfo(state, code, redirect_uri).catch(e => {
+      console.log('getOAuthUserInfo error: ', e);
+      return Promise.reject(e);
+    });
+    // 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
     let localUserinfo: User = await this.oauthService.findByUser(state, String(oAuthUserinfo.id));
     // 判断是否存在这个用户
     if (!localUserinfo) {

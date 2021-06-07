@@ -166,10 +166,17 @@ export class UserService {
   }
 
   async findByGithubId (githubID: string): Promise<User | undefined> {
+    const githubIDNum: any = parseInt(githubID) as any;
     const user: User = await this.userSchema.findOne({
-      githubID
+      $or: [
+        {
+          githubID: githubIDNum
+        },
+        {
+          githubID
+        }
+      ]
     });
-
     if (user) {
       return user;
     }

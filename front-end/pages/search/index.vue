@@ -3,7 +3,22 @@
     <v-row>
       <v-col :md="8" :sm="12" :cols="12">
         <v-card class="mt-6 px-2 pb-4" :elevation="0">
-          <v-card-title>搜索</v-card-title>
+          <v-card-title>
+            <div
+              style="width: 100%"
+              class="d-flex align-center justify-space-between"
+            >
+              <span>搜索</span>
+              <v-btn
+                elevation="0"
+                text
+                @click="handleClear"
+                v-if="this.keywords"
+              >
+                <v-icon>{{ $icons['mdi-arrow-left'] }}</v-icon>
+              </v-btn>
+            </div>
+          </v-card-title>
           <v-container class="mt-0">
             <div class="search-input-box">
               <input
@@ -44,6 +59,7 @@
                 <ArticleItem
                   v-for="item in searchArticleData.list"
                   :key="item._id"
+                  :id="item._id"
                   :title="item.title"
                   :content="item.summary"
                   :keywords="searchArticleData.keyList"
@@ -217,6 +233,11 @@ export default {
         });
       this.searchArticleData = data;
 
+    },
+    handleClear () {
+      this.searchArticleData = {};
+      this.$router.push('');
+      this.keywords = '';
     }
   }
 };

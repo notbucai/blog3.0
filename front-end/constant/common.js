@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 22:03:18
  * @LastEditors: bucai
- * @LastEditTime: 2021-04-09 15:44:19
+ * @LastEditTime: 2021-06-07 16:08:54
  * @Description: 
  */
 export const valid = {
@@ -16,7 +16,7 @@ const QQ_CLIENT_ID = process.env.NODE_ENV === 'production' ? "101862792" : '1018
 const WEIBO_CLIENT_ID = process.env.NODE_ENV === 'production' ? "42171906" : '42171906';
 const GITEE_CLIENT_ID = process.env.NODE_ENV === 'production' ? "d208b7476ff8f79010ff026b7487b400bc6bdf4690450b9deaa57f2d35fe1cc5" : 'd208b7476ff8f79010ff026b7487b400bc6bdf4690450b9deaa57f2d35fe1cc5';
 const NOTBUCAI_CLIENT_ID = process.env.NODE_ENV === 'production' ? "e3afc612ee3d46df5405aff7de410b2b" : 'e3afc612ee3d46df5405aff7de410b2b';
-const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://www.notbucai.com' : 'https://www.notbucai.com';
+const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://www.notbucai.com' : 'http://localhost:9907';
 
 const urls = {
   github: 'https://github.com/login/oauth/authorize',
@@ -49,8 +49,8 @@ const getOAuthUrl = ({
   Object.keys(args).forEach(key => {
     urlSP.set(key, args[key]);
   });
-
-  return url + '?' + urlSP.toString();
+  const resUrl = url + '?' + urlSP.toString();
+  return resUrl;
 }
 
 

@@ -55,13 +55,13 @@
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
-    <v-content>
+    <v-main>
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
         <!-- If using vue-router -->
         <nuxt />
       </v-container>
-    </v-content>
+    </v-main>
 
     <v-lazy transition="scale-transition" min-height="100px">
       <v-footer app absolute>

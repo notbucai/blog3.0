@@ -6,7 +6,7 @@ import { ErrorCode } from '../../constants/error';
 import { MyHttpException } from '../exception/my-http.exception';
 import { Role } from '../../models/role.entity';
 import { Acl } from '../../models/acl.entity';
-import { LoggerService } from 'src/common/logger.service';
+import { LoggerService } from '../../common/logger.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

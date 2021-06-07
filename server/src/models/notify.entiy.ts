@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-07-05 18:24:48
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-31 17:41:03
+ * @LastEditTime: 2021-06-07 08:49:41
  * @Description: 
  */
 import { prop, Ref } from '@typegoose/typegoose';
@@ -36,15 +36,15 @@ export class Notify extends Base {
   @prop({ default: null, enum: NotifyType })
   type: NotifyType; // 类型  文章 / 评论 / 留言 / 系统
 
-  @prop({ ref: User })
+  @prop({ ref: User, index: true })
   user: Ref<User>; // 触发
 
-  @prop({ref: User})
+  @prop({ ref: User, index: true })
   receive: Ref<User>; // 接收
 
-  @prop({ default: null })
+  @prop({ default: null, index: true })
   source: ObjectID; // 来源 文章id / 评论 / 留言
 
-  @prop({ default: '' })
+  @prop({ default: '', index: true })
   content: string;
 }

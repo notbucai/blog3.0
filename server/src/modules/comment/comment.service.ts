@@ -12,7 +12,7 @@ import { User } from '../../models/user.entity';
 import { AllListDto } from './dto/allList.dto';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
-import { NotifyType } from 'src/models/notify.entiy';
+import { NotifyType } from '../../models/notify.entiy';
 import { NotifyService } from '../../common/notify.service';
 import { ArticleService } from '../article/article.service';
 import MarkDownUtils from '../../utils/markdown'

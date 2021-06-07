@@ -14,6 +14,9 @@
           <v-btn to="/timelines" elevation="0" tile text nuxt>归档</v-btn>
         </div>
         <div class="toolbar-action">
+          <v-btn elevation="0" nuxt to="/search/" text>
+            <v-icon>{{ $icons['mdi-magnify'] }}</v-icon>
+          </v-btn>
           <v-btn elevation="0" @click="handleChangeTheme" text small>
             <v-icon v-if="$vuetify.theme.dark">{{
               $icons['mdi-white-balance-sunny']
@@ -22,6 +25,7 @@
               $icons['mdi-weather-night']
             }}</v-icon>
           </v-btn>
+
           <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
             <v-badge
               color="error"
@@ -68,7 +72,7 @@
               <a href="/">不才</a> All Rights Reserved.
             </p>
             <a
-              href="http://www.beian.miit.gov.cn/"
+              href="http://beian.miit.gov.cn/"
               target="_blank"
               rel="noopener noreferrer"
               >赣ICP备15001741号-3</a
@@ -100,6 +104,7 @@ export default {
         timeout: 3000
       };
     },
+    ComponetLoading,
     CurrentUser,
     NavigationDrawer: () => import('@/components/NavigationDrawer.vue'),
     ScrollToTop,

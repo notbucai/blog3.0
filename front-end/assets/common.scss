@@ -4,9 +4,17 @@ html,
 body {
   font-size: 16px;
 }
-.v-application a{
-  color: initial;
+
+.v-application {
+  a {
+    color: initial !important;
+  }
+
+  &.theme--dark a {
+    color: #f0f0f0 !important;
+  }
 }
+
 .theme--light.v-btn .theme--light.v-icon {
   color: #666;
 }
@@ -22,13 +30,16 @@ body {
     box-shadow: none;
     color: inherit;
   }
-  .markdown-body img{
+
+  .markdown-body img {
     display: block;
     margin: 0 auto;
   }
-  .markdown-body table tr{
+
+  .markdown-body table tr {
     background-color: initial;
   }
+
   .hljs {
     background-color: initial;
   }
@@ -52,15 +63,17 @@ body {
     }
 
   }
-  .v-note-wrapper{
-    border-color: #000!important;
+
+  .v-note-wrapper {
+    border-color: #000 !important;
   }
 
   .v-note-wrapper .v-note-op {
     border-bottom-color: #000;
   }
 
-  .v-note-wrapper .v-note-op .v-left-item .op-icon:hover, .v-note-wrapper .v-note-op .v-right-item .op-icon:hover{
+  .v-note-wrapper .v-note-op .v-left-item .op-icon:hover,
+  .v-note-wrapper .v-note-op .v-right-item .op-icon:hover {
     background-color: #000;
     color: #ccc;
   }
@@ -95,10 +108,13 @@ body {
 
 }
 
-.page-enter-active, .page-leave-active {
+.page-enter-active,
+.page-leave-active {
   transition: opacity .5s;
 }
-.page-enter, .page-leave-active {
+
+.page-enter,
+.page-leave-active {
   opacity: 0;
 }
 

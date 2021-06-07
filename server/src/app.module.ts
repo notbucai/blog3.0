@@ -1,4 +1,4 @@
-import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule, RequestMethod, OnApplicationBootstrap } from '@nestjs/common';
 
 import { ConfigModule } from './config/config.module';
 import { RedisModule } from './redis/redis.module';
@@ -19,6 +19,10 @@ import { RoleService } from './modules/role/role.service';
 import { RoleModule } from './modules/role/role.module';
 import { LinksModule } from './modules/links/links.module';
 import { OpenapiModule } from './openapi/openapi.module';
+import { KeywordsModule } from './modules/keywords/keywords.module';
+import { KeywordsService } from './modules/keywords/keywords.service';
+import { TasksModule } from './common/tasks/tasks.module';
+import { TasksService } from './common/tasks/tasks.service';
 
 @Module({
   imports: [
@@ -52,19 +56,29 @@ import { OpenapiModule } from './openapi/openapi.module';
     RoleModule,
     LinksModule,
     OpenapiModule,
+    TasksModule,
+    KeywordsModule
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  constructor(private readonly configService: ConfigService) { }
+export class AppModule implements NestModule, OnApplicationBootstrap {
+  constructor(
+    // private readonly configService: ConfigService,
+    // private readonly tasksService: TasksService
+    private readonly keywordsService: KeywordsService
+  ) { }
 
-  configure(consumer: MiddlewareConsumer) {
+  configure (consumer: MiddlewareConsumer) {
     const middlewares = [
       UserMiddleware
     ];
     consumer
       .apply(...middlewares)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+
+  onApplicationBootstrap () {
+    this.keywordsService.generateKeywordsCloud()
   }
 }

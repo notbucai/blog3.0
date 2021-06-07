@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+import axios from '../../plugins/axios';
 
 import { ConfigService } from '../../config/config.service';
 import WeChatConfig from '../../config/type/WeChatConfig';

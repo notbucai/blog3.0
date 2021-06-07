@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { OpenapiController } from './openapi.controller';
 import { OpenapiService } from './openapi.service';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from '../common/common.module';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { OpenMpUser } from '../models/open_mp_user';
 import { OpenUserAndClientMap } from '../models/open_user_and_client_map';

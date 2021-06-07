@@ -14,5 +14,6 @@ import { CommonModule } from '../../common/common.module';
   ],
   providers: [RoleService, AclService],
   controllers: [RoleController],
+  exports: [RoleService, AclService]
 })
 export class RoleModule { }

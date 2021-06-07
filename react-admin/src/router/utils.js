@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-02-26 10:34:58
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-03 16:50:53
+ * @LastEditTime: 2021-04-14 21:55:19
  * @Description: 
  */
 import { cloneDeep } from 'lodash'
@@ -91,7 +91,7 @@ export const flatRoutesHandle = (routes) => {
 
 /**
  * 获取固定的tabView
- * @param {[]} routes 
+ * @param {any[]} routes 
  */
 export const getAffixTabViews = (routes) => {
   const newRoutes = cloneDeep(routes);

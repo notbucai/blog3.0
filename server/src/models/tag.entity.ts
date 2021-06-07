@@ -9,7 +9,7 @@ export class Tag extends Base {
   @prop({ default: Date.now() })
   updatedAt: Date;
 
-  @prop({ unique: true, required: true })
+  @prop({ unique: true, required: true,index:true })
   name: string;
 
   @prop({ default: null })

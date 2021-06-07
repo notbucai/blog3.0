@@ -38,13 +38,13 @@ export class User extends Base {
     @prop()
     activatedAt: Date; // 账号激活时间
 
-    @prop()
+    @prop({ index: true })
     username: string;
 
-    @prop()
+    @prop({ index: true })
     email: string;
 
-    @prop()
+    @prop({ index: true })
     phone: string;
 
     @Exclude()
@@ -93,7 +93,7 @@ export class User extends Base {
     @prop()
     location: string;
 
-    @prop()
+    @prop({ index: true })
     githubID: string;
 
     @prop()
@@ -105,7 +105,7 @@ export class User extends Base {
     @prop()
     githubName: string;
 
-    @prop()
+    @prop({ index: true })
     weiboID: string;
 
     @prop()
@@ -120,7 +120,7 @@ export class User extends Base {
     @prop()
     weiboAvatarLarge: string;
 
-    @prop()
+    @prop({ index: true })
     qqID: string;
 
     @prop()
@@ -129,7 +129,7 @@ export class User extends Base {
     @prop()
     qqAvatar: string;
 
-    @prop()
+    @prop({ index: true })
     baiduID: string;
 
     @prop()
@@ -141,7 +141,7 @@ export class User extends Base {
     @prop()
     baiduAvatarLarge: string;
 
-    @prop()
+    @prop({ index: true })
     giteeID: string;
 
     @prop()
@@ -159,7 +159,7 @@ export class User extends Base {
     @prop()
     giteeUrl: string;
 
-    @prop()
+    @prop({ index: true })
     notbucaiID: string;
 
     @prop()

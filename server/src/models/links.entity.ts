@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-06-20 11:01:10
  * @LastEditors: bucai
- * @LastEditTime: 2020-06-20 11:05:23
+ * @LastEditTime: 2021-06-07 08:50:15
  * @Description: 
  */
 import { prop } from '@typegoose/typegoose';
@@ -24,7 +24,7 @@ export class Link extends Base {
   @prop({ default: LinkType.normal })
   type: LinkType;
 
-  @prop()
+  @prop({index:true})
   title: string
 
   @prop()

@@ -8,7 +8,7 @@ import { WechatService } from '../common/wechat/wechat.service';
 import { ChangeStatus } from './dto/changeStatus.dto';
 import { LoggerService } from '../common/logger.service';
 import { AccessTokenDto } from './dto/accessToken.dto';
-import { MyResponse } from 'src/core/types/net';
+import { MyResponse } from '../core/types/net';
 
 @ApiTags('开发API')
 @Controller('openapi')

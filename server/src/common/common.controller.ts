@@ -13,7 +13,7 @@ import { CodeConstants } from '../constants/constants';
 import { EmailService } from './email.service';
 import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 import { ActiveGuard } from '../core/guards/active.guard';
-import { IpAddress } from 'src/core/decorators/ipAddress.decorator';
+import { IpAddress } from '../core/decorators/ipAddress.decorator';
 import { SendSmsDto } from './dto/sendSms.dto';
 
 @Controller('common')

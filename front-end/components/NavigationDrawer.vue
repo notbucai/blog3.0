@@ -125,7 +125,13 @@ export default {
         icon: 'timeline-clock',
         key: 'timelines',
         path: '/timelines',
-      }
+      },
+      {
+        icon: 'magnify',
+        title: '搜索',
+        key: 'magnify',
+        path: '/search/',
+      },
     ];
     return {
       drawer: true,

@@ -2,6 +2,11 @@ const isDark = new Date().getHours() > 19 && new Date().getHours() < 7;
 const axios = require('axios');
 const minifyTheme = require('minify-css-string');
 
+
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+
+const smp = new SpeedMeasurePlugin();
+
 module.exports = {
   mode: 'universal',
   /*
@@ -76,6 +81,7 @@ module.exports = {
     '@nuxtjs/style-resources',
     'cookie-universal-nuxt',
     '@nuxtjs/sitemap',
+    // 'nuxt-purgecss',
     // '@nuxtjs/pwa',
     ['@nuxtjs/vuetify', {
       treeShake: true,
@@ -101,6 +107,11 @@ module.exports = {
       // treeShake: true
     }]
   ],
+  purgeCSS: {
+    // whitelist: ['v-application', 'v-application--wrap'],
+    // whitelistPatterns: [/^v-((?!application).)*$/, /^theme--*/, /.*-transition/],
+    // whitelistPatternsChildren: [/^v-((?!application).)*$/, /^theme--*/],
+  },
   vuetify: {
     treeShake: false,
     defaultAssets: {
@@ -140,7 +151,7 @@ module.exports = {
 
 
   optimization: {
-    minimize: true,
+    minimize: process.env.NODE_ENV !== 'development',
   },
   render: {
     resourceHints: false
@@ -149,6 +160,11 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    loaders: {
+      vue: {
+        // prettify: false
+      }
+    },
     plugins: [],
     vendor: [
       // 'vue-cropperjs',
@@ -164,7 +180,7 @@ module.exports = {
     analyze: process.env.ENV_ANALYZE == 'analyze',
 
     optimization: {
-      minimize: true,
+      minimize: process.env.NODE_ENV !== 'development',
       splitChunks: {
         maxInitialRequests: 20,
         maxAsyncRequests: 20
@@ -182,7 +198,9 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
-
+      if (ctx.isDev) {
+        return smp.wrap(config);
+      }
     }
   },
 }

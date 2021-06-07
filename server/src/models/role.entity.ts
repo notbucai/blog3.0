@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-26 15:32:53
  * @LastEditors: bucai
- * @LastEditTime: 2020-03-26 16:55:14
+ * @LastEditTime: 2021-06-07 08:49:56
  * @Description: 角色信息
  */
 import { prop, arrayProp, Ref } from '@typegoose/typegoose';
@@ -17,10 +17,10 @@ export class Role extends Base {
   @prop({ default: Date.now() })
   updatedAt: Date;
 
-  @prop({ unique: true, required: true })
+  @prop({ unique: true, required: true,index:true })
   name: string;
 
-  @arrayProp({ itemsRef: Acl })
+  @arrayProp({ itemsRef: Acl,index:true })
   acls: Array<Ref<Acl>> // 对应权限
 
 }

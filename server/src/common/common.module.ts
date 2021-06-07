@@ -13,10 +13,11 @@ import { ArticleComment, MessageComment } from '../models/comment.entity';
 import { User } from '../models/user.entity';
 import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 import { WechatService } from './wechat/wechat.service';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
-    TypegooseModule.forFeature([Notify, Article, ArticleComment, MessageComment,User]),
+    TypegooseModule.forFeature([Notify, Article, ArticleComment, MessageComment,User])
   ],
   controllers: [
     CommonController
@@ -29,7 +30,7 @@ import { WechatService } from './wechat/wechat.service';
     LoggerService,
     NotifyService,
     TencentCloudService,
-    WechatService
+    WechatService,
   ],
   exports: [
     LoggerService,

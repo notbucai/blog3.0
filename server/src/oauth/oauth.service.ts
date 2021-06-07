@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { User, UserStatus } from '../models/user.entity';
-import axios from 'axios';
+import axios from '../plugins/axios';
 import { ConfigService } from '../config/config.service';
 import { UserService } from '../modules/user/user.service';
 import { CommonService } from '../common/common.service';

@@ -9,6 +9,7 @@ import { ConfigModule } from '../../config/config.module';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { CommentModule } from '../comment/comment.module';
 import { ArticleModule } from '../article/article.module';
+import { RoleModule } from '../role/role.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ArticleModule } from '../article/article.module';
     CommonModule,
     CommentModule,
     ArticleModule,
+    RoleModule,
     TypegooseModule.forFeature([User])
   ],
   providers: [UserService],

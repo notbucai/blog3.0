@@ -23,6 +23,9 @@ import { ChangeUserStatus } from './dto/status.dto';
 import { CommentService } from '../comment/comment.service';
 import { ArticleService } from '../article/article.service';
 import { NotifyService } from '../../common/notify.service';
+import { RoleService } from '../role/role.service';
+import { Role } from '../../models/role.entity';
+import { AclService } from '../role/acl.service';
 
 @Controller('users')
 @ApiTags('用户')
@@ -35,6 +38,8 @@ export class UserController {
     private readonly configService: ConfigService,
     private readonly commonService: CommonService,
     private readonly articleService: ArticleService,
+    private readonly roleService: RoleService,
+    private readonly aclService: AclService,
     private readonly commentService: CommentService,
     private readonly notifyService: NotifyService,
   ) { };
@@ -135,7 +140,15 @@ export class UserController {
   @ApiOperation({ summary: "当前用户角色权限信息" })
   @ApiBearerAuth()
   public async permissions (@CurUser() user: User) {
-    return user ? user.role : null;
+    let role = user.role;
+    if(user.isAdmin){
+      // 获取所有权限
+      // this.roleService.list()
+      role = new Role();
+      role.name = "SYSTEM";
+      role.acls = await this.aclService.findAll();
+    }
+    return role || {};
   }
 
   /**

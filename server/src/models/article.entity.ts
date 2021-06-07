@@ -24,21 +24,21 @@ export class Article extends Base {
   @prop({ default: null })
   deletedAt: Date;
 
-  @prop()
+  @prop({index: true})
   title: string;
 
-  @prop()
+  @prop({index: true})
   summary: string;
 
 
   @prop()
   menus: any[];
 
-  @prop()
+  @prop({index: true})
   content: string;
 
   // html 对象
-  @prop()
+  @prop({index: true})
   htmlContent: string;
 
   @prop({ default: 0 })
@@ -54,7 +54,6 @@ export class Article extends Base {
 
   @prop({ enum: ArticleStatus })
   status: ArticleStatus;
-
 
   @arrayProp({ itemsRef: Tag })
   tags: Array<Ref<Tag>>

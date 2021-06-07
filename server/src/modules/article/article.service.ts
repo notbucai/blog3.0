@@ -12,6 +12,7 @@ import { Comment, ArticleComment, CommentStatus } from '../../models/comment.ent
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
 import MarkdownUtils from '../../utils/markdown';
+import * as nodejieba from 'nodejieba';
 
 @Injectable()
 export class ArticleService {
@@ -254,6 +255,26 @@ export class ArticleService {
     }
   }
 
+  async search (keyList: Array<string>) {
+
+    // 将搜索词进行一个缓存
+    const keyRe = new RegExp(keyList.join('|'));
+    return this.articleSchema.find({
+      status: ArticleStatus.VerifySuccess,
+      $or: [
+        {
+          title: keyRe
+        },
+        {
+          content: keyRe
+        }
+      ]
+    }, '-htmlContent -content -menus -likes')
+      // .populate([{ path: 'user', select: "-pass" }])
+      // .populate([{ path: 'tags' }])
+      .sort({ browseCount: -1 })
+  }
+
   async getAllYearAndCount () {
     return this.articleSchema.aggregate([
       {
@@ -265,7 +286,7 @@ export class ArticleService {
       {
         $group: { _id: "$year", count: { $sum: 1 } }
       },
-      { $sort: { _id : -1 } }
+      { $sort: { _id: -1 } }
     ]);
   }
 
@@ -351,6 +372,14 @@ export class ArticleService {
         likes: uid
       }
     });
+  }
+
+  async allList (status: ArticleStatus = ArticleStatus.VerifySuccess) {
+    const list = await this.articleSchema.find({
+      status
+    });
+
+    return list;
   }
 
   async allArticleMarkdownContentToHtmlContent () {

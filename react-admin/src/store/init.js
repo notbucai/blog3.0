@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-03-02 14:55:46
  * @LastEditors: bucai
- * @LastEditTime: 2021-03-05 18:35:38
+ * @LastEditTime: 2021-04-14 21:48:59
  * @Description: 初始化数据
  */
 
@@ -32,8 +32,11 @@ const init = async () => {
 
   // 判断token
   await store.dispatch(updateUserAction());
+
   await store.dispatch(initPermissionRouters());
+
   store.dispatch(updateTabViews());
+
   store.dispatch(updateBreadcrumbs());
 
 }

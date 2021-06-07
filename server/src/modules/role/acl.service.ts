@@ -19,7 +19,7 @@ export class AclService {
    * 创建权限点
    * @param aclDto CreateAclDto
    */
-  create(aclDto: CreateAclDto) {
+  create (aclDto: CreateAclDto) {
     const acl = new Acl();
     acl.name = aclDto.name;
     acl.title = aclDto.title;
@@ -33,14 +33,14 @@ export class AclService {
   /**
    * 删除权限点
    */
-  delete(id: string) {
+  delete (id: string) {
     return this.aclSchema.remove({ _id: id });
   }
 
   /**
    * 修改权限点
    */
-  update(id: string, aclDto: CreateAclDto) {
+  update (id: string, aclDto: CreateAclDto) {
     const { title, name, parent } = aclDto;
     const _set = {};
     title && (_set['title'] = title);
@@ -53,7 +53,7 @@ export class AclService {
   /**
    * 查询权限列表
    */
-  async list(roleListDto: RoleListDto) {
+  async list (roleListDto: RoleListDto) {
     let { page_index = 1, page_size = 20 } = roleListDto;
     page_index = Number(page_index);
     page_size = Number(page_size);
@@ -61,7 +61,7 @@ export class AclService {
       .find({})
       .skip((page_index - 1) * page_size)
       .limit(page_size)
-      // .populate('parent');
+    // .populate('parent');
     const total = await this.aclSchema.countDocuments({});
     return {
       list,
@@ -69,10 +69,14 @@ export class AclService {
     }
   }
 
+  async findAll () {
+    return await this.aclSchema.find();
+  }
+
   /**
    * 查询权限关系列表, 可无限层级
    */
-  async roleList(parent: string | ObjectID | null = null) {
+  async roleList (parent: string | ObjectID | null = null) {
     const root_list = await this.aclSchema
       .find({ parent });
     return Promise.all(root_list.map(async (item: any) => {

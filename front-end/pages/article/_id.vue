@@ -11,10 +11,10 @@
             ></v-img>
           </div>
           <div class="acticle_content">
-            <v-alert type="warning" dense v-if="data.status === 1"
+            <v-alert :icon="$icons['mdi-alert-circle-outline']" type="warning" dense v-if="data.status === 1"
               >审核中</v-alert
             >
-            <v-alert type="warning" dense v-if="data.status === 3"
+            <v-alert :icon="$icons['mdi-alert-circle-outline']" type="warning" dense v-if="data.status === 3"
               >审核未通过</v-alert
             >
 

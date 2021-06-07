@@ -122,7 +122,7 @@
 </template>
 <script>
 import CurrentUser from '@/components/CurrentUser.vue';
-import { fileSize } from '@/utils/file'
+import { fileSize as $file_fileSize } from '@/utils/file'
 export default {
   layout: 'empty',
   components: {
@@ -246,6 +246,7 @@ export default {
       this.$refs['upload'].click();
     },
     async handleuploadImg (file) {
+      
       const size = $file_fileSize(file);
       if (size > 3) {
         return this.$snackbar.error('文件大小不能超过3m');

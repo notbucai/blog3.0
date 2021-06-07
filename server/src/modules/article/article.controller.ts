@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Delete, Put, Get, Param, UseGuards, Query } from '@nestjs/common';
+import { Controller, Post, Body, Delete, Put, Get, Param, UseGuards, Query, forwardRef, Inject } from '@nestjs/common';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
 import { ObjectID } from 'mongodb';
 import { MyHttpException } from '../../core/exception/my-http.exception';
@@ -14,8 +14,9 @@ import { ArticleListDto } from './dto/list.dto';
 import { ChangeArticleStatus } from './dto/status.dto';
 import { ArticleStatus } from '../../models/article.entity';
 import { NotifyService } from '../../common/notify.service';
-import { NotifyType } from 'src/models/notify.entiy';
+import { NotifyType } from '../../models/notify.entiy';
 import { ChangeArticleUpStatus } from './dto/upStatus.dto';
+import { KeywordsService } from '../keywords/keywords.service';
 
 @Controller('article')
 @ApiTags('文章')
@@ -24,11 +25,37 @@ export class ArticleController {
   constructor(
     private readonly articleService: ArticleService,
     private readonly notifyService: NotifyService,
+    @Inject(forwardRef(() => KeywordsService))
+    private readonly keywordsService: KeywordsService,
   ) { }
 
   @Get('list/hot')
   async hotList () {
     return this.articleService.pageHotList();
+  }
+
+  @Get('list/search')
+  async search (@Query('keywords') keywords: string = '') {
+    keywords = keywords || '';
+
+    keywords = keywords.trim();
+    if (keywords.length === 0) {
+      throw new MyHttpException({
+        code: ErrorCode.ParamsError.CODE,
+        message: ErrorCode.ParamsError.MESSAGE,
+      });
+    }
+    const keyList = this.keywordsService.cat(keywords);
+
+    const list = await this.articleService.search([keywords, ...keyList]);
+    if (list && list.length) {
+      await this.keywordsService.keywordsListInc(keyList);
+    }
+
+    return {
+      keyList,
+      list
+    };
   }
 
   @Get('years')

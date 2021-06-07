@@ -81,6 +81,7 @@ export default {
     overflow: hidden;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3; //当属性值为3，表示超出3行隐藏
+    color: #888888;
   }
   mark {
     padding: 0 2px;

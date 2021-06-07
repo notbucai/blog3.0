@@ -7,11 +7,7 @@ body {
 
 .v-application {
   a {
-    color: initial !important;
-  }
-
-  &.theme--dark a {
-    color: #f0f0f0 !important;
+    color: initial;
   }
 }
 

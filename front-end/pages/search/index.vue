@@ -91,6 +91,8 @@
                     plain
                     small
                     text
+                    nuxt
+                    :to="{ path: '', query: {s:item.value } }"
                     @click="handleSearch(item.value)"
                     >{{ item.value }}</v-btn
                   >
@@ -110,6 +112,8 @@
                     };font-size: ${Math.min(14 + item.count, 28)}px`"
                     plain
                     text
+                    nuxt
+                    :to="{ path: '', query: {s:item.value } }"
                     @click="handleSearch(item.value)"
                     >{{ item.value }}</v-btn
                   >

@@ -9,6 +9,7 @@ import TagList from '../views/tag/List.vue';
 import RoleList from '../views/role/List.vue';
 import AclList from '../views/acl/List.vue';
 import LinksList from '../views/links/List.vue';
+import KeywordsList from '../views/keywords/List.vue';
 
 Vue.use(VueRouter)
 
@@ -100,6 +101,16 @@ export const navRoutes = [
       role: 'acl_page',
       title: "权限点管理",
       icon: "iconpinglun"
+    }
+  },
+  {
+    path: '/keywords/list',
+    name: 'KeywordsList',
+    component: KeywordsList,
+    meta: {
+      role: 'keywords_page',
+      title: "词云管理",
+      icon: "iconwordCloud-chart"
     }
   }
 ];

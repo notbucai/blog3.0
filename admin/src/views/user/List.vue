@@ -13,7 +13,11 @@
         v-model="keyword"
         class="search_input mb2"
       >
-        <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
+        <el-button
+          slot="append"
+          icon="el-icon-search"
+          @click="handleSearch"
+        ></el-button>
       </el-input>
 
       <el-table
@@ -31,12 +35,17 @@
           label="ID"
           max-width="200"
         ></el-table-column>
-        <el-table-column prop="avatarURL" label="头像" width="80" align="center">
+        <el-table-column
+          prop="avatarURL"
+          label="头像"
+          width="80"
+          align="center"
+        >
           <template slot-scope="scope">
             <el-image
               class="avatarURL"
               v-if="scope.row.avatarURL"
-              :src="scope.row.avatarURL | imageMogr2(60)"
+              :src="filter_imageMogr2(scope.row.avatarURL, 60)"
             ></el-image>
           </template>
         </el-table-column>
@@ -48,7 +57,13 @@
           show-overflow-tooltip
           header-align="center"
         ></el-table-column>
-        <el-table-column prop="phone" show-overflow-tooltip label="手机号" width="100" align="center"></el-table-column>
+        <el-table-column
+          prop="phone"
+          show-overflow-tooltip
+          label="手机号"
+          width="100"
+          align="center"
+        ></el-table-column>
         <el-table-column
           prop="email"
           show-overflow-tooltip
@@ -63,25 +78,61 @@
           max-width="260"
           align="center"
         ></el-table-column>
-        <el-table-column prop="sex" show-overflow-tooltip label="性别" width="60" align="center">
-          <template slot-scope="scope">{{scope.row.sex | sex}}</template>
+        <el-table-column
+          prop="sex"
+          show-overflow-tooltip
+          label="性别"
+          width="60"
+          align="center"
+        >
+          <template slot-scope="scope">{{
+            filter_sex(scope.row.sex)
+          }}</template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.createdAt | format}}</template>
+        <el-table-column
+          prop="createdAt"
+          label="创建时间"
+          width="160"
+          align="center"
+        >
+          <template slot-scope="scope">{{
+            filter_format(scope.row.createdAt)
+          }}</template>
         </el-table-column>
-        <el-table-column prop="activatedAt" label="激活时间" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.createdAt | format}}</template>
+        <el-table-column
+          prop="activatedAt"
+          label="激活时间"
+          width="160"
+          align="center"
+        >
+          <template slot-scope="scope">{{
+            filter_format(scope.row.createdAt)
+          }}</template>
         </el-table-column>
-        <el-table-column prop="status" show-overflow-tooltip label="状态" width="100" align="center">
+        <el-table-column
+          prop="status"
+          show-overflow-tooltip
+          label="状态"
+          width="100"
+          align="center"
+        >
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status == 1" type="info">未激活</el-tag>
             <el-tag v-if="scope.row.status == 2" type="success">已激活</el-tag>
             <el-tag v-if="scope.row.status == 3" type="danger">已冻结</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="role" show-overflow-tooltip label="角色" width="120" align="center">
+        <el-table-column
+          prop="role"
+          show-overflow-tooltip
+          label="角色"
+          width="120"
+          align="center"
+        >
           <template slot-scope="scope">
-            <el-tag type="info" v-if="scope.row.role">{{scope.row.role.name}}</el-tag>
+            <el-tag type="info" v-if="scope.row.role">{{
+              scope.row.role.name
+            }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="100">
@@ -91,7 +142,8 @@
                 size="mini"
                 @click="handleChangeRole(scope.row)"
                 v-if="$permissions('BindRole')"
-              >角色</el-button>
+                >角色</el-button
+              >
               <!-- :disabled="scope.row.role === 4" -->
               <template v-if="$permissions('ChangeStatus')">
                 <el-button
@@ -99,13 +151,15 @@
                   type="danger"
                   v-if="scope.row.status == 2"
                   @click="handleChangeStatus(scope.row)"
-                >冻结</el-button>
+                  >冻结</el-button
+                >
                 <el-button
                   size="mini"
                   type="success"
                   v-else
                   @click="handleChangeStatus(scope.row)"
-                >激活</el-button>
+                  >激活</el-button
+                >
               </template>
             </div>
             <div v-else>禁止操作</div>
@@ -122,36 +176,26 @@
         class="mt2"
       ></el-pagination>
     </div>
-
-    <el-dialog title="权限设置" :visible.sync="dialogFormVisible" width="30%">
-      <div class="tc">
-        <div class="pb2 fb" v-if="current">设置“{{current.username}}”的角色</div>
-        <el-input v-model="roleId" label="角色id" placeholder="请输入角色id"></el-input>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false" size="small">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="handleChangeRoleCofirm"
-          size="small"
-          :loading="roleLoading"
-        >确 定</el-button>
-      </div>
-    </el-dialog>
+    <RoleDialog
+      v-if="$permissions('BindRole')"
+      @success="handleChangeRoleSuccess"
+      ref="RoleDialog"
+    />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import RoleDialog from './components/RoleDialog.vue';
+
 export default {
-  data() {
+  components: { RoleDialog },
+  data () {
     return {
       current: null,
       dialogFormVisible: false,
       tableData: [],
       // roleList: ['普通用户', '网站编辑', '管理员'],
-      roleId: '',
-      roleLoading: false,
       total: 0,
       page_size: 10,
       page_index: 1,
@@ -166,12 +210,12 @@ export default {
     //   return
     // }
   },
-  created() {
+  created () {
     this.loadData();
   },
   filters: {},
   methods: {
-    async loadData() {
+    async loadData () {
       this.loading = true;
       const { page_size, page_index, keyword } = this;
       const query = {
@@ -187,22 +231,22 @@ export default {
       this.tableData = data.list;
       this.total = data.total;
     },
-    handleSearch() {
+    handleSearch () {
       // const keyword;
       this.page_index = 1;
       this.loadData();
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(`每页 ${val} 条`);
       this.page_size = val;
       this.loadData();
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       console.log(`当前页: ${val}`);
       this.page_index = val;
       this.loadData();
     },
-    async handleChangeStatus(item) {
+    async handleChangeStatus (item) {
       console.log(item);
       // TODO: 激活解冻
       let msg = '激活';
@@ -225,27 +269,15 @@ export default {
       // TODO: 以后有空再改
       this.tableData = [...this.tableData];
     },
-    handleChangeRole(item) {
+    handleChangeRole (item) {
       console.log(item);
       this.current = item;
       this.roleRadio = item.role || 1;
       this.dialogFormVisible = true;
+      this.$refs['RoleDialog'].open(item);
     },
-    async handleChangeRoleCofirm() {
-      const id = this.current._id;
-      const role = this.roleId;
-      this.roleLoading = true;
-      const [err, data] = await this.$http.changeRole({ id, role });
-      this.roleLoading = false;
-      this.dialogFormVisible = false;
-      if (err) {
-        return;
-      }
-      this.$notify.success({ title: '修改成功' });
-      this.current.role = this.roleRadio;
-      this.current = null;
-      // TODO: 以后有空再改
-      this.tableData = [...this.tableData];
+    handleChangeRoleSuccess () {
+      this.loadData();
     }
   }
 };

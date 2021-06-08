@@ -6,19 +6,36 @@
       <!-- 插画 -->
       <div class="login-pic">
         <img
-          :src="`https://image.notbucai.com/pixiv/${pixivIndex}.jpg` | imageMogr2(600)"
+          :src="
+            filter_imageMogr2(
+              `https://image.notbucai.com/pixiv/${pixivIndex}.jpg`,
+              600
+            )
+          "
           alt="pic"
         />
       </div>
       <!-- 登录框 -->
       <div class="login-form">
         <div class="login-form--title">登录</div>
-        <el-form :model="formData" :rules="rules" ref="login-form" class="login-form_form">
+        <el-form
+          :model="formData"
+          :rules="rules"
+          ref="login-form"
+          class="login-form_form"
+        >
           <el-form-item prop="login">
-            <el-input v-model="formData.login" placeholder="请输入手机/邮箱/用户名"></el-input>
+            <el-input
+              v-model="formData.login"
+              placeholder="请输入手机/邮箱/用户名"
+            ></el-input>
           </el-form-item>
           <el-form-item prop="pass">
-            <el-input v-model="formData.pass" type="password" placeholder="请输入密码"></el-input>
+            <el-input
+              v-model="formData.pass"
+              type="password"
+              placeholder="请输入密码"
+            ></el-input>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -26,7 +43,8 @@
               type="primary"
               round
               @click="handleSubmit('login-form')"
-            >登录</el-button>
+              >登录</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
@@ -41,7 +59,7 @@ let stopCanAn = null;
 let pixivIndex = (Math.random() * 10) | 0;
 let loadingMark;
 export default {
-  data() {
+  data () {
     return {
       formData: {
         login: '',
@@ -61,7 +79,7 @@ export default {
   computed: {
     ...mapState(['token'])
   },
-  created() {
+  created () {
     const redirect = this.$route.query.redirect;
     this.redirectPath = redirect;
     if (redirect) return;
@@ -71,15 +89,15 @@ export default {
       return;
     }
   },
-  mounted() {
+  mounted () {
     stopCanAn = canvasAn(this.$refs['space']);
   },
-  beforeDestroy() {
+  beforeDestroy () {
     stopCanAn();
   },
   methods: {
     ...mapActions(['setToken', 'setUser']),
-    handleSubmit(formName) {
+    handleSubmit (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           loadingMark = this.$loading({ lock: true });
@@ -89,7 +107,7 @@ export default {
         }
       });
     },
-    async handleLogin() {
+    async handleLogin () {
       const [err, data] = await this.$http.login(this.formData);
       if (err) {
         loadingMark && loadingMark.close();
@@ -98,7 +116,7 @@ export default {
       this.setToken(data);
       this.handleGetUser();
     },
-    async handleGetUser() {
+    async handleGetUser () {
       const [, data] = await this.$http.userInfo();
 
       loadingMark && loadingMark.close();

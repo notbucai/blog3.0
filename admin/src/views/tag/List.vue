@@ -41,10 +41,10 @@
         ></el-table-column>
 
         <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.createdAt | format}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.createdAt)}}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.updatedAt | format}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.updatedAt)}}</template>
         </el-table-column>
 
         <el-table-column label="操作" min-width="100">

@@ -80,15 +80,15 @@
         ></el-table-column>
 
         <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.createdAt | format}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.createdAt)}}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{scope.row.updatedAt | format}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.updatedAt)}}</template>
         </el-table-column>
 
         <el-table-column prop="status" show-overflow-tooltip label="状态" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag type="info">{{scope.row.status | articleStatus}}</el-tag>
+            <el-tag type="info">{{filter_articleStatus(scope.row.status)}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="180">
@@ -218,7 +218,7 @@ export default {
       // TODO: 发送AJAX
       const id = this.current._id;
       const status = this.currentRadio;
-      const [err, data] = await this.$http.changeArticleStatus(id, { status });
+      const [err, data] = await this.$http.changefilter_articleStatus(id, { status });
       this.dialogFormVisible = false;
       if (err) return;
       this.changStatusLoading = false;

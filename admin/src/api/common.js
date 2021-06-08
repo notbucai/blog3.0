@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-23 09:31:46
  * @LastEditors: bucai
- * @LastEditTime: 2020-07-22 15:52:32
+ * @LastEditTime: 2021-06-08 17:35:20
  * @Description: 共用接口
  */
 
@@ -117,4 +117,24 @@ export const linkUpdate = (id, data) => {
 
 export const uploadImage = (data) => {
   return $post('/common/uploadImage', data);
+}
+
+export const keywordsList = (params) => {
+  return $get(`/keywords/list`, { params });
+}
+
+export const keywordsDeleteItem = (id) => {
+  return $del(`/keywords/${id}`);
+}
+
+export const keywordGenerate = () => {
+  return $post(`/keywords/generate`);
+}
+
+export const keywordsChangeItemStatus = (id, status) => {
+  return $put(`/keywords/${id}/status`, {}, {
+    params: {
+      status
+    }
+  });
 }

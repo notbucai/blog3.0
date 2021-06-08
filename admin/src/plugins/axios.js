@@ -25,7 +25,9 @@ _axios.interceptors.request.use(
 
     const token = store.get('token');
     if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token;
+      if (!['/users/signin'].includes(config.url)) {
+        config.headers['Authorization'] = 'Bearer ' + token;
+      }
     }
 
     return config;

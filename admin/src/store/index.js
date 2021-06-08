@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import store from 'store2';
 
+import modules from './modules';
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -10,31 +12,32 @@ export default new Vuex.Store({
     user: store.get('user', null),
   },
   mutations: {
-    SET_TOKNE(state, data) {
+    SET_TOKNE (state, data) {
       state.token = data;
     },
-    SET_USER(state, data) {
+    SET_USER (state, data) {
       state.user = data;
     },
-    QUIT(state) {
+    QUIT (state) {
       state.user = null;
       state.token = null;
     }
   },
   actions: {
-    setToken({ commit }, payload) {
+    setToken ({ commit }, payload) {
       commit('SET_TOKNE', payload);
       store.set('token', payload);
     },
-    setUser({ commit }, payload) {
+    setUser ({ commit }, payload) {
       commit('SET_USER', payload);
       store.set('user', payload);
     },
-    quit({ commit }) {
+    quit ({ commit }) {
       commit('QUIT');
       store.clear();
     },
   },
   modules: {
+    ...modules
   }
 })

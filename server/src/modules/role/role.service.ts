@@ -16,7 +16,7 @@ export class RoleService {
    * 创建角色
    * @param roleDto CreateAclDto
    */
-  create(roleDto: CreateRoleDto) {
+  create (roleDto: CreateRoleDto) {
     const role = new Role();
     role.name = roleDto.name;
     return this.roleSchema.create(role);
@@ -25,14 +25,14 @@ export class RoleService {
   /**
    * 删除角色
    */
-  delete(id: string) {
+  delete (id: string) {
     return this.roleSchema.remove({ _id: id });
   }
 
   /**
    * 修改角色
    */
-  update(id: string, aclDto: CreateRoleDto) {
+  update (id: string, aclDto: CreateRoleDto) {
     const { name } = aclDto;
     const _set = {};
     name && (_set['name'] = name);
@@ -42,21 +42,28 @@ export class RoleService {
   /**
    * 绑定权限
    */
-  bindAcls(id: string, bindAclDto: BindAclDto) {
+  bindAcls (id: string, bindAclDto: BindAclDto) {
     const { acls } = bindAclDto;
-    const _acls = acls.map(item=>new ObjectID(item));
+    const _acls = acls.map(item => new ObjectID(item));
     return this.roleSchema.findByIdAndUpdate({ _id: id }, { $set: { acls: _acls } });
   }
 
   /**
    * 查询权限列表
    */
-  async list(roleListDto: RoleListDto) {
+  async list (roleListDto: RoleListDto) {
     let { page_index = 1, page_size = 20 } = roleListDto;
     page_index = Number(page_index);
     page_size = Number(page_size);
+    const keyRex = new RegExp(roleListDto.keyword || '');
     const list = await this.roleSchema
-      .find({})
+      .find({
+        $or: [
+          {
+            name: keyRex
+          },
+        ]
+      })
       .skip((page_index - 1) * page_size)
       .limit(page_size)
       .populate('acls');

@@ -12,6 +12,7 @@ import {
   ValidateIf
 } from 'class-validator';
 import { ApiProperty, ApiProduces } from '@nestjs/swagger';
+import { ErrorCode } from '../../../constants/error';
 
 export class RoleListDto {
 
@@ -24,5 +25,10 @@ export class RoleListDto {
   @ValidateIf(o => o.page_index !== undefined)
   @Min(1)
   page_index?: number = 1;
+
+  @ApiProperty({ description: '关键词', required: false })
+  @ValidateIf(o => o.keyword !== undefined)
+  @MinLength(1, { message: ErrorCode.ParamsError.MESSAGE })
+  keyword?: string;
 
 }

@@ -141,7 +141,7 @@ export class UserController {
   @ApiBearerAuth()
   public async permissions (@CurUser() user: User) {
     let role = user.role;
-    if(user.isAdmin){
+    if (user.isAdmin) {
       // 获取所有权限
       // this.roleService.list()
       role = new Role();
@@ -226,7 +226,9 @@ export class UserController {
     if (listDto.page_index < 1 || listDto.page_size < 1) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     }
-    return this.userService.findList(listDto);
+    return this.userService.findList(listDto, {
+      createdAt: -1
+    });
   }
 
   /**

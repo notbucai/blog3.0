@@ -25,4 +25,16 @@ export class KeywordsListDto {
   @Min(1)
   page_index?: number = 1;
 
+  @ApiProperty({ description: '创建时间排序', example: 1, required: false })
+  sort_createdAt?: number = 1;
+
+  @ApiProperty({ description: '更新时间排序', example: 1, required: false })
+  sort_updatedAt?: number = 1;
+
+  @ApiProperty({ description: '状态排序', example: 1, required: false })
+  sort_status?: number = 1;
+
+  @ApiProperty({ description: '数量排序', example: 1, required: false })
+  sort_count?: number = 1;
+
 }

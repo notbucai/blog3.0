@@ -8,6 +8,7 @@ import * as nodejieba from 'nodejieba'
 import { LoggerService } from '../../common/logger.service';
 import { ArticleService } from '../article/article.service';
 import { Keywords, KeywordsStatus } from '../../models/keywords.entity';
+import { ObjectID } from 'mongodb';
 
 const isNumber = require('is-number');
 
@@ -41,7 +42,7 @@ export class KeywordsService {
         .replace(/(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g, '')
 
       // 选出关键词
-      const ks = nodejieba.extract(text, 20).map(item => item.word);
+      const ks = nodejieba.extract(text, 20).map(item => (item.word||"").trim());
 
       return pv.concat(ks);
     }, []);
@@ -56,9 +57,16 @@ export class KeywordsService {
     this.logger.info({ data: "only keywords list count： " + Object.keys(keywordsMap).length });
 
     this.logger.info({ data: "updateIncActionList start " });
-    const updateIncActionList = Object.keys(keywordsMap).filter(item => item.length < 6).filter(n => !isNumber(n)).map(value => {
-      return this.updateCount(value, keywordsMap[value]);
-    });
+    const updateIncActionList = Object
+      .keys(keywordsMap)
+      .filter(item => {
+        return !new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]", 'ig').test(item)
+      })
+      .filter(item => item.length < 6)
+      .filter(n => !isNumber(n))
+      .map(value => {
+        return this.updateCount(value, keywordsMap[value]);
+      });
 
     await Promise.all(updateIncActionList).catch(err => {
       this.logger.error({ data: err, message: err ? err.message : 'updateIncActionList err' });
@@ -81,18 +89,17 @@ export class KeywordsService {
       .limit(size);
   }
 
-  async pageList (page: number = 1, size: number = 20) {
+  async pageList (page: number = 1, size: number = 20, sort = { updatedAt: 0, createdAt: 0, status: 0, count: 0 }) {
+
     const find = () => {
       return this.keywordsSchema.find({
-        $nor: [
-          {
-            status: KeywordsStatus.BAD
-          }
-        ]
+        // $nor: [
+        //   {
+        //     status: KeywordsStatus.BAD
+        //   }
+        // ]
       })
-        .sort({
-          updatedAt: 1
-        });
+        .sort(sort);
     }
     const total = await find().countDocuments();
 
@@ -179,5 +186,22 @@ export class KeywordsService {
   cat (keywords: string) {
     return nodejieba.cutForSearch(keywords, true);
   }
+
+  removeById (id: ObjectID) {
+    return this.keywordsSchema.deleteOne({
+      _id: id
+    })
+  }
+
+  updateStatusById (id: ObjectID, status: KeywordsStatus) {
+    return this.keywordsSchema.updateOne({
+      _id: id
+    }, {
+      $set: {
+        status
+      }
+    });
+  }
+
 
 }

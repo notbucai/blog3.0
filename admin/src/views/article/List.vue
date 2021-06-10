@@ -218,7 +218,7 @@ export default {
       // TODO: 发送AJAX
       const id = this.current._id;
       const status = this.currentRadio;
-      const [err, data] = await this.$http.changefilter_articleStatus(id, { status });
+      const [err, data] = await this.$http.changeArticleStatus(id, { status });
       this.dialogFormVisible = false;
       if (err) return;
       this.changStatusLoading = false;

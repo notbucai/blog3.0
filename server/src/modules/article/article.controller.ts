@@ -9,6 +9,7 @@ import { RolesGuard } from '../../core/guards/roles.guard';
 import { User } from '../../models/user.entity';
 import { ApiBearerAuth, ApiTags, ApiParam } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
+import { ReadService } from './read.service';
 import { CurUser } from '../../core/decorators/user.decorator';
 import { ArticleListDto } from './dto/list.dto';
 import { ChangeArticleStatus } from './dto/status.dto';
@@ -17,6 +18,7 @@ import { NotifyService } from '../../common/notify.service';
 import { NotifyType } from '../../models/notify.entiy';
 import { ChangeArticleUpStatus } from './dto/upStatus.dto';
 import { KeywordsService } from '../keywords/keywords.service';
+import { IpAddress } from '../../core/decorators/ipAddress.decorator';
 
 @Controller('article')
 @ApiTags('文章')
@@ -24,6 +26,7 @@ export class ArticleController {
 
   constructor(
     private readonly articleService: ArticleService,
+    private readonly articleReadService: ReadService,
     private readonly notifyService: NotifyService,
     @Inject(forwardRef(() => KeywordsService))
     private readonly keywordsService: KeywordsService,
@@ -140,11 +143,14 @@ export class ArticleController {
   }
 
   @Get(':id')
-  async get (@Param('id') id: string) {
+  async get (@Param('id') id: string, @IpAddress() ipAddress: string) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     const _id = new ObjectID(id);
-    this.articleService.addViewCount(_id);
-    return this.articleService.findById(id);
+    await this.articleService.addViewCount(_id);
+
+    const article = await this.articleService.findById(id);
+    await this.articleReadService.record(_id,ipAddress);
+    return article;
   }
 
   @Get(':id/basis')

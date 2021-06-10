@@ -18,5 +18,6 @@ import { ArticleModule } from '../article/article.module';
     LoggerService
   ],
   controllers: [TagController],
+  exports: [TagService]
 })
 export class TagModule { }

@@ -16,6 +16,8 @@ import { NotifyType } from '../../models/notify.entiy';
 import { NotifyService } from '../../common/notify.service';
 import { ArticleService } from '../article/article.service';
 import MarkDownUtils from '../../utils/markdown'
+import { DateType } from '../../constants/constants';
+import moment = require('moment');
 
 @Injectable()
 export class CommentService {
@@ -377,4 +379,80 @@ export class CommentService {
     });
 
   }
+
+  async count () {
+    const { SourceArticle, SourceMessage } = CommentConstants;
+    const list = [SourceArticle, SourceMessage];
+    const pList = list.map(item => this.getCommentSchema(item).countDocuments());
+    const [article, message] = await Promise.all(pList);
+    return {
+      article,
+      message
+    }
+  }
+
+  async growthData (type: DateType = DateType.day, size: number = 30) {
+    const { SourceArticle, SourceMessage } = CommentConstants;
+    const _list = [SourceArticle, SourceMessage].map(item => {
+      const schema = this.getCommentSchema(item);
+
+      const date = moment();
+      const list = [];
+      for (let i = 0; i < size; i++) {
+
+        const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
+        const endDate = moment(startDate).add(1, type).format('YYYY-MM-DD');
+
+        const findPromise = schema.countDocuments({
+          createdAt: {
+            $gte: new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'),
+            $lt: new Date(endDate + ' 23:59:59'),
+          }
+        });
+
+        list.push(findPromise.then(data => {
+          return {
+            date: startDate,
+            count: data,
+          }
+        }));
+        date.subtract(1, type);
+      }
+      return Promise.all(list);
+    });
+
+    return Promise.all(_list);
+  }
+
+  async historyData (type: DateType = DateType.day, size: number = 30) {
+    const { SourceArticle, SourceMessage } = CommentConstants;
+    const _list = [SourceArticle, SourceMessage].map(item => {
+      const schema = this.getCommentSchema(item);
+
+      const date = moment();
+      const list = [];
+      for (let i = 0; i < size; i++) {
+
+        const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
+
+        const findPromise = schema.countDocuments({
+          createdAt: {
+            $gte: new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:59'),
+          }
+        });
+
+        list.push(findPromise.then(data => {
+          return {
+            date: startDate,
+            count: data,
+          }
+        }));
+        date.subtract(1, type);
+      }
+      return Promise.all(list);
+    });
+
+    return Promise.all(_list);
+  }
+
 }

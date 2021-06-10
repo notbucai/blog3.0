@@ -13,18 +13,18 @@ export class TagService {
   ) { }
 
 
-  async create(tagDto: CreateDto) {
+  async create (tagDto: CreateDto) {
     const tag = new Tag()
     tag.name = tagDto.name;
     tag.iconURL = tagDto.iconURL;
     return this.tagSchema.create(tag);
   }
 
-  async delete(id: string) {
+  async delete (id: string) {
     return this.tagSchema.deleteOne({ _id: id });
   }
 
-  async update(id: string, tagDto: CreateDto) {
+  async update (id: string, tagDto: CreateDto) {
     return this.tagSchema.update({ _id: id }, {
       $set: {
         name: tagDto.name,
@@ -33,7 +33,7 @@ export class TagService {
       }
     })
   }
-  async findAll() {
+  async findAll () {
     const tags = await this.tagSchema.find();
     const p_all = tags.map(async (item) => {
       item = item.toJSON()
@@ -42,19 +42,35 @@ export class TagService {
     });
     return await Promise.all(p_all);
   }
-  
-  async findCountGreaterZero() {
+
+  async findCountGreaterZero () {
     const tags = await this.findAll();
 
     return tags.filter(item => item.articleCount);
   }
-  async findById(id: string) {
+  async findById (id: string) {
     return this.tagSchema.findById(id);
   }
-  async findByName(name: string) {
+  async findByName (name: string) {
     const rgx = new RegExp(name);
     return this.tagSchema.find({
       name: rgx
     });
   }
+
+  async tagsArticleData () {
+    return this.tagSchema.aggregate([
+      {
+        $lookup:
+        {
+          from: 'articles',
+          localField: '_id',
+          foreignField: 'tags',
+          as: 'articles'
+        },
+      },
+      { $project: { _id: 1, name: 1, iconURL: 1, count: { $size: '$articles' } } },
+    ]);
+  }
+
 }

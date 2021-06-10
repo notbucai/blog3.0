@@ -396,4 +396,8 @@ export class ArticleService {
     })
 
   }
+
+  count () {
+    return this.articleSchema.countDocuments()
+  }
 }

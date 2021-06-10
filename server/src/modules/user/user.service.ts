@@ -16,6 +16,8 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'nestjs-typegoose';
 import { ListDto } from './dto/list.dto';
 import { ArticleService } from '../article/article.service';
+import { DateType } from '../../constants/constants';
+import moment = require('moment');
 
 @Injectable()
 export class UserService {
@@ -295,4 +297,107 @@ export class UserService {
     return this.articleService.statistics(oid);
   }
 
+  async growthData (type: DateType = DateType.day, size: number = 30) {
+
+    const schema = this.userSchema
+
+    const date = moment();
+    const list = [];
+    for (let i = 0; i < size; i++) {
+
+      const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
+      const endDate = moment(startDate).add(1, type).format('YYYY-MM-DD');
+
+      const findPromise = schema.countDocuments({
+        createdAt: {
+          $gte: new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'),
+          $lt: new Date(endDate + ' 23:59:59'),
+        }
+      });
+
+      list.push(findPromise.then(data => {
+        return {
+          date: startDate,
+          count: data,
+        }
+      }));
+      date.subtract(1, type);
+    }
+    return Promise.all(list);
+  }
+
+  async historyData (type: DateType = DateType.day, size: number = 30) {
+
+    const schema = this.userSchema
+
+    const date = moment();
+    const list = [];
+    for (let i = 0; i < size; i++) {
+
+      const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
+
+      const findPromise = schema.countDocuments({
+        createdAt: {
+          $gte: new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:59'),
+        }
+      });
+
+      list.push(findPromise.then(data => {
+        return {
+          date: startDate,
+          count: data,
+        }
+      }));
+      date.subtract(1, type);
+    }
+    return Promise.all(list);
+  }
+
+  userTypeData () {
+    const types = ['github', 'gitee', 'baidu', 'weibo', 'qq', 'notbucai'];
+    const schema = this.userSchema;
+
+    const list = types.map(type => {
+      const countPromise = schema.countDocuments({
+        [type + 'ID']: { $exists: true }
+      });
+      return countPromise.then(res => {
+        return {
+          type,
+          count: res,
+        }
+      });
+    });
+
+    return Promise.all(list);
+  }
+
+  async authorData (size: number = 10) {
+    const list = await this.userSchema.aggregate([
+      {
+        $lookup:
+        {
+          from: 'articles',
+          localField: '_id',
+          foreignField: 'user',
+          as: 'articles'
+        },
+      },
+      { $project: { _id: 1, username: 1, count: { $size: '$articles' } } },
+      {
+        $sort: {
+          count: -1
+        }
+      },
+      {
+        $limit: size
+      }
+    ]);
+
+    return list;
+  }
+
+  count () {
+    return this.userSchema.countDocuments()
+  }
 }

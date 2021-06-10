@@ -1,7 +1,7 @@
 import { User } from './user.entity';
 import { Tag } from './tag.entity';
-import { prop, Ref, arrayProp,modelOptions } from '@typegoose/typegoose';
-import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { prop, Ref, arrayProp } from '@typegoose/typegoose';
+import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 export enum ArticleStatus {
   Verifying = 1, // 审核中
@@ -18,7 +18,7 @@ export class Article extends Base {
   @prop({ default: Date.now() })
   updatedAt: Date;
 
-  @prop({ default: Date.now(), })
+  @prop({ default: Date.now() })
   createdAt: Date;
 
   @prop({ default: null })
@@ -29,7 +29,6 @@ export class Article extends Base {
 
   @prop({index: true})
   summary: string;
-
 
   @prop()
   menus: any[];

@@ -17,3 +17,8 @@ export class UserConstants {
 export class CodeConstants {
     static readonly CODE_REREPEAT: number = 60
 }
+
+export enum DateType {
+    month = 'month',
+    day = 'day'
+}

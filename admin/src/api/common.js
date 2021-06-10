@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-03-23 09:31:46
  * @LastEditors: bucai
- * @LastEditTime: 2021-06-08 17:35:20
+ * @LastEditTime: 2021-06-10 19:44:25
  * @Description: 共用接口
  */
 
@@ -137,4 +137,8 @@ export const keywordsChangeItemStatus = (id, status) => {
       status
     }
   });
+}
+
+export const websiteData = (params) => {
+  return $get(`/data`, { params });
 }

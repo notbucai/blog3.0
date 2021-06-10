@@ -7,15 +7,17 @@ import { Tag } from '../../models/tag.entity';
 import { CommonModule } from '../../common/common.module';
 import { ArticleComment } from '../../models/comment.entity';
 import { KeywordsModule } from '../keywords/keywords.module';
+import { ReadService } from './read.service';
+import { ArticleRead } from '../../models/article.read.entity';
 
 @Module({
   imports: [
     CommonModule,
-    TypegooseModule.forFeature([Article, Tag, ArticleComment]),
+    TypegooseModule.forFeature([Article, Tag, ArticleComment, ArticleRead]),
     forwardRef(() => KeywordsModule)
   ],
-  providers: [ArticleService],
+  providers: [ArticleService, ReadService],
   controllers: [ArticleController],
-  exports: [ArticleService]
+  exports: [ArticleService, ReadService]
 })
 export class ArticleModule { }

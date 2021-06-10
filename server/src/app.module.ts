@@ -23,6 +23,7 @@ import { KeywordsModule } from './modules/keywords/keywords.module';
 import { KeywordsService } from './modules/keywords/keywords.service';
 import { TasksModule } from './common/tasks/tasks.module';
 import { TasksService } from './common/tasks/tasks.service';
+import { DataModule } from './modules/data/data.module';
 
 @Module({
   imports: [
@@ -57,7 +58,8 @@ import { TasksService } from './common/tasks/tasks.service';
     LinksModule,
     OpenapiModule,
     TasksModule,
-    KeywordsModule
+    KeywordsModule,
+    DataModule
   ],
   controllers: [],
   providers: [],

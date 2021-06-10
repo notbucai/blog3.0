@@ -23,11 +23,47 @@ body {
 .tc {
   text-align: center;
 }
+.tr{
+  text-align: right;
+}
 
 .fb {
   font-weight: bold;
 }
 
+.df {
+  display: flex;
+}
+
+.dfc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.aic {
+  align-items: center;
+}
+
+.aie {
+  align-items: flex-end;
+}
+
+.jcc {
+  justify-content: center;
+}
+
+.jcsb {
+  justify-content: space-between;
+}
+
+.jcsa {
+  justify-content: space-around;
+}
+
+.jce {
+  justify-content: flex-end;
+}
 // 封装常用边距
 $listKey:t,
 b,

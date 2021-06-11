@@ -84,6 +84,7 @@
     <LoginOrRegister v-if="LoginOrRegisterDialog" />
     <NavigationDrawer v-if="sideStatus" />
     <ScrollToTop />
+    <SvgWalle />
   </v-app>
 </template>
 

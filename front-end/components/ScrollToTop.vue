@@ -32,7 +32,7 @@ export default {
   position: fixed;
   z-index: 99;
   right: 100px;
-  bottom: 100px;
+  bottom: 160px;
   @media (max-width: 600px) {
     right: 30px;
   }

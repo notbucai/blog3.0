@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-07-05 18:24:48
  * @LastEditors: bucai
- * @LastEditTime: 2021-06-07 08:49:41
+ * @LastEditTime: 2021-06-13 10:20:40
  * @Description: 
  */
 import { prop, Ref } from '@typegoose/typegoose';
@@ -10,16 +10,22 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ObjectID } from 'mongodb';
 import { User } from './user.entity';
 
+export enum NotifyObjectType {
+  article = 'article', // 文章
+  comment = 'comment', // 评论
+  message = 'message', // 留言
+  user = 'user', // 用户
+}
 
-export enum NotifyType {
-  acticle = 1,
-  acticleMessage = 2, // 
-  messagecomment = 3, // 
-  system = 4, // 1
-  user = 5, // 1
-  articleCommentlike = 61, // 1
-  messageCommentlike = 62, // 1
-  articlelike = 7, //
+export enum NotifyActionType {
+  comment = 'comment', // 评论
+  like = 'like', // 点赞
+  follow = 'follow', // 关注
+}
+
+export enum NotifyStatus {
+  read = 1,
+  new = 0,
 }
 
 export class Notify extends Base {
@@ -30,21 +36,30 @@ export class Notify extends Base {
   @prop({ default: Date.now() })
   updatedAt: Date;
 
-  @prop({ default: null })
-  readAt: number;
+  @prop({ required: false, ref: User })
+  recipient: Ref<User>; // 消息接收者；可能是对象的所有者或订阅者；
 
-  @prop({ default: null, enum: NotifyType })
-  type: NotifyType; // 类型  文章 / 评论 / 留言 / 系统
+  @prop({ required: true, ref: User })
+  sender: Ref<User>; // 操作者，三个0代表是系统发送的；
 
-  @prop({ ref: User, index: true })
-  user: Ref<User>; // 触发
+  @prop({ required: true, enum: NotifyActionType })
+  senderAction: NotifyActionType; // 操作者的动作，如：捐款、更新、评论、收藏；
 
-  @prop({ ref: User, index: true })
-  receive: Ref<User>; // 接收
+  @prop({ required: true })
+  objectID: ObjectID; // 目标对象ID
 
-  @prop({ default: null, index: true })
-  source: ObjectID; // 来源 文章id / 评论 / 留言
+  @prop({ required: false })
+  object: string; // 目标对象内容或简介，比如：文章标题；
 
-  @prop({ default: '', index: true })
-  content: string;
+  @prop({ required: false, enum: NotifyObjectType })
+  objectType: NotifyObjectType // 被操作对象类型，如：人、文章、活动、视频等；
+
+  @prop({ required: true })
+  message: string; // 消息内容，由提醒模版生成，需要提前定义；
+
+  @prop({ default: NotifyStatus.new })
+  status: number; // 是否阅读，默认未读；
+
+  @prop({})
+  readAt: Date;
 }

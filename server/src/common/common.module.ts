@@ -5,7 +5,7 @@ import { CommonService } from './common.service';
 import { CosService } from './cos.service';
 import { SMSService } from './sms.service';
 import { EmailService } from './email.service';
-import { NotifyService } from './notify.service';
+import { NotifyService } from './notify/notify.service';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { Notify } from '../models/notify.entiy';
 import { Article } from '../models/article.entity';

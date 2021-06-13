@@ -12,8 +12,8 @@ import { User } from '../../models/user.entity';
 import { AllListDto } from './dto/allList.dto';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
-import { NotifyType } from '../../models/notify.entiy';
-import { NotifyService } from '../../common/notify.service';
+import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
+import { NotifyService } from '../../common/notify/notify.service';
 import { ArticleService } from '../article/article.service';
 import MarkDownUtils from '../../utils/markdown'
 import { DateType } from '../../constants/constants';
@@ -87,13 +87,7 @@ export class CommentService {
   }
 
   async notifyComment (source: string, createCommentDto: CreateCommentDto, userID: ObjectID) {
-    let NType: NotifyType;
 
-    if (source == CommentConstants.SourceArticle) {
-      NType = NotifyType.acticleMessage;
-    } else if (source == CommentConstants.SourceMessage) {
-      NType = NotifyType.messagecomment;
-    }
     // 判断是一级回复，还是二级回复
     // 一级评论直接给资源用户发布
     // 二级评论给上级评论的用户
@@ -116,8 +110,22 @@ export class CommentService {
         }
       }
     }
-    if (NType) {
-      await this.notifyService.publish(NType, userID, receive, '评论了', sourceId);
+
+    // 通知
+    let NType: NotifyObjectType;
+
+    if (source == CommentConstants.SourceArticle) {
+      if (!createCommentDto.rootID) {
+        NType = NotifyObjectType.article;
+      } else {
+        NType = NotifyObjectType.comment;
+      }
+    } else if (source == CommentConstants.SourceMessage) {
+      NType = NotifyObjectType.message;
+    }
+
+    if (receive && NType) {
+      await this.notifyService.publish(NType, NotifyActionType.comment, sourceId, userID, receive);
     }
   }
 
@@ -345,14 +353,17 @@ export class CommentService {
       }
     });
     const article: Comment = await commentRepository.findById(cid);
-    let nType: NotifyType;
+
+    // 通知
+    let nType: NotifyObjectType;
+
     if (source == CommentConstants.SourceArticle) {
-      nType = NotifyType.articleCommentlike;
-    } else {
-      nType = NotifyType.messageCommentlike;
+      nType = NotifyObjectType.comment;
+    } else if (source == CommentConstants.SourceMessage) {
+      nType = NotifyObjectType.message;
     }
     if (nType) {
-      await this.notifyService.publish(nType, uid, article.user as ObjectID, '点赞了', cid);
+      await this.notifyService.publish(nType, NotifyActionType.like, cid, uid, article.user as ObjectID);
     }
     // $push
     return like;

@@ -14,8 +14,8 @@ import { CurUser } from '../../core/decorators/user.decorator';
 import { ArticleListDto } from './dto/list.dto';
 import { ChangeArticleStatus } from './dto/status.dto';
 import { ArticleStatus } from '../../models/article.entity';
-import { NotifyService } from '../../common/notify.service';
-import { NotifyType } from '../../models/notify.entiy';
+import { NotifyService } from '../../common/notify/notify.service';
+import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
 import { ChangeArticleUpStatus } from './dto/upStatus.dto';
 import { KeywordsService } from '../keywords/keywords.service';
 import { IpAddress } from '../../core/decorators/ipAddress.decorator';
@@ -120,7 +120,7 @@ export class ArticleController {
       await this.articleService.unlikeById(oid, user._id);
     } else {
       await this.articleService.likeById(oid, user._id);
-      await this.notifyService.publish(NotifyType.articlelike, user._id, currentArticle.user as ObjectID, '点赞了', oid);
+      await this.notifyService.publish(NotifyObjectType.article, NotifyActionType.like, oid, user._id, currentArticle.user as ObjectID);
     }
     return "成功";
   }
@@ -149,7 +149,7 @@ export class ArticleController {
     await this.articleService.addViewCount(_id);
 
     const article = await this.articleService.findById(id);
-    await this.articleReadService.record(_id,ipAddress);
+    await this.articleReadService.record(_id, ipAddress);
     return article;
   }
 

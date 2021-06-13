@@ -22,7 +22,7 @@ import { ObjectID } from 'mongodb';
 import { ChangeUserStatus } from './dto/status.dto';
 import { CommentService } from '../comment/comment.service';
 import { ArticleService } from '../article/article.service';
-import { NotifyService } from '../../common/notify.service';
+import { NotifyService } from '../../common/notify/notify.service';
 import { RoleService } from '../role/role.service';
 import { Role } from '../../models/role.entity';
 import { AclService } from '../role/acl.service';
@@ -171,7 +171,7 @@ export class UserController {
   @ApiOperation({ summary: "获取用户消息数量" })
   @ApiBearerAuth()
   async notifyCount (@CurUser() user: User) {
-    const count = await this.notifyService.getNoReadNotifyConuntByUId(user._id);
+    const count = await this.notifyService.getNoReadNotifyCountByUId(user._id);
     return {
       unread: count || 0
     };

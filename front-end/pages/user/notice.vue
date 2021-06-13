@@ -2,31 +2,30 @@
   <v-container>
     <!-- tab -->
     <v-tabs :value="tabIndex" color="primary" optional slider-color="primary">
-      <v-tab v-for="item in tabRoutes" :key="item.path">{{item.name}}</v-tab>
+      <v-tab v-for="item in tabRoutes" :key="item.path">{{ item.name }}</v-tab>
     </v-tabs>
     <!-- router -->
     <v-row>
       <v-col :md="9" :sm="12" :cols="12" v-show="tabIndex == 0">
-        <div class="mb-4" v-for="(item, index) in list" :key="index">
-          <v-card>
-            <v-card-title>
-              {{item.user?item.user.username:'有人'}}{{item.content}}你的
-              <nuxt-link :to="getPath(item)">{{item.type|notifyType}}</nuxt-link>
-            </v-card-title>
-          </v-card>
+        <div class="mt-4" v-for="(item, index) in list" :key="index">
+          <NoticeItem :notice="item" />
         </div>
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script>
+import NoticeItem from '@/components/notice/Item';
 export default {
   middleware: 'auth',
   async asyncData ({ $axios }) {
     const list = await $axios.get('/api/users/notify/list');
     return {
-      list
+      list,
     }
+  },
+  components: {
+    NoticeItem
   },
   filters: {
     notifyType (type) {

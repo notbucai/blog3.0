@@ -41,6 +41,14 @@
 
         <v-card
           class="mt-6 pt-4 px-2 pb-4"
+          v-if="searchArticleDataEmpty"
+          :elevation="0"
+        >
+          <v-card-title> 没有找到任何内容 </v-card-title>
+        </v-card>
+
+        <v-card
+          class="mt-6 pt-4 px-2 pb-4"
           :elevation="0"
           v-if="
             searchArticleData &&
@@ -92,7 +100,7 @@
                     small
                     text
                     nuxt
-                    :to="{ path: '', query: {s:item.value } }"
+                    :to="{ path: '', query: { s: item.value } }"
                     @click="handleSearch(item.value)"
                     >{{ item.value }}</v-btn
                   >
@@ -113,7 +121,7 @@
                     plain
                     text
                     nuxt
-                    :to="{ path: '', query: {s:item.value } }"
+                    :to="{ path: '', query: { s: item.value } }"
                     @click="handleSearch(item.value)"
                     >{{ item.value }}</v-btn
                   >
@@ -187,6 +195,7 @@ export default {
       cloudKeywordsList,
       searchArticleData: searchArticleData || {},
       loading: false,
+      searchArticleDataEmpty: searchArticleData ? searchArticleData.list.length <= 0 : false,
     };
   },
   components: { ArticleItem, Loading, ArticleList, TagList, SideRandomArticle, SideCommentList },
@@ -203,11 +212,32 @@ export default {
       randomList: [],
       commentlist: [],
       cloudKeywordsList: [],
-      hotKeywordsList: []
+      hotKeywordsList: [],
+      searchArticleData: {
+        list: [],
+        total: -1
+      },
+      searchArticleDataEmpty: false,
     };
   },
   mounted () {
     this.$refs['keywords-input'].focus()
+  },
+  watch: {
+    $route () {
+      if (process.client) {
+        if (this.$route.query.s) {
+          this.handleSearch(this.$route.query.s);
+          this.handleLoadData();
+        } else {
+          this.keywords = '';
+          this.searchArticleData = {
+            list: []
+          };
+          this.searchArticleDataEmpty = false;
+        }
+      }
+    }
   },
   methods: {
     handleSearch (keywords) {
@@ -218,7 +248,6 @@ export default {
       }
       this.$router.push('?s=' + encodeURIComponent(k));
       this.keywords = k;
-      this.handleLoadData();
     },
     async handleLoadData () {
       this.loading = true;
@@ -236,7 +265,7 @@ export default {
           this.loading = false;
         });
       this.searchArticleData = data;
-
+      this.searchArticleDataEmpty = data.list.length <= 0;
     },
     handleClear () {
       this.searchArticleData = {};

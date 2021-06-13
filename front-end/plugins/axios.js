@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-04-19 14:39:55
  * @LastEditors: bucai
- * @LastEditTime: 2021-04-03 17:09:55
+ * @LastEditTime: 2021-06-13 17:05:53
  * @Description: axios配置
  */
 import Snackbar from '../components/snackbar';
@@ -40,7 +40,9 @@ export default function ({ $axios, app, redirect, error: _error }) {
         return resData.data;
       }
       errorHandle(resData);
-      throw resData;
+      if (process.client) {
+        throw resData;
+      }
     }
     return res;
   });

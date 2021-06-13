@@ -10,13 +10,24 @@
       >
         <div class="mr-2" v-if="comment.user.avatarURL">
           <v-avatar size="36">
-            <v-img
-              :src="comment.user.avatarURL | imageMogr2(100,100)"
-            ></v-img>
+            <v-img :src="comment.user.avatarURL | imageMogr2(100, 100)"></v-img>
           </v-avatar>
         </div>
         <div v-if="type !== 'user'">
           <div class="body-2 d-flex align-center">
+            <v-btn
+              v-if="
+                source === 'article' &&
+                sourceData &&
+                sourceData.user._id === comment.user._id
+              "
+              color="accent"
+              outlined
+              tile
+              x-small
+              disabled
+              class="mr-1"
+            >作者</v-btn>
             <span class="pr-2">{{ comment.user.username }}</span>
             <v-btn
               color="primary"
@@ -74,6 +85,7 @@
           :key="_item._id"
           :source="source"
           @reply="handleReply"
+          :source-data="sourceData"
           @delete="handleDelete($event, comment)"
         />
       </template>
@@ -121,6 +133,12 @@ export default {
     source: {
       type: String,
       default: 'article'
+    },
+    sourceData: {
+      type: Object,
+      default () {
+        return null;
+      }
     }
   },
   computed: {
@@ -188,7 +206,7 @@ export default {
 .theme--dark {
   .comment-item {
     border-top-color: #111 !important;
-    background-color: #1f1f1f!important;
+    background-color: #1f1f1f !important;
   }
 }
 </style>
@@ -206,6 +224,8 @@ export default {
       width: 42px;
       background-color: #888;
     }
+  }
+  .author-icon {
   }
 }
 </style>

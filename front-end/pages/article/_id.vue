@@ -96,6 +96,7 @@
           </div>
           <v-divider></v-divider>
           <comment-box
+            :source-data="data"
             source="article"
             id="comment"
             :cid="id"

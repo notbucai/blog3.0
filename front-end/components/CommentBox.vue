@@ -26,6 +26,7 @@
             @delete="handleDelete"
             v-for="item in comments"
             :key="item._id"
+            :source-data="sourceData"
           />
         </transition-group>
       </div>
@@ -55,7 +56,13 @@ export default {
       type: String,
       default: 'article'
     },
-    cid: String
+    cid: String,
+    sourceData: {
+      type: Object,
+      default () {
+        return null;
+      }
+    }
   },
   computed: {
     ...mapState(['user'])

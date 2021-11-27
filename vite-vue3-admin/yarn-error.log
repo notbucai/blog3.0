@@ -1,0 +1,52 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.22.10/libexec/bin/yarn.js
+
+PATH: 
+  /Users/bucai/ME/cocos2d-x-3.17.2/templates:/Users/bucai/ME:/Users/bucai/ME/cocos2d-x-3.17.2/tools/cocos2d-console/bin:/Users/bucai/Library/Android/sdk/tools:/Users/bucai/Library/Android/sdk/platform-tools:/Users/bucai/Library/Android/sdk:/Users/bucai/ME/cocos2d-x-4.0/templates:/Users/bucai/ME:/Users/bucai/ME/cocos2d-x-4.0/tools/cocos2d-console/bin:/Users/bucai/flutter/flutter/bin:/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home/bin:/usr/local/Cellar/dart/2.4.1/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/Xamarin Workbooks.app/Contents/SharedSupport/path-bin:/Users/bucai/ME/cocos2d-x-3.17.2/templates:/Users/bucai/ME:/Users/bucai/ME/cocos2d-x-3.17.2/tools/cocos2d-console/bin:/Users/bucai/Library/Android/sdk/tools:/Users/bucai/Library/Android/sdk/platform-tools:/Users/bucai/Library/Android/sdk:/Users/bucai/ME/cocos2d-x-4.0/templates:/Users/bucai/ME/cocos2d-x-4.0/tools/cocos2d-console/bin:/usr/local/anaconda3/bin:/usr/local/anaconda3/condabin:/Users/bucai/flutter/flutter/bin:/Library/Java/JavaVirtualMachines/jdk1.8.0_221.jdk/Contents/Home/bin:/usr/local/Cellar/dart/2.4.1/bin:/Users/bucai/.cargo/bin:/Users/bucai/Library/Android/sdk/tools/bin:/Users/bucai/Library/Android/sdk/emulator:/Users/bucai/.gradle/wrapper/dists/gradle-4.6-all/bcst21l2brirad8k2ben1letg/gradle-4.6/bin:.:/Library/Java/apache-maven/bin:/Applications/JD/go/bin:/Users/bucai/Library/Android/sdk/tools:/Users/bucai/Library/Android/sdk/tools/bin:/Users/bucai/Library/Android/sdk/platform-tools:/Users/bucai/Library/Android/sdk/emulator:/Users/bucai/.gradle/wrapper/dists/gradle-4.6-all/bcst21l2brirad8k2ben1letg/gradle-4.6/bin:.:/Library/Java/apache-maven/bin:/Applications/JD/go/bin
+
+Yarn version: 
+  1.22.10
+
+Node version: 
+  14.17.3
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/typescript: ESOCKETTIMEDOUT
+      at ClientRequest.<anonymous> (/usr/local/Cellar/yarn/1.22.10/libexec/lib/cli.js:141376:19)
+      at Object.onceWrapper (events.js:481:28)
+      at ClientRequest.emit (events.js:375:28)
+      at TLSSocket.emitRequestTimeout (_http_client.js:790:9)
+      at Object.onceWrapper (events.js:481:28)
+      at TLSSocket.emit (events.js:387:35)
+      at TLSSocket.Socket._onTimeout (net.js:484:8)
+      at listOnTimeout (internal/timers.js:557:17)
+      at processTimers (internal/timers.js:500:7)
+
+npm manifest: 
+  {
+    "name": "vite-vue3-admin",
+    "version": "0.0.0",
+    "scripts": {
+      "dev": "vite",
+      "build": "vue-tsc --noEmit && vite build",
+      "serve": "vite preview"
+    },
+    "dependencies": {
+      "vue": "^3.2.16"
+    },
+    "devDependencies": {
+      "@vitejs/plugin-vue": "^1.9.3",
+      "typescript": "^4.4.3",
+      "vite": "^2.6.4",
+      "vue-tsc": "^0.3.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

@@ -15,10 +15,10 @@ export enum LinkType {
 
 export class Link extends Base {
 
-  @prop({ default: Date.now() })
+  @prop({ default: Date })
   createdAt: Date;
 
-  @prop({ default: Date.now() })
+  @prop({ default: Date })
   updatedAt: Date;
 
   @prop({ default: LinkType.normal })

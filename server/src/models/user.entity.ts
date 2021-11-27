@@ -23,10 +23,10 @@ export enum UserSex {
 
 export class User extends Base {
 
-    @prop({ default: Date.now() })
+    @prop({ default: Date })
     createdAt: Date;
 
-    @prop({ default: Date.now() })
+    @prop({ default: Date })
     updatedAt: Date;
 
     @prop({ default: null })

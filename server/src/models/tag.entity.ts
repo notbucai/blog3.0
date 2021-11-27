@@ -3,10 +3,10 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 export class Tag extends Base {
 
-  @prop({ default: Date.now() })
+  @prop({ default: Date })
   createdAt: Date;
 
-  @prop({ default: Date.now() })
+  @prop({ default: Date })
   updatedAt: Date;
 
   @prop({ unique: true, required: true,index:true })

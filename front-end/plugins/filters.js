@@ -1,13 +1,13 @@
 /*
  * @Author: bucai
  * @Date: 2020-04-19 23:07:57
- * @LastEditors: bucai
- * @LastEditTime: 2021-04-14 20:44:17
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2021-11-27 14:16:48
  * @Description: 过滤器
  */
 import Vue from 'vue';
 import utils from '../utils/common';
-Vue.filter('format', (date, format = 'yyyy-MM-dd hh:mm:ss') => {
+Vue.filter('format', (date, format = 'yyyy-MM-dd HH:mm:ss') => {
   return utils.formatDate(new Date(date), format);
 });
 Vue.filter('fromNowDate', (date) => {

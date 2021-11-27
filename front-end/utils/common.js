@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2020-05-03 21:01:51
- * @LastEditors: bucai
- * @LastEditTime: 2021-03-30 22:10:34
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2021-11-27 14:15:09
  * @Description: 
  */
 import { format,formatDistanceToNow } from 'date-fns';
@@ -81,7 +81,7 @@ function flatTreeList (currentArr, keyName = 'children') {
   return _list;
 };
 
-function formatDate (date = new Date(), formatStr = 'yyyy-MM-dd hh:mm:ss') {
+function formatDate (date = new Date(), formatStr = 'yyyy-MM-dd HH:mm:ss') {
   return format(date, formatStr);
 }
 

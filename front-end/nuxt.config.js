@@ -8,10 +8,11 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const smp = new SpeedMeasurePlugin();
 
 module.exports = {
-  mode: 'universal',
+  // mode: 'universal',
   /*
   ** Headers of the page
   */
+  telemetry: false,
   head: {
     // title: '不才的博客',
     titleTemplate: (title) => {
@@ -166,11 +167,11 @@ module.exports = {
       }
     },
     plugins: [],
-    vendor: [
-      // 'vue-cropperjs',
-      // 'mavon-editor',
-      'highlight.js',
-    ],
+    // vendor: [
+    //   // 'vue-cropperjs',
+    //   // 'mavon-editor',
+    //   'highlight.js',
+    // ],
     extractCSS: {
       ignoreOrder: true
     },

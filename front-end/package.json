@@ -8,13 +8,13 @@
     "dev": "cross-env NODE_ENV=development PORT=9907 nodemon server/index.js --watch server",
     "build": "nuxt build",
     "analyze": "cross-env ENV_ANALYZE=analyze nuxt build",
-    "start": "cross-env PORT=9907 NODE_ENV=production node server/index.js",
     "generate": "nuxt generate",
     "help": "nuxt",
-    "pm2": "pm2-runtime start -i 0 npm --name blog-front -- run start"
+    "pm2": "cross-env NODE_ENV=production pm2-runtime start server/index.js -i 0 --name blog-front"
   },
   "config": {
     "nuxt": {
+      "port": 9907,
       "host": "0.0.0.0"
     }
   },

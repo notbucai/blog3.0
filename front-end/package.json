@@ -10,7 +10,8 @@
     "analyze": "cross-env ENV_ANALYZE=analyze nuxt build",
     "start": "cross-env PORT=9907 NODE_ENV=production node server/index.js",
     "generate": "nuxt generate",
-    "help": "nuxt"
+    "help": "nuxt",
+    "pm2": "pm2 start -i 0 npm --name blog-front -- run start"
   },
   "config": {
     "nuxt": {
@@ -38,6 +39,7 @@
     "markdown-it-sanitizer": "^0.4.3",
     "mavon-editor": "^2.9.0",
     "nuxt": "^2.15.6",
+    "pm2": "^5.1.2",
     "vue-cropper": "^0.5.3"
   },
   "devDependencies": {

@@ -11,7 +11,7 @@
     "start": "cross-env PORT=9907 NODE_ENV=production node server/index.js",
     "generate": "nuxt generate",
     "help": "nuxt",
-    "pm2": "pm2 start -i 0 npm --name blog-front -- run start"
+    "pm2": "pm2-runtime start -i 0 npm --name blog-front -- run start"
   },
   "config": {
     "nuxt": {

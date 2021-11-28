@@ -4,7 +4,11 @@
   "description": "这是不才的个人博客，记录生活，学习笔记。欢迎各位常来看看。",
   "author": "bucai",
   "private": true,
-  "sideEffects": false,
+  "sideEffects": [
+    "*.vue",
+    "./assets/common.scss",
+    "./assets/variables.scss"
+  ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development PORT=9907 nodemon server/index.js --watch server",
     "build": "nuxt build",

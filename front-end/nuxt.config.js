@@ -217,7 +217,7 @@ module.exports = {
 
       
       if(ctx.isClient) {
-        config.externalsType = 'script';
+        // config.externalsType = 'script';
         config.externals = [
           {
             vue: 'Vue',

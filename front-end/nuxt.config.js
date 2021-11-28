@@ -30,7 +30,7 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.min.css' },
+      { rel: 'stylesheet', href: '//unpkg.com/animate.css@4.1.1/animate.min.css' },
       { rel: 'stylesheet', href: '//unpkg.com/mavon-editor@2.9.0/dist/markdown/github-markdown.min.css' }
     ],
     script: [
@@ -41,8 +41,8 @@ module.exports = {
       { src: '//unpkg.com/vue-router@3/dist/vue-router.min.js', defer: true },
       { src: '//unpkg.com/browser-image-compression', defer: true },
       // { src: '//unpkg.com/vuetify@2.x/dist/vuetify.min.js', defer: true },
-      { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', defer: true }, /*引入百度统计的js*/
       { src: '//at.alicdn.com/t/font_2451840_fhijy36qb98.js', defer: true }, /*引入百度统计的js*/
+      { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', defer: true }, /*引入百度统计的js*/
     ]
   },
   /*
@@ -198,8 +198,8 @@ module.exports = {
     optimization: {
       minimize: process.env.NODE_ENV !== 'development',
       splitChunks: {
-        maxInitialRequests: 20,
-        maxAsyncRequests: 20
+        maxInitialRequests: 5,
+        maxAsyncRequests: 5
       }
     },
     optimizeCSS: {

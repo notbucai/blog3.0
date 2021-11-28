@@ -1,7 +1,8 @@
 const isDark = new Date().getHours() > 19 && new Date().getHours() < 7;
 const axios = require('axios');
 const minifyTheme = require('minify-css-string');
-
+const { VueLoaderPlugin } = require('vue-loader')
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 
@@ -29,9 +30,17 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.min.css' }
+      { rel: 'stylesheet', href: 'https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.min.css' },
+      { rel: 'stylesheet', href: '//unpkg.com/mavon-editor@2.9.0/dist/markdown/github-markdown.min.css' }
     ],
     script: [
+      { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
+      { src: '//unpkg.com/vue@2/dist/vue.min.js', defer: true },
+      { src: '//unpkg.com/axios', defer: true },
+      { src: '//unpkg.com/gsap', defer: true },
+      { src: '//unpkg.com/vue-router@3/dist/vue-router.min.js', defer: true },
+      { src: '//unpkg.com/browser-image-compression', defer: true },
+      // { src: '//unpkg.com/vuetify@2.x/dist/vuetify.min.js', defer: true },
       { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', defer: true }, /*引入百度统计的js*/
       { src: '//at.alicdn.com/t/font_2451840_fhijy36qb98.js', defer: true }, /*引入百度统计的js*/
     ]
@@ -46,7 +55,7 @@ module.exports = {
   css: [
     '@/assets/common.scss',
     // { src: "mavon-editor/dist/css/index.css" },
-    { src: "mavon-editor/dist/markdown/github-markdown.min.css" },
+    // { src: "mavon-editor/dist/markdown/github-markdown.min.css" },
   ],
   /*
   ** Plugins to load before mounting the App
@@ -114,7 +123,7 @@ module.exports = {
     // whitelistPatternsChildren: [/^v-((?!application).)*$/, /^theme--*/],
   },
   vuetify: {
-    treeShake: false,
+    treeShake: true,
     defaultAssets: {
       // nuxt.config.js
       font: false,
@@ -166,7 +175,11 @@ module.exports = {
         // prettify: false
       }
     },
-    plugins: [],
+    // plugins: [],
+    plugins: [
+      // new VueLoaderPlugin(),
+      // new VuetifyLoaderPlugin()
+    ],
     // vendor: [
     //   // 'vue-cropperjs',
     //   // 'mavon-editor',
@@ -201,9 +214,25 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+
+      
+      if(ctx.isClient) {
+        config.externals = [
+          {
+            vue: 'Vue',
+            axios: 'axios',
+            // 'highlight.js': 'hljs',
+            'mavon-editor': 'MavonEditor',
+            'vue-router': 'VueRouter',
+            'browser-image-compression': 'imageCompression'
+          }
+        ];
+      }
+
       if (ctx.isDev) {
         return smp.wrap(config);
       }
+      return config;
     }
   },
 }

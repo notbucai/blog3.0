@@ -1,12 +1,11 @@
 /*
  * @Author: bucai
  * @Date: 2020-05-05 10:58:10
- * @LastEditors: bucai
- * @LastEditTime: 2020-05-05 12:20:11
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2021-11-28 14:06:02
  * @Description: 文件工具
  */
 
-import imageCompression from 'browser-image-compression';
 const options = {
   // maxSizeMB: 1, // (default: Number.POSITIVE_INFINITY)
   maxWidthOrHeight: 1000, // compressedFile will scale down by ratio to a point that width or height is smaller than maxWidthOrHeight (default: undefined)
@@ -18,6 +17,7 @@ const options = {
 };
 
 export const imageFleCompression = async (file) => {
+  const imageCompression = await import('browser-image-compression')
   const _file = await imageCompression(file, options);
   // const _file = file;
   console.log('-原图：', file);

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-05 10:58:10
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-11-28 14:06:02
+ * @LastEditTime: 2021-11-28 14:40:31
  * @Description: 文件工具
  */
 
@@ -17,6 +17,7 @@ const options = {
 };
 
 export const imageFleCompression = async (file) => {
+  // 应该吧价值的位置放在这里
   const imageCompression = await import('browser-image-compression')
   const _file = await imageCompression(file, options);
   // const _file = file;

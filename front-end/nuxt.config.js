@@ -37,7 +37,7 @@ module.exports = {
       { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
       { src: '//unpkg.com/vue@2/dist/vue.min.js', defer: true },
       { src: '//unpkg.com/axios', defer: true },
-      { src: '//unpkg.com/gsap', defer: true },
+      // { src: '//unpkg.com/gsap', defer: true },
       { src: '//unpkg.com/vue-router@3/dist/vue-router.min.js', defer: true },
       { src: '//unpkg.com/browser-image-compression', defer: true },
       // { src: '//unpkg.com/vuetify@2.x/dist/vuetify.min.js', defer: true },
@@ -217,6 +217,7 @@ module.exports = {
 
       
       if(ctx.isClient) {
+        config.externalsType = 'script';
         config.externals = [
           {
             vue: 'Vue',

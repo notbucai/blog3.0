@@ -6,7 +6,7 @@
     hide-delimiter-background
     :delimiter-icon="$icons['mdi-minus']"
     width="100%"
-    :height="carouselHeight"
+    height="calc(100vh - 68px - 16px)"
     v-resize="onResize"
     ref="carousel"
     class="bc-banner"
@@ -14,9 +14,9 @@
     <v-carousel-item v-for="(item, i) in recommendedList" :key="i">
       <v-img
         class="align-end carousel-image"
-        :src="item.coverURL | imageMogr2(700)"
-        :height="carouselHeight"
+        :src="item.coverURL | imageMogr2(600)"
         :lazy-src="item.coverURL | imageMogr2(100)"
+        height="100%"
       >
         <v-container fluid>
           <v-row align="end">
@@ -49,10 +49,10 @@ export default {
   },
   methods: {
     onResize () {
-      const el = this.$refs['carousel'].$el;
-      const top = this.$dom.getElementToPageTop(el);
-      const innerHeight = window.innerHeight;
-      this.carouselHeight = innerHeight - top - 10;
+      // const el = this.$refs['carousel'].$el;
+      // const top = this.$dom.getElementToPageTop(el);
+      // const innerHeight = window.innerHeight;
+      // this.carouselHeight = innerHeight - top - 10;
       // this.$vuetify.goTo(0, 0);
     },
   }
@@ -61,6 +61,7 @@ export default {
 <style lang="scss" scoped>
 .bc-banner {
   transition: height 0.2s;
+  /* height: calc(100vh - 68px - 24px); */
   .carousel-image {
     transition: height 0.2s;
   }

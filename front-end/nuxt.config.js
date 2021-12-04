@@ -20,7 +20,7 @@ module.exports = {
       return title ? `${title} - 不才的博客` : '不才的博客'
     },
     htmlAttrs: {
-      lang: undefined
+      lang: 'zh-CN'
     },
     meta: [
       { charset: 'utf-8' },
@@ -91,6 +91,7 @@ module.exports = {
     '@nuxtjs/style-resources',
     'cookie-universal-nuxt',
     '@nuxtjs/sitemap',
+    // 'nuxt-speedkit',
     // 'nuxt-purgecss',
     // '@nuxtjs/pwa',
     ['@nuxtjs/vuetify', {
@@ -117,6 +118,35 @@ module.exports = {
       // treeShake: true
     }]
   ],
+  speedkit: {
+    detection: {
+      performance: true,
+      browserSupport: true
+    },
+    performanceMetrics: {
+      device: {
+        hardwareConcurrency: { min: 2, max: 48 },
+        deviceMemory: { min: 2 }
+      },
+      timing: {
+        fcp: 800,
+        dcl: 1200
+      },
+      lighthouseDetectionByUserAgent: false
+    },
+    fonts: [],
+
+    componentAutoImport: false,
+    componentPrefix: undefined,
+    disableNuxtImage: true,
+    /**
+     * IntersectionObserver rootMargin for Compoennts and Assets
+     */
+    lazyOffset: {
+      component: '0%',
+      asset: '0%'
+    }
+  },
   purgeCSS: {
     // whitelist: ['v-application', 'v-application--wrap'],
     // whitelistPatterns: [/^v-((?!application).)*$/, /^theme--*/, /.*-transition/],
@@ -214,9 +244,7 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
-
-      
-      if(ctx.isClient) {
+      if (ctx.isClient) {
         // config.externalsType = 'script';
         config.externals = [
           {

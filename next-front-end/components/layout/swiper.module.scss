@@ -1,0 +1,42 @@
+.swiper {
+  margin-bottom: 36px;
+  margin-top: 24px;
+  :global {
+    .swiper-pagination-bullet {
+      background-color: transparent;
+      width: 28px;
+      height: 28px;
+      display: inline-block;
+      position: relative;
+      opacity: 1 !important;
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 40%;
+        height: 2px;
+        display: block;
+        background-color: rgba($color: #000000, $alpha: 0.1);
+      }
+      &.swiper-pagination-bullet-active {
+        background-color: rgba($color: #888888, $alpha: 0.2);
+        &::after {
+          background-color: rgba($color: #ffffff, $alpha: 0.8);
+        }
+      }
+    }
+  }
+  .swiperItem {
+    height: calc(100vh - 68px - 32px);
+    .cardMain {
+      position: absolute;
+      bottom: 0;
+      padding: 36px;
+    }
+    .swiperImage {
+      border-radius: 4px;
+    }
+  }
+}

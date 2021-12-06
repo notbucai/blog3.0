@@ -1,0 +1,9 @@
+.post {
+  .postTitle {
+    transition: all 0.2s;
+    &.postTitleActive,
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

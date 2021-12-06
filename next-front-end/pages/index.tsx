@@ -1,54 +1,69 @@
 import type { NextPage } from 'next'
-import { Button, Card, CardActions, CardContent, CardMedia, Typography } from '@material-ui/core'
-import { getPosts } from '../http/posts'
-import { BasicPost } from '../model/Post'
+import Head from 'next/head'
+import { LoadingButton } from '@mui/lab';
+import { Typography } from '@mui/material'
+import { getPosts, usePosts } from '../http/posts'
+import { BasicPost } from '../model/post'
+import PostCard from '../components/common/post'
+import { useEffect, useState } from 'react'
+import postStyles from '../styles/post.module.scss'
 
 interface Props {
   list: BasicPost[],
   total: number
 }
 
-const Home: NextPage<Props> = ({ list = [], total = 0 }: Props) => {
+const HomePage: NextPage<Props> = ({ list = [], total = 0 }: Props) => {
+  const [data, setData] = useState<{ list: BasicPost[], total: number }>({
+    list: list,
+    total: total
+  });
+  const [pageIndex, setPageIndex] = useState(1);
+  const { data: reqData, run, loading } = usePosts()
+
+  useEffect(() => {
+    if (pageIndex === 1) return
+
+    run({
+      page_index: pageIndex
+    })
+  }, [run, pageIndex])
+
+  useEffect(() => {
+    setData((data) => {
+      return {
+        list: [...data.list, ...(reqData?.list || [])],
+        total: reqData?.total || data.total
+      }
+    })
+  }, [reqData])
+
   return (
     <div>
       <Typography gutterBottom variant="h5" component="div">
         全部文章
       </Typography>
       {
-        list.map(post => {
+        data.list.map(post => {
           return (
-            <Card sx={{ mb: 2.5 }} key={post._id}>
-              {
-                post.coverURL ? (<CardMedia
-                  component="img"
-                  height="140"
-                  image={post.coverURL}
-                  alt={post.title}
-                />) : null
-              }
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {post.title}
-                </Typography>
-                <Typography sx={{ mb: 1.5 }} variant="body2" color="text.secondary">
-                  {post.createdAt}
-                </Typography>
-                <Typography sx={{ wordWrap: 'break-word', wordBreak: 'break-all' }} variant="body1" color="text.secondary">
-                  {post.summary}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="large">开始阅读</Button>
-              </CardActions>
-            </Card>
+            <PostCard post={post} key={post._id} />
           );
         })
+      }
+      {
+        data.list.length < data.total
+          ?
+          <div className={postStyles.loadMore}>
+            <LoadingButton loading={loading} size="large" variant="contained" color="error" onClick={() => setPageIndex(pageIndex + 1)}>加载更多</LoadingButton>
+          </div>
+          :
+          null
       }
     </div>
   )
 }
 
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   try {
     const data = await getPosts()
 
@@ -64,9 +79,10 @@ export const getStaticProps = async () => {
   }
   return {
     props: {
+      total: 0,
       list: []
     }
   }
 }
 
-export default Home
+export default HomePage

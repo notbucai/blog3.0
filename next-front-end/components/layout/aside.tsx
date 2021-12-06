@@ -2,16 +2,16 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2021-11-29 19:42:24
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-11-30 12:32:49
+ * @LastEditTime: 2021-12-06 16:55:20
  * @Description: 
  */
-import { Button, Card, CardContent, Typography } from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
+import { Button, Card, CardContent, Typography } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import layoutStyles from './style.module.scss'
 
-const Aside = () => {
-
+const LayoutAside = () => {
   return (
-    <div>
+    <div className={layoutStyles.aside}>
       <Typography gutterBottom variant="h5" component="div">
         标签
       </Typography>
@@ -31,4 +31,4 @@ const Aside = () => {
 }
 
 
-export default Aside
+export default LayoutAside

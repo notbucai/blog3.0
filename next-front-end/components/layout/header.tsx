@@ -1,9 +1,8 @@
-import { Button, ButtonBase, Container } from '@material-ui/core';
-import Link from 'next/link';
+import { Button, ButtonBase, Container } from '@mui/material';
 import ActiveLink from '../common/activeLink';
 import styles from './style.module.scss';
 
-export default function Header () {
+export default function LayoutHeader () {
   return (
     <header className={styles.header}>
       <Container className={styles.headerContainer}>
@@ -30,12 +29,9 @@ export default function Header () {
           </ActiveLink>
         </nav>
         <div className={styles.headerRight}>
-          <ActiveLink href="/login" activeClassName={styles.activeNavLink} passHref>
-            <Button disableElevation variant="contained" className={styles.navLink} >登录</Button>
-          </ActiveLink>
+          <Button disableElevation variant="contained" className={styles.navLink} >登录</Button>
         </div>
       </Container>
-
     </header>
   );
 }

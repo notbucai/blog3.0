@@ -2,12 +2,12 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2021-11-28 17:16:36
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-11-29 17:09:41
+ * @LastEditTime: 2021-12-05 17:11:31
  * @Description: 
  */
-import { Container } from "@material-ui/core";
+import { Container } from "@mui/material";
 
-export default function Footer () {
+export default function LayoutFooter () {
   return (
     <Container>
       <footer className="footer">

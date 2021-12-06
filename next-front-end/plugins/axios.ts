@@ -14,9 +14,11 @@ export interface ResponseData<T> {
   data: T;
   message: string;
 }
+export interface RequestParams {
+  page_index: number
+}
 
 export type ResponseDataList<T> = { list: T[], total: number }
-
 export async function request<T, D = any> (options: AxiosRequestConfig<D>) {
   const response = await _axios.request<ResponseData<T>>(options);
   const resData = response.data;

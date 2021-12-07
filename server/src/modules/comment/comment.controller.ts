@@ -99,6 +99,7 @@ export class CommentController {
       });
     }
     const comment = await this.commentService.create(source, createCommentDto, user._id);
+    this.commentService.censor(source, String(comment._id))
     await this.commentService.notifyComment(source, createCommentDto, user._id);
     return comment;
   }
@@ -138,6 +139,7 @@ export class CommentController {
     //   throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
     // }
     const comment = await this.commentService.updateById(source, id, updateDto.content);
+    this.commentService.censor(source, id)
     return comment;
   }
 

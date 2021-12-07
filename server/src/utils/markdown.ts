@@ -1,3 +1,5 @@
+import * as cheerio from 'cheerio';
+
 const md = require('markdown-it')({
   html: true,
   breaks: true,
@@ -7,8 +9,7 @@ const md = require('markdown-it')({
   .use(require('./markdown-it-sanitizer'), {
     extraTags: ['details', 'summary']
   });
-
-import * as cheerio from 'cheerio';
+md.disable("entity");
 
 class MarkdownUtils {
 

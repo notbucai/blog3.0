@@ -103,7 +103,9 @@ export class ArticleController {
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   async created (@Body() createDto: CreateDto, @CurUser() user: User) {
-    return this.articleService.create(createDto, user._id);
+    const article = await this.articleService.create(createDto, user._id);
+    this.articleService.censor(String(article._id));
+    return article;
   }
 
   @Put(':id/like')
@@ -139,7 +141,9 @@ export class ArticleController {
   @ApiBearerAuth()
   async updated (@Param('id') id: string, @Body() createDto: CreateDto) {
     if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    return this.articleService.updateById(id, createDto);
+    const article = await this.articleService.updateById(id, createDto);
+    this.articleService.censor(id);
+    return article;
   }
 
   @Get(':id')

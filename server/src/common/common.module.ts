@@ -13,7 +13,7 @@ import { ArticleComment, MessageComment } from '../models/comment.entity';
 import { User } from '../models/user.entity';
 import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 import { WechatService } from './wechat/wechat.service';
-import { TasksModule } from './tasks/tasks.module';
+import { CensorService } from './censor.service';
 
 @Module({
   imports: [
@@ -31,12 +31,14 @@ import { TasksModule } from './tasks/tasks.module';
     NotifyService,
     TencentCloudService,
     WechatService,
+    CensorService
   ],
   exports: [
     LoggerService,
     CommonService,
     NotifyService,
-    WechatService
+    WechatService,
+    CensorService
   ],
 })
 export class CommonModule { }

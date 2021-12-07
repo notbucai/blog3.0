@@ -18,6 +18,7 @@ import { ArticleService } from '../article/article.service';
 import MarkDownUtils from '../../utils/markdown'
 import { DateType } from '../../constants/constants';
 import moment = require('moment');
+import { CensorService } from 'src/common/censor.service';
 
 @Injectable()
 export class CommentService {
@@ -31,7 +32,7 @@ export class CommentService {
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
     private readonly notifyService: NotifyService,
     private readonly articleService: ArticleService,
-
+    private readonly censorService: CensorService,
   ) { }
 
   private getCommentSchema (source: string): any {
@@ -43,6 +44,21 @@ export class CommentService {
       commentRepository = this.messageCommentSchema;
     }
     return commentRepository;
+  }
+  async censor (source: string, id: string) {
+    const schema = this.getCommentSchema(source)
+    const object = await schema.findById(new ObjectID(id))
+
+    const content = object.content;
+
+    const data = await this.censorService.applyBasic(content)
+    if (data.status) {
+      return this.changeStatus(source, id, CommentStatus.VerifySuccess)
+    }
+
+    if (data.type === 2) {
+      return this.changeStatus(source, id, CommentStatus.VerifyFail)
+    }
   }
   /**
    * 创建评论

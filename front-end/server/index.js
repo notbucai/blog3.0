@@ -1,14 +1,54 @@
 const Koa = require('koa')
+const KoaRouter = require('koa-router')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
+const http = require('./http')
+
+const cache = require('./cache')
 
 const app = new Koa()
+const router = new KoaRouter({
+  prefix: '/cache'
+});
+
+router.get('/data/home', async (ctx) => {
+  const httpUrls = [
+    ['/article/list/hot', 'cache'],
+    ['/article/list/all', ''],
+    ['/tag/list/effect', 'cache'],
+    ['/article/list/random', 'cache'],
+    ['/comment/list/new/article', 'cache'],
+  ];
+  const promiseList = httpUrls.map(async (item) => {
+    const [url, type] = item;
+    if (type === 'cache') {
+      return {
+        data: {
+          data: await cache.getCache(url)
+        }
+      }
+    }
+    return http.get(url)
+  });
+
+  const data = await Promise.all(promiseList)
+  ctx.body = {
+    code: 0,
+    data: data.map(item => item.data ? item.data.data : {})
+  }
+})
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
 config.dev = app.env !== 'production'
 
 async function start () {
+  cache.initTask([
+    '/comment/list/new/article',
+    '/article/list/hot',
+    '/tag/list/effect',
+    '/article/list/random'
+  ]);
   // Instantiate nuxt.js
   const nuxt = new Nuxt(config)
 
@@ -23,6 +63,9 @@ async function start () {
     const builder = new Builder(nuxt)
     await builder.build()
   }
+
+  app
+    .use(router.routes())
 
   app.use((ctx) => {
     ctx.status = 200

@@ -134,7 +134,7 @@ export class ArticleService {
       status: ArticleStatus.VerifySuccess
     };
     const a_list = await this.articleSchema
-      .find(where, '-htmlContent -content')
+      .find(where, '-htmlContent -content -menus')
       .sort({ _id: -1 })
       .skip(page_index * page_size)
       .limit(page_size)
@@ -173,7 +173,7 @@ export class ArticleService {
     const page_size = Number(listDto.page_size || 10);
 
     const a_list = await this.articleSchema
-      .find(where, '-htmlContent -content')
+      .find(where, '-htmlContent -content -menus')
       .sort(sort2)
       .sort(sort1)
       .skip(page_index * page_size)
@@ -232,7 +232,7 @@ export class ArticleService {
   async pageHotList () {
 
     const a_list = await this.articleSchema
-      .find({ coverURL: { $ne: null }, status: ArticleStatus.VerifySuccess }, '-htmlContent -content')
+      .find({ coverURL: { $ne: null }, status: ArticleStatus.VerifySuccess }, '-htmlContent -content -menus')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
       .sort({ browseCount: -1 })
@@ -310,7 +310,7 @@ export class ArticleService {
 
   async listByUserId (id: ObjectID | string) {
     const a_list = await this.articleSchema
-      .find({ user: id }, '-htmlContent -content')
+      .find({ user: id }, '-htmlContent -content  -menus')
       .sort({ _id: -1 })
       // .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])

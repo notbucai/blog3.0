@@ -1,3 +1,5 @@
 blog.conf
 blog.sh
 .version
+.next
+node_modules

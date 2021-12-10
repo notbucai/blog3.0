@@ -336,6 +336,29 @@ export default {
     border: none;
     background-color: inherit;
     color: inherit;
+    ::v-deep{
+      .bug-text{
+        position: relative;
+        cursor: pointer;
+        &:hover{
+          i{
+            display: block;
+          }
+        }
+        i{
+          position: absolute;
+          bottom: -30px;
+          left: 0;
+          font-size: 12px;
+          white-space: nowrap;
+          display: none;
+          background-color: #fff;
+          padding: 4px 8px;
+          border-radius: 4px;
+          box-shadow: 0 0 4px rgba($color: #000000, $alpha: .2);
+        }
+      }
+    }
   }
   @media (max-width: 600px) {
     .acticle_content {

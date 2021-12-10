@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { DocumentType, ReturnModelType } from '@typegoose/typegoose';
 import { Article, ArticleStatus, ArticleUpStatus } from '../../models/article.entity';
 import { Tag } from '../../models/tag.entity';
 import { InjectModel } from 'nestjs-typegoose';
@@ -8,11 +8,13 @@ import { ObjectID } from 'mongodb';
 import { ArticleListDto } from './dto/list.dto';
 import { ArticleListByTagDto } from './dto/listByTag.dto';
 
-import { Comment, ArticleComment, CommentStatus } from '../../models/comment.entity';
+import { ArticleComment, CommentStatus } from '../../models/comment.entity';
 import { MyHttpException } from '../../core/exception/my-http.exception';
 import { ErrorCode } from '../../constants/error';
 import MarkdownUtils from '../../utils/markdown';
-import * as nodejieba from 'nodejieba';
+import { CensorService } from '../../common/censor.service';
+import * as htmlEntities from 'html-entities';
+import { LoggerService } from 'src/common/logger.service';
 
 @Injectable()
 export class ArticleService {
@@ -23,6 +25,8 @@ export class ArticleService {
     private readonly tagSchema: ReturnModelType<typeof Tag>,
     @InjectModel(ArticleComment)
     private readonly commentSchema: ReturnModelType<typeof ArticleComment>,
+    private readonly censorService: CensorService,
+    private readonly loggerService: LoggerService,
   ) { }
 
   // 解析一些对象
@@ -37,6 +41,59 @@ export class ArticleService {
       menus,
       markText,
       summary: markText.substr(0, 150).replace(/[\r\n]/g, '')
+    }
+  }
+
+  async censor (id: string) {
+    const article = await this.findById(id)
+    let title = article.title
+    let content = title + '\n' + article.content
+    let htmlContent = article.htmlContent
+    this.loggerService.info({
+      message: "censor applyBasic init",
+      data: {}
+    });
+
+    const data = await this.censorService.applyBasic(content)
+    this.loggerService.info({
+      message: "censor applyBasic result",
+      data: data
+    });
+
+    if (data.status) {
+      return this.changeStatus(String(article._id), ArticleStatus.VerifySuccess);
+    }
+    // 失败后 进行错误标记
+    data.data.forEach(item => {
+      const message = htmlEntities.encode(item.msg || '违规', { mode: 'extensive', numeric: 'hexadecimal' });
+      ; (item.hits || []).map(hit => {
+        const wordsRexString = hit.words.filter(item => item).map(text => htmlEntities.encode(text, { mode: 'extensive', numeric: 'hexadecimal' })).join('|')
+        if (!wordsRexString.length) return;
+        const wordsRex = new RegExp(wordsRexString, 'ig');
+        htmlContent = htmlContent.replace(wordsRex, (substring: string, start: number) => {
+          const startStr = '<span style="color: #f00;" class="bug-text">';
+          const endStrFn = (_message: string) => `<i>${_message}</i></span>`;
+          const startIndex = start - startStr.length + 3;
+          const endIndex = start + endStrFn(message).length + 10;
+          const fullStr = htmlContent.substring(startIndex, endIndex);
+          // fullStr
+          // 判断 状态
+          if (new RegExp(startStr + '.*?' + endStrFn('.*?'), 'ig').test(fullStr)) {
+            return substring
+          }
+          // 硬编码
+          return startStr + substring + endStrFn(message)
+        });
+      });
+    });
+    // htmlContent
+    await this.articleSchema.updateOne({ _id: article._id }, {
+      $set: {
+        htmlContent
+      }
+    });
+    if (data.type === 2) {
+      await this.changeStatus(String(article._id), ArticleStatus.VerifyFail);
     }
   }
 
@@ -68,7 +125,8 @@ export class ArticleService {
   }
 
   async changeStatus (id: string, status: ArticleStatus = 1) {
-    return this.articleSchema.findByIdAndUpdate(id, { $set: { status } })
+    const res = await this.articleSchema.findByIdAndUpdate(id, { $set: { status } })
+    return res;
   }
 
 
@@ -134,7 +192,7 @@ export class ArticleService {
       status: ArticleStatus.VerifySuccess
     };
     const a_list = await this.articleSchema
-      .find(where, '-htmlContent -content')
+      .find(where, '-htmlContent -content -menus')
       .sort({ _id: -1 })
       .skip(page_index * page_size)
       .limit(page_size)
@@ -173,7 +231,7 @@ export class ArticleService {
     const page_size = Number(listDto.page_size || 10);
 
     const a_list = await this.articleSchema
-      .find(where, '-htmlContent -content')
+      .find(where, '-htmlContent -content -menus')
       .sort(sort2)
       .sort(sort1)
       .skip(page_index * page_size)
@@ -232,7 +290,7 @@ export class ArticleService {
   async pageHotList () {
 
     const a_list = await this.articleSchema
-      .find({ coverURL: { $ne: null }, status: ArticleStatus.VerifySuccess }, '-htmlContent -content')
+      .find({ coverURL: { $ne: null }, status: ArticleStatus.VerifySuccess }, '-htmlContent -content -menus')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
       .sort({ browseCount: -1 })
@@ -310,7 +368,7 @@ export class ArticleService {
 
   async listByUserId (id: ObjectID | string) {
     const a_list = await this.articleSchema
-      .find({ user: id }, '-htmlContent -content')
+      .find({ user: id }, '-htmlContent -content  -menus')
       .sort({ _id: -1 })
       // .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])

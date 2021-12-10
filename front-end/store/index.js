@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-12-06 22:27:21
+ * @LastEditTime: 2021-12-08 18:07:45
  * @Description: 
  */
 
@@ -18,7 +18,6 @@ export const state = () => ({
     startTime: new Date(),
     buildTime: new Date('2020-06-02'),
     viewCount: 999999999,
-    
   }
 });
 export const mutations = {

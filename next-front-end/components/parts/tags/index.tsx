@@ -2,16 +2,16 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2021-11-29 19:42:24
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-12-06 16:55:20
+ * @LastEditTime: 2021-12-10 19:47:13
  * @Description: 
  */
 import { Button, Card, CardContent, Typography } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import layoutStyles from './style.module.scss'
+import styles from './style.module.scss'
 
-const LayoutAside = () => {
+const PartTags = () => {
   return (
-    <div className={layoutStyles.aside}>
+    <div className={styles.tags}>
       <Typography gutterBottom variant="h5" component="div">
         标签
       </Typography>
@@ -31,4 +31,4 @@ const LayoutAside = () => {
 }
 
 
-export default LayoutAside
+export default PartTags

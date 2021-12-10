@@ -2,7 +2,7 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2021-12-05 17:10:50
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-12-06 21:46:00
+ * @LastEditTime: 2021-12-10 19:53:58
  * @Description: 
  */
 import { Button, Card, CardActions, CardContent, Container, Typography } from '@mui/material';
@@ -14,9 +14,9 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { bannerState } from '../../store';
-import swiperStyles from './swiper.module.scss'
+import styles from './style.module.scss'
 
-const LayoutSwiper = () => {
+const Banner = () => {
   const resData = useRecoilValueLoadable(bannerState({}))
 
   return (
@@ -27,7 +27,7 @@ const LayoutSwiper = () => {
         }}
         modules={[Pagination, Autoplay, Lazy]}
         pagination={{ clickable: true }}
-        className={swiperStyles.swiper}
+        className={styles.swiper}
       >
         {
           resData.state === 'hasValue'
@@ -39,9 +39,9 @@ const LayoutSwiper = () => {
                   <SwiperSlide
                     key={post._id}
                   >
-                    <Card className={swiperStyles.swiperItem}>
+                    <Card className={styles.swiperItem}>
                       <Image
-                        className={swiperStyles.swiperImage}
+                        className={styles.swiperImage}
                         src={post.coverURL || ''}
                         alt={post.title}
                         layout="fill"
@@ -49,9 +49,9 @@ const LayoutSwiper = () => {
                         objectFit="cover"
                         unoptimized
                       />
-                      <div className={swiperStyles.cardMain}>
+                      <div className={styles.cardMain}>
                         <CardContent>
-                          <Typography className={swiperStyles.postTitle} gutterBottom variant="h4" component="div">
+                          <Typography className={styles.postTitle} gutterBottom variant="h4" component="div">
                             {post.title}
                           </Typography>
                         </CardContent>
@@ -71,4 +71,4 @@ const LayoutSwiper = () => {
   )
 }
 
-export default LayoutSwiper;
+export default Banner;

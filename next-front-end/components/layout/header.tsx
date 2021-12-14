@@ -1,4 +1,5 @@
 import { Button, ButtonBase, Container } from '@mui/material';
+import Auth from '../auth';
 import ActiveLink from '../common/activeLink';
 import styles from './style.module.scss';
 
@@ -31,6 +32,7 @@ export default function LayoutHeader () {
         <div className={styles.headerRight}>
           <Button disableElevation variant="contained" className={styles.navLink} >登录</Button>
         </div>
+        <Auth open/>
       </Container>
     </header>
   );

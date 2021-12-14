@@ -10,7 +10,8 @@ import postStyles from '../styles/post.module.scss'
 import { motion } from 'framer-motion';
 import pageStyles from '../styles/page.module.scss';
 import PartTags from '../components/parts/tags';
-import Banner from '../components/banner/banner';
+import Banner from '../components/banner/index';
+import PostList from '../components/common/postList';
 
 interface Props {
   list: BasicPost[],
@@ -24,7 +25,6 @@ const HomePage: NextPage<Props> = ({ list = [], total = 0 }: Props) => {
   });
   const [pageIndex, setPageIndex] = useState(1);
   const { data: reqData, run, loading } = usePosts()
-  const [n, setN] = useState(0);
 
   useEffect(() => {
     if (pageIndex === 1) return
@@ -45,36 +45,22 @@ const HomePage: NextPage<Props> = ({ list = [], total = 0 }: Props) => {
   }, [reqData])
 
 
-  useEffect(() => {
-    setN(n => n + 1)
-  }, [])
-
   return (
     <Container sx={{ marginTop: '20px' }}>
       <motion.div initial={{ scale: .8, opacity: .6 }} exit={{ scale: .8, opacity: .6 }} animate={{ scale: 1, opacity: 1 }}>
-        <Banner />
+        <Banner list={data.list || []} />
       </motion.div>
       <div className={pageStyles.container}>
         <div className={pageStyles.content}>
           <Typography gutterBottom variant="h5" component="div">
-            全部文章{n}
+            全部文章
           </Typography>
-          {
-            data.list.map(post => {
-              return (
-                <PostCard post={post} key={post._id} />
-              );
-            })
-          }
-          {
-            data.list.length < data.total
-              ?
-              <div className={postStyles.loadMore}>
-                <LoadingButton loading={loading} size="large" variant="contained" color="error" onClick={() => setPageIndex(pageIndex + 1)}>加载更多</LoadingButton>
-              </div>
-              :
-              null
-          }
+          <PostList
+            loading={loading}
+            list={data.list}
+            total={data.total}
+            onLoadNext={() => setPageIndex(pageIndex + 1)}
+          />
         </div>
         <div className={pageStyles.asideContainer}>
           <PartTags />
@@ -94,7 +80,6 @@ export const getServerSideProps = async () => {
         total: data.total
       },
     }
-
   } catch (error) {
     console.log(error);
   }

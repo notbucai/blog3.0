@@ -1,9 +1,6 @@
-import { atomFamily } from "recoil";
-import { getHotPosts } from "../http/posts";
+import { atom, selector } from "recoil";
 
-export const bannerState = atomFamily({
-  key: 'banner',
-  default: () => {
-    return getHotPosts()
-  }
+export const bannerState = atom({
+  key: 'token',
+  default: ''
 });

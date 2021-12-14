@@ -1,0 +1,24 @@
+
+.formItem {
+  margin-bottom: 4px;
+  .formLabel {
+    margin-bottom: 0px;
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    &.formLabelRequire {
+      &::after {
+        color: #f00;
+        content: "*";
+        display: flex;
+        align-items: center;
+        margin-left: 6px;
+        font-size: 16px;
+        font-weight: normal;
+        font-family: serif;
+      }
+    }
+  }
+}

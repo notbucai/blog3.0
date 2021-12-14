@@ -2,7 +2,7 @@ import * as path from 'path';
 
 const domain = '127.0.0.1';
 const port = 9905;
-const url = `http://${domain}`; 
+const url = `http://${domain}`;
 
 const staticURL = `https://image.notbucai.com`; // 静态资源域名配置
 
@@ -146,5 +146,8 @@ export default {
         appID: "",
         apiKey: "",
         secretKey: ""
+    },
+    redis: {
+        
     }
 };

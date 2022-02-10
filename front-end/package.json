@@ -57,7 +57,7 @@
     "@mdi/font": "^5.1.45",
     "@nuxtjs/vuetify": "^1.11.0",
     "minify-css-string": "^1.0.0",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "nodemon": "^1.18.9",
     "nuxt-purgecss": "^1.0.0",
     "sass": "^1.32.13",

@@ -141,7 +141,7 @@ export class CommentService {
     }
 
     if (receive && NType) {
-      await this.notifyService.publish(NType, NotifyActionType.comment, sourceId, userID, receive);
+      await this.notifyService.publish(NType, NotifyActionType.comment, sourceId, userID, receive, createCommentDto.content);
     }
   }
 

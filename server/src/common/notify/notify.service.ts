@@ -68,7 +68,7 @@ export class NotifyService {
     return desc[type];
   }
 
-  public async publish (type: NotifyObjectType, action: NotifyActionType, objectID: ObjectID, senderID: ObjectID, recipientID: ObjectID) {
+  public async publish (type: NotifyObjectType, action: NotifyActionType, objectID: ObjectID, senderID: ObjectID, recipientID: ObjectID, message?: string) {
 
     const typeDesc = this.getDescByType(type);
 
@@ -85,9 +85,8 @@ export class NotifyService {
     const title = this.getTitleByType(type, object);
 
     const template = publish[action];
-    if (!template) throw Error("template not fined");
-    const objectMessage = format(template, sender.username, typeDesc);
-
+    // if (!template) throw Error("template not fined");
+    const objectMessage = message || format(template, sender.username, typeDesc)
     const notify = new Notify();
 
     notify.objectID = objectID;
@@ -109,7 +108,10 @@ export class NotifyService {
   public async getNoReadNotifyCountByUId (id: ObjectID) {
     return this.notifySchema.countDocuments({
       recipient: id,
-      status: NotifyStatus.new
+      status: NotifyStatus.new,
+      sender: {
+        $ne: id
+      }
     });
   }
 
@@ -144,6 +146,9 @@ export class NotifyService {
   public async getNotifyListByUserId (id: ObjectID) {
     const list = await this.notifySchema.find({
       recipient: id,
+      sender: {
+        $ne: id
+      }
     })
       .sort({
         _id: -1

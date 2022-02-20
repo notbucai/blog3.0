@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "start": "node .output/server/index.mjs"
+  },
+  "devDependencies": {
+    "@mdi/font": "^6.5.95",
+    "@types/node-schedule": "^1.3.2",
+    "nuxt3": "latest"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "http-proxy-middleware": "^2.0.1",
+    "node-schedule": "^2.1.0",
+    "sass": "^1.44.0",
+    "vuetify": "^3.0.0-alpha.12"
+  }
+}

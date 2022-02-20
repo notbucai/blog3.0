@@ -1,8 +1,8 @@
 <template>
   <v-card class="notice-item">
     <v-card-title>
-      <v-lazy min-height="32" min-width="32" v-if="notice.sender">
-        <v-avatar size="32">
+      <v-lazy min-height="56" min-width="56" v-if="notice.sender">
+        <v-avatar size="56">
           <v-img :src="notice.sender.avatarURL | imageMogr2(56)"></v-img>
         </v-avatar>
       </v-lazy>
@@ -12,34 +12,39 @@
         :to="'/user/' + notice.sender._id"
         color="success"
         plain
+        large
+        class="title"
         >{{ notice.sender.username }}</v-btn
       >
       <div>{{ template[notice.senderAction] }}</div>
-      <div
-        v-if="
-          notice.objectType === 'article' &&
-          objectType[notice.objectType] &&
-          notice.source
-        "
-      >
-        {{ objectType[notice.objectType] }}
-      </div>
       <v-btn
-        v-if="notice.objectType"
+        v-if="objectType[notice.objectType]"
         nuxt
         :to="url(notice.objectType, notice.objectID)"
         color="success"
         plain
+        large
+        class="title"
+        >{{ objectType[notice.objectType] }}</v-btn
       >
-        {{
-          notice.objectType === 'article' && notice.source
-            ? notice.source.title
-            : objectType[notice.objectType]
-        }}
-      </v-btn>
     </v-card-title>
-    <div class="pa-4">
-      {{ notice.message }}
+
+    <div class="pa-4" v-if="notice.objectType === 'article' && notice.source">
+      <div class="article-box">
+        <NuxtLink
+          :to="'/article/' + notice.source._id"
+          class="article-link mb-4 pa-4"
+        >
+          <header class="text-h6 mb-2">
+            <span>
+              {{ notice.source.title }}
+            </span>
+          </header>
+          <main class="body-2">
+            <span>{{ notice.source.summary }}</span>
+          </main>
+        </NuxtLink>
+      </div>
     </div>
   </v-card>
 </template>
@@ -56,7 +61,7 @@ export default {
         follow: "关注了你",
       },
       objectType: {
-        article: '文章', // 文章·
+        article: '文章', // 文章
         comment: '评论', // 评论
         message: '回复', // 回复
         user: '用户', // 用户
@@ -64,7 +69,6 @@ export default {
     };
   },
   created () {
-    
   },
   methods: {
     url (type, id) {

@@ -2,10 +2,10 @@
   <div>
     <v-row align="center" justify="center">
       <v-col xl="7" lg="8" md="9" sm="11" xs="12">
-        <!-- <banner
-          :recommendedList="homeData.recommendedList"
+        <banner
+          :recommendedList="homeData.recommendedList || []"
           v-if="homeData.recommendedList && homeData.recommendedList.length"
-        /> -->
+        />
       </v-col>
     </v-row>
     <v-container class="content-container">
@@ -57,10 +57,9 @@ const { data, pending, } = useFetch<string, { code: number, data: any }>('/api/c
 
 const homeData = computed(() => {
   const [hotList, allList, taglist, randomList, commentlist] = ((data.value || {}).data || []);
-
   return {
     taglist: taglist || [],
-    recommendedList: hotList.list || [],
+    recommendedList: hotList?.list || [],
     articleStore: allList || {},
     randomList: randomList || [],
     commentlist: commentlist || [],

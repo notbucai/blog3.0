@@ -1,17 +1,17 @@
 <template>
   <NuxtLink :to="'/article/' + id" class="search-article-item mb-4">
     <header class="text-h6 mb-2">
-      <template v-for="(item, index) in title_show">
-        <mark :key="index" v-if="item.status">{{ item.value }}</mark>
-        <span :key="index" v-else>
+      <template v-for="(item, index) in title_show" :key="index">
+        <mark v-if="item.status">{{ item.value }}</mark>
+        <span v-else>
           {{ item.value }}
         </span>
       </template>
     </header>
     <main class="body-2">
-      <template v-for="(item, index) in content_show">
-        <mark :key="index" v-if="item.status">{{ item.value }}</mark>
-        <span :key="index" v-else>
+      <template v-for="(item, index) in content_show" :key="index" >
+        <mark v-if="item.status">{{ item.value }}</mark>
+        <span v-else>
           {{ item.value }}
         </span>
       </template>

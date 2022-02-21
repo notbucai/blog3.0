@@ -1,13 +1,13 @@
 /*
  * @Author: bucai
  * @Date: 2020-05-03 12:23:16
- * @LastEditors: bucai
- * @LastEditTime: 2021-06-13 11:19:56
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-02-20 14:25:18
  * @Description: 
  */
 
 import Vue from 'vue';
-import Vuetify from 'vuetify/lib'
+import Vuetify from '@vuetify/nightly/lib'
 import SnackbarComponent from './Snackbar.vue';
 let SnackbarConstructor = Vue.extend(SnackbarComponent);
 

@@ -8,9 +8,10 @@
   "devDependencies": {
     "@mdi/font": "^6.5.95",
     "@types/node-schedule": "^1.3.2",
-    "nuxt3": "latest"
+    "nuxt3": "^3.0.0-27420403.16e2a54"
   },
   "dependencies": {
+    "@vuetify/nightly": "npm:@vuetify/nightly@next",
     "axios": "^0.24.0",
     "http-proxy-middleware": "^2.0.1",
     "node-schedule": "^2.1.0",

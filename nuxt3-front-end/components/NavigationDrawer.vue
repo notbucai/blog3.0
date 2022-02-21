@@ -46,13 +46,13 @@
           :to="item.path"
           link
         >
-          <v-list-item-icon>
+          <!-- <v-list-item-icon>
             <v-icon>{{ 'mdi-' + item.icon }}</v-icon>
-          </v-list-item-icon>
+          </v-list-item-icon> -->
 
-          <v-list-item-content>
+          <div>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
+          </div>
         </v-list-item>
       </v-list>
     </div>

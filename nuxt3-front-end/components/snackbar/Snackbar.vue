@@ -1,8 +1,8 @@
 <!--
  * @Author: bucai
  * @Date: 2020-05-03 12:11:12
- * @LastEditors: bucai
- * @LastEditTime: 2021-06-13 11:19:35
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-02-20 18:00:36
  * @Description: 
  -->
 <template>
@@ -13,7 +13,7 @@
  
 <script>
 export default {
-  name: 'Snackbar',
+  name: 'SnackbarComponent',
   data () {
     return {
       icon: '',

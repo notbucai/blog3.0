@@ -215,9 +215,7 @@ module.exports = {
     //   // 'mavon-editor',
     //   'highlight.js',
     // ],
-    extractCSS: {
-      ignoreOrder: true
-    },
+    extractCSS: true,
     splitChunks: {
       // layouts: true
     },

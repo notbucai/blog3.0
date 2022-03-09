@@ -45,11 +45,11 @@
 </template>
 <script>
 import { mapState } from 'vuex';
-import { mavonEditor } from 'mavon-editor';
+import { asyncLoad } from '@/utils/loadScriptComponent';
 
 export default {
   components: {
-    'mavon-editor':mavonEditor
+    'mavon-editor': asyncLoad.mavonEditorComponent
   },
   props: {
     reply: Object,

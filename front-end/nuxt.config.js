@@ -34,7 +34,7 @@ module.exports = {
       { rel: 'stylesheet', href: '//unpkg.com/mavon-editor@2.9.0/dist/markdown/github-markdown.min.css' }
     ],
     script: [
-      { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
+      // { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
       { src: '//unpkg.com/vue@2/dist/vue.min.js', defer: true },
       { src: '//unpkg.com/axios', defer: true },
       // { src: '//unpkg.com/gsap', defer: true },

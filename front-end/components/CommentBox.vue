@@ -36,7 +36,7 @@
 <script>
 import CommentItem from './CommentItem';
 import { mapState } from 'vuex';
-import ComponetLoading from '@/components/common/Loading.vue';
+import ComponentLoading from '@/components/common/Loading.vue';
 
 export default {
   components: {
@@ -44,7 +44,7 @@ export default {
     CommentEditor: () => {
       return {
         component: import('./CommentEditor.vue'),
-        loading: ComponetLoading,
+        loading: ComponentLoading,
         delay: 100,
         timeout: 3000
       }

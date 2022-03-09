@@ -123,11 +123,12 @@
 <script>
 import CurrentUser from '@/components/CurrentUser.vue';
 import { fileSize as $file_fileSize } from '@/utils/file'
+import { asyncLoad } from '@/utils/loadScriptComponent';
 export default {
   layout: 'empty',
   components: {
     CurrentUser,
-    'mavon-editor': async () => (await import('mavon-editor')).mavonEditor
+    'mavon-editor': asyncLoad.mavonEditorComponent
   },
   async asyncData ({ params, query, $axios }) {
     if (params.type == 'new') {

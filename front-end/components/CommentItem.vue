@@ -1,88 +1,100 @@
 <template>
-  <div class="comment-item pa-3" v-ripple>
+  <div class="comment-item pa-6 pb-2 pt-4">
     <div class="comment-user d-flex align-center justify-space-between">
-      <nuxt-link
-        v-ripple
-        tag="div"
-        :to="`/user/${comment.user._id}`"
-        class="d-flex align-center"
-        v-if="comment.user"
-      >
+      <div class="d-flex align-start">
         <div class="mr-2" v-if="comment.user.avatarURL">
-          <v-avatar size="36">
-            <v-img :src="comment.user.avatarURL | imageMogr2(100, 100)"></v-img>
+          <v-avatar size="42">
+            <v-img
+              lazy-src="https://image.notbucai.com/logo.png"
+              :src="comment.user.avatarURL | imageMogr2(100, 100)"
+            ></v-img>
           </v-avatar>
         </div>
-        <div v-if="type !== 'user'">
+        <div>
           <div class="body-2 d-flex align-center">
-            <v-btn
+            <v-chip
               v-if="
                 source === 'article' &&
                 sourceData &&
                 sourceData.user._id === comment.user._id
               "
-              color="accent"
               outlined
-              tile
               x-small
-              disabled
-              class="mr-1"
-            >作者</v-btn>
-            <span class="pr-2">{{ comment.user.username }}</span>
-            <v-btn
-              color="primary"
-              :elevation="0"
-              x-small
-              @click.stop="handleReply(comment)"
-              >回复</v-btn
+              color="green"
+              label
+              class="mr-2"
             >
-            <v-btn
-              class="ml-2"
-              color="error"
-              :elevation="0"
-              x-small
-              @click.stop="handleDelete(comment)"
-              :loading="deleteIng"
-              v-if="user && comment.user._id == user._id"
-              >删除</v-btn
-            >
-          </div>
-          <div class="caption text--secondary">
-            {{ comment.createdAt | format }}
+              作者
+            </v-chip>
+            <span class="text--secondary">{{ comment.user.username }}</span>
           </div>
         </div>
-      </nuxt-link>
-      <div class="d-flex flex-column align-center">
-        <v-btn
-          text
-          icon
-          small
-          :color="hasLike(comment.likes) ? 'error' : ''"
-          @click="handleClickLike(comment)"
-        >
-          <v-icon :color="hasLike(comment.likes) ? 'error' : ''">{{
-            $icons['mdi-cards-heart']
-          }}</v-icon>
-        </v-btn>
-        <span
-          class="body-2"
-          :class="hasLike(comment.likes) ? 'error--text' : 'text--secondary'"
-          >{{ comment.likes ? comment.likes.length : 0 }}</span
-        >
+      </div>
+      <div class="comment-operate">
+        <v-menu offset-y :close-on-content-click="true" close-on-click>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              x-small
+              class="comment-operate-icon"
+              v-bind="attrs"
+              v-on="on"
+              >{{ $icons['mdi-dots-vertical'] }}</v-icon
+            >
+          </template>
+          <div>
+            <div>
+              <v-btn
+                color="primary"
+                :elevation="0"
+                x-small
+                text
+                @click="handleReply(comment)"
+                >回复</v-btn
+              >
+            </div>
+            <div>
+              <v-btn
+                color="error"
+                :elevation="0"
+                x-small
+                text
+                @click="handleDelete(comment)"
+                :loading="deleteIng"
+                v-if="user && comment.user._id == user._id"
+                >删除</v-btn
+              >
+            </div>
+          </div>
+        </v-menu>
       </div>
     </div>
     <div class="comment-centent">
-      <div
-        v-html="comment.htmlContent"
-        class="markdown-body text--secondary"
-      ></div>
+      <div v-html="comment.htmlContent" class="markdown-body body-1"></div>
+      <div class="mt-1 d-flex align-center">
+        <span class="caption text--secondary">{{
+          comment.createdAt | format
+        }}</span>
+        <div class="ml-2 d-flex align-center comment-like">
+          <v-btn text x-small :ripple="false" @click="handleClickLike(comment)">
+            <v-icon
+              x-small
+              class="comment-like-icon"
+              :color="hasLike(comment.likes) ? 'error' : ''"
+              >{{ $icons['mdi-cards-heart'] }}</v-icon
+            >
+            <span class="caption ml-1">{{
+              comment.likes ? comment.likes.length : 0
+            }}</span>
+          </v-btn>
+        </div>
+      </div>
     </div>
 
     <div class="comment-item-reply-box mt-3 pl-3" v-if="comment.replylist">
       <template v-for="_item in comment.replylist">
         <comment-item
-          :comment="_item"
           :key="_item._id"
+          :comment="_item"
           :source="source"
           @reply="handleReply"
           :source-data="sourceData"
@@ -91,16 +103,16 @@
       </template>
     </div>
 
-    <div class="comment-item-reply-btn" v-if="comment.commentCounts">
+    <div class="comment-item-reply-btn mt-2" v-if="comment.commentCounts">
       <v-btn
         text
-        small
+        x-small
         @click="handleGetCommentReply(comment)"
         :loading="comment.isFetReplyIng"
         v-if="!comment.replylist"
-        >展开{{ comment.commentCounts }}条回复</v-btn
+        >展开 {{ comment.commentCounts }} 条回复</v-btn
       >
-      <v-btn text small @click="handleGetCommentReply(comment)" v-else
+      <v-btn text x-small @click="handleGetCommentReply(comment)" v-else
         >收起</v-btn
       >
     </div>
@@ -205,27 +217,83 @@ export default {
 <style lang="scss">
 .theme--dark {
   .comment-item {
-    border-top-color: #111 !important;
-    background-color: #1f1f1f !important;
+    background-color: #000 !important;
+    &::after {
+      background-color: #121212 !important;
+    }
+    .comment-item-reply-btn {
+      &::before {
+        background-color: #121212 !important;
+      }
+    }
   }
 }
 </style>
 <style lang="scss" scoped>
 .comment-item {
-  border-top: 1px solid #f4f5f6;
   background-color: #fff;
+  position: relative;
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: #f4f5f6;
+    width: calc(100% - 60px);
+  }
+  &:last-child {
+    &::after {
+      display: none;
+    }
+  }
+  &:hover{
+    .comment-like .comment-like-icon {
+        @keyframes heartbeat {
+          0% {
+            transform: scale(1, 1);
+            opacity: 1;
+          }
+          25% {
+            transform: scale(1.3, 1.3);
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(1, 1);
+            opacity: 1;
+          }
+        }
+        animation: heartbeat 1s infinite;
+    }
+  }
+  .comment-like {
+    &:hover {
+      .comment-like-icon {
+        color: #333;
+      }
+    }
+  }
   .comment-item-reply-btn {
-    margin-top: 12px;
     display: flex;
     align-items: center;
     &::before {
       content: '';
       height: 1px;
       width: 42px;
-      background-color: #888;
+      background-color: #f4f5f6;
     }
   }
   .author-icon {
+  }
+  .comment-centent {
+    margin-left: 42px + 8px;
+    margin-top: -20px;
+  }
+  .comment-operate {
+    position: absolute;
+    right: 24px;
+    top: 12px;
   }
 }
 </style>

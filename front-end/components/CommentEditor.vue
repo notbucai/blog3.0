@@ -11,6 +11,7 @@
         toolbarsBackground="inherit"
         previewBackground="inherit"
         :tabSize="2"
+        fontSize="16px"
         :ishljs="false"
         :toolbars="markdownOption"
         :placeholder="editPlaceholder"
@@ -19,19 +20,80 @@
         :autofocus="false"
         :codeStyle="$vuetify.theme.dark ? 'atom-one-light' : 'atom-one-light'"
       >
-        <template slot="right-toolbar-after">
-          <v-btn
-            text
-            color="primary"
-            class="close-reply-btn"
-            @click.stop="handleUnReply"
-            v-if="this.reply"
-            >取消回复</v-btn
-          >
+        <template slot="left-toolbar-before">
+          <div class="edit-icon-list">
+            <div class="edit-icon-item" @click="handleOperateClick('bold')">
+              <i class="edit_icon icon-bold"></i>
+            </div>
+            <div class="edit-icon-item" @click="handleOperateClick('italic')">
+              <i class="edit_icon icon-italic"></i>
+            </div>
+            <div
+              class="edit-icon-item"
+              @click="handleOperateClick('underline')"
+            >
+              <i class="edit_icon icon-underline"></i>
+            </div>
+            <div
+              class="edit-icon-item"
+              @click="handleOperateClick('strikethrough')"
+            >
+              <i class="edit_icon icon-strikethrough"></i>
+            </div>
+            <!-- 间隔 -->
+            <div class="gap"></div>
+            <div class="edit-icon-item xxs-hide" @click="handleOperateClick('header3')">
+              <i class="edit_icon icon-heading-h1"></i>
+            </div>
+            <div class="edit-icon-item xs-hide xxs-hide" @click="handleOperateClick('header4')">
+              <i class="edit_icon icon-heading-h2"></i>
+            </div>
+            <div class="edit-icon-item xs-hide xxs-hide" @click="handleOperateClick('header5')">
+              <i class="edit_icon icon-heading-h3"></i>
+            </div>
+            <div class="gap"></div>
+            <div class="edit-icon-item" @click="handleOperateClick('code')">
+              <i class="edit_icon icon-code-inline"></i>
+            </div>
+            <div class="edit-icon-item xs-hide" @click="handleOperateClick('link')">
+              <i class="edit_icon icon-link"></i>
+            </div>
+            <div
+              class="edit-icon-item xs-hide"
+              @click="handleOperateClick('imagelink')"
+            >
+              <i class="edit_icon icon-image"></i>
+            </div>
+          </div>
+        </template>
+        <template slot="right-toolbar-before">
+          <div class="edit-icon-list">
+            <div class="edit-icon-item xs-hide" @click="handleOperateClick('help')">
+              <i class="edit_icon icon-cat_help"></i>
+            </div>
+            <div class="edit-icon-item" :class="{active: operate['preview']}" @click="handleOperateClick('preview')">
+              <i class="edit_icon icon-show"></i>
+            </div>
+             <div class="edit-icon-item xxs-hide" @click="handleOperateClick('redo')">
+              <i class="edit_icon icon-redo"></i>
+            </div>
+            <div class="edit-icon-item xxs-hide" @click="handleOperateClick('undo')">
+              <i class="edit_icon icon-undo"></i>
+            </div>
+          </div>
         </template>
       </mavon-editor>
     </client-only>
-    <div class="d-flex justify-end">
+    <div class="d-flex justify-end mt-2 align-center">
+      <v-btn
+        text
+        color="primary"
+        class="close-reply-btn"
+        @click.stop="handleUnReply"
+        v-if="this.reply"
+        small
+        >取消回复</v-btn
+      >
       <v-btn
         text
         color="#fa1"
@@ -60,21 +122,16 @@ export default {
     editPlaceholder () {
       return this.reply && this.reply.user
         ? '回复@' + this.reply.user.username
-        : '请输入...';
+        : '请发表核善的评论';
     }
   },
   data () {
     return {
       showEdit: false,
       markdownOption: {
-        link: true, // 链接
-        imagelink: true, // 图片链接
-        code: true, // code
-        preview: true, // 预览
-        trash: true, // 清空
-        help: true // 帮助
       },
-      content: ''
+      content: '',
+      operate: {}
     };
   },
   mounted () {
@@ -91,6 +148,11 @@ export default {
     io.observe(document.querySelector('.comment_edit'));
   },
   methods: {
+    handleOperateClick (operate) {
+      this.$refs['mdeditor'].toolbar_left_click(operate);
+      this.$refs['mdeditor'].toolbar_right_click(operate);
+      this.$set(this.operate, operate, !this.operate[operate])
+    },
     handleClear () {
       this.content = '';
     },
@@ -115,27 +177,116 @@ export default {
 </script>
 <style lang="scss">
 .comment_edit {
-  .v-note-wrapper .v-note-op .v-left-item,
-  .v-note-wrapper .v-note-op .v-right-item {
-    flex: none;
+  .v-note-op {
+    border: none !important;
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: block;
+      width: calc(100% - 24px);
+      height: 1px;
+      background-color: #f4f5f6;
+    }
   }
-  .op-icon-divider {
-    display: none;
+  .v-note-wrapper {
+    border: none !important;
+    .auto-textarea-wrapper {
+      & textarea::placeholder {
+        color: #b2b9c9;
+      }
+    }
+  }
+}
+.theme--dark {
+  .comment_edit {
+    .v-note-wrapper {
+      background-color: #000000;
+      .auto-textarea-wrapper {
+        & textarea::placeholder {
+          color: #333333;
+        }
+      }
+    }
+    .v-note-op {
+      &::after {
+        background-color: #121212;
+      }
+    }
+    .edit-icon-list {
+      .edit-icon-item {
+        &:hover,
+        &.active {
+          background-color: #121212 !important;
+        }
+      }
+    }
   }
 }
 </style>
+
 <style lang="scss" scoped>
+@import url(//at.alicdn.com/t/font_3238881_rw3b9pyc28o.css);
+
 .comment_edit {
   .v-note-wrapper.markdown-body {
     width: 100%;
     min-height: 200px;
-    max-height: 320px;
+    max-height: 200px;
     z-index: 1;
+  }
+  .v-right-item {
+    display: flex;
+    align-items: center;
+    .edit-icon-list {
+      flex-direction: row-reverse;
+    }
+  }
+  .edit-icon-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 100%;
+    padding: 0 6px;
+    .edit-icon-item {
+      display: flex;
+      width: 28px;
+      height: 28px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+      &:hover,
+      &.active {
+        background-color: #f4f5f6;
+      }
+      .edit_icon {
+        color: #333;
+        font-size: 20px;
+      }
+      @media (max-width: 750px) {
+        &.xs-hide{
+          display: none;
+        }
+      }
+      @media (max-width: 480px) {
+        &.xxs-hide{
+          display: none;
+        }
+      }
+    }
+    .gap {
+      width: 10px;
+    }
   }
 
   .close-reply-btn {
-    position: absolute;
-    right: 0;
+    // position: absolute;
+    // right: 0;
     /* 
     z-index: 10;
     right: 40px;

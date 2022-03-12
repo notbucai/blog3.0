@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2021-03-21 21:20:08
- * @LastEditors: bucai
- * @LastEditTime: 2021-06-06 17:27:32
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-03-12 09:41:22
  * @Description: 
  */
 import {
@@ -32,6 +32,7 @@ import {
   mdiAllInclusive,
   mdiDotsHorizontal,
   mdiTimelineClock,
+  mdiDotsVertical,
   mdiLinkVariant,
   mdiApps,
   mdiLink,
@@ -78,5 +79,6 @@ Vue.prototype.$icons = {
   'mdi-message-text': mdiMessageText,
   'mdi-apps': mdiApps,
   'mdi-alert-circle-outline': mdiAlertCircleOutline,
-  'mdi-magnify':mdiMagnify
+  'mdi-magnify':mdiMagnify,
+  'mdi-dots-vertical': mdiDotsVertical
 };

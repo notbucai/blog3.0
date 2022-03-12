@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-row align="center" justify="center">
-      <v-col xl="7" lg="8" md="9" sm="11" xs="12">
+      <v-col xl="7" lg="9" md="11" sm="12" xs="12">
         <banner
           :recommendedList="recommendedList"
           v-if="recommendedList && recommendedList.length"
@@ -50,6 +50,13 @@ import SideCommentList from '@/components/SideCommentList.vue';
 import ArticleList from '@/components/ArticleList.vue';
 import TagList from '@/components/TagList.vue';
 export default {
+  head () {
+    return {
+      title: '',
+      meta: [
+      ]
+    }
+  },
   scrollToTop: true,
   async asyncData ({ $axios }) {
     const t = Date.now()

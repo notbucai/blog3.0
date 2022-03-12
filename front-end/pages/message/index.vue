@@ -9,18 +9,20 @@
 import CommentBox from '@/components/CommentBox.vue';
 export default {
   scrollToTop: true,
-  head () {
-    return {
-      title: '留言',
-      meta: []
-    }
+  // head () {
+  //   return {
+  //     title: '留言',
+  //     meta: []
+  //   }
+  // },
+  head: {
+    title: '留言',
   },
   async asyncData ({ $axios, env, params }) {
     const id = '000000000000000000000000';
     const promiseList = [];
     promiseList.push($axios.get(`/api/comment/list/message/${id}`));
     const [comments] = await Promise.all(promiseList);
-    console.log('comments', comments);
 
     return {
       comments,

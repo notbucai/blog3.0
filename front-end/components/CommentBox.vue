@@ -10,12 +10,12 @@
       :source="source"
     />
     <!-- 评论列表 -->
-    <v-card tile :elevation="0" style="overflow: hidden">
-      <div>
+    <v-card :elevation="0" style="overflow: hidden">
+      <div class="pb-4 pt-2">
         <transition-group
           tag="div"
           appear
-          :duration="1000"
+          :duration="200"
           enter-active-class="animate__animated animate__bounceIn"
           leave-active-class="animate__animated animate__bounceOut"
         >
@@ -124,10 +124,24 @@ export default {
     handleDelete (comment) {
       const index = this.comments.findIndex(item => comment._id == item._id);
       this.comments.splice(index, 1);
+      if(this.reply && comment) {
+        if(this.reply._id === comment._id){
+          this.reply = null;
+        }
+      }
     }
   }
 };
 </script>
+<style lang="scss">
+.CommentBox {
+  .theme--dark{
+    &.v-card{
+      background-color: #000000;
+    }
+  }
+}
+</style>
 <style lang="scss" scoped>
 .CommentBox {
   padding: 30px 40px;

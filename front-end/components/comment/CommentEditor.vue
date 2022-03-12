@@ -42,20 +42,32 @@
             </div>
             <!-- 间隔 -->
             <div class="gap"></div>
-            <div class="edit-icon-item xxs-hide" @click="handleOperateClick('header3')">
+            <div
+              class="edit-icon-item xxs-hide"
+              @click="handleOperateClick('header3')"
+            >
               <i class="edit_icon icon-heading-h1"></i>
             </div>
-            <div class="edit-icon-item xs-hide xxs-hide" @click="handleOperateClick('header4')">
+            <div
+              class="edit-icon-item xs-hide xxs-hide"
+              @click="handleOperateClick('header4')"
+            >
               <i class="edit_icon icon-heading-h2"></i>
             </div>
-            <div class="edit-icon-item xs-hide xxs-hide" @click="handleOperateClick('header5')">
+            <div
+              class="edit-icon-item xs-hide xxs-hide"
+              @click="handleOperateClick('header5')"
+            >
               <i class="edit_icon icon-heading-h3"></i>
             </div>
             <div class="gap"></div>
             <div class="edit-icon-item" @click="handleOperateClick('code')">
               <i class="edit_icon icon-code-inline"></i>
             </div>
-            <div class="edit-icon-item xs-hide" @click="handleOperateClick('link')">
+            <div
+              class="edit-icon-item xs-hide"
+              @click="handleOperateClick('link')"
+            >
               <i class="edit_icon icon-link"></i>
             </div>
             <div
@@ -68,40 +80,58 @@
         </template>
         <template slot="right-toolbar-before">
           <div class="edit-icon-list">
-            <div class="edit-icon-item xs-hide" @click="handleOperateClick('help')">
+            <div
+              class="edit-icon-item xs-hide"
+              @click="handleOperateClick('help')"
+            >
               <i class="edit_icon icon-cat_help"></i>
             </div>
-            <div class="edit-icon-item" :class="{active: operate['preview']}" @click="handleOperateClick('preview')">
+            <div
+              class="edit-icon-item"
+              :class="{ active: operate['preview'] }"
+              @click="handleOperateClick('preview')"
+            >
               <i class="edit_icon icon-show"></i>
             </div>
-             <div class="edit-icon-item xxs-hide" @click="handleOperateClick('redo')">
+            <div
+              class="edit-icon-item xxs-hide"
+              @click="handleOperateClick('redo')"
+            >
               <i class="edit_icon icon-redo"></i>
             </div>
-            <div class="edit-icon-item xxs-hide" @click="handleOperateClick('undo')">
+            <div
+              class="edit-icon-item xxs-hide"
+              @click="handleOperateClick('undo')"
+            >
               <i class="edit_icon icon-undo"></i>
             </div>
           </div>
         </template>
       </mavon-editor>
     </client-only>
-    <div class="d-flex justify-end mt-2 align-center">
-      <v-btn
-        text
-        color="primary"
-        class="close-reply-btn"
-        @click.stop="handleUnReply"
-        v-if="this.reply"
-        small
-        >取消回复</v-btn
-      >
-      <v-btn
-        text
-        color="#fa1"
-        :disabled="!content"
-        @click="handleComment"
-        :loading="loading"
-        >{{ token ? '评论' : '请登录' }}</v-btn
-      >
+    <div class="d-flex justify-space-between mt-2 align-center">
+      <div class="d-flex align-center">
+        <p class="body-2 mb-0" v-if="$route.path === '/message'">欢迎留言，互换友链请移步 <nuxt-link to="/links">友邻</nuxt-link> 页面申请</p>
+      </div>
+      <div>
+        <v-btn
+          text
+          color="primary"
+          class="close-reply-btn"
+          @click.stop="handleUnReply"
+          v-if="this.reply"
+          small
+          >取消回复</v-btn
+        >
+        <v-btn
+          text
+          color="#fa1"
+          :disabled="!content"
+          @click="handleComment"
+          :loading="loading"
+          >{{ token ? '评论' : '请登录' }}</v-btn
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -115,7 +145,7 @@ export default {
   },
   props: {
     reply: Object,
-    loading: Boolean
+    loading: Boolean,
   },
   computed: {
     ...mapState(['token']),
@@ -269,12 +299,12 @@ export default {
         font-size: 20px;
       }
       @media (max-width: 750px) {
-        &.xs-hide{
+        &.xs-hide {
           display: none;
         }
       }
       @media (max-width: 480px) {
-        &.xxs-hide{
+        &.xxs-hide {
           display: none;
         }
       }

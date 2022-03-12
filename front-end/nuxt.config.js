@@ -15,6 +15,9 @@ module.exports = {
   */
   ssr: true,
   telemetry: false,
+  publicRuntimeConfig:{
+    WEBSITE_LOGO: process.env.WEBSITE_LOGO
+  },
   head: {
     // title: '不才的博客',
     titleTemplate: (title) => {

@@ -19,7 +19,7 @@
         </div>
         <div class="article-item-right">
           <div class="right-name">{{item.title}}</div>
-          <div class="right-user">{{item.summary}}</div>
+          <div class="right-user caption text--secondary">{{item.summary}}</div>
         </div>
       </nuxt-link>
     </v-card>

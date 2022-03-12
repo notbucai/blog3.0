@@ -57,6 +57,15 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.theme--dark {
+  .search-article-item {
+    mark {
+      color: yellow !important;
+    }
+  }
+}
+</style>
 <style lang="scss" scoped>
 .search-article-item {
   text-decoration: none;
@@ -87,6 +96,8 @@ export default {
     padding: 0 2px;
     font-weight: bold;
     border-radius: 1px;
+    color: rgb(0, 124, 240);
+    background-color: unset;
   }
   span,
   mark {

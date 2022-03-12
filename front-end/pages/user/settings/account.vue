@@ -1,19 +1,19 @@
 <!--
  * @Author: bucai
  * @Date: 2020-06-02 16:29:03
- * @LastEditors: bucai
- * @LastEditTime: 2021-04-09 20:32:00
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-03-12 21:07:18
  * @Description: 
 --> 
 <template>
-  <div>
+  <div class="mt-4">
     <v-card class="pl-10 pr-10">
       <v-card-title>账号关联</v-card-title>
       <div class="content body-2">
         <v-divider></v-divider>
         <template v-for="(item, index) in formShowJson">
           <v-divider :key="index"></v-divider>
-          <v-row align="center" class="pa-2" :key="item.key">
+          <v-row align="center" class="pa-4" :key="item.key">
             <v-col :cols="2">{{ item.label }}</v-col>
             <v-col>
               <input
@@ -24,7 +24,8 @@
               />
             </v-col>
             <v-col :cols="2">
-              <v-btn
+              <div class="text-right">
+                <v-btn
                 v-if="!user[item.key]"
                 color="primary"
                 x-small
@@ -40,6 +41,7 @@
                 @click="handleUnbind(item.type, item.state)"
                 >解除绑定</v-btn
               >
+              </div>
             </v-col>
           </v-row>
         </template>

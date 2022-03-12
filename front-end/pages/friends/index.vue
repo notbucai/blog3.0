@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-03-30 19:47:48
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-12 17:02:36
+ * @LastEditTime: 2022-03-12 20:03:01
  * @Description:
 -->
 <template>
@@ -15,7 +15,7 @@
           :key="item._id"
           :value="$isServer"
         >
-          <v-card class="rounded-lg" link :href="'/user/' + item._id" elevation="0">
+          <v-card class="rounded-lg" nuxt link :href="'/user/' + item._id" elevation="0">
             <div class="friend-item">
               <v-avatar color="primary" size="48">
                 <img :src="item.avatarURL | imageMogr2(60)" />

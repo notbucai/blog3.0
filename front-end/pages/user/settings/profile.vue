@@ -1,19 +1,19 @@
 <template>
-  <div class="profile">
+  <div class="profile mt-4">
     <v-card class="pl-10 pr-10 _profile-card">
       <v-card-title>个人资料</v-card-title>
       <div class="content body-2">
         <v-divider></v-divider>
-        <v-row align="center" class="pl-4">
+        <v-row align="center" class="pl-4 pt-2 pb-2">
           <v-col :cols="2">头像</v-col>
           <v-col>
-            <div class="d-flex align-center _profile_avatar">
-              <v-avatar :size="64">
+            <div class="d-flex align-center flex-grow-1 _profile_avatar">
+              <v-avatar :size="48" color="blue">
                 <img :src="user.avatarURL" alt="alt" />
               </v-avatar>
-              <div class="pl-3">
-                <p class="caption text--secondary">
-                  支持 jpg、png 格式大小 5M 以内的图片
+              <div class="d-flex justify-space-between flex-grow-1 align-center pl-4 pr-2">
+                <p class="caption text--secondary mb-0">
+                  支持 jpg、png、gif 格式大小 5M 以内的图片
                 </p>
                 <v-btn
                   color="primary"
@@ -28,7 +28,7 @@
         </v-row>
         <template v-for="(item, index) in formShowJson">
           <v-divider :key="index"></v-divider>
-          <v-row align="center" class="pa-2" :key="item.key">
+          <v-row align="center" class="pa-4" :key="item.key">
             <v-col :cols="2">{{ item.label }}</v-col>
             <v-col>
               <input
@@ -80,7 +80,7 @@
               class="d-flex align-center justify-space-between"
               style="width: 100%"
             >
-              <span>图片</span>
+              <span class="body-1">编辑图片</span>
               <v-icon @click="cropperDialog = false">{{$icons['mdi-close']}}</v-icon>
             </div>
           </v-card-title>
@@ -272,7 +272,6 @@ export default {
 </style>
 <style lang="scss" scoped>
 .profile {
-  padding: 10px 0;
   @media (max-width: 600px) {
     .content {
       .col {

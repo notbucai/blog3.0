@@ -1,44 +1,66 @@
 <template>
   <v-card class="notice-item">
-    <v-card-title>
-      <v-lazy min-height="32" min-width="32" :value="$isServer" v-if="notice.sender">
-        <v-avatar size="32">
-          <v-img :src="notice.sender.avatarURL | imageMogr2(56)"></v-img>
-        </v-avatar>
-      </v-lazy>
-      <v-btn
-        v-if="notice.sender"
-        nuxt
-        :to="'/user/' + notice.sender._id"
-        color="success"
-        plain
-        >{{ notice.sender.username }}</v-btn
-      >
-      <div>{{ template[notice.senderAction] }}</div>
-      <div
-        v-if="
-          notice.objectType === 'article' &&
-          objectType[notice.objectType] &&
-          notice.source
-        "
-      >
-        {{ objectType[notice.objectType] }}
+    <v-card-title class="pb-2">
+      <div class="d-flex align-center">
+        <v-lazy
+          min-height="42"
+          min-width="42"
+          :value="$isServer"
+          v-if="notice.sender"
+        >
+          <v-avatar size="42">
+            <v-img
+              :lazy-src="$config.WEBSITE_LOGO"
+              :src="notice.sender.avatarURL | imageMogr2(56)"
+            ></v-img>
+          </v-avatar>
+        </v-lazy>
+        <div class="d-flex flex-column">
+          <div class="d-flex align-center">
+            <v-btn
+              v-if="notice.sender"
+              nuxt
+              :to="'/user/' + notice.sender._id"
+              color="success"
+              plain
+              small
+              >{{ notice.sender.username }}</v-btn
+            >
+            <div class="body-2">{{ template[notice.senderAction] }}</div>
+            <div
+              v-if="
+                notice.objectType === 'article' &&
+                objectType[notice.objectType] &&
+                notice.source
+              "
+              class="body-2"
+            >
+              {{ objectType[notice.objectType] }}
+            </div>
+            <v-btn
+              v-if="notice.objectType"
+              nuxt
+              small
+              :to="url(notice.objectType, notice.objectID)"
+              color="success"
+              plain
+            >
+              {{
+                notice.objectType === 'article' && notice.source
+                  ? notice.source.title
+                  : objectType[notice.objectType]
+              }}
+            </v-btn>
+          </div>
+          <div class="pl-3 d-flex align-center">
+            <span class="caption text--secondary">{{
+              notice.createdAt | format
+            }}</span>
+          </div>
+        </div>
       </div>
-      <v-btn
-        v-if="notice.objectType"
-        nuxt
-        :to="url(notice.objectType, notice.objectID)"
-        color="success"
-        plain
-      >
-        {{
-          notice.objectType === 'article' && notice.source
-            ? notice.source.title
-            : objectType[notice.objectType]
-        }}
-      </v-btn>
     </v-card-title>
-    <div class="pa-4">
+    <div class="pb-4 pl-4 body-2">
       {{ notice.message }}
     </div>
   </v-card>
@@ -64,7 +86,6 @@ export default {
     };
   },
   created () {
-    
   },
   methods: {
     url (type, id) {

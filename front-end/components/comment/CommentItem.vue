@@ -5,7 +5,7 @@
         <div class="mr-2" v-if="comment.user.avatarURL">
           <v-avatar size="42">
             <v-img
-              lazy-src="https://image.notbucai.com/logo.png"
+              :lazy-src="$config.WEBSITE_LOGO"
               :src="comment.user.avatarURL | imageMogr2(100, 100)"
             ></v-img>
           </v-avatar>

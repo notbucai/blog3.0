@@ -1,8 +1,8 @@
 <!--
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
- * @LastEditors: bucai
- * @LastEditTime: 2021-04-01 22:26:36
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-03-12 20:31:14
  * @Description:
 -->
 <template>
@@ -157,7 +157,12 @@
             </svg>
           </v-btn>
 
-          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('notbucai')">
+          <v-btn
+            :elevation="0"
+            icon
+            x-large
+            @click="handleAuthLogin('notbucai')"
+          >
             <svg class="symbol-icon" aria-hidden="true">
               <use xlink:href="#iconxiaochengxu"></use>
             </svg>
@@ -280,7 +285,7 @@ export default {
       }, 100);
     },
     handleShowVCodeForGetCode () {
-      
+
       if (this.loadScriptIng) return;
       if (scriptError) {
         return this.$snackbar.error('加载资源失败，请刷新页面重试。');
@@ -295,7 +300,7 @@ export default {
       if (errlist.length) {
         return this.$snackbar.error('手机号不能为空');
       }
-      
+
       this.captcha.show();
     },
     async handleGetCode (captcha) {
@@ -371,7 +376,12 @@ export default {
       }
       .v-input__slot {
         input {
-          color: #333;
+          background-color: #272727;
+          color: #fff;
+          &:focus,
+          &:hover {
+            background-color: #121212;
+          }
         }
       }
     }

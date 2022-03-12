@@ -14,7 +14,7 @@
           <v-btn to="/timelines" elevation="0" tile text nuxt>归档</v-btn>
         </div>
         <div class="toolbar-action">
-          <v-btn elevation="0" nuxt to="/search/" text>
+          <v-btn elevation="0" small nuxt to="/search/" text>
             <v-icon>{{ $icons['mdi-magnify'] }}</v-icon>
           </v-btn>
           <v-btn elevation="0" @click="handleChangeTheme" text small>

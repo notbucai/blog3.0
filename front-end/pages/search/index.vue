@@ -281,9 +281,10 @@ export default {
     .search-input-box {
       background-color: #272727;
       .search-input-input {
+        color: #fff;
         &:focus,
         &:hover {
-          background-color: #000000;
+          background-color: #121212;
         }
       }
       .search-input-icon {

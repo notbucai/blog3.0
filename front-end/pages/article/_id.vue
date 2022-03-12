@@ -11,10 +11,18 @@
             ></v-img>
           </div>
           <div class="acticle_content">
-            <v-alert :icon="$icons['mdi-alert-circle-outline']" type="warning" dense v-if="data.status === 1"
+            <v-alert
+              :icon="$icons['mdi-alert-circle-outline']"
+              type="warning"
+              dense
+              v-if="data.status === 1"
               >审核中</v-alert
             >
-            <v-alert :icon="$icons['mdi-alert-circle-outline']" type="warning" dense v-if="data.status === 3"
+            <v-alert
+              :icon="$icons['mdi-alert-circle-outline']"
+              type="warning"
+              dense
+              v-if="data.status === 3"
               >审核未通过</v-alert
             >
 
@@ -33,9 +41,7 @@
                 >
                   <v-avatar size="48">
                     <v-img
-                      :src="
-                        data.user.avatarURL | imageMogr2(100,100)
-                      "
+                      :src="data.user.avatarURL | imageMogr2(100, 100)"
                     ></v-img>
                   </v-avatar>
                 </div>
@@ -89,7 +95,7 @@
               :key="item.name"
             >
               <v-chip class="ma-2" label>
-                <v-icon left small>{{$icons['mdi-'+item.iconURL]}}</v-icon>
+                <v-icon left small>{{ $icons['mdi-' + item.iconURL] }}</v-icon>
                 {{ item.name }}
               </v-chip>
             </nuxt-link>
@@ -336,17 +342,18 @@ export default {
     border: none;
     background-color: inherit;
     color: inherit;
-    ::v-deep{
-      .bug-text{
+    ::v-deep {
+      .bug-text {
         position: relative;
         cursor: pointer;
-        &:hover{
-          i{
+        &:hover {
+          i {
             display: block;
           }
         }
-        i{
+        i {
           position: absolute;
+          z-index: 5;
           bottom: -30px;
           left: 0;
           font-size: 12px;
@@ -355,7 +362,7 @@ export default {
           background-color: #fff;
           padding: 4px 8px;
           border-radius: 4px;
-          box-shadow: 0 0 4px rgba($color: #000000, $alpha: .2);
+          box-shadow: 0 0 4px rgba($color: #000000, $alpha: 0.2);
         }
       }
     }

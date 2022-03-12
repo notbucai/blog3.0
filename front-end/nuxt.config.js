@@ -9,10 +9,11 @@ const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
 const smp = new SpeedMeasurePlugin();
 
 module.exports = {
-  // mode: 'universal',
+  mode: 'universal',
   /*
   ** Headers of the page
   */
+  ssr: true,
   telemetry: false,
   head: {
     // title: '不才的博客',
@@ -200,11 +201,11 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    loaders: {
-      vue: {
-        // prettify: false
-      }
-    },
+    // loaders: {
+    //   vue: {
+    //     // prettify: false
+    //   }
+    // },
     // plugins: [],
     plugins: [
       // new VueLoaderPlugin(),

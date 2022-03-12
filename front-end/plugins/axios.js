@@ -2,22 +2,20 @@
  * @Author: bucai
  * @Date: 2020-04-19 14:39:55
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-11-28 15:32:36
+ * @LastEditTime: 2022-03-12 17:47:01
  * @Description: axios配置
  */
 import Snackbar from '../components/snackbar';
 
-export default function ({ $axios, app, redirect, error: _error }) {
+export default function ({ $axios, app, redirect, error: _error, ...other }) {
   // console.log(process.env.API_BASE_URL);
   // console.log('$cookies', app.$cookies);
-
   const errorHandle = (error) => {
     const message = error.message;
     console.log('errorHandle=> error', error.code);
     if ([403, 1001, 1002, 1003, 1004].includes(error.code)) {
       app.$cookies.remove('Authorization');
-      redirect('/');
-      return true;
+      redirect(other.route.path === '/auth' ? '/' : '/auth');
     }
     if (process.client) {
       Snackbar.error(message);
@@ -51,6 +49,10 @@ export default function ({ $axios, app, redirect, error: _error }) {
   // 处理服务器错误
   $axios.onError(error => {
     // console.log('HTTP_ERROR', error);
-    console.log('error.message', error,JSON.stringify(error.message));
+    try {
+      console.log('error.message', error, JSON.stringify(error.message));
+    } catch (error2) {
+      console.log('console log error', error, error2);
+    }
   })
 }

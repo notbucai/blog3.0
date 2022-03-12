@@ -16,7 +16,7 @@ RUN npm config set sharp_binary_host https://npm.taobao.org/mirrors/sharp
 
 RUN npm config set sharp_libvips_binary_host https://npm.taobao.org/mirrors/sharp-libvips
 
-RUN npm install --registry https://registry.npm.taobao.org
+RUN npm install --registry https://registry.npm.taobao.org --max-old-space-size=4096
 
 RUN npm run build
 

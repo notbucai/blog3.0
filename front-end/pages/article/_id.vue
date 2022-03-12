@@ -132,7 +132,7 @@
 <script>
 // import 'mavon-editor/dist/markdown/github-markdown.min.css';
 
-import CommentBox from '@/components/CommentBox';
+import CommentBox from '@/components/comment/CommentBox';
 import { mapState } from 'vuex';
 import mixin from '@/utils/mixin';
 

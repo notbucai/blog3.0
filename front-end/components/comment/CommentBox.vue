@@ -43,7 +43,7 @@ export default {
     CommentItem,
     CommentEditor: () => {
       return {
-        component: import('./CommentEditor.vue'),
+        component: import('../comment/CommentEditor.vue'),
         loading: ComponentLoading,
         delay: 100,
         timeout: 3000

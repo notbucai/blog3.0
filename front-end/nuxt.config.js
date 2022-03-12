@@ -262,11 +262,4 @@ module.exports = {
       return config;
     }
   },
-  hooks: {
-    'render': {
-      done(){
-        console.log(111);
-      }
-    }
-  },
 }

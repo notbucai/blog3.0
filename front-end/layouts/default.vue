@@ -122,7 +122,7 @@ export default {
   watch: {
     user () {
       // this.loadUserMessageCount();
-    }
+    },
   },
   mounted () {
     const h = new Date().getHours();

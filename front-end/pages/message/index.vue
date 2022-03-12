@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-import CommentBox from '@/components/CommentBox.vue';
+import CommentBox from '~/components/comment/CommentBox.vue';
 export default {
   scrollToTop: true,
   // head () {

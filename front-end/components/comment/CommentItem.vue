@@ -30,8 +30,8 @@
           </div>
         </div>
       </div>
-      <div class="comment-operate">
-        <v-menu offset-y :close-on-content-click="true" close-on-click>
+      <div class="comment-operate"  v-if="(user && comment.user && comment.user._id == user._id) || type !== 'user'">
+        <v-menu offset-y :close-on-content-click="true" close-on-click >
           <template v-slot:activator="{ on, attrs }">
             <v-icon
               x-small
@@ -44,6 +44,7 @@
           <div>
             <div>
               <v-btn
+                v-if="type !== 'user'"
                 color="primary"
                 :elevation="0"
                 x-small
@@ -60,7 +61,7 @@
                 text
                 @click="handleDelete(comment)"
                 :loading="deleteIng"
-                v-if="user && comment.user._id == user._id"
+                v-if="user && comment.user && comment.user._id == user._id"
                 >删除</v-btn
               >
             </div>

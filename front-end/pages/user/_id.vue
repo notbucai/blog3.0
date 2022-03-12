@@ -131,7 +131,7 @@
 </template>
 <script>
 import ArticleItem from '@/components/article/ArticleItem.vue';
-import CommentItem from '@/components/CommentItem.vue';
+import CommentItem from '@/components/comment/CommentItem.vue';
 import { mapState } from 'vuex';
 export default {
   head () {

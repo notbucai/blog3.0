@@ -63,7 +63,7 @@
       </v-container>
     </v-main>
 
-    <v-lazy transition="scale-transition" min-height="100px">
+    <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
       <v-footer app absolute>
         <v-container>
           <div class="footer">

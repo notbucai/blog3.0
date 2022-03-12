@@ -1,7 +1,7 @@
 <template>
   <v-card class="notice-item">
     <v-card-title>
-      <v-lazy min-height="32" min-width="32" v-if="notice.sender">
+      <v-lazy min-height="32" min-width="32" :value="$isServer" v-if="notice.sender">
         <v-avatar size="32">
           <v-img :src="notice.sender.avatarURL | imageMogr2(56)"></v-img>
         </v-avatar>

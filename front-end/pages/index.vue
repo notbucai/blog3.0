@@ -21,17 +21,29 @@
           <article-list :articleStore="articleStore" @loadData="loadData" />
         </v-col>
         <v-col :md="4" :sm="12" :cols="12">
-          <v-lazy transition="scale-transition" min-height="100px">
+          <v-lazy
+            :value="$isServer"
+            transition="scale-transition"
+            min-height="100px"
+          >
             <div>
               <tag-list :taglist="taglist" />
             </div>
           </v-lazy>
-          <v-lazy transition="scale-transition" min-height="100px">
+          <v-lazy
+            :value="$isServer"
+            transition="scale-transition"
+            min-height="100px"
+          >
             <div>
               <side-random-article :list="randomList" />
             </div>
           </v-lazy>
-          <v-lazy transition="scale-transition" min-height="100px">
+          <v-lazy
+            :value="$isServer"
+            transition="scale-transition"
+            min-height="100px"
+          >
             <div>
               <side-comment-list :list="commentlist" />
             </div>
@@ -47,7 +59,7 @@ import ArticleItem from '@/components/article/ArticleItem.vue';
 import Banner from '@/components/Banner.vue';
 import SideRandomArticle from '@/components/SideRandomArticle.vue';
 import SideCommentList from '@/components/SideCommentList.vue';
-import ArticleList from '@/components/ArticleList.vue';
+import ArticleList from '~/components/article/ArticleList.vue';
 import TagList from '@/components/TagList.vue';
 export default {
   head () {

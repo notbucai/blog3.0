@@ -133,12 +133,12 @@
       </v-col>
       <v-col :md="4" :sm="12" :cols="12">
         <!-- <tag-list :taglist="taglist" /> -->
-        <v-lazy transition="scale-transition" min-height="100px">
+        <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
           <div>
             <side-random-article :list="randomList" />
           </div>
         </v-lazy>
-        <v-lazy transition="scale-transition" min-height="100px">
+        <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
           <div>
             <side-comment-list :list="commentlist" />
           </div>
@@ -150,7 +150,7 @@
   </v-container>
 </template>
 <script>
-import ArticleList from '@/components/ArticleList.vue';
+import ArticleList from '~/components/article/ArticleList.vue';
 import ArticleItem from '@/components/search/ArticleItem.vue';
 import TagList from '@/components/TagList.vue';
 import SideRandomArticle from '@/components/SideRandomArticle.vue';

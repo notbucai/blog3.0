@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2021-03-30 19:47:48
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-12 14:18:11
+ * @LastEditTime: 2022-03-12 17:02:36
  * @Description:
 -->
 <template>
@@ -13,6 +13,7 @@
           transition="scale-transition"
           v-for="item in list"
           :key="item._id"
+          :value="$isServer"
         >
           <v-card class="rounded-lg" link :href="'/user/' + item._id" elevation="0">
             <div class="friend-item">

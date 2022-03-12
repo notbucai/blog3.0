@@ -1,8 +1,8 @@
 <!--
  * @Author: bucai
  * @Date: 2020-05-23 11:19:02
- * @LastEditors: bucai
- * @LastEditTime: 2020-07-02 20:03:52
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-03-12 16:52:01
  * @Description: 
 --> 
 
@@ -25,7 +25,7 @@
   </v-container>
 </template>
 <script>
-import ArticleList from '@/components/ArticleList.vue';
+import ArticleList from '~/components/article/ArticleList.vue';
 import TagList from '@/components/TagList.vue';
 
 export default {

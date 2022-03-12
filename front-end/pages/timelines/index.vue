@@ -29,6 +29,7 @@
           </v-timeline-item>
 
           <v-lazy
+            :value="$isServer"
             transition="scale-transition"
             min-height="120"
             v-for="(article, index) in timelines[item._id]"

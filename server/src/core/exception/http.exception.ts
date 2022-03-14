@@ -11,6 +11,7 @@ export class MyHttpException extends HttpException {
         if (typeof expData.code === 'undefined') {
             expData.code = ErrorCode.ParamsError.CODE;
         }
+        // this.getResponse()
         super(expData, HttpStatus.OK);
     }
 }

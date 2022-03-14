@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Render, Query, Request, Response, Body, Headers } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ErrorCode } from '../constants/error';
-import { MyHttpException } from '../core/exception/my-http.exception';
+import { MyHttpException } from '../core/exception/http.exception';
 
 import { AuthStatus, OpenapiService } from './openapi.service';
 import { WechatService } from '../common/wechat/wechat.service';

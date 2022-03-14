@@ -6,7 +6,7 @@ import { User, UserStatus, UserSex } from '../../models/user.entity';
 import { SignUpDto } from './dto/signup.dto';
 import { ConfigService } from '../../config/config.service';
 import { UpdateUserInfoDto } from './dto/update-userinfo.dto';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 // import { InjectModel } from 'nestjs-typegoose';
 // import { returnmodeltype } from '@typegoose/typegoose';

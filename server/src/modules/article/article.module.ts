@@ -9,10 +9,12 @@ import { ArticleComment } from '../../models/comment.entity';
 import { KeywordsModule } from '../keywords/keywords.module';
 import { ReadService } from './read.service';
 import { ArticleRead } from '../../models/article.read.entity';
+import { NotifyModule } from '../notify/notify.module';
 
 @Module({
   imports: [
     CommonModule,
+    NotifyModule,
     TypegooseModule.forFeature([Article, Tag, ArticleComment, ArticleRead]),
     forwardRef(() => KeywordsModule)
   ],

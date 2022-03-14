@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Notify, NotifyActionType, NotifyObjectType, NotifyStatus } from '../../models/notify.entiy';
@@ -6,9 +6,10 @@ import { ObjectID } from 'mongodb';
 import { Article } from '../../models/article.entity';
 import { MessageComment, ArticleComment } from '../../models/comment.entity';
 import { User } from '../../models/user.entity';
-import { LoggerService } from '../logger.service';
+import { LoggerService } from '../../common/logger.service';
 import { publish } from './notify.template';
 import { format } from 'util';
+import { NoticeGateway } from '../gateway/notice.gateway';
 
 @Injectable()
 export class NotifyService {
@@ -19,8 +20,9 @@ export class NotifyService {
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
     @InjectModel(ArticleComment) public readonly articleCommentSchema: ReturnModelType<typeof ArticleComment>,
     @InjectModel(User) public readonly userSchema: ReturnModelType<typeof User>,
+    @Inject(forwardRef(() => NoticeGateway))
+    private readonly noticeGateway: NoticeGateway,
     private readonly logger: LoggerService,
-
   ) { }
 
   private async getObject (type: NotifyObjectType, objectID: ObjectID) {
@@ -98,7 +100,11 @@ export class NotifyService {
     notify.object = title;
     notify.message = objectMessage;
 
-    return await this.notifySchema.create(notify);
+    const createRow = await this.notifySchema.create(notify);
+    
+    this.noticeGateway.noticeNoReadCount(((recipientID as any)?._id || recipientID).toString());
+
+    return createRow;
   }
 
   /**
@@ -158,7 +164,7 @@ export class NotifyService {
       .exec();
 
     const jsonArray = list.map(item => item.toJSON());
-    const resList = jsonArray.map(async item => {
+    const resList = jsonArray.map(async (item: any) => {
       const { objectType, objectID } = item;
       const $source_temp = await this.getNotifySourceIdByType(objectType, objectID);
       item.source = $source_temp;

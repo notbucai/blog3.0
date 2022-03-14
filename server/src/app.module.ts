@@ -1,5 +1,7 @@
 import { Module, MiddlewareConsumer, NestModule, RequestMethod, OnApplicationBootstrap } from '@nestjs/common';
 
+// import { ConfigModule as NestConfigModule } from '@nestjs/config';
+
 import { ConfigModule } from './config/config.module';
 import { RedisModule } from './redis/redis.module';
 
@@ -11,11 +13,8 @@ import { OauthModule } from './oauth/oauth.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { CommonModule } from './common/common.module';
-import { ArticleController } from './modules/article/article.controller';
-import { ArticleService } from './modules/article/article.service';
 import { ArticleModule } from './modules/article/article.module';
 import { TagModule } from './modules/tag/tag.module';
-import { RoleService } from './modules/role/role.service';
 import { RoleModule } from './modules/role/role.module';
 import { LinksModule } from './modules/links/links.module';
 import { OpenapiModule } from './openapi/openapi.module';
@@ -23,9 +22,15 @@ import { KeywordsModule } from './modules/keywords/keywords.module';
 import { KeywordsService } from './modules/keywords/keywords.service';
 import { TasksModule } from './common/tasks/tasks.module';
 import { DataModule } from './modules/data/data.module';
+import { NotifyModule } from './modules/notify/notify.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { GatewayModule } from './modules/gateway/gateway.module';
 
 @Module({
   imports: [
+    // NestConfigModule.forRoot({
+    //   envFilePath: process.env.NODE_ENV === 'development' ? '.env' : '.env.prod'
+    // }),
     ConfigModule,
     TypegooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
@@ -58,7 +63,10 @@ import { DataModule } from './modules/data/data.module';
     OpenapiModule,
     TasksModule,
     KeywordsModule,
-    DataModule
+    DataModule,
+    NotifyModule,
+    AuthModule,
+    GatewayModule,
   ],
   controllers: [],
   providers: [],

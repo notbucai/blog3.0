@@ -10,15 +10,15 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Article } from '../../models/article.entity';
 import { User } from '../../models/user.entity';
 import { AllListDto } from './dto/allList.dto';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
-import { NotifyService } from '../../common/notify/notify.service';
+import { NotifyService } from '../notify/notify.service';
 import { ArticleService } from '../article/article.service';
 import MarkDownUtils from '../../utils/markdown'
 import { DateType } from '../../constants/constants';
 import moment = require('moment');
-import { CensorService } from 'src/common/censor.service';
+import { CensorService } from '../../common/censor.service';
 
 @Injectable()
 export class CommentService {

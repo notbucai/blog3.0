@@ -8,6 +8,7 @@ export class ErrorCode {
     static readonly SUCCESS: CodeAndMsg = { CODE: 0, MESSAGE: 'success' };
     static readonly ERROR: CodeAndMsg = { CODE: 1, MESSAGE: 'fail' };
     static readonly ParamsError: CodeAndMsg = { CODE: 2, MESSAGE: '参数错误' };
+    static readonly BugFix: CodeAndMsg = { CODE: 3, MESSAGE: '这可能是个bug' };
 
     static readonly Forbidden: CodeAndMsg = { CODE: 403, MESSAGE: '没有权限执行此操作' };
     static readonly NotFound: CodeAndMsg = { CODE: 404, MESSAGE: '找不到请求的资源' };

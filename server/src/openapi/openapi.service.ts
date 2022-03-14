@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 import { WechatService } from '../common/wechat/wechat.service';
-import { MyHttpException } from '../core/exception/my-http.exception';
+import { MyHttpException } from '../core/exception/http.exception';
 import { ErrorCode } from '../constants/error';
 import { OpenMpUser } from '../models/open_mp_user';
 import { InjectModel } from 'nestjs-typegoose';

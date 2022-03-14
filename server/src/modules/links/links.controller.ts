@@ -6,7 +6,7 @@ import { Roles } from '../../core/decorators/roles.decorator';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { ObjectID } from 'mongodb';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 
 @Controller('links')

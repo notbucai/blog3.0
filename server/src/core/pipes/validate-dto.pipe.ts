@@ -9,7 +9,7 @@ import { plainToClass } from 'class-transformer';
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
 
-import { MyHttpException } from '../exception/my-http.exception';
+import { MyHttpException } from '../exception/http.exception';
 
 @Injectable()
 export class ValidateDtoPipe implements PipeTransform<any> {

@@ -4,7 +4,7 @@ import Email from '../utils/email';
 import * as _ from 'lodash';
 import * as util from 'util';
 import { EmailCode } from '../constants/temp';
-import { MyHttpException } from '../core/exception/my-http.exception';
+import { MyHttpException } from '../core/exception/http.exception';
 import { ErrorCode } from '../constants/error';
 
 @Injectable()

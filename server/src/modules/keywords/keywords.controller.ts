@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ErrorCode } from '../../constants/error';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { KeywordsStatus } from '../../models/keywords.entity';
 import { ObjectID } from 'mongodb';
 import { Roles } from '../../core/decorators/roles.decorator';

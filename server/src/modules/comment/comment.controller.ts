@@ -2,7 +2,7 @@ import { Controller, Post, Body, Param, UseGuards, Query, Get, Delete, Put } fro
 import { CreateCommentDto } from './dto/create.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CommentConstants } from '../../constants/comment';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import { CommentService } from './comment.service';
 import { CurUser } from '../../core/decorators/user.decorator';

@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as ejs from 'ejs';
 import { ConfigService } from './config/config.service';
 import { TransformResInterceptor } from './core/interceptors/transform-res.interceptor';
-import { GlobalExceptionFilter } from './core/filters/global-exceptoin.filter';
+import { GlobalExceptionFilter } from './core/filters/globalHttpExceptoin.filter';
 import { ValidateDtoPipe } from './core/pipes/validate-dto.pipe';
 import { LoggerService } from './common/logger.service';
 import { INestApplication } from '@nestjs/common';
@@ -11,6 +11,7 @@ import * as cookieParser from 'cookie-parser'
 
 // api文档插件
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { WsAdapter } from './core/adapter/ws.adapter';
 
 function initSwagger(app, swaggerPrefix) {
     // DocumentBuilder是一个辅助类，有助于结构的基本文件SwaggerModule。它包含几种方法，可用于设置诸如标题，描述，版本等属性。
@@ -30,7 +31,6 @@ function initSwagger(app, swaggerPrefix) {
 
 
 function initView(app) {
-    const configService: ConfigService = app.get(ConfigService);
     const viewPath = path.join(__dirname, '../views');
 
     app.setBaseViewsDir(viewPath) // 放视图的文件
@@ -46,14 +46,21 @@ export default async function bootstrap(app: INestApplication, listening: boolea
         message: 'Starting Nest application...',
         data: {
             NODE_ENV: process.env.NODE_ENV,
-            port: configService.server.port,
+            website: {
+                port: configService.server.port,
+            },
+            sockets: {
+                port: process.env.DEFAULT_WEBSOCKET_PORT,
+            }
         },
     });
     app.use(requestIp.mw());
+    app.useWebSocketAdapter(new WsAdapter(app));
     app.use(cookieParser());
     app.useGlobalPipes(new ValidateDtoPipe(configService));
     app.useGlobalInterceptors(new TransformResInterceptor(configService, myLoggerService));
     app.useGlobalFilters(new GlobalExceptionFilter(configService, myLoggerService));
+    // app.useGlobalFilters
     initView(app);
     initSwagger(app, configService.server.swaggerPrefix);
 

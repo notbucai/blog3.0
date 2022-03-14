@@ -4,7 +4,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import * as util from 'util';
 
 import { ImgUploadDto, FileDto } from './dto/imgUpload.dto';
-import { MyHttpException } from '../core/exception/my-http.exception';
+import { MyHttpException } from '../core/exception/http.exception';
 import { ErrorCode } from '../constants/error';
 import { CosService } from './cos.service';
 import { SMSService } from './sms.service';

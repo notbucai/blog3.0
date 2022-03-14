@@ -2,9 +2,13 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-12-08 18:07:45
+ * @LastEditTime: 2022-03-14 19:47:13
  * @Description: 
  */
+import io from 'socket.io-client';
+import { EMIT_EXCEPTION, EMIT_NOTIFY_COUNT, ON_INIT_COUNT } from '~/constant/wsEvents';
+
+let notify;
 
 export const state = () => ({
   LoginOrRegisterDialog: false,
@@ -50,7 +54,7 @@ export const actions = {
     if (token) {
       // 获取用户信息更新
       // commit用以提交需要更新的数据，并指定更新的方法
-      const userinfo = await $axios.get('api/users/info');
+      const userinfo = await $axios.get('/api/users/info');
       // userinfo
       commit('SET_TOKEN', token);
       commit('SET_USER', userinfo);
@@ -61,9 +65,37 @@ export const actions = {
     user[key] = value;
     commit('SET_USER', user);
   },
-  async loadNoticeStatus ({ commit, state }) {
+  async emitNoticeCount () {
+    console.log('notify', notify);
+    notify?.emit(ON_INIT_COUNT);
+  },
+  async loadNoticeStatus ({ commit, state, dispatch }) {
     if (!state.user) return;
-    const resData = await this.$axios.get('/api/users/notify/count');
-    commit('SET_NOTICE_STATUS', resData);
+    if (!state.token) return;
+    // const resData = await this.$axios.get('/api/users/notify/count');
+    // start socket on
+    // commit('SET_NOTICE_STATUS', resData);
+    notify = io('/notice', {
+      path: '/socket-gateway',
+      extraHeaders: {
+        Authorization: state.token,
+      }
+    });
+
+    notify.on(EMIT_NOTIFY_COUNT, (v) => {
+      commit('SET_NOTICE_STATUS', {
+        unread: v || 0
+      })
+    });
+    notify.on(EMIT_EXCEPTION, (v) => {
+      console.error(v);
+    });
+
+    notify.on('disconnect', (e) => {
+      console.log('disconnect', e);
+    })
+    notify.on('connect', () => {
+      dispatch('emitNoticeCount');
+    });
   }
 }

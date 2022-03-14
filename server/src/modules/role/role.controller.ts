@@ -5,7 +5,7 @@ import { AclService } from './acl.service';
 import { CreateAclDto } from './dto/acl.dto';
 import { RoleListDto } from './dto/list.dto';
 import { ObjectID } from 'mongodb';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import { CreateRoleDto } from './dto/role.dto';
 import { BindAclDto } from './dto/bind.dto';

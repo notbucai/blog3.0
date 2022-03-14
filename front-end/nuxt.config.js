@@ -15,7 +15,7 @@ module.exports = {
   */
   ssr: true,
   telemetry: false,
-  publicRuntimeConfig:{
+  publicRuntimeConfig: {
     WEBSITE_LOGO: process.env.WEBSITE_LOGO
   },
   head: {
@@ -190,7 +190,12 @@ module.exports = {
 
   },
   proxy: {
-    '/api/': { target: process.env.NODE_ENV === 'development' ? 'http://localhost:9905/' : 'http://bucai-blog-server:9905/', pathRewrite: { '^/api/': '' } }
+    '/api/': { target: process.env.NODE_ENV === 'development' ? 'http://localhost:9905/' : 'http://bucai-blog-server:9905/', pathRewrite: { '^/api/': '' } },
+    '/socket-gateway': {
+      target: process.env.NODE_ENV === 'development' ? 'http://localhost:9905' : 'http://bucai-blog-server:9905',
+      ws: true,
+      changeOrigin: true,
+    }
   },
 
 

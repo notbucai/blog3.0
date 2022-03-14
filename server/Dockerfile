@@ -18,4 +18,4 @@ RUN npm run build
 
 EXPOSE 9905
 
-CMD  nohup sh -c 'npm run start:prod'
+CMD  nohup sh -c 'npm run start:pm2'

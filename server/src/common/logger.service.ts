@@ -2,7 +2,8 @@ import * as pino from 'pino';
 import * as moment from 'moment';
 
 const logger = pino({
-    prettyPrint: true
+    prettyPrint: true,
+    level: 'trace'
 });
 
 class LogData {

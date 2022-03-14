@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { User } from '../../models/user.entity';
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
-import { MyHttpException } from '../exception/my-http.exception';
+import { MyHttpException } from '../exception/http.exception';
 import { Role } from '../../models/role.entity';
 import { Acl } from '../../models/acl.entity';
 import { LoggerService } from '../../common/logger.service';

@@ -58,9 +58,8 @@ export default {
       ]
     };
   },
-
   mounted () {
-    this.$store.dispatch('loadNoticeStatus');
+    this.$store.dispatch('emitNoticeCount');
   },
   methods: {
     getPath ({ type, source }) {

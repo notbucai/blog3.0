@@ -154,10 +154,6 @@ export default {
     },
     async handleLoadNoticeStatus () {
       await this.$store.dispatch('loadNoticeStatus');
-
-      setTimeout(() => {
-        this.handleLoadNoticeStatus();
-      }, 3000);
     }
   }
 };

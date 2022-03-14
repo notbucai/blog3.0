@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Delete, Post, Body, Put, Query, UseGuards } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { ObjectID } from 'mongodb';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import { CreateDto } from './dto/create.dto';
 import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger';

@@ -2,7 +2,7 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2021-12-07 10:38:56
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-12-07 12:07:13
+ * @LastEditTime: 2022-03-13 15:34:32
  * @Description: 
  */
 const schedule = require('node-schedule');
@@ -14,8 +14,11 @@ const cachePool = {
 
 const refresh = async (url) => {
   const res = await http.get(url)
-  cachePool[url] = res.data ? res.data.data : null
-  return cachePool[url];
+  if(res.status === 200 && res.data && res.data.code === 0) {
+    cachePool[url] = res.data.data;
+    return cachePool[url];
+  }
+  return null;
 }
 
 module.exports.initTask = (urls) => {

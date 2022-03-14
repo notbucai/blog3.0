@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Delete, Put, Get, Param, UseGuards, Query, forwardRef, Inject } from '@nestjs/common';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
 import { ObjectID } from 'mongodb';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import { Roles } from '../../core/decorators/roles.decorator';
 import { ActiveGuard } from '../../core/guards/active.guard';
@@ -14,7 +14,7 @@ import { CurUser } from '../../core/decorators/user.decorator';
 import { ArticleListDto } from './dto/list.dto';
 import { ChangeArticleStatus } from './dto/status.dto';
 import { ArticleStatus } from '../../models/article.entity';
-import { NotifyService } from '../../common/notify/notify.service';
+import { NotifyService } from '../notify/notify.service';
 import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
 import { ChangeArticleUpStatus } from './dto/upStatus.dto';
 import { KeywordsService } from '../keywords/keywords.service';

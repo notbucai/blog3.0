@@ -1,10 +1,10 @@
-import { NotifyActionType } from "src/models/notify.entiy";
+import { NotifyActionType } from "../../models/notify.entiy";
 
 /*
  * @Author: bucai
  * @Date: 2021-06-12 16:08:44
- * @LastEditors: bucai
- * @LastEditTime: 2021-06-12 17:15:27
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-03-13 16:43:56
  * @Description: 
  * XXX 关注了你  - 「这则属于资源发布提醒」   
  * XXX 喜欢了你的文章 《消息通知系统模型设计》  - 「这则属于资源发布提醒」    

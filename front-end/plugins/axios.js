@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-04-19 14:39:55
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-12 17:47:01
+ * @LastEditTime: 2022-03-13 16:27:53
  * @Description: axios配置
  */
 import Snackbar from '../components/snackbar';
@@ -33,6 +33,7 @@ export default function ({ $axios, app, redirect, error: _error, ...other }) {
   $axios.onResponse(res => {
     // console.log('$axios', res.data);
     const resData = res.data;
+
     if (typeof resData === 'object') {
       if (resData.code === 0) {
         return resData.data;
@@ -42,6 +43,7 @@ export default function ({ $axios, app, redirect, error: _error, ...other }) {
         throw resData;
       }
     }
+
     return res;
   });
 

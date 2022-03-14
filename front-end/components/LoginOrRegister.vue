@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-12 20:31:14
+ * @LastEditTime: 2022-03-14 18:06:34
  * @Description:
 -->
 <template>
@@ -355,9 +355,10 @@ export default {
         this.$store.commit('SET_TOKEN', resData);
         this.$store.commit('SET_LOGIN_OR_REGISTER_DIALOG');
 
-        const userinfo = await this.$axios.get('api/users/info');
+        const userinfo = await this.$axios.get('/api/users/info');
         console.log('userinfo', userinfo);
         this.$store.commit('SET_USER', userinfo);
+        this.$store.dispatch('loadNoticeStatus');
       } catch (error) {
         console.log(error);
       }

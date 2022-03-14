@@ -8,6 +8,7 @@ import {
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
 import { LoggerService } from '../../common/logger.service';
+import { MyHttpException } from '../exception/http.exception';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -17,11 +18,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     ) { }
 
     catch (exception: any, host: ArgumentsHost) {
+        console.log('------------------');
+        
         const ctx = host.switchToHttp();
-        // const request = ctx.getRequest();
         const response = ctx.getResponse();
-        const nestjsMessage = exception.message;
-        let message;
+        
+        let message: string;
         let code: number;
 
         if (exception.code === 'EBADCSRFTOKEN') {
@@ -30,11 +32,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
                 message: 'invalid csrf token',
             });
             return;
-        } else if (exception.getStatus) { // http exception
-            const httpException: HttpException = exception as HttpException;
-            if (httpException.message && typeof httpException.message.code !== 'undefined') {
-                code = httpException.message.code;
-                message = httpException.message.message || ErrorCode.CodeToMessage(code);
+        } else if (exception instanceof HttpException) { // http exception
+            const httpException: HttpException = exception;
+            const exceptionMessage = httpException.getResponse() as { code?: number; message?: string; };
+
+            if (exceptionMessage && typeof exceptionMessage.code !== 'undefined') {
+                code = exceptionMessage.code;
+                message = exceptionMessage.message || ErrorCode.CodeToMessage(code);
             } else {
                 const statusCode = httpException.getStatus();
                 if (ErrorCode.HasCode(statusCode)) {
@@ -65,11 +69,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         //     response.redirect(url);
         //     return;
         // }
+        this.logger.error({
+            message: message,
+            data: exception
+        });
         response.status(HttpStatus.OK).json({
             code,
             message,
             data: this.configService.env === this.configService.DEVELOPMENT ? {
-                nestjs: nestjsMessage,
+                nestjs: exception,
             } : null,
         });
     }

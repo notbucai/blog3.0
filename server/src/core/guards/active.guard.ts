@@ -1,38 +1,44 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus, ContextType } from '@nestjs/common';
 import { User, UserStatus } from '../../models/user.entity';
 import { ConfigService } from '../../config/config.service';
 import { ErrorCode } from '../../constants/error';
-import { MyHttpException } from '../exception/my-http.exception';
+import { MyHttpException } from '../exception/http.exception';
 import { LoggerService } from '../../common/logger.service';
+import { CustomException } from '../exception/custom.exception';
+import { Server, Socket } from 'socket.io';
 
 @Injectable()
 export class ActiveGuard implements CanActivate {
     constructor(
-        private readonly configService: ConfigService,
-        private readonly logger: LoggerService
+        private readonly logger: LoggerService,
     ) { }
 
-    canActivate(context: ExecutionContext): boolean {
-        const request = context.switchToHttp().getRequest();
+    canActivate (context: ExecutionContext): boolean {
+        // type 
+        const type = context.getType();
+        const handle = type === 'http' ? context.switchToHttp().getRequest() : type === 'ws' ? context.switchToWs().getClient() : context.switchToRpc().getContext();
+        const Exception = type === 'http' ? MyHttpException : CustomException;
         this.logger.info({
             data: {
                 codeline: 'active.guard canActivate',
-                ip: request.clientIp,
+                ip: handle.clientIp,
                 timeLabel: new Date().toLocaleDateString(),
             }
         });
+        let user = handle.user as User;
+        if( type === 'ws'){
+            user = handle.data?.user;
+        }
 
-        const user = request.user as User;
-        
         if (!user) {
-            throw new MyHttpException({
+            throw new Exception({
                 code: ErrorCode.LoginTimeout.CODE,
             });
         }
         if (user.status === UserStatus.Actived) {
             return true;
         }
-        throw new MyHttpException({
+        throw new Exception({
             code: ErrorCode.Frozen.CODE,
         });
     }

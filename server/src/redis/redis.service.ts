@@ -11,6 +11,7 @@ class CacheKeys {
     readonly validationCode: string = 'validationcode:%s';
     readonly validationCodeTime: string = 'validationcodetime:%s';
     readonly userToken: string = 'usertoken:%s';
+    readonly wsUserIdMap: string = 'WS_USER_MAP:%s';
     readonly publishArticle: string = 'publisharticle:%d';
     readonly categories: string = 'categories';
 }
@@ -19,7 +20,6 @@ class CacheKeys {
 export class RedisService {
     readonly client: Redis.Redis;
     readonly cacheKeys: CacheKeys;
-
     constructor(private readonly configService: ConfigService) {
         this.client = new Redis(this.configService.redis);
         this.cacheKeys = new CacheKeys();
@@ -119,4 +119,5 @@ export class RedisService {
     async delCache (key: string) {
         return await this.client.del(key);
     }
+
 }

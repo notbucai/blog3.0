@@ -9,12 +9,12 @@ import { ArticleListDto } from './dto/list.dto';
 import { ArticleListByTagDto } from './dto/listByTag.dto';
 
 import { ArticleComment, CommentStatus } from '../../models/comment.entity';
-import { MyHttpException } from '../../core/exception/my-http.exception';
+import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import MarkdownUtils from '../../utils/markdown';
 import { CensorService } from '../../common/censor.service';
 import * as htmlEntities from 'html-entities';
-import { LoggerService } from 'src/common/logger.service';
+import { LoggerService } from '../../common/logger.service';
 
 @Injectable()
 export class ArticleService {
@@ -199,7 +199,7 @@ export class ArticleService {
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }]);
     const list_p = a_list.map(async item => {
-      item = item.toJSON();
+      item = item.toJSON() as any;
       item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
       return item;
     });
@@ -241,7 +241,7 @@ export class ArticleService {
       .exec();
 
     const list_p = a_list.map(async item => {
-      item = item.toJSON();
+      item = item.toJSON() as any;
       item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id, status: CommentStatus.VerifySuccess });
       return item;
     });
@@ -298,7 +298,7 @@ export class ArticleService {
       .exec();
 
     const list_p = a_list.map(async item => {
-      item = item.toJSON();
+      item = item.toJSON() as any;
       item.commentCount = await this.commentSchema.countDocuments({ article: item._id });
       return item;
     });
@@ -375,7 +375,7 @@ export class ArticleService {
       .exec();
 
     const list_p = a_list.map(async item => {
-      item = item.toJSON();
+      item = item.toJSON() as any;
       item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
       return item;
     });

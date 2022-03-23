@@ -2,7 +2,7 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2022-03-13 17:37:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-14 18:55:05
+ * @LastEditTime: 2022-03-15 09:44:57
  * @Description: 
  */
 import { IoAdapter } from '@nestjs/platform-socket.io';
@@ -107,9 +107,16 @@ export class WsAdapter extends IoAdapter {
 
   createIOServer (port: number, options?: ServerOptions): any {
     const server = new Server(this.app.getHttpServer(), {
-      path: '/socket-gateway'
+      maxHttpBufferSize: 10e7,
+      pingTimeout: 60 * 1000,
+      path: '/socket-gateway',
+      cors: {
+        origin: ["https://www.notbucai.com", "https://notbucai.com"],
+        allowedHeaders: ["authorization", "Authorization"],
+        credentials: true
+      }
     });
-    server.adapter(this.adapterConstructor);
+    // server.adapter(this.adapterConstructor);
     this.logger.info({
       message: "create socket.io server...",
       data: {
@@ -165,7 +172,7 @@ export class WsAdapter extends IoAdapter {
 
   bindClientDisconnect (client: Socket, callback: Function): void {
     super.bindClientDisconnect(client, callback);
-    client.on('disconnect', async () => {
+    client.on('disconnect', async (e) => {
       // 移除
       try {
         const { id: userId } = await this.getClientUserId(client);
@@ -177,6 +184,7 @@ export class WsAdapter extends IoAdapter {
           message: format('disconnect ws remove userId(%s) client(%s)', userId, client.id),
           data: {
             userId,
+            reason: e,
             connected: client.connected
           }
         });

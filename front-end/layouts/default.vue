@@ -71,12 +71,35 @@
               &copy; 2021
               <a href="/">不才</a> All Rights Reserved.
             </p>
-            <a
-              href="http://beian.miit.gov.cn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              >赣ICP备15001741号-3</a
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 14px;
+              "
             >
+              <a
+                href="http://beian.miit.gov.cn/"
+                target="_blank"
+                style="font-size: 12px; color: #888;"
+                rel="noopener noreferrer"
+                >赣ICP备15001741号</a
+              >
+              <a
+                href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44030602006687"
+                target="_blank"
+                style="font-size: 12px; color: #888;"
+                rel="noopener noreferrer"
+              >
+                <img
+                  src="https://image.notbucai.com/static/ghs.png"
+                  loading="lazy"
+                  width="12px"
+                />
+                粤公网安备 44030602006687号</a
+              >
+            </div>
           </div>
         </v-container>
       </v-footer>

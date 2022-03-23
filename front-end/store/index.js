@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-14 19:47:13
+ * @LastEditTime: 2022-03-15 10:00:47
  * @Description: 
  */
 import io from 'socket.io-client';
@@ -77,9 +77,16 @@ export const actions = {
     // commit('SET_NOTICE_STATUS', resData);
     notify = io('/notice', {
       path: '/socket-gateway',
+      ithCredentials: true,
+      timeout: 60 * 1000,
       extraHeaders: {
         Authorization: state.token,
       }
+    });
+
+    socket.on("connect_error", (error) => {
+      // ...
+      console.log('connect_error', error);
     });
 
     notify.on(EMIT_NOTIFY_COUNT, (v) => {

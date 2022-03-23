@@ -16,7 +16,7 @@
     "analyze": "cross-env ENV_ANALYZE=analyze nuxt build",
     "generate": "nuxt generate",
     "help": "nuxt",
-    "pm2": "cross-env NODE_ENV=production pm2-runtime  start server/index.js -i 0 --name blog-front --max-memory-restart 4096M"
+    "pm2": "cross-env NODE_ENV=production pm2-runtime start server/index.js -i 0 --name blog-front --max-memory-restart 4096M"
   },
   "config": {
     "nuxt": {

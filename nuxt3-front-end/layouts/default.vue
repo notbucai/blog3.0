@@ -71,7 +71,7 @@
               href="http://beian.miit.gov.cn/"
               target="_blank"
               rel="noopener noreferrer"
-              >赣ICP备15001741号-3</a
+              >赣ICP备15001741号</a
             >
           </div>
         </v-container>

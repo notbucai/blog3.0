@@ -20,6 +20,8 @@ RUN npm install --registry https://registry.npm.taobao.org --max-old-space-size=
 
 RUN npm run build
 
+ENV NODE_ENV production
+
 EXPOSE 9907
 
 CMD  nohup sh -c 'npm run pm2'

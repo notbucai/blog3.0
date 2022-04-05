@@ -12,16 +12,18 @@
         :key="index"
         @click.prevent="$router.push('/article/' + item.sourceID + '#comment')"
       >
-        <nuxt-link
-          class="article-item-left rounded-sm"
-          :to="item.user ? '/user/' + item.user._id : ''"
-          @click.native.stop
-        >
-          <div class="left-month">User</div>
-          <div class="left-day">
-            {{ item.user ? item.user.username : '匿名' }}
-          </div>
-        </nuxt-link>
+        <user-card :userId="item.user._id">
+          <nuxt-link
+            class="article-item-left rounded-sm"
+            :to="item.user ? '/user/' + item.user._id : ''"
+            @click.native.stop
+          >
+            <div class="left-month">User</div>
+            <div class="left-day">
+              {{ item.user ? item.user.username : '匿名' }}
+            </div>
+          </nuxt-link>
+        </user-card>
         <nuxt-link
           :to="'/article/' + item.sourceID + '#comment'"
           v-ripple
@@ -36,8 +38,12 @@
   </div>
 </template>
 <script>
-export default {
+import UserCard from '@/components/user/UserCard.vue';
 
+export default {
+  components: {
+    UserCard
+  },
   computed: {
     cList () {
       return this.list.slice(0, 5);

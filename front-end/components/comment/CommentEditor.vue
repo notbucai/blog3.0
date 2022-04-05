@@ -1,117 +1,122 @@
 <template>
   <div class="comment_edit mb-5">
-    <client-only>
-      <!-- 这里计算一下 高度 -->
-      <mavon-editor
-        v-if="showEdit"
-        v-model="content"
-        :boxShadow="false"
-        :subfield="false"
-        editorBackground="inherit"
-        toolbarsBackground="inherit"
-        previewBackground="inherit"
-        :tabSize="2"
-        fontSize="16px"
-        :ishljs="false"
-        :toolbars="markdownOption"
-        :placeholder="editPlaceholder"
-        ref="mdeditor"
-        @imgAdd="handleEditAddImg"
-        :autofocus="false"
-        :codeStyle="$vuetify.theme.dark ? 'atom-one-light' : 'atom-one-light'"
-      >
-        <template slot="left-toolbar-before">
-          <div class="edit-icon-list">
-            <div class="edit-icon-item" @click="handleOperateClick('bold')">
-              <i class="edit_icon icon-bold"></i>
+    <div class="comment_edit-editor">
+      <client-only>
+        <!-- 这里计算一下 高度 -->
+        <mavon-editor
+          v-if="showEdit"
+          v-model="content"
+          :boxShadow="false"
+          :subfield="false"
+          editorBackground="inherit"
+          toolbarsBackground="inherit"
+          previewBackground="inherit"
+          :tabSize="2"
+          fontSize="16px"
+          :ishljs="false"
+          :toolbars="markdownOption"
+          :placeholder="editPlaceholder"
+          ref="mdeditor"
+          @imgAdd="handleEditAddImg"
+          :autofocus="false"
+          :codeStyle="$vuetify.theme.dark ? 'atom-one-light' : 'atom-one-light'"
+        >
+          <template slot="left-toolbar-before">
+            <div class="edit-icon-list">
+              <div class="edit-icon-item" @click="handleOperateClick('bold')">
+                <i class="edit_icon icon-bold"></i>
+              </div>
+              <div class="edit-icon-item" @click="handleOperateClick('italic')">
+                <i class="edit_icon icon-italic"></i>
+              </div>
+              <div
+                class="edit-icon-item"
+                @click="handleOperateClick('underline')"
+              >
+                <i class="edit_icon icon-underline"></i>
+              </div>
+              <div
+                class="edit-icon-item"
+                @click="handleOperateClick('strikethrough')"
+              >
+                <i class="edit_icon icon-strikethrough"></i>
+              </div>
+              <!-- 间隔 -->
+              <div class="gap"></div>
+              <div
+                class="edit-icon-item xxs-hide"
+                @click="handleOperateClick('header3')"
+              >
+                <i class="edit_icon icon-heading-h1"></i>
+              </div>
+              <div
+                class="edit-icon-item xs-hide xxs-hide"
+                @click="handleOperateClick('header4')"
+              >
+                <i class="edit_icon icon-heading-h2"></i>
+              </div>
+              <div
+                class="edit-icon-item xs-hide xxs-hide"
+                @click="handleOperateClick('header5')"
+              >
+                <i class="edit_icon icon-heading-h3"></i>
+              </div>
+              <div class="gap"></div>
+              <div class="edit-icon-item" @click="handleOperateClick('code')">
+                <i class="edit_icon icon-code-inline"></i>
+              </div>
+              <div
+                class="edit-icon-item xs-hide"
+                @click="handleOperateClick('link')"
+              >
+                <i class="edit_icon icon-link"></i>
+              </div>
+              <div
+                class="edit-icon-item xs-hide"
+                @click="handleOperateClick('imagelink')"
+              >
+                <i class="edit_icon icon-image"></i>
+              </div>
             </div>
-            <div class="edit-icon-item" @click="handleOperateClick('italic')">
-              <i class="edit_icon icon-italic"></i>
+          </template>
+          <template slot="right-toolbar-before">
+            <div class="edit-icon-list">
+              <div
+                class="edit-icon-item xs-hide"
+                @click="handleOperateClick('help')"
+              >
+                <i class="edit_icon icon-cat_help"></i>
+              </div>
+              <div
+                class="edit-icon-item"
+                :class="{ active: operate['preview'] }"
+                @click="handleOperateClick('preview')"
+              >
+                <i class="edit_icon icon-show"></i>
+              </div>
+              <div
+                class="edit-icon-item xxs-hide"
+                @click="handleOperateClick('redo')"
+              >
+                <i class="edit_icon icon-redo"></i>
+              </div>
+              <div
+                class="edit-icon-item xxs-hide"
+                @click="handleOperateClick('undo')"
+              >
+                <i class="edit_icon icon-undo"></i>
+              </div>
             </div>
-            <div
-              class="edit-icon-item"
-              @click="handleOperateClick('underline')"
-            >
-              <i class="edit_icon icon-underline"></i>
-            </div>
-            <div
-              class="edit-icon-item"
-              @click="handleOperateClick('strikethrough')"
-            >
-              <i class="edit_icon icon-strikethrough"></i>
-            </div>
-            <!-- 间隔 -->
-            <div class="gap"></div>
-            <div
-              class="edit-icon-item xxs-hide"
-              @click="handleOperateClick('header3')"
-            >
-              <i class="edit_icon icon-heading-h1"></i>
-            </div>
-            <div
-              class="edit-icon-item xs-hide xxs-hide"
-              @click="handleOperateClick('header4')"
-            >
-              <i class="edit_icon icon-heading-h2"></i>
-            </div>
-            <div
-              class="edit-icon-item xs-hide xxs-hide"
-              @click="handleOperateClick('header5')"
-            >
-              <i class="edit_icon icon-heading-h3"></i>
-            </div>
-            <div class="gap"></div>
-            <div class="edit-icon-item" @click="handleOperateClick('code')">
-              <i class="edit_icon icon-code-inline"></i>
-            </div>
-            <div
-              class="edit-icon-item xs-hide"
-              @click="handleOperateClick('link')"
-            >
-              <i class="edit_icon icon-link"></i>
-            </div>
-            <div
-              class="edit-icon-item xs-hide"
-              @click="handleOperateClick('imagelink')"
-            >
-              <i class="edit_icon icon-image"></i>
-            </div>
-          </div>
-        </template>
-        <template slot="right-toolbar-before">
-          <div class="edit-icon-list">
-            <div
-              class="edit-icon-item xs-hide"
-              @click="handleOperateClick('help')"
-            >
-              <i class="edit_icon icon-cat_help"></i>
-            </div>
-            <div
-              class="edit-icon-item"
-              :class="{ active: operate['preview'] }"
-              @click="handleOperateClick('preview')"
-            >
-              <i class="edit_icon icon-show"></i>
-            </div>
-            <div
-              class="edit-icon-item xxs-hide"
-              @click="handleOperateClick('redo')"
-            >
-              <i class="edit_icon icon-redo"></i>
-            </div>
-            <div
-              class="edit-icon-item xxs-hide"
-              @click="handleOperateClick('undo')"
-            >
-              <i class="edit_icon icon-undo"></i>
-            </div>
-          </div>
-        </template>
-      </mavon-editor>
-    </client-only>
+          </template>
+        </mavon-editor>
+      </client-only>
+    </div>
     <div class="d-flex justify-space-between mt-2 align-center">
       <div class="d-flex align-center">
-        <p class="body-2 mb-0" v-if="$route.path === '/message'">欢迎留言，互换友链请移步 <nuxt-link to="/links">友邻</nuxt-link> 页面申请</p>
+        <p class="body-2 mb-0" v-if="$route.path === '/message'">
+          欢迎留言，互换友链请移步
+          <nuxt-link to="/links">友邻</nuxt-link> 页面申请
+        </p>
       </div>
       <div>
         <v-btn
@@ -262,6 +267,26 @@ export default {
 @import url(//at.alicdn.com/t/font_3238881_rw3b9pyc28o.css);
 
 .comment_edit {
+  .comment_edit-editor{
+    min-height: 200px;
+    position: relative;
+    &::after{
+      content: '组件加载中...';
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      background-color: rgba($color: #888888, $alpha: .1);
+    }
+  }
   .v-note-wrapper.markdown-body {
     width: 100%;
     min-height: 200px;

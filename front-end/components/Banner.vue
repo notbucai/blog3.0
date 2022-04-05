@@ -15,7 +15,7 @@
       <v-img
         class="align-end carousel-image"
         :src="item.coverURL | imageMogr2(600)"
-        :lazy-src="item.coverURL | imageMogr2(100)"
+        :lazy-src="item.coverURL | imageMogr2(68)"
         height="100%"
       >
         <v-container fluid>

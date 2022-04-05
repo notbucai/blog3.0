@@ -10,6 +10,17 @@ const app = new Koa()
 const router = new KoaRouter({
   prefix: '/cache'
 });
+const bffRouter = new KoaRouter({
+  prefix: '/bff'
+});
+bffRouter.get('/user/:id/card', async (ctx) => {
+  const data = await bff.userCard(ctx.params.id);
+  ctx.body = {
+    code: 0,
+    data
+  };
+});
+
 
 router.get('/data/home', async (ctx) => {
   const httpUrls = [
@@ -40,6 +51,7 @@ router.get('/data/home', async (ctx) => {
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
+const bff = require('./bff')
 config.dev = app.env !== 'production'
 
 async function start () {
@@ -66,6 +78,7 @@ async function start () {
 
   app
     .use(router.routes())
+    .use(bffRouter.routes());
 
   app.use((ctx) => {
     ctx.status = 200

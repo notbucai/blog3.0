@@ -102,7 +102,7 @@
                 <v-list-item-avatar>
                   <v-icon small>{{$icons['mdi-cards-heart']}}</v-icon>
                 </v-list-item-avatar>
-                <v-list-item-content>获得点赞 {{achievement.likeConunt||0}}</v-list-item-content>
+                <v-list-item-content>获得点赞 {{achievement.likeCount||0}}</v-list-item-content>
               </v-list-item>
               <v-list-item dense>
                 <v-list-item-avatar>

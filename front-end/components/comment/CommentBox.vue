@@ -1,14 +1,16 @@
 <template>
   <div class="CommentBox">
     <!-- 评论框 -->
-    <CommentEditor
-      ref="CommentEditor"
-      :reply="reply"
-      :loading="submitIng"
-      @comment="handleComment"
-      @unReply="handleReply(null)"
-      :source="source"
-    />
+    <div class="CommentEditor-container">
+      <CommentEditor
+        ref="CommentEditor"
+        :reply="reply"
+        :loading="submitIng"
+        @comment="handleComment"
+        @unReply="handleReply(null)"
+        :source="source"
+      />
+    </div>
     <!-- 评论列表 -->
     <v-card :elevation="0" style="overflow: hidden">
       <div class="pb-4 pt-2">
@@ -46,7 +48,7 @@ export default {
         component: import('../comment/CommentEditor.vue'),
         loading: ComponentLoading,
         delay: 100,
-        timeout: 3000
+        timeout: 3000,
       }
     }
   },
@@ -124,8 +126,8 @@ export default {
     handleDelete (comment) {
       const index = this.comments.findIndex(item => comment._id == item._id);
       this.comments.splice(index, 1);
-      if(this.reply && comment) {
-        if(this.reply._id === comment._id){
+      if (this.reply && comment) {
+        if (this.reply._id === comment._id) {
           this.reply = null;
         }
       }
@@ -135,8 +137,8 @@ export default {
 </script>
 <style lang="scss">
 .CommentBox {
-  .theme--dark{
-    &.v-card{
+  .theme--dark {
+    &.v-card {
       background-color: #000000;
     }
   }
@@ -147,6 +149,9 @@ export default {
   padding: 30px 40px;
   @media (max-width: 600px) {
     padding: 0;
+  }
+  .CommentEditor-container {
+    min-height: 200px;
   }
 }
 </style>

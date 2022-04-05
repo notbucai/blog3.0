@@ -13,7 +13,7 @@
                 elevation="0"
                 text
                 @click="handleClear"
-                v-if="this.keywords"
+                v-if="this.keywords || (searchArticleData.list && typeof searchArticleData.list.length) || searchArticleDataEmpty"
               >
                 <v-icon>{{ $icons['mdi-arrow-left'] }}</v-icon>
               </v-btn>

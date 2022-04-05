@@ -15,7 +15,7 @@
       v-if="article.coverURL"
       class="article-pic"
       :src="article.coverURL | imageMogr2(800)"
-      :lazy-src="article.coverURL | imageMogr2(100)"
+      :lazy-src="article.coverURL | imageMogr2(68)"
     />
 
     <v-card-title>
@@ -37,11 +37,15 @@
         >开始阅读</v-btn
       >
       <div>
-        <v-btn text>
+        <v-btn text nuxt :to="`/article/${article._id}`">
           <v-icon left>{{ $icons['mdi-eye'] }}</v-icon>
           {{ article.browseCount }}
         </v-btn>
-        <v-btn text :color="hasLike(article.likes) ? 'error' : ''">
+        <v-btn
+          text
+          :color="hasLike(article.likes) ? 'error' : ''"
+          @click="handleLike(article)"
+        >
           <v-icon
             left
             class="heart-icon"
@@ -50,7 +54,7 @@
           >
           {{ article.likes ? article.likes.length : 0 }}
         </v-btn>
-        <v-btn text>
+        <v-btn text nuxt :to="`/article/${article._id}#comment`">
           <v-icon left>{{ $icons['mdi-message'] }}</v-icon>
           {{ article.commentCount }}
         </v-btn>
@@ -91,6 +95,16 @@ export default {
     onIntersect (entries, observer) {
       if (entries[0].intersectionRatio >= 0.5) {
         this.istransition = true;
+      }
+    },
+    async handleLike (article) {
+      const aid = article._id;
+      try {
+        const likes = this.changeLike(article.likes);
+        await this.$axios.put('/api/article/' + aid + '/like');
+        this.$set(article, 'likes', likes);
+      } catch (error) {
+        console.log('error', error);
       }
     }
   }

@@ -16,6 +16,10 @@ body {
 }
 
 #__nuxt {
+  .v-menu__content {
+    box-shadow: 0 0px 10px 0px rgba(0, 0, 0, 0.1)!important;
+  }
+
   .markdown-body {
     color: #4c4e4d;
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;

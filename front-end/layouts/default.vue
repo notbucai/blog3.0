@@ -147,7 +147,10 @@ export default {
       // this.loadUserMessageCount();
     },
   },
-  mounted () {
+  // created() {
+
+  // },
+  created () {
     const h = new Date().getHours();
     const theme = this.$cookies.get('theme');
     let isDark = (h >= 19 && h <= 24) || (h >= 0 && h <= 7);

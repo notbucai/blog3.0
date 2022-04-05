@@ -1,37 +1,48 @@
 <template>
   <div class="comment-item pa-6 pb-2 pt-4">
     <div class="comment-user d-flex align-center justify-space-between">
-      <div class="d-flex align-start">
-        <div class="mr-2" v-if="comment.user.avatarURL">
-          <v-avatar size="42">
-            <v-img
-              :lazy-src="$config.WEBSITE_LOGO"
-              :src="comment.user.avatarURL | imageMogr2(100, 100)"
-            ></v-img>
-          </v-avatar>
-        </div>
-        <div>
-          <div class="body-2 d-flex align-center">
-            <v-chip
-              v-if="
-                source === 'article' &&
-                sourceData &&
-                sourceData.user._id === comment.user._id
-              "
-              outlined
-              x-small
-              color="green"
-              label
-              class="mr-2"
-            >
-              作者
-            </v-chip>
-            <span class="text--secondary">{{ comment.user.username }}</span>
+      <user-card :userId="comment.user._id">
+        <nuxt-link
+          :to="`/user/${comment.user._id}`"
+          class="d-flex align-start text-decoration-none"
+        >
+          <div class="mr-2" v-if="comment.user.avatarURL">
+            <v-avatar size="42">
+              <v-img
+                :lazy-src="$config.WEBSITE_LOGO"
+                :src="comment.user.avatarURL | imageMogr2(68)"
+              ></v-img>
+            </v-avatar>
           </div>
-        </div>
-      </div>
-      <div class="comment-operate"  v-if="(user && comment.user && comment.user._id == user._id) || type !== 'user'">
-        <v-menu offset-y :close-on-content-click="true" close-on-click >
+          <div>
+            <div class="body-2 d-flex align-center">
+              <v-chip
+                v-if="
+                  source === 'article' &&
+                  sourceData &&
+                  sourceData.user._id === comment.user._id
+                "
+                outlined
+                x-small
+                color="green"
+                label
+                class="mr-2"
+              >
+                作者
+              </v-chip>
+              <span class="text--secondary">{{ comment.user.username }}</span>
+            </div>
+          </div>
+        </nuxt-link>
+      </user-card>
+      <div
+        class="comment-operate"
+        v-if="
+          (user && comment.user && comment.user._id == user._id) ||
+          type !== 'user'
+        "
+      >
+        <v-menu offset-y :close-on-content-click="true" close-on-click>
           <template v-slot:activator="{ on, attrs }">
             <v-icon
               x-small
@@ -121,13 +132,14 @@
 </template>
 <script>
 import CommentItem from './CommentItem';
+import UserCard from '@/components/user/UserCard.vue';
 import { mapState } from 'vuex';
 import mixin from '@/utils/mixin';
 
 export default {
   mixins: [mixin],
   name: 'CommentItem',
-  components: { CommentItem },
+  components: { CommentItem, UserCard },
   props: {
     type: {
       type: String,
@@ -249,23 +261,23 @@ export default {
       display: none;
     }
   }
-  &:hover{
+  &:hover {
     .comment-like .comment-like-icon {
-        @keyframes heartbeat {
-          0% {
-            transform: scale(1, 1);
-            opacity: 1;
-          }
-          25% {
-            transform: scale(1.3, 1.3);
-            opacity: 0.8;
-          }
-          100% {
-            transform: scale(1, 1);
-            opacity: 1;
-          }
+      @keyframes heartbeat {
+        0% {
+          transform: scale(1, 1);
+          opacity: 1;
         }
-        animation: heartbeat 1s infinite;
+        25% {
+          transform: scale(1.3, 1.3);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(1, 1);
+          opacity: 1;
+        }
+      }
+      animation: heartbeat 1s infinite;
     }
   }
   .comment-like {

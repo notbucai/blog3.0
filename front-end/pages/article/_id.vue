@@ -7,7 +7,7 @@
             <v-img
               :aspect-ratio="16 / 9"
               :src="data.coverURL | imageMogr2(800)"
-              :lazy-src="data.coverURL | imageMogr2(100)"
+              :lazy-src="data.coverURL | imageMogr2(10)"
             ></v-img>
           </div>
           <div class="acticle_content">
@@ -28,41 +28,44 @@
 
             <h1 class="acticle_title display-1">{{ data.title }}</h1>
             <div class="acticle_user d-flex justify-space-between align-center">
-              <nuxt-link
-                v-ripple
-                tag="div"
-                :to="`/user/${data.user._id}`"
-                class="acticle_user-left d-flex align-center"
-                v-if="data.user"
-              >
-                <div
-                  class="acticle_user-avatar mr-2"
-                  v-if="data.user.avatarURL"
+              <!-- user info -->
+              <user-card :userId="data.user._id">
+                <nuxt-link
+                  v-ripple
+                  tag="div"
+                  :to="`/user/${data.user._id}`"
+                  class="acticle_user-left d-flex align-center"
+                  v-if="data.user"
                 >
-                  <v-avatar size="48">
-                    <v-img
-                      :src="data.user.avatarURL | imageMogr2(100, 100)"
-                    ></v-img>
-                  </v-avatar>
-                </div>
-                <div class="acticle_info">
-                  <div class="acticle_info-username">
-                    {{ data.user.username }}
+                  <div
+                    class="acticle_user-avatar mr-3"
+                    v-if="data.user.avatarURL"
+                  >
+                    <v-avatar size="42">
+                      <v-img
+                        :src="data.user.avatarURL | imageMogr2(68, 68)"
+                      ></v-img>
+                    </v-avatar>
                   </div>
-                  <div class="acticle_info-date">
-                    <span>{{ data.createdAt | format }}</span>
-                    <v-btn
-                      text
-                      color="primary"
-                      x-small
-                      class="overline"
-                      v-if="user && user._id == data.user._id"
-                      @click.stop="handleEditArticle"
-                      >编辑</v-btn
-                    >
+                  <div class="acticle_info">
+                    <div class="acticle_info-username">
+                      {{ data.user.username }}
+                    </div>
+                    <div class="acticle_info-date">
+                      <span>{{ data.createdAt | format }}</span>
+                      <v-btn
+                        text
+                        color="primary"
+                        x-small
+                        class="overline"
+                        v-if="user && user._id == data.user._id"
+                        @click.stop="handleEditArticle"
+                        >编辑</v-btn
+                      >
+                    </div>
                   </div>
-                </div>
-              </nuxt-link>
+                </nuxt-link>
+              </user-card>
               <div class="acticle_user-right">
                 <v-btn text>
                   <v-icon left>{{ $icons['mdi-eye'] }}</v-icon>
@@ -136,14 +139,11 @@
   </v-container>
 </template>
 <script>
-// import 'mavon-editor/dist/markdown/github-markdown.min.css';
-
 import CommentBox from '@/components/comment/CommentBox';
+import UserCard from '@/components/user/UserCard.vue';
 import { mapState } from 'vuex';
 import mixin from '@/utils/mixin';
 
-// import 'mavon-editor/dist/highlightjs'
-// import highlightjs from 'mavon-editor/dist/highlightjs/highlight.min.js';
 export default {
   head () {
     const { title, summary } = this.data;
@@ -170,7 +170,10 @@ export default {
     };
   },
   mixins: [mixin],
-  components: { CommentBox },
+  components: { 
+    CommentBox,
+    UserCard
+  },
   props: {},
   computed: {
     ...mapState(['user']),
@@ -332,9 +335,13 @@ export default {
     }
   }
   .acticle_info {
+    &-username{
+    }
     &-date {
       font-size: 12px;
       color: #666;
+      display: flex;
+      align-items: center;
     }
   }
   .acticle_htmlContent {

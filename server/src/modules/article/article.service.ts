@@ -396,9 +396,11 @@ export class ArticleService {
           as: 'comments'
         },
       },
-      { $project: { _id: 1, user: 1, wordCount: 1, commentCount: { $size: '$comments' }, browseCount: '$browseCount' } },
-      { $group: { _id: '$user', wordCount: { $sum: '$wordCount' }, browseCount: { $sum: '$browseCount' }, commentCount: { $sum: '$commentCount' }, } },
+      { $project: { _id: 1, user: 1, wordCount: 1, likes: 1, commentCount: { $size: '$comments' }, likeCount: { "$size": { '$ifNull': ['$likes', []] } }, browseCount: '$browseCount' } },
+      { $group: { _id: '$user', likeCount: { $sum: '$likeCount' }, wordCount: { $sum: '$wordCount' }, browseCount: { $sum: '$browseCount' }, commentCount: { $sum: '$commentCount' }, } },
     ]).exec();
+    // likeCount: { $size: '$links' },
+    // likeConunt
     return data[0] || { _id: id, wordCount: 0, browseCount: 0, commentCount: 0 };
   }
 

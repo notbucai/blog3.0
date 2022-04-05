@@ -2,10 +2,9 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2022-03-09 09:50:47
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-09 10:16:27
+ * @LastEditTime: 2022-04-05 21:15:13
  * @Description: 
  */
-import ComponentLoading from '@/components/common/Loading.vue';
 export const asyncLoad = {
   async mavonEditorComponent () {
     const id = 'mavon-editor-script';

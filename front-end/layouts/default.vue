@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app dense flat :height="56" tile>
+    <v-app-bar app dense flat :height="56" tile hide-on-scroll :scroll-threshold="56">
       <!-- -->
       <div class="toolbar-content container">
         <div class="toolbar-title">
@@ -205,7 +205,7 @@ export default {
   align-items: center;
   justify-content: space-between;
 
-  @media (max-width: 600px) {
+  @media (max-width: 824px) {
     .toolbar-action,
     .toolbar-nav {
       display: none !important;

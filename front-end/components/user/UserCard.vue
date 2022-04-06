@@ -40,7 +40,7 @@
               }}</v-list-item-title>
               <v-list-item-subtitle
                 >{{ data ? data.job || '' : '' }}
-                {{ data ? '@' + data.company || '' : '' }}</v-list-item-subtitle
+                {{ data && data.company ? '@' + data.company || '' : '' }}</v-list-item-subtitle
               >
             </v-list-item-content>
           </v-list-item>

@@ -170,7 +170,7 @@ export default {
     };
   },
   mixins: [mixin],
-  components: { 
+  components: {
     CommentBox,
     UserCard
   },
@@ -294,6 +294,13 @@ export default {
     }
   }
 }
+#comment {
+  @media (max-width: 1260px) {
+    .xs-hide {
+      display: none !important;
+    }
+  }
+}
 </style>
 <style lang="scss" scoped>
 .theme--dark {
@@ -332,10 +339,16 @@ export default {
       cursor: pointer;
       border-radius: 4px;
       padding: 4px;
+      min-width: 200px;
+    }
+    &-right {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
   }
   .acticle_info {
-    &-username{
+    &-username {
     }
     &-date {
       font-size: 12px;

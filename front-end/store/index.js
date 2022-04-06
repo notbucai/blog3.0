@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-15 10:00:47
+ * @LastEditTime: 2022-04-06 20:45:47
  * @Description: 
  */
 import io from 'socket.io-client';
@@ -84,7 +84,7 @@ export const actions = {
       }
     });
 
-    socket.on("connect_error", (error) => {
+    notify.on("connect_error", (error) => {
       // ...
       console.log('connect_error', error);
     });

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:01:07
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-14 18:06:34
+ * @LastEditTime: 2022-04-08 21:49:30
  * @Description:
 -->
 <template>
@@ -175,7 +175,6 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex';
-let scriptError = false, scriptSuccesful = false;
 export default {
   data () {
     return {
@@ -232,49 +231,10 @@ export default {
     },
     setType (type) {
       this.type = type;
-      // 注册
-      this.handleLoadVImageCode();
-    },
-    handleLoadVImageCode () {
-      if (!this.isType(2)) return;
-      if (this.loadScriptIng) return;
-      if (scriptSuccesful) return;
-      if (scriptError) return;
-      this.loadScriptIng = true;
-
-      const scriptEl = document.createElement('script');
-      scriptEl.src = "https://ssl.captcha.qq.com/TCaptcha.js";
-      scriptEl.onload = () => {
-        this.loadScriptIng = false;
-        scriptSuccesful = true;
-        // 执行逻辑
-        this.captcha = new window.TencentCaptcha("2035186935", (res) => {
-          if (res.ret === 0) {
-            this.captchaSuccesful(res);
-          } else {
-            console.log(res);
-            // this.$snackbar.error('');
-          }
-        }, {});
-      }
-      scriptEl.onerror = () => {
-        this.loadScriptIng = false;
-        scriptError = true;
-        // 错误提示
-        this.$snackbar.error('加载资源失败，请刷新页面重试。');
-      }
-      document.querySelector('body').appendChild(scriptEl);
-    },
-    captchaSuccesful (data) {
-      console.log('data', data);
-      // 调用接口验证数据
-      // 调用发送验证码
-      this.handleGetCode(data);
     },
     handleAuthLogin (type) {
       console.log('type', type);
       const url = this.$constant.STATE_LIST['login_' + type];
-      console.log('url', url);
 
       const sonWin = window.open(url, '绑定');
       const loop = setInterval(function () {
@@ -285,14 +245,7 @@ export default {
       }, 100);
     },
     handleShowVCodeForGetCode () {
-
       if (this.loadScriptIng) return;
-      if (scriptError) {
-        return this.$snackbar.error('加载资源失败，请刷新页面重试。');
-      }
-      if (!this.captcha) {
-        return this.$snackbar.error('无验证码实例！！！');
-      }
       const phone = this.registerForm.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -300,10 +253,9 @@ export default {
       if (errlist.length) {
         return this.$snackbar.error('手机号不能为空');
       }
-
-      this.captcha.show();
+      this.handleGetCode();
     },
-    async handleGetCode (captcha) {
+    async handleGetCode () {
       const phone = this.registerForm.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -319,7 +271,6 @@ export default {
         // 发送ajax
         await this.$axios.post('api/common/sendPhoneCode', {
           phone,
-          captcha
         });
         codeTmp.loading = false; // 发送完毕
         // 开始倒计时

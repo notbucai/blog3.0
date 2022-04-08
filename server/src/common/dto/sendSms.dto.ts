@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2021-04-02 00:04:51
- * @LastEditors: bucai
- * @LastEditTime: 2021-04-03 20:27:28
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-04-08 21:49:47
  * @Description:
  */
 import {
@@ -28,13 +28,13 @@ export class SendSmsDto {
   })
   readonly phone: string;
 
-  @ApiProperty({ description: '验证码数据', required: true })
-  @IsObject({
-    message: ErrorCode.ParamsError.MESSAGE,
-    context: {
-      errorCode: ErrorCode.ParamsError.CODE,
-    },
-  })
-  captcha: CaptchaType;
+  // @ApiProperty({ description: '验证码数据', required: true })
+  // @IsObject({
+  //   message: ErrorCode.ParamsError.MESSAGE,
+  //   context: {
+  //     errorCode: ErrorCode.ParamsError.CODE,
+  //   },
+  // })
+  // captcha: CaptchaType;
 
 }

@@ -56,15 +56,13 @@ export class CommonController {
   @ApiOperation({ summary: "发送手机验证码" })
   @ApiQuery({ name: 'phone', example: "13767284559" })
   public async sendPhoneCode (@Body() reqData: SendSmsDto, @IpAddress() ipAddress: string) {
-    const { phone, captcha } = reqData
+    const { phone } = reqData
     const reg = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/;
     if (!reg.test(phone)) {
       throw new MyHttpException({ code: ErrorCode.InvalidPhone.CODE });
     }
     console.log('ipAddress', ipAddress);
-
     // 验证验证码
-    await this.tencentCloudService.DescribeCaptchaResult(captcha.ticket, captcha.randstr, ipAddress);
 
     const expire = 10; // 10分钟
     const reExpireSecond = CodeConstants.CODE_REREPEAT; // 重复请求 间隔 60 second

@@ -35,7 +35,7 @@
     "@typegoose/typegoose": "^6.4.0",
     "@types/dotenv": "^8.2.0",
     "@types/mongoose": "^5.7.27",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "baidu-aip-sdk": "github:Baidu-AIP/nodejs-sdk",
     "cheerio": "^1.0.0-rc.10",
     "class-transformer": "^0.2.3",

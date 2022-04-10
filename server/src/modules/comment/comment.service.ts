@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, LessThan, In } from 'typeorm';
 import { ObjectID } from 'mongodb';
-import { MessageComment, ArticleComment, Comment, CommentStatus } from '../../models/comment.entity';
+import { MessageComment, ArticleComment, Comment } from '../../models/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommentConstants } from '../../constants/comment';
 import { CreateCommentDto } from './dto/create.dto';
@@ -16,7 +16,7 @@ import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
 import { NotifyService } from '../notify/notify.service';
 import { ArticleService } from '../article/article.service';
 import MarkDownUtils from '../../utils/markdown'
-import { DateType } from '../../constants/constants';
+import { ContentStatus, ContentStatusLabelMap, DateType, systemObjectId } from '../../constants/constants';
 import moment = require('moment');
 import { CensorService } from '../../common/censor.service';
 
@@ -53,11 +53,11 @@ export class CommentService {
 
     const data = await this.censorService.applyBasic(content)
     if (data.status) {
-      return this.changeStatus(source, id, CommentStatus.VerifySuccess)
+      return this.changeStatus(source, id, ContentStatus.VerifySuccess)
     }
 
     if (data.type === 2) {
-      return this.changeStatus(source, id, CommentStatus.VerifyFail)
+      return this.changeStatus(source, id, ContentStatus.VerifyFail)
     }
   }
   /**
@@ -84,7 +84,7 @@ export class CommentService {
 
     const htmlContent = MarkDownUtils.markdown(createCommentDto.content);
 
-    comment.status = CommentStatus.VerifySuccess;
+    comment.status = ContentStatus.VerifySuccess;
     comment.user = userID;
     comment.content = createCommentDto.content;
     comment.htmlContent = htmlContent;
@@ -141,13 +141,15 @@ export class CommentService {
     }
 
     if (receive && NType) {
-      await this.notifyService.publish(NType, NotifyActionType.comment, sourceId, userID, receive, createCommentDto.content);
+      await this.notifyService.publish(NType, NotifyActionType.comment, sourceId, userID, ((receive as unknown as User)?._id) || receive, createCommentDto.content);
     }
   }
 
-  async changeStatus (source: string, id: string, status: CommentStatus = 1) {
+  async changeStatus (source: string, id: string, status: ContentStatus = 1) {
     const commentRepository = this.getCommentSchema(source);
-    return commentRepository.findByIdAndUpdate(id, { $set: { status } });
+    const res = await commentRepository.findByIdAndUpdate(id, { $set: { status } });
+    this.notifyService.publish(NotifyObjectType.article, NotifyActionType.audit, res._id, systemObjectId, ((res.user as unknown as User)?._id) || res.user as ObjectID, ContentStatusLabelMap[status])
+    return res;
   }
 
   async getListByUserId (source: string, id: ObjectID | string) {
@@ -267,7 +269,7 @@ export class CommentService {
   async getChildCommentList (source: string, rootID: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository
-      .find({ rootID, status: CommentStatus.VerifySuccess }, '-sourceID -__v -rootID')
+      .find({ rootID, status: ContentStatus.VerifySuccess }, '-sourceID -__v -rootID')
       .populate({
         path: 'parent',
         select: '-sourceID -__v -rootID',
@@ -288,7 +290,7 @@ export class CommentService {
     const query: any = {
       sourceID: sourceID,
       rootID: null,
-      status: CommentStatus.VerifySuccess
+      status: ContentStatus.VerifySuccess
     };
     if (lastCommentID) {
       query._id = {
@@ -303,7 +305,7 @@ export class CommentService {
 
     const counts_p = list.map(item => {
       return commentRepository.countDocuments({
-        status: CommentStatus.VerifySuccess,
+        status: ContentStatus.VerifySuccess,
         rootID: item._id
       }).exec()
     });
@@ -323,7 +325,7 @@ export class CommentService {
     const commentRepository = this.getCommentSchema(source);
     const list = commentRepository
       .find({
-        status: CommentStatus.VerifySuccess
+        status: ContentStatus.VerifySuccess
       })
       .sort({ _id: -1 })
       .limit(6)

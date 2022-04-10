@@ -1,11 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum } from "class-validator";
+import { ContentStatus } from "../../../constants/constants";
 import { ErrorCode } from "../../../constants/error";
-import { CommentStatus } from "../../../models/comment.entity";
 
-export class ChangeCommentStatusDto {
+export class ChangeContentStatusDto {
 
-  @ApiProperty({ description: "status", enum: CommentStatus, default: CommentStatus.Verifying })
-  @IsEnum(CommentStatus, { message: ErrorCode.ParamsError.MESSAGE })
-  status: CommentStatus
+  @ApiProperty({ description: "status", enum: ContentStatus, default: ContentStatus.Verifying })
+  @IsEnum(ContentStatus, { message: ErrorCode.ParamsError.MESSAGE })
+  status: ContentStatus
 }

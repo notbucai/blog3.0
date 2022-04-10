@@ -3,12 +3,7 @@ import { Article } from './article.entity';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { prop, Ref, mapProp, arrayProp, modelOptions } from '@typegoose/typegoose';
 import { ObjectID } from 'mongodb';
-
-export enum CommentStatus {
-  Verifying = 1, // 审核中
-  VerifySuccess = 2, // 审核通过
-  VerifyFail = 3, // 审核未通过
-}
+import { ContentStatus } from '../constants/constants';
 
 export class Comment extends Base {
 
@@ -29,8 +24,8 @@ export class Comment extends Base {
   @prop({ index: true })
   htmlContent: string;
 
-  @prop({ enum: CommentStatus, default: CommentStatus.VerifySuccess })
-  status: CommentStatus;
+  @prop({ enum: ContentStatus, default: ContentStatus.VerifySuccess })
+  status: ContentStatus;
 
   parent: Ref<Comment>; // 直接父评论
 

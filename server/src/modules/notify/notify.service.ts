@@ -10,6 +10,10 @@ import { LoggerService } from '../../common/logger.service';
 import { publish } from './notify.template';
 import { format } from 'util';
 import { NoticeGateway } from '../gateway/notice.gateway';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { SMSService } from '../../common/sms.service';
+import { ConfigService } from '../../config/config.service';
+import { ContentStatus, systemObjectId } from 'src/constants/constants';
 
 @Injectable()
 export class NotifyService {
@@ -23,6 +27,9 @@ export class NotifyService {
     @Inject(forwardRef(() => NoticeGateway))
     private readonly noticeGateway: NoticeGateway,
     private readonly logger: LoggerService,
+    private readonly smsService: SMSService,
+    private readonly configService: ConfigService,
+    private schedulerRegistry: SchedulerRegistry,
   ) { }
 
   private async getObject (type: NotifyObjectType, objectID: ObjectID) {
@@ -65,12 +72,31 @@ export class NotifyService {
     const desc = {
       [NotifyObjectType.article]: '文章',
       [NotifyObjectType.comment]: '评论',
-      [NotifyObjectType.message]: '留言'
-    }
+      [NotifyObjectType.message]: '留言',
+    };
     return desc[type];
   }
 
+  public async getSystemUser () {
+    const user = new User();
+    // 构建一个系统内存用户
+    user._id = systemObjectId;
+    user.username = 'System';
+    user.email = this.configService.email?.auth?.user;
+    user.avatarURL = 'https://image.notbucai.com/logo.png';
+    return user;
+  }
+
   public async publish (type: NotifyObjectType, action: NotifyActionType, objectID: ObjectID, senderID: ObjectID, recipientID: ObjectID, message?: string) {
+
+    if (systemObjectId.equals(objectID)) {
+      // todo 直接发送到管理员邮箱
+      this.logger.info({
+        message: 'send to admin email',
+        data: this.configService.email?.auth?.user,
+      });
+      return;
+    }
 
     const typeDesc = this.getDescByType(type);
 
@@ -78,7 +104,12 @@ export class NotifyService {
 
     if (!object) throw new Error("object not undefined");
 
-    const sender = await this.userSchema.findById(senderID);
+    this.logger.info({
+      message: 'publish: ',
+      data: arguments
+    });
+
+    const sender = senderID.equals(systemObjectId) ? await this.getSystemUser() : await this.userSchema.findById(senderID);
     const recipient = await this.userSchema.findById(recipientID);
 
     if (!sender) throw new Error("sender not undefined");
@@ -101,10 +132,81 @@ export class NotifyService {
     notify.message = objectMessage;
 
     const createRow = await this.notifySchema.create(notify);
-    
-    this.noticeGateway.noticeNoReadCount(((recipientID as any)?._id || recipientID).toString());
 
+    const notifyUserId = ((recipientID as any)?._id || recipientID).toString();
+    // 如果发送和接受相等就没必要提示了
+    if (!new ObjectID(senderID).equals(recipientID)) {
+      this.noticeGateway.noticeNoReadCount(notifyUserId);
+      if (action === NotifyActionType.audit) {
+        // 单独通知
+        this.notifyAudit(notifyUserId, object);
+      } else {
+        this.notifyByEntity(notifyUserId);
+      }
+    }
     return createRow;
+  }
+
+  private async notifyByEntity (userId: string) {
+    const notifyTimeOutName = `task::notify::${userId}`;
+    const doesExist = this.schedulerRegistry.doesExist('timeout', notifyTimeOutName);
+    this.logger.info({
+      message: `notifyByEntity -> notifyTimeOutName: ${notifyTimeOutName} doesExist: ${doesExist}`,
+      data: {
+        notifyTimeOutName,
+        doesExist
+      }
+    });
+    if (!doesExist) {
+      // 有手机号才通知，其他平台后续考虑再接入
+      const notifyUser = await this.userSchema.findById(userId);
+      if (!notifyUser?.phone) return;
+      // 不存在才创建任务, 存在就忽略
+      const timeoutId = setTimeout(async () => {
+        try {
+          // 获取未读通知消息数量
+          const unCount = await this.getNoReadNotifyCountByUId(notifyUser?.id);
+          if (unCount) {
+            const smsRes = await this.smsService.sendNotifyCount(notifyUser?.phone, notifyUser?.username, unCount);
+            this.logger.info({
+              data: smsRes,
+              message: 'notifyByEntity send sms result -<'
+            });
+          }
+        } catch (error) {
+          this.logger.error({
+            message: `error ${error?.message}`,
+            data: error,
+          });
+        }
+        this.schedulerRegistry.deleteTimeout(notifyTimeOutName);
+      }, this.configService.env === this.configService.DEVELOPMENT ? 60 * 1000 : 30 * 60 * 1000);
+      this.schedulerRegistry.addTimeout(notifyTimeOutName, timeoutId);
+    }
+  }
+
+  private async notifyAudit (userId: string, content: Article | MessageComment | ArticleComment) {
+
+    try {
+      const notifyUser = await this.userSchema.findById(userId);
+      if (!notifyUser?.phone) return;
+      const title = content instanceof Article ? content.title : content.content;
+      this.logger.info({
+        message: 'notifyAudit: ',
+        data: {
+          phone: notifyUser?.phone,
+          title
+        }
+      });
+      const res = await this.smsService.sendAudit(notifyUser.phone, title, content.status)
+      this.logger.info({
+        message: 'notifyAudit: res',
+        data: res
+      });
+    } catch (e) {
+      console.error(e);
+      this.logger.error(e);
+    }
   }
 
   /**

@@ -14,7 +14,7 @@ import { RolesGuard } from '../../core/guards/roles.guard';
 import { Roles } from '../../core/decorators/roles.decorator';
 import { ObjectID } from 'mongodb';
 import { UpdateCommentDto } from './dto/update.dto';
-import { ChangeCommentStatusDto } from './dto/status.dto';
+import { ChangeContentStatusDto } from './dto/status.dto';
 
 @Controller('comment')
 @ApiTags('评论')
@@ -173,7 +173,7 @@ export class CommentController {
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论状态" })
-  public async changeStatus (@Param('source') source: string, @Param('id') id: string, @Body() statusDto: ChangeCommentStatusDto) {
+  public async changeStatus (@Param('source') source: string, @Param('id') id: string, @Body() statusDto: ChangeContentStatusDto) {
     if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }

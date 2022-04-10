@@ -13,12 +13,12 @@ import { ReadService } from './read.service';
 import { CurUser } from '../../core/decorators/user.decorator';
 import { ArticleListDto } from './dto/list.dto';
 import { ChangeArticleStatus } from './dto/status.dto';
-import { ArticleStatus } from '../../models/article.entity';
 import { NotifyService } from '../notify/notify.service';
 import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
 import { ChangeArticleUpStatus } from './dto/upStatus.dto';
 import { KeywordsService } from '../keywords/keywords.service';
 import { IpAddress } from '../../core/decorators/ipAddress.decorator';
+import { ContentStatus } from 'src/constants/constants';
 
 @Controller('article')
 @ApiTags('文章')
@@ -74,7 +74,7 @@ export class ArticleController {
 
   @Get('list/all')
   async pageList (@Query() ListDto: ArticleListDto) {
-    return this.articleService.pageList(ListDto, ArticleStatus.VerifySuccess, true);
+    return this.articleService.pageList(ListDto, ContentStatus.VerifySuccess, true);
   }
 
   @Get('list/random')
@@ -122,7 +122,7 @@ export class ArticleController {
       await this.articleService.unlikeById(oid, user._id);
     } else {
       await this.articleService.likeById(oid, user._id);
-      await this.notifyService.publish(NotifyObjectType.article, NotifyActionType.like, oid, user._id, currentArticle.user as ObjectID);
+      await this.notifyService.publish(NotifyObjectType.article, NotifyActionType.like, oid, user._id, ((currentArticle.user as unknown as User)?._id) || currentArticle.user as ObjectID);
     }
     return "成功";
   }

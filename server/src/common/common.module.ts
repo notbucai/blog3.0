@@ -36,6 +36,7 @@ import { CensorService } from './censor.service';
     CommonService,
     WechatService,
     CensorService,
+    SMSService
   ],
 })
 export class CommonModule { }

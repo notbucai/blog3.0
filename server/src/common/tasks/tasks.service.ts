@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import { KeywordsService } from '../../modules/keywords/keywords.service';
 
 import { LoggerService } from '../logger.service';
@@ -17,5 +17,4 @@ export class TasksService {
   async generateKeywordsCloud () {
     await this.keywordsService.generateKeywordsCloud();
   }
-
 }

@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2020-07-05 18:24:48
- * @LastEditors: bucai
- * @LastEditTime: 2021-06-13 10:20:40
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-04-10 16:10:10
  * @Description: 
  */
 import { prop, Ref } from '@typegoose/typegoose';
@@ -21,6 +21,7 @@ export enum NotifyActionType {
   comment = 'comment', // 评论
   like = 'like', // 点赞
   follow = 'follow', // 关注
+  audit = 'audit', // 状态
 }
 
 export enum NotifyStatus {

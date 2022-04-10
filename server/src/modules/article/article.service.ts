@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentType, ReturnModelType } from '@typegoose/typegoose';
-import { Article, ArticleStatus, ArticleUpStatus } from '../../models/article.entity';
+import { Article, ArticleUpStatus } from '../../models/article.entity';
 import { Tag } from '../../models/tag.entity';
 import { InjectModel } from 'nestjs-typegoose';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
@@ -8,13 +8,17 @@ import { ObjectID } from 'mongodb';
 import { ArticleListDto } from './dto/list.dto';
 import { ArticleListByTagDto } from './dto/listByTag.dto';
 
-import { ArticleComment, CommentStatus } from '../../models/comment.entity';
+import { ArticleComment } from '../../models/comment.entity';
 import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import MarkdownUtils from '../../utils/markdown';
 import { CensorService } from '../../common/censor.service';
 import * as htmlEntities from 'html-entities';
 import { LoggerService } from '../../common/logger.service';
+import { ContentStatus, ContentStatusLabelMap, systemObjectId } from 'src/constants/constants';
+import { NotifyService } from '../notify/notify.service';
+import { NotifyActionType, NotifyObjectType } from 'src/models/notify.entiy';
+import { User } from 'src/models/user.entity';
 
 @Injectable()
 export class ArticleService {
@@ -26,6 +30,7 @@ export class ArticleService {
     @InjectModel(ArticleComment)
     private readonly commentSchema: ReturnModelType<typeof ArticleComment>,
     private readonly censorService: CensorService,
+    private readonly notifyService: NotifyService,
     private readonly loggerService: LoggerService,
   ) { }
 
@@ -61,7 +66,7 @@ export class ArticleService {
     });
 
     if (data.status) {
-      return this.changeStatus(String(article._id), ArticleStatus.VerifySuccess);
+      return this.changeStatus(String(article._id), ContentStatus.VerifySuccess);
     }
     // 失败后 进行错误标记
     data.data.forEach(item => {
@@ -93,7 +98,7 @@ export class ArticleService {
       }
     });
     if (data.type === 2) {
-      await this.changeStatus(String(article._id), ArticleStatus.VerifyFail);
+      await this.changeStatus(String(article._id), ContentStatus.VerifyFail);
     }
   }
 
@@ -119,13 +124,15 @@ export class ArticleService {
 
     article.tags = tags;
     article.user = userId;
-    article.status = 1;
+    article.status = ContentStatus.Verifying;
     article.wordCount = markText.replace(/[\s\n\r\t\f\v]+/g, '').length;
     return this.articleSchema.create(article);
   }
 
-  async changeStatus (id: string, status: ArticleStatus = 1) {
+  async changeStatus (id: string, status: ContentStatus = ContentStatus.Verifying) {
     const res = await this.articleSchema.findByIdAndUpdate(id, { $set: { status } })
+    // notify message
+    this.notifyService.publish(NotifyObjectType.article, NotifyActionType.audit, res._id, systemObjectId, ((res.user as unknown as User)?._id) || res.user as ObjectID, ContentStatusLabelMap[status])
     return res;
   }
 
@@ -138,7 +145,7 @@ export class ArticleService {
     return this.articleSchema.deleteOne({ _id: id });
   }
 
-  async updateById (id: string, createDto: CreateDto, status: ArticleStatus = ArticleStatus.Verifying) {
+  async updateById (id: string, createDto: CreateDto, status: ContentStatus = ContentStatus.Verifying) {
     const article = await this.articleSchema.findById(id);
     if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     // const htmlContent = createDto.htmlContent || article.htmlContent;
@@ -189,7 +196,7 @@ export class ArticleService {
     const page_size = Number(listDto.page_size || 10);
     const where = {
       tags: { $elemMatch: { $eq: tagId } },
-      status: ArticleStatus.VerifySuccess
+      status: ContentStatus.VerifySuccess
     };
     const a_list = await this.articleSchema
       .find(where, '-htmlContent -content -menus')
@@ -211,7 +218,7 @@ export class ArticleService {
     }
   }
 
-  async pageList (listDto: ArticleListDto, status?: ArticleStatus, up?: boolean) {
+  async pageList (listDto: ArticleListDto, status?: ContentStatus, up?: boolean) {
     const where: any = {};
     const sort1: any = { _id: -1, };
     const sort2: any = {};
@@ -242,7 +249,7 @@ export class ArticleService {
 
     const list_p = a_list.map(async item => {
       item = item.toJSON() as any;
-      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id, status: CommentStatus.VerifySuccess });
+      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id, status: ContentStatus.VerifySuccess });
       return item;
     });
     // commentSchema
@@ -262,7 +269,7 @@ export class ArticleService {
       .aggregate([
         {
           $match: {
-            status: ArticleStatus.VerifySuccess
+            status: ContentStatus.VerifySuccess
           }
         },
         { $sample: { size: len } },
@@ -290,7 +297,7 @@ export class ArticleService {
   async pageHotList () {
 
     const a_list = await this.articleSchema
-      .find({ coverURL: { $ne: null }, status: ArticleStatus.VerifySuccess }, '-htmlContent -content -menus')
+      .find({ coverURL: { $ne: null }, status: ContentStatus.VerifySuccess }, '-htmlContent -content -menus')
       .populate([{ path: 'user', select: "-pass" }])
       .populate([{ path: 'tags' }])
       .sort({ browseCount: -1 })
@@ -318,7 +325,7 @@ export class ArticleService {
     // 将搜索词进行一个缓存
     const keyRe = new RegExp(keyList.join('|'));
     return this.articleSchema.find({
-      status: ArticleStatus.VerifySuccess,
+      status: ContentStatus.VerifySuccess,
       $or: [
         {
           title: keyRe
@@ -336,7 +343,7 @@ export class ArticleService {
   async getAllYearAndCount () {
     return this.articleSchema.aggregate([
       {
-        $match: { status: ArticleStatus.VerifySuccess }
+        $match: { status: ContentStatus.VerifySuccess }
       },
       {
         $project: { year: { $year: '$createdAt' } }
@@ -350,7 +357,7 @@ export class ArticleService {
 
   async getByYear (year: number) {
     return this.articleSchema.aggregate([
-      { $match: { status: ArticleStatus.VerifySuccess } },
+      { $match: { status: ContentStatus.VerifySuccess } },
       { $project: { title: 1, summary: 1, user: 1, createdAt: 1, year: { $year: '$createdAt' } } },
       { $match: { year } },
       {
@@ -434,7 +441,7 @@ export class ArticleService {
     });
   }
 
-  async allList (status: ArticleStatus = ArticleStatus.VerifySuccess) {
+  async allList (status: ContentStatus = ContentStatus.VerifySuccess) {
     const list = await this.articleSchema.find({
       status
     });

@@ -117,7 +117,7 @@
         <v-card class="menus_box">
           <v-card-title>导航</v-card-title>
 
-          <ul class="menus">
+          <ul class="menus overflow-y-auto">
             <li class="menu menu-h1">{{ data.title }}</li>
             <li
               v-for="(item, index) in menus"
@@ -423,8 +423,9 @@ export default {
     padding: 0 12px 12px;
     margin: 0;
     position: relative;
+    max-height: 480px;
     &::before {
-      content: '';
+      // content: '';
       position: absolute;
       z-index: 0;
       left: 24px;

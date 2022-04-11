@@ -21,33 +21,35 @@
           <article-list :articleStore="articleStore" @loadData="loadData" />
         </v-col>
         <v-col :md="4" :sm="12" :cols="12">
-          <v-lazy
-            :value="$isServer"
-            transition="scale-transition"
-            min-height="100px"
-          >
-            <div>
-              <tag-list :taglist="taglist" />
-            </div>
-          </v-lazy>
-          <v-lazy
-            :value="$isServer"
-            transition="scale-transition"
-            min-height="100px"
-          >
-            <div>
-              <side-random-article :list="randomList" />
-            </div>
-          </v-lazy>
-          <v-lazy
-            :value="$isServer"
-            transition="scale-transition"
-            min-height="100px"
-          >
-            <div>
-              <side-comment-list :list="commentlist" />
-            </div>
-          </v-lazy>
+          <div style="position: sticky; top: 0">
+            <v-lazy
+              :value="$isServer"
+              transition="scale-transition"
+              min-height="100px"
+            >
+              <div>
+                <tag-list :taglist="taglist" />
+              </div>
+            </v-lazy>
+            <v-lazy
+              :value="$isServer"
+              transition="scale-transition"
+              min-height="100px"
+            >
+              <div>
+                <side-random-article :list="randomList" />
+              </div>
+            </v-lazy>
+            <v-lazy
+              :value="$isServer"
+              transition="scale-transition"
+              min-height="100px"
+            >
+              <div>
+                <side-comment-list :list="commentlist" />
+              </div>
+            </v-lazy>
+          </div>
         </v-col>
       </v-row>
     </v-container>

@@ -6,6 +6,12 @@ const md = require('markdown-it')({
   linkify: true,
 })
   .use(require('markdown-it-highlightjs')) // 代码高亮 目前太大了
+  .use(require('markdown-it-link-attributes'), {
+    attrs: {
+      target: "_blank",
+      rel: "noopener",
+    },
+  })
   .use(require('./markdown-it-sanitizer'), {
     extraTags: ['details', 'summary']
   });

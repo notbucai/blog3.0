@@ -1,6 +1,7 @@
 <template>
   <div class="comment_edit mb-5">
     <div class="comment_edit-editor">
+      <Loading :absolute="true" :hidden="!uploading" />
       <client-only>
         <!-- 这里计算一下 高度 -->
         <mavon-editor
@@ -133,7 +134,7 @@
           color="#fa1"
           :disabled="!content"
           @click="handleComment"
-          :loading="loading"
+          :loading="loading || uploading"
           >{{ token ? '评论' : '请登录' }}</v-btn
         >
       </div>
@@ -143,10 +144,12 @@
 <script>
 import { mapState } from 'vuex';
 import { asyncLoad } from '@/utils/loadScriptComponent';
+import Loading from '@/components/common/Loading.vue';
 
 export default {
   components: {
-    'mavon-editor': asyncLoad.mavonEditorComponent
+    'mavon-editor': asyncLoad.mavonEditorComponent,
+    Loading
   },
   props: {
     reply: Object,
@@ -166,6 +169,7 @@ export default {
       markdownOption: {
       },
       content: '',
+      uploading: false,
       operate: {}
     };
   },
@@ -202,10 +206,12 @@ export default {
       this.$emit('comment', this.content);
     },
     async handleEditAddImg (pos, $file) {
+      this.uploading = true;
       const formdata = new FormData();
       formdata.append('file', $file);
       const fileurl = await this.$axios.post('/api/common/uploadImage', formdata);
       this.$refs['mdeditor'].$img2Url(pos, fileurl);
+      this.uploading = false;
     }
   }
 };
@@ -267,10 +273,10 @@ export default {
 @import url(//at.alicdn.com/t/font_3238881_rw3b9pyc28o.css);
 
 .comment_edit {
-  .comment_edit-editor{
+  .comment_edit-editor {
     min-height: 200px;
     position: relative;
-    &::after{
+    &::after {
       content: '组件加载中...';
       position: absolute;
       z-index: 0;
@@ -284,7 +290,7 @@ export default {
       width: 100%;
       height: 100%;
       border-radius: 4px;
-      background-color: rgba($color: #888888, $alpha: .1);
+      background-color: rgba($color: #888888, $alpha: 0.1);
     }
   }
   .v-note-wrapper.markdown-body {

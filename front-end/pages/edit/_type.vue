@@ -116,6 +116,7 @@
           @imgAdd="handleEditAddImg"
           :codeStyle="$vuetify.theme.dark ? 'atom-one-light' : 'atom-one-light'"
         />
+        <Loading :absolute="true" :hidden="!uploading" />
       </client-only>
     </div>
   </div>
@@ -124,10 +125,13 @@
 import CurrentUser from '@/components/CurrentUser.vue';
 import { fileSize as $file_fileSize } from '@/utils/file'
 import { asyncLoad } from '@/utils/loadScriptComponent';
+import Loading from '@/components/common/Loading.vue';
+
 export default {
   layout: 'empty',
   components: {
     CurrentUser,
+    Loading,
     'mavon-editor': asyncLoad.mavonEditorComponent
   },
   async asyncData ({ params, query, $axios }) {
@@ -167,6 +171,7 @@ export default {
       taglist: [],
       loading: false,
       fileUploading: false,
+      uploading: false,
       formData: {
         title: '',
         coverURL: '',
@@ -176,10 +181,30 @@ export default {
       }
     };
   },
+  watch: {
+    formData: {
+      deep: true,
+      handler (v) {
+        if (process.client) {
+          localStorage.setItem('cache_edit', JSON.stringify(v));
+        }
+      }
+    }
+  },
   async mounted () {
     const resData = await this.$axios.get('/api/tag/list');
     this.taglist = resData;
-    const formData = this.formData;
+    if (process.client) {
+      const strData = localStorage.getItem('cache_edit')
+      try {
+        if (strData) {
+          const d = JSON.parse(strData)
+          this.formData = d;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   },
   methods: {
     handleSelectItem (item) {
@@ -230,7 +255,7 @@ export default {
       } else {
         resData = await this.$axios.post('/api/article', formData);
       }
-
+      localStorage.removeItem('cache_edit');
       // formData
       // TODO: 跳转成功页面
       this.$router.push('/article/' + (resData._id || formData.id));
@@ -247,7 +272,7 @@ export default {
       this.$refs['upload'].click();
     },
     async handleuploadImg (file) {
-      
+
       const size = $file_fileSize(file);
       if (size > 3) {
         return this.$snackbar.error('文件大小不能超过3m');
@@ -275,10 +300,12 @@ export default {
       this.formData.coverURL = '';
     },
     async handleEditAddImg (pos, $file) {
+      this.uploading = true;
       const formdata = new FormData();
       formdata.append('file', $file);
       const fileurl = await this.$axios.post('/api/common/uploadImage', formdata);
       this.$refs['mdeditor'].$img2Url(pos, fileurl);
+      this.uploading = false;
     }
   }
 };
@@ -317,6 +344,7 @@ export default {
   .edit_box {
     flex: 1;
     overflow: hidden;
+    position: relative;
     .v-note-wrapper.markdown-body {
       height: 100%;
     }

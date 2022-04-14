@@ -43,7 +43,7 @@ module.exports = {
       { src: '//unpkg.com/axios', defer: true },
       // { src: '//unpkg.com/gsap', defer: true },
       { src: '//unpkg.com/vue-router@3/dist/vue-router.min.js', defer: true },
-      { src: '//unpkg.com/browser-image-compression', defer: true },
+      // { src: '//unpkg.com/browser-image-compression', defer: true },
       // { src: '//unpkg.com/vuetify@2.x/dist/vuetify.min.js', defer: true },
       { src: '//at.alicdn.com/t/font_2451840_fhijy36qb98.js', defer: true }, /*iconfont*/
       { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', defer: true }, /*引入百度统计的js*/
@@ -258,6 +258,7 @@ module.exports = {
             vue: 'Vue',
             axios: 'axios',
             // 'highlight.js': 'hljs',
+            'vue-cropper': 'vue-cropper',
             'mavon-editor': 'MavonEditor',
             'vue-router': 'VueRouter',
             'browser-image-compression': 'imageCompression'

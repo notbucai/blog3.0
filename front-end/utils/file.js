@@ -2,9 +2,11 @@
  * @Author: bucai
  * @Date: 2020-05-05 10:58:10
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2021-11-28 14:40:31
+ * @LastEditTime: 2022-04-13 22:54:20
  * @Description: 文件工具
  */
+
+import { asyncLoad } from "./loadScriptComponent";
 
 const options = {
   // maxSizeMB: 1, // (default: Number.POSITIVE_INFINITY)
@@ -18,7 +20,7 @@ const options = {
 
 export const imageFleCompression = async (file) => {
   // 应该吧价值的位置放在这里
-  const imageCompression = await import('browser-image-compression')
+  const imageCompression = await asyncLoad.browserImageCompression();
   const _file = await imageCompression(file, options);
   // const _file = file;
   console.log('-原图：', file);

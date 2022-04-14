@@ -113,10 +113,11 @@
 </template>
 <script>
 import { mapState } from 'vuex';
+import { asyncLoad } from '~/utils/loadScriptComponent';
 export default {
   middleware: 'auth',
   components: {
-    'vueCropper': async () => (await import('vue-cropper')).VueCropper
+    'vueCropper': asyncLoad.vueCropperComponent
   },
   props: {},
   computed: {

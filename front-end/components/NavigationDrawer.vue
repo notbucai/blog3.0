@@ -120,12 +120,12 @@ export default {
         key: 'friends',
         path: '/friends',
       },
-      {
-        title: "归档",
-        icon: 'timeline-clock',
-        key: 'timelines',
-        path: '/timelines',
-      },
+      // {
+      //   title: "归档",
+      //   icon: 'timeline-clock',
+      //   key: 'timelines',
+      //   path: '/timelines',
+      // },
       {
         icon: 'magnify',
         title: '搜索',

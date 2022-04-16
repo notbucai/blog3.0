@@ -33,6 +33,13 @@
         </transition-group>
       </div>
     </v-card>
+    <client-only>
+      <BindPhone
+        v-if="user && !user.phone"
+        :visible.sync="bindPhoneModal"
+        @success="handleBindPhoneSuccess"
+      />
+    </client-only>
   </div>
 </template>
 <script>
@@ -43,6 +50,7 @@ import ComponentLoading from '@/components/common/Loading.vue';
 export default {
   components: {
     CommentItem,
+    BindPhone: () => import('@/components/user/BindPhone.vue'),
     CommentEditor: () => {
       return {
         component: import('../comment/CommentEditor.vue'),
@@ -72,7 +80,8 @@ export default {
   data () {
     return {
       reply: null,
-      submitIng: false
+      submitIng: false,
+      bindPhoneModal: false,
     };
   },
   mounted () { },
@@ -95,6 +104,13 @@ export default {
         rootID = formData['rootID'] = reply.parent
           ? reply.parent._id
           : reply._id;
+      }
+      console.log('this.user.phone', this.user.phone);
+      if (!this.user.phone) {
+        // 存储旧数据
+        this.cacheContent = content;
+        this.submitIng = false;
+        return this.handleBindPhone();
       }
       try {
         const resData = await this.$axios.post(
@@ -131,6 +147,14 @@ export default {
           this.reply = null;
         }
       }
+    },
+    handleBindPhone () {
+      this.bindPhoneModal = true;
+    },
+    handleBindPhoneSuccess () {
+      this.$nextTick(() => {
+        this.handleComment(this.cacheContent);
+      });
     }
   }
 };
@@ -139,7 +163,7 @@ export default {
 .CommentBox {
   .theme--dark {
     &.v-card {
-      background-color: #1E1E1E;
+      background-color: #1e1e1e;
     }
   }
 }

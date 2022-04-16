@@ -149,7 +149,7 @@ import Loading from '@/components/common/Loading.vue';
 export default {
   components: {
     'mavon-editor': asyncLoad.mavonEditorComponent,
-    Loading
+    Loading,
   },
   props: {
     reply: Object,

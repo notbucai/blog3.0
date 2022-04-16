@@ -119,9 +119,17 @@
         <Loading :absolute="true" :hidden="!uploading" />
       </client-only>
     </div>
+    <client-only>
+      <BindPhone
+        v-if="user && !user.phone"
+        :visible.sync="bindPhoneModal"
+        @success="handleBindPhoneSuccess"
+      />
+    </client-only>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex';
 import CurrentUser from '@/components/CurrentUser.vue';
 import { fileSize as $file_fileSize } from '@/utils/file'
 import { asyncLoad } from '@/utils/loadScriptComponent';
@@ -132,6 +140,7 @@ export default {
   components: {
     CurrentUser,
     Loading,
+    BindPhone: () => import('@/components/user/BindPhone.vue'),
     'mavon-editor': asyncLoad.mavonEditorComponent
   },
   async asyncData ({ params, query, $axios }) {
@@ -153,6 +162,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(['user']),
     taglistSelect () {
       return this.taglist.map(item => {
         const isSelectd = (this.formData.tags || []).find(
@@ -172,6 +182,7 @@ export default {
       loading: false,
       fileUploading: false,
       uploading: false,
+      bindPhoneModal: false,
       formData: {
         title: '',
         coverURL: '',
@@ -231,6 +242,9 @@ export default {
       return text.substring(0, 180);
     },
     async handlePublish () {
+      if (!this.user.phone) {
+        return this.handleBindPhone();
+      }
       const formData = this.formData;
       formData.tags = this.taglistSelect.filter(item => item.selectd).map(item => item._id);
       // formData.summary = this.getSummary(formData.content);
@@ -306,6 +320,14 @@ export default {
       const fileurl = await this.$axios.post('/api/common/uploadImage', formdata);
       this.$refs['mdeditor'].$img2Url(pos, fileurl);
       this.uploading = false;
+    },
+    handleBindPhone () {
+      this.bindPhoneModal = true;
+    },
+    handleBindPhoneSuccess () {
+      this.$nextTick(() => {
+        this.handlePublish();
+      });
     }
   }
 };

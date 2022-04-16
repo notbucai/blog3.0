@@ -139,7 +139,7 @@ export default {
 .CommentBox {
   .theme--dark {
     &.v-card {
-      background-color: #000000;
+      background-color: #1E1E1E;
     }
   }
 }

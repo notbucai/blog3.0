@@ -245,7 +245,7 @@ export default {
 .theme--dark {
   .comment_edit {
     .v-note-wrapper {
-      background-color: #000000;
+      background-color: #1e1e1e;
       .auto-textarea-wrapper {
         & textarea::placeholder {
           color: #333333;
@@ -262,6 +262,9 @@ export default {
         &:hover,
         &.active {
           background-color: #121212 !important;
+        }
+        i.edit_icon {
+          color: #ccc;
         }
       }
     }

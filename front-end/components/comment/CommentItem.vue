@@ -230,7 +230,7 @@ export default {
 <style lang="scss">
 .theme--dark {
   .comment-item {
-    background-color: #000 !important;
+    background-color: #1E1E1E !important;
     &::after {
       background-color: #121212 !important;
     }

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-04-16 16:51:02
+ * @LastEditTime: 2022-05-08 17:06:21
  * @Description: 
  */
 import io from 'socket.io-client';
@@ -12,6 +12,7 @@ let notify;
 
 export const state = () => ({
   LoginOrRegisterDialog: false,
+  keyboardShow: false,
   token: '',
   user: null,
   sideStatus: false,
@@ -30,6 +31,9 @@ export const mutations = {
   },
   SET_LOGIN_OR_REGISTER_DIALOG (state) {
     state.LoginOrRegisterDialog = !state.LoginOrRegisterDialog;
+  },
+  SET_KEYBOARD_SHOW(state, status) {
+    state.keyboardShow = status;
   },
   SET_TOKEN (state, payload) {
     state.token = payload;

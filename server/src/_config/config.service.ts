@@ -5,7 +5,7 @@ import defaultConfig from './default.conf';
 import developmentConfig from './development.conf';
 import productionConfig from './production.conf';
 
-import DBConfig from './type/DBConfig';
+import MongodbConfig from './type/MongodbConfig';
 import RedisConfig from './type/RedisConfig';
 import ServerConfig from './type/ServerConfig';
 import StaticConfig from './type/StaticConfig';
@@ -21,7 +21,7 @@ export class ConfigService {
   readonly PRODUCTION = 'production';
 
   readonly env: string;
-  readonly db: DBConfig;
+  readonly mongodb: MongodbConfig;
   readonly redis: RedisConfig;
   readonly server: ServerConfig;
   readonly static: StaticConfig;
@@ -50,7 +50,7 @@ export class ConfigService {
       this.env = process.env.NODE_ENV;
     }
 
-    this.db = new DBConfig(defaultConfig.db);
+    this.mongodb = new MongodbConfig(defaultConfig.mongodb);
     this.redis = new RedisConfig(defaultConfig.redis);
     this.server = new ServerConfig(defaultConfig.server);
     this.static = new StaticConfig(defaultConfig.static);

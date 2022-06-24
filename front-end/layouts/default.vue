@@ -106,6 +106,7 @@
     </v-lazy>
     <LoginOrRegister v-if="LoginOrRegisterDialog" />
     <NavigationDrawer v-if="sideStatus" />
+    <Keyboard v-if="keyboardShow" />
     <ScrollToTop />
     <SvgWalle />
   </v-app>
@@ -132,7 +133,15 @@ export default {
     CurrentUser,
     NavigationDrawer: () => import('@/components/NavigationDrawer.vue'),
     ScrollToTop,
-    SvgWalle: () => import('@/components/svg/Walle.vue')
+    SvgWalle: () => import('@/components/svg/Walle.vue'),
+    Keyboard: () => {
+      return {
+        component: import('@/components/keyboard/Index.vue'),
+        loading: ComponetLoading,
+        delay: 100,
+        timeout: 3000
+      };
+    },
   },
   data () {
     return {
@@ -140,7 +149,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['user', 'noticeStatus', 'LoginOrRegisterDialog', 'sideStatus'])
+    ...mapState(['user', 'noticeStatus', 'LoginOrRegisterDialog', 'sideStatus', 'keyboardShow'])
   },
   watch: {
     user () {

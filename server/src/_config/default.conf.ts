@@ -7,7 +7,7 @@ const url = `http://${domain}`;
 const staticURL = `https://image.notbucai.com`; // 静态资源域名配置
 
 export default {
-    db: {
+    mongodb: {
         // type: 'mongodb',
         // host: 'localhost',
         // port: 27017,
@@ -26,6 +26,7 @@ export default {
         useNewUrlParser: true,
         useCreateIndex: true,
     },
+    mysql: {},
     static: {
         staticURL,
         imgPath: `${staticURL}`,

@@ -185,6 +185,10 @@ export default {
       }
     });
     io.observe(document.querySelector('.comment_edit'));
+    this.$store.commit('SET_KEYBOARD_SHOW', true);
+  },
+  beforeDestroy() {
+    this.$store.commit('SET_KEYBOARD_SHOW', false);
   },
   methods: {
     handleOperateClick (operate) {

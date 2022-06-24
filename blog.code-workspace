@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "front-end"
+		},
+		{
+			"path": "server"
+		},
+		{
+			"path": "admin"
+		}
+	],
+	"settings": {}
+}

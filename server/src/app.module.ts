@@ -34,7 +34,7 @@ import { GatewayModule } from './modules/gateway/gateway.module';
     ConfigModule,
     TypegooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
-        return configService.db;
+        return configService.mongodb;
       },
       inject: [ConfigService],
     }),

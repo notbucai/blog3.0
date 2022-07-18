@@ -12,7 +12,7 @@ import { Acl } from './acl.entity';
 export class Role extends Base {
 
   @prop({ default: Date })
-  createdAt: Date;
+  createAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;

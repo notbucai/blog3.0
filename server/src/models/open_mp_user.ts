@@ -38,7 +38,7 @@ export class OpenMpUser extends Base {
   language: string;
 
   @prop({ default: Date })
-  createdAt: Date;
+  createAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;

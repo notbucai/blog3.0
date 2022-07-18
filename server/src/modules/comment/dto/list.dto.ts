@@ -4,7 +4,7 @@ import {
   MinLength,
   MaxLength,
   ValidateIf,
-  IsMongoId,
+  IsUUID,
   Min,
 } from 'class-validator';
 import { CommentConstants } from '../../../constants/comment';
@@ -14,7 +14,7 @@ export class ListCommentDto {
 
   @ApiProperty({ description: "lastCommentID", required: false })
   @ValidateIf(o => o.lastCommentID !== undefined)
-  @IsMongoId({ message: '无效的lastCommentID' })
+  @IsUUID("4", { message: '无效的lastCommentID' })
   readonly lastCommentID?: string;
 
   @ValidateIf(o => o.limit !== undefined)

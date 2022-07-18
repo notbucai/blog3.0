@@ -172,7 +172,7 @@ module.exports = {
       const res = await axios.get('https://www.notbucai.com/api/article/list/all?page_index=1&page_size=100000000')
       const resData = res.data;
       if (resData.code === 0) {
-        const a_list = resData.data.list.map((item) => `/article/${item._id}`);
+        const a_list = resData.data.list.map((item) => `/article/${item.id}`);
         list.push(...a_list);
       }
       return list;

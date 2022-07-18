@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository, LessThan, In } from 'typeorm';
+import { Repository, LessThan, In, Like, MoreThan, Between, IsNull } from 'typeorm';
 import { ObjectID } from 'mongodb';
 import { MessageComment, ArticleComment, Comment } from '../../models/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,34 +20,62 @@ import { ContentStatus, ContentStatusLabelMap, DateType, systemObjectId } from '
 import moment = require('moment');
 import { CensorService } from '../../common/censor.service';
 
+import { LeaveWord } from '../../entities/LeaveWord';
+import { LeaveWordLike } from '../../entities/LeaveWordLike';
+import { ArticleComment as ArticleCommentEntity } from '../../entities/ArticleComment';
+import { ArticleCommentLike } from '../../entities/ArticleCommentLike';
+
 @Injectable()
 export class CommentService {
 
   constructor(
-    // @InjectRepository(MessageComment)
-    // private readonly messageCommentRepository: Repository<MessageComment>,
-    // @InjectRepository(ArticleComment)
-    // private readonly articleCommentRepository: Repository<ArticleComment>,
+    @InjectRepository(LeaveWord)
+    private readonly leaveWordRepository: Repository<LeaveWord>,
+    @InjectRepository(ArticleCommentEntity)
+    private readonly articleCommentRepository: Repository<ArticleCommentEntity>,
+
     @InjectModel(ArticleComment) public readonly articleCommentSchema: ReturnModelType<typeof ArticleComment>,
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
+
+
     private readonly notifyService: NotifyService,
     private readonly articleService: ArticleService,
     private readonly censorService: CensorService,
   ) { }
 
-  private getCommentSchema (source: string): any {
-    let commentRepository: ReturnModelType<typeof ArticleComment> |
-      ReturnModelType<typeof MessageComment>;
+  private getCommentSchema (source: string) {
+    let commentRepository: Repository<LeaveWord | ArticleCommentEntity>;
     if (source === CommentConstants.SourceArticle) {
-      commentRepository = this.articleCommentSchema;
+      commentRepository = this.articleCommentRepository;
     } else if (source === CommentConstants.SourceMessage) {
-      commentRepository = this.messageCommentSchema;
+      commentRepository = this.leaveWordRepository;
     }
     return commentRepository;
   }
+
+  private getCommentEntity (source: string) {
+    let entity: LeaveWord | ArticleCommentEntity;
+    if (source === CommentConstants.SourceArticle) {
+      entity = new ArticleCommentEntity();
+    } else if (source === CommentConstants.SourceMessage) {
+      entity = new LeaveWord();
+    }
+    return entity;
+  }
+
+  private getCommentLikeEntity (source: string) {
+    let entity: ArticleCommentLike | LeaveWordLike;
+    if (source === CommentConstants.SourceArticle) {
+      entity = new ArticleCommentLike();
+    } else if (source === CommentConstants.SourceMessage) {
+      entity = new LeaveWordLike();
+    }
+    return entity;
+  }
+
   async censor (source: string, id: string) {
     const schema = this.getCommentSchema(source)
-    const object = await schema.findById(new ObjectID(id))
+    const object = await schema.findOneOrFail(id)
 
     const content = object.content;
 
@@ -63,66 +91,64 @@ export class CommentService {
   /**
    * 创建评论
    */
-  async create (source: string, createCommentDto: CreateCommentDto, userID: ObjectID) {
+  async create (source: string, createCommentDto: CreateCommentDto, userId: string) {
     const commentRepository = this.getCommentSchema(source);
-    // sourceID 文章的时候是文章id 
-    // parentID 表示父级评论id
-    // rootID 表示一级评论  不填为一级
+    // sourceId 文章的时候是文章id 
+    // parentId 表示父级评论id
+    // rootId 表示一级评论  不填为一级
 
-    const comment = new Comment();
-    if (ObjectID.isValid(createCommentDto.rootID)) {
-      comment.rootID = new ObjectID(createCommentDto.rootID);
+    const comment = this.getCommentEntity(source);
+    if (createCommentDto.rootId) {
+      comment.rootId = createCommentDto.rootId;
     }
-    if (ObjectID.isValid(createCommentDto.parentID)) {
-      comment.parent = new ObjectID(createCommentDto.parentID);
+    if (createCommentDto.parentId) {
+      comment.parentId = createCommentDto.parentId;
     }
-    if (ObjectID.isValid(createCommentDto.sourceID)) {
-      comment.sourceID = new ObjectID(createCommentDto.sourceID);
-    } else {
-      comment.sourceID = new ObjectID(CommentConstants.CommonMessageID);
+    if (createCommentDto.sourceId && comment instanceof ArticleCommentEntity) {
+      comment.objectId = createCommentDto.sourceId;
     }
 
     const htmlContent = MarkDownUtils.markdown(createCommentDto.content);
 
     comment.status = ContentStatus.VerifySuccess;
-    comment.user = userID;
+    comment.userId = userId;
     comment.content = createCommentDto.content;
     comment.htmlContent = htmlContent;
 
-    return commentRepository.create(comment);
+    return commentRepository.save(comment);
   }
-  async getUserIdBySourceId (source: CommentConstants, id: ObjectID): Promise<ObjectID | null> {
+  async getUserIdBySourceId (source: CommentConstants, id: string): Promise<string | null> {
     // articleService
-    let Source: any;
+    let object: LeaveWord | ArticleCommentEntity;
     if (source === CommentConstants.SourceArticle) {
-      Source = await this.articleCommentSchema.findById(id);
+      object = await this.articleCommentRepository.findOneOrFail(id);
     } else if (source === CommentConstants.SourceMessage) {
-      Source = await this.messageCommentSchema.findById(id);
+      object = await this.leaveWordRepository.findOneOrFail(id);
     }
-    return Source.user;
+    return object?.userId;
   }
 
-  async notifyComment (source: string, createCommentDto: CreateCommentDto, userID: ObjectID) {
+  async notifyComment (source: string, createCommentDto: CreateCommentDto, userId: string) {
 
     // 判断是一级回复，还是二级回复
     // 一级评论直接给资源用户发布
     // 二级评论给上级评论的用户
-    let receive: ObjectID;
-    let sourceId: ObjectID;
-    if (createCommentDto.rootID) {
+    let receive: string;
+    let sourceId: string;
+    if (createCommentDto.rootId) {
       // 获取接受用户id
-      const sId = new ObjectID(createCommentDto.parentID);
+      const sId = createCommentDto.parentId;
       receive = await this.getUserIdBySourceId(source, sId);
       sourceId = sId;
     } else {
-      sourceId = new ObjectID(createCommentDto.sourceID);
+      sourceId = createCommentDto.sourceId;
       // 判断是文章还是留言
-      if (sourceId.equals(CommentConstants.CommonMessageID)) {
+      if (!sourceId) {
         receive = null;
       } else {
         const article = await this.articleService.findById(String(sourceId));
         if (article) {
-          receive = article.user as ObjectID;
+          receive = article.userId;
         }
       }
     }
@@ -131,7 +157,7 @@ export class CommentService {
     let NType: NotifyObjectType;
 
     if (source == CommentConstants.SourceArticle) {
-      if (!createCommentDto.rootID) {
+      if (!createCommentDto.rootId) {
         NType = NotifyObjectType.article;
       } else {
         NType = NotifyObjectType.comment;
@@ -139,44 +165,26 @@ export class CommentService {
     } else if (source == CommentConstants.SourceMessage) {
       NType = NotifyObjectType.message;
     }
-
     if (receive && NType) {
-      await this.notifyService.publish(NType, NotifyActionType.comment, sourceId, userID, ((receive as unknown as User)?._id) || receive, createCommentDto.content);
+      await this.notifyService.publish(NType, NotifyActionType.comment, sourceId, userId, receive, createCommentDto.content);
     }
   }
 
-  async changeStatus (source: string, id: string, status: ContentStatus = 1) {
+  async changeStatus (source: string, id: string, status: ContentStatus = ContentStatus.Verifying) {
     const commentRepository = this.getCommentSchema(source);
-    const res = await commentRepository.findByIdAndUpdate(id, { $set: { status } });
-    this.notifyService.publish(NotifyObjectType.article, NotifyActionType.audit, res._id, systemObjectId, ((res.user as unknown as User)?._id) || res.user as ObjectID, ContentStatusLabelMap[status])
-    return res;
+    const comment = await commentRepository.findOneOrFail(id);
+    comment.status = status;
+    commentRepository.save(comment);
+    this.notifyService.publish(NotifyObjectType.article, NotifyActionType.audit, comment.id, systemObjectId, comment.userId, ContentStatusLabelMap[status])
+    return comment;
   }
 
-  async getListByUserId (source: string, id: ObjectID | string) {
+  async getListByUserId (source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
-    return commentRepository.find({ user: id })
-
-      .populate({
-        path: 'article',
-        select: '-htmlContent -__v -content -tags -summary',
-      })
-      .populate({
-        path: 'parent',
-        select: '-sourceID -__v -rootID',
-        populate: {
-          path: 'user',
-          select: "username avatarURL"
-        },
-      })
-      .populate({
-        path: 'rootID',
-        select: '-sourceID -__v -rootID',
-        populate: {
-          path: 'user',
-          select: "username avatarURL"
-        },
-      })
-      .populate([{ path: 'user', select: "username avatarURL" }]);
+    return commentRepository.find({
+      where: { userId: id },
+      relations: ['object', 'parent', 'root', 'user', 'root.user', 'object.user', 'parent.user']
+    });
   }
 
   async findList (source: string, listDto: AllListDto) {
@@ -189,43 +197,21 @@ export class CommentService {
 
     if (listDto.keyword) {
       const keyRe = new RegExp(listDto.keyword);
-      query = {
-        $or: [
-          { content: keyRe },
-          { 'user.username': keyRe },
-        ]
-      };
+      query = [
+        { content: Like(keyRe) },
+        { 'user.username': Like(keyRe) },
+      ];
     }
     const list = await commentRepository
-      .find(query)
-      .skip((listDto.page_index - 1) * listDto.page_size)
-      .limit(listDto.page_size)
-      .populate({
-        path: 'parent',
-        select: '-sourceID -__v -rootID',
-        populate: {
-          path: 'user',
-          select: "username avatarURL"
-        },
+      .find({
+        where: query,
+        skip: (listDto.page_index - 1) * listDto.page_size,
+        take: listDto.page_size,
+        relations: ['article', 'parent', 'root', 'user', 'root.user', 'article.user', 'parent.user']
       })
-      .populate({
-        path: 'article',
-        // select: '-sourceID -__v -rootID',
-        populate: {
-          path: 'user',
-          select: "username avatarURL"
-        },
-      })
-      .populate({
-        path: 'rootID',
-        select: '-sourceID -__v -rootID',
-        populate: {
-          path: 'user',
-          select: "username avatarURL"
-        },
-      })
-      .populate([{ path: 'user', select: "username avatarURL" }])
-    const total = await commentRepository.countDocuments(query);
+    const total = await commentRepository.count({
+      where: query
+    });
     return {
       list,
       total
@@ -235,87 +221,78 @@ export class CommentService {
   async getById (source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
 
-    return commentRepository.findById(id).populate({
-      path: 'parent',
-      select: '-sourceID -__v -rootID',
-      populate: {
-        path: 'user',
-        select: "username avatarURL"
-      },
-    })
-      .populate({
-        path: 'rootID',
-        select: '-sourceID -__v -rootID',
-        populate: {
-          path: 'user',
-          select: "username avatarURL"
-        },
-      })
-      .populate([{ path: 'user', select: "username avatarURL" }])
+    return commentRepository.findOneOrFail(id, {
+      relations: ['article', 'parent', 'root', 'user', 'root.user', 'article.user', 'parent.user']
+    });
   }
 
   async delById (source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
-    return commentRepository.deleteOne({ _id: id })
+    return commentRepository.delete(id)
   }
 
   async updateById (source: string, id: string, content: string) {
     const commentRepository = this.getCommentSchema(source);
     const htmlContent = MarkDownUtils.markdown(content);
-    return commentRepository.updateOne({ _id: id }, { $set: { content, htmlContent, updatedAt: Date.now() } });
+
+    const comment = await commentRepository.findOneOrFail(id);
+    comment.content = htmlContent;
+    return commentRepository.save(comment);
   }
 
   // 查询子评论
-  async getChildCommentList (source: string, rootID: string) {
+  async getChildCommentList (source: string, rootId: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository
-      .find({ rootID, status: ContentStatus.VerifySuccess }, '-sourceID -__v -rootID')
-      .populate({
-        path: 'parent',
-        select: '-sourceID -__v -rootID',
-        populate: {
-          path: 'user',
-          select: "username avatarURL"
+      .find({
+        where: {
+          rootId, status: ContentStatus.VerifySuccess
         },
-      })
-      .populate([{ path: 'user', select: "username avatarURL" }])
-      .exec()
+        relations: ['parent', 'parent.user', 'user']
+      });
   }
 
   /**
    * 查询一级评论,分页
    */
-  async getRootCommentList (source: string, sourceID: string = CommentConstants.CommonMessageID, lastCommentID?: string, limit: number = 10) {
+  async getRootCommentList (source: string, sourceId?: string, lastCommentID?: string, limit: number = 10) {
     const commentRepository = this.getCommentSchema(source);
     const query: any = {
-      sourceID: sourceID,
-      rootID: null,
+      rootId: IsNull(),
       status: ContentStatus.VerifySuccess
     };
     if (lastCommentID) {
-      query._id = {
-        '$lt': new ObjectID(lastCommentID)
-      };
+      const lastComment = await commentRepository.findOne(lastCommentID);
+      query.createAt = MoreThan(lastComment.createAt);
+    }
+    if (sourceId && sourceId !== CommentConstants.CommonMessageID && source === CommentConstants.SourceArticle) {
+      query.objectId = sourceId;
     }
     const list = await commentRepository
-      .find(query, '-sourceID -__v')
-      .sort({ _id: -1 })
-      .limit(limit)
-      .populate([{ path: 'user', select: "username avatarURL" }]).exec()
-
+      .find({
+        where: query,
+        order: {
+          createAt: 'DESC'
+        },
+        take: limit,
+        relations: ['user']
+      });
+    
+    
     const counts_p = list.map(item => {
-      return commentRepository.countDocuments({
+      return commentRepository.count({
         status: ContentStatus.VerifySuccess,
-        rootID: item._id
-      }).exec()
+        rootId: item.id
+      })
     });
 
     const counts = await Promise.all(counts_p);
 
     const comments = list.map((item, index) => {
-      item = item.toJSON()
-      item.commentCounts = counts[index];
-      return item;
+      return {
+        ...item,
+        commentCounts: counts[index]
+      };
     });
 
     return comments;
@@ -325,16 +302,15 @@ export class CommentService {
     const commentRepository = this.getCommentSchema(source);
     const list = commentRepository
       .find({
-        status: ContentStatus.VerifySuccess
-      })
-      .sort({ _id: -1 })
-      .limit(6)
-      .populate([{ path: 'user', select: "username avatarURL" }])
-      .populate({
-        path: 'article',
-        select: '-htmlContent -__v -content -tags -summary',
-      })
-      .exec()
+        where: {
+          status: ContentStatus.VerifySuccess
+        },
+        order: {
+          createAt: 'DESC',
+        },
+        take: 6,
+        relations: ['user']
+      });
     return list;
   }
 
@@ -349,28 +325,32 @@ export class CommentService {
   }
 
 
-  async hashLikeByUid (source: string, aid: ObjectID, uid: ObjectID) {
+  async hashLikeByUid (source: string, aid: string, uid: string) {
     const commentRepository = this.getCommentSchema(source);
 
-    const sourceObj = await commentRepository.findById(aid);
+    const sourceObj = await commentRepository.findOneOrFail(aid, {
+      relations: ['likes']
+    });
 
-    if (!sourceObj) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
-    if (sourceObj.likes) {
-      return !!sourceObj.likes.find((item: any) => {
-        return uid.equals(item);
+    if (sourceObj?.likes?.length) {
+      return (sourceObj.likes as (ArticleCommentLike | LeaveWordLike)[]).find(item => {
+        return uid === item.userId
       });
     }
     return false;
   }
 
-  async likeById (source: string, cid: ObjectID, uid: ObjectID) {
+  async likeById (source: string, cid: string, uid: string) {
     const commentRepository = this.getCommentSchema(source);
-    const like = await commentRepository.updateOne({ _id: cid }, {
-      $addToSet: {
-        likes: uid
-      }
+    const data = await commentRepository.findOneOrFail(cid, {
+      relations: ['likes']
     });
-    const article: Comment = await commentRepository.findById(cid);
+    const like = this.getCommentLikeEntity(source);
+    like.userId = uid;
+    like.objectId = source;
+
+    data.likes = [...data.likes, like] as any[];
+    await commentRepository.save(data);
 
     // 通知
     let nType: NotifyObjectType;
@@ -381,30 +361,29 @@ export class CommentService {
       nType = NotifyObjectType.message;
     }
     if (nType) {
-      await this.notifyService.publish(nType, NotifyActionType.like, cid, uid, article.user as ObjectID);
+      await this.notifyService.publish(nType, NotifyActionType.like, cid, uid, data.userId);
     }
     // $push
     return like;
   }
 
-  async unlikeById (source: string, aid: ObjectID, uid: ObjectID) {
+  async unlikeById (source: string, aid: string, uid: string) {
     const commentRepository = this.getCommentSchema(source);
-
-    // $push
-    return commentRepository.findByIdAndUpdate(aid, {
-      $pull: {
-        likes: uid
-      }
+    const data = await commentRepository.findOneOrFail(aid, {
+      relations: ['likes']
     });
+    const index = data.likes.findIndex(item => item.userId === uid)
+    data.likes.splice(index, 1);
+    return commentRepository.save(data);
   }
 
   async allMarkdownContentToHtmlContent (source: string) {
 
     const commentSchema = this.getCommentSchema(source);
-    const list: any[] = await commentSchema.find({});
+    const list = await commentSchema.find({});
 
     list.forEach(item => {
-      this.updateById(source, item._id, item.content);
+      this.updateById(source, item.id, item.content);
     });
 
   }
@@ -412,7 +391,7 @@ export class CommentService {
   async count () {
     const { SourceArticle, SourceMessage } = CommentConstants;
     const list = [SourceArticle, SourceMessage];
-    const pList = list.map(item => this.getCommentSchema(item).countDocuments());
+    const pList = list.map(item => this.getCommentSchema(item).count());
     const [article, message] = await Promise.all(pList);
     return {
       article,
@@ -432,11 +411,8 @@ export class CommentService {
         const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
         const endDate = moment(startDate).add(1, type).format('YYYY-MM-DD');
 
-        const findPromise = schema.countDocuments({
-          createdAt: {
-            $gte: new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'),
-            $lt: new Date(endDate + ' 23:59:59'),
-          }
+        const findPromise = schema.count({
+          createAt: Between(new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'), new Date(endDate + ' 23:59:59'))
         });
 
         list.push(findPromise.then(data => {
@@ -464,10 +440,8 @@ export class CommentService {
 
         const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
 
-        const findPromise = schema.countDocuments({
-          createdAt: {
-            $gte: new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:59'),
-          }
+        const findPromise = schema.count({
+          createAt: LessThan(new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:59'))
         });
 
         list.push(findPromise.then(data => {

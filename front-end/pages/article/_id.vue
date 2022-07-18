@@ -3,11 +3,11 @@
     <v-row>
       <v-col :md="8" :sm="12" :cols="12">
         <v-card>
-          <div class="acticle_pic" v-if="data.coverURL">
+          <div class="acticle_pic" v-if="data.coverUrl">
             <v-img
               :aspect-ratio="16 / 9"
-              :src="data.coverURL | imageMogr2(800)"
-              :lazy-src="data.coverURL | imageMogr2(10)"
+              :src="data.coverUrl | imageMogr2(800)"
+              :lazy-src="data.coverUrl | imageMogr2(10)"
             ></v-img>
           </div>
           <div class="acticle_content">
@@ -29,21 +29,21 @@
             <h1 class="acticle_title display-1">{{ data.title }}</h1>
             <div class="acticle_user d-flex justify-space-between align-center">
               <!-- user info -->
-              <user-card :userId="data.user._id">
+              <user-card :userId="data.user.id">
                 <nuxt-link
                   v-ripple
                   tag="div"
-                  :to="`/user/${data.user._id}`"
+                  :to="`/user/${data.user.id}`"
                   class="acticle_user-left d-flex align-center"
                   v-if="data.user"
                 >
                   <div
                     class="acticle_user-avatar mr-3"
-                    v-if="data.user.avatarURL"
+                    v-if="data.user.avatarUrl"
                   >
                     <v-avatar size="42">
                       <v-img
-                        :src="data.user.avatarURL | imageMogr2(68, 68)"
+                        :src="data.user.avatarUrl | imageMogr2(68, 68)"
                       ></v-img>
                     </v-avatar>
                   </div>
@@ -52,13 +52,13 @@
                       {{ data.user.username }}
                     </div>
                     <div class="acticle_info-date">
-                      <span>{{ data.createdAt | format }}</span>
+                      <span>{{ data.createAt | format }}</span>
                       <v-btn
                         text
                         color="primary"
                         x-small
                         class="overline"
-                        v-if="user && user._id == data.user._id"
+                        v-if="user && user.id == data.user.id"
                         @click.stop="handleEditArticle"
                         >编辑</v-btn
                       >
@@ -92,14 +92,14 @@
           </div>
           <div class="acticle_tags">
             <nuxt-link
-              :to="`/tag/${item.name}`"
-              class="tag-item-link"
               v-for="item in data.tags"
-              :key="item.name"
+              :key="item.id"
+              class="tag-item-link"
+              :to="`/tag/${item.tag ? item.tag.name : item.name}`"
             >
               <v-chip class="ma-2" label>
-                <v-icon left small>{{ $icons['mdi-' + item.iconURL] }}</v-icon>
-                {{ item.name }}
+                <v-icon left small v-if="item.tag && item.tag.iconUrl">{{ $icons['mdi-' + item.tag.iconUrl] }}</v-icon>
+                {{ item.tag ? item.tag.name : '-' }}
               </v-chip>
             </nuxt-link>
           </div>
@@ -257,7 +257,7 @@ export default {
       this.$vuetify.goTo(topSize - 20);
     },
     async handleClickLike () {
-      const aid = this.data._id;
+      const aid = this.data.id;
       try {
         const likes = this.changeLike(this.data.likes);
         await this.$axios.put('/api/article/' + aid + '/like');

@@ -2,7 +2,7 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2022-03-13 17:37:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-15 09:44:57
+ * @LastEditTime: 2022-06-30 13:24:16
  * @Description: 
  */
 import { IoAdapter } from '@nestjs/platform-socket.io';
@@ -15,7 +15,7 @@ import { ConfigService } from '../../config/config.service';
 import { LoggerService } from '../../common/logger.service';
 import { UserService } from '../../modules/user/user.service';
 import { AuthService } from '../../modules/auth/auth.service';
-import { User } from '../../models/user.entity';
+import { User as UserEntity } from '../../entities/User';
 import { RedisService } from '../../redis/redis.service';
 import { format } from 'util';
 import { MessageMappingProperties } from '@nestjs/websockets';
@@ -83,7 +83,7 @@ export class WsAdapter extends IoAdapter {
     }
 
     let userToken: string;
-    let user: User;
+    let user: UserEntity;
 
     [userToken] = await Promise.all([
       this.redisService.getUserToken(userId),
@@ -98,7 +98,7 @@ export class WsAdapter extends IoAdapter {
       this.logger.debug({
         message: 'login get user ing',
         data: {
-          user: user?._id
+          user: user?.id
         }
       })
     }
@@ -128,24 +128,24 @@ export class WsAdapter extends IoAdapter {
     return server;
   }
 
-  async bindMessageHandlers (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> & { user?: User }, handlers: MessageMappingProperties[], transform: (data: any) => Observable<any>) {
+  async bindMessageHandlers (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> & { user?: UserEntity }, handlers: MessageMappingProperties[], transform: (data: any) => Observable<any>) {
     super.bindMessageHandlers(socket, handlers, transform);
   }
 
   bindClientConnect (server: Server, callback: Function): void {
     super.bindClientConnect(server, callback);
-    server.on('connection', async (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> & { user?: User }) => {
+    server.on('connection', async (socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any> & { user?: UserEntity }) => {
       try {
         const user = await this.getClientUser(socket);
         this.logger.info({
-          message: format("websocket connection isLogin(%s) user(%s)", Boolean(user), user?._id),
+          message: format("websocket connection isLogin(%s) user(%s)", Boolean(user), user?.id),
           data: {
-            user: user?._id,
+            user: user?.id,
             username: user?.username
           }
         });
-        if (user?._id) {
-          const userId = user?._id?.toString();
+        if (user?.id) {
+          const userId = user?.id?.toString();
           // 加入房间
           await socket.join(userId);
           socket.data = {

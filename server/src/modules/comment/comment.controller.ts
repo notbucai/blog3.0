@@ -6,7 +6,7 @@ import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
 import { CommentService } from './comment.service';
 import { CurUser } from '../../core/decorators/user.decorator';
-import { User } from '../../models/user.entity';
+import { User } from '../../entities/User';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { ListCommentDto } from './dto/list.dto';
 import { AllListDto } from './dto/allList.dto';
@@ -78,13 +78,13 @@ export class CommentController {
 
   @Get('list/:source')
   @ApiOperation({ summary: "子评论列表" })
-  public async childList (@Param('source') source: string, @Query('rootID') rootID: string, @CurUser() user: User) {
+  public async childList (@Param('source') source: string, @Query('rootId') rootId: string, @CurUser() user: User) {
     if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
     }
-    return this.commentService.getChildCommentList(source, rootID);
+    return this.commentService.getChildCommentList(source, rootId);
   }
 
 
@@ -98,9 +98,9 @@ export class CommentController {
         code: ErrorCode.ParamsError.CODE,
       });
     }
-    const comment = await this.commentService.create(source, createCommentDto, user._id);
-    this.commentService.censor(source, String(comment._id))
-    await this.commentService.notifyComment(source, createCommentDto, user._id);
+    const comment = await this.commentService.create(source, createCommentDto, user.id);
+    this.commentService.censor(source, String(comment.id))
+    this.commentService.notifyComment(source, createCommentDto, user.id);
     return comment;
   }
 
@@ -109,14 +109,14 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "删除评论" })
   public async del (@Param('source') source: string, @Param('id') id: string, @CurUser() user: User) {
-    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
+    if (!this.commentService.isValidSource(source) ) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
     }
 
     const oldComment = await this.commentService.getById(source, id);
-    // if ((oldComment.user as User)._id !== user._id && user.role === UserRole.Normal) {
+    // if ((oldComment.user as User).id !== user.id && user.role === UserRole.Normal) {
     //   throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
     // }
 
@@ -129,13 +129,13 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论" })
   public async update (@Param('source') source: string, @Param('id') id: string, @Body() updateDto: UpdateCommentDto, @CurUser() user: User) {
-    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
+    if (!this.commentService.isValidSource(source) ) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE,
       });
     }
     const oldComment = await this.commentService.getById(source, id);
-    // if ((oldComment.user as User)._id !== user._id && user.role === UserRole.Normal) {
+    // if ((oldComment.user as User).id !== user.id && user.role === UserRole.Normal) {
     //   throw new MyHttpException({ code: ErrorCode.Forbidden.CODE })
     // }
     const comment = await this.commentService.updateById(source, id, updateDto.content);
@@ -150,19 +150,18 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "点赞" })
   async like (@Param('source') source: string, @Param('id') id: string, @CurUser() user: User) {
-    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
+    if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
 
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    const oid = new ObjectID(id);
+    const oid = id;
 
-    const hasLike = await this.commentService.hashLikeByUid(source, oid, user._id);
+    const hasLike = await this.commentService.hashLikeByUid(source, oid, user.id);
 
     if (hasLike) {
-      await this.commentService.unlikeById(source, oid, user._id);
+      await this.commentService.unlikeById(source, oid, user.id);
     } else {
-      await this.commentService.likeById(source, oid, user._id);
+      await this.commentService.likeById(source, oid, user.id);
     }
     return "成功";
   }
@@ -174,7 +173,7 @@ export class CommentController {
   @ApiBearerAuth()
   @ApiOperation({ summary: "修改评论状态" })
   public async changeStatus (@Param('source') source: string, @Param('id') id: string, @Body() statusDto: ChangeContentStatusDto) {
-    if (!this.commentService.isValidSource(source) || !ObjectID.isValid(id)) {
+    if (!this.commentService.isValidSource(source)) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
     const comment = await this.commentService.changeStatus(source, id, statusDto.status);

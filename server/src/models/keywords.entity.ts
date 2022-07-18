@@ -1,17 +1,17 @@
 /*
  * @Author: bucai
  * @Date: 2021-06-06 22:58:33
- * @LastEditors: bucai
- * @LastEditTime: 2021-06-07 13:17:45
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-06-29 17:57:26
  * @Description: 
  */
 import { prop } from '@typegoose/typegoose';
 import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 
 export enum KeywordsStatus {
-  BAD = -1,
-  NORMAL = 0,
-  GOOD = 1
+  BAD = 'BAD',
+  NORMAL = 'NORMAL',
+  GOOD = 'GOOD'
 }
 
 export class Keywords extends Base {
@@ -20,7 +20,7 @@ export class Keywords extends Base {
   updatedAt: Date;
 
   @prop({ default: Date, })
-  createdAt: Date;
+  createAt: Date;
 
   @prop({ default: null })
   deletedAt: Date;

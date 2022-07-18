@@ -8,8 +8,8 @@
               <v-list-item class="_user-header">
                 <v-list-item-avatar size="80" class="_user-avatar">
                   <v-img
-                    v-if="userInfo.avatarURL"
-                    :src="userInfo.avatarURL"
+                    v-if="userInfo.avatarUrl"
+                    :src="userInfo.avatarUrl"
                     aspect-ratio="1"
                     :width="120"
                   ></v-img>
@@ -59,7 +59,7 @@
                     color="primary"
                     outlined
                     elevation="0"
-                    v-if="user && user._id == userInfo._id"
+                    v-if="user && user.id == userInfo.id"
                     nuxt
                     to="settings"
                     class="_user-setting"
@@ -77,19 +77,19 @@
           <v-tabs-items v-model="tab" color="transparent">
             <v-tab-item>
               <div class="pt-4">
-                <article-item v-for="item in articleList" :key="item._id" :article="item" />
+                <article-item v-for="item in articleList" :key="item.id" :article="item" />
               </div>
             </v-tab-item>
             <v-tab-item>
               <div class="pt-4">
-                <v-card v-for="item in commentList" :key="item._id" class="mb-2">
+                <v-card v-for="item in commentList" :key="item.id" class="mb-2">
                   <comment-item :comment="item" type="user" />
                 </v-card>
               </div>
             </v-tab-item>
             <v-tab-item>
               <div class="pt-4">
-                <!-- <article-item v-for="item in " :key="item._id" :article="item" /> -->
+                <!-- <article-item v-for="item in " :key="item.id" :article="item" /> -->
               </div>
             </v-tab-item>
           </v-tabs-items>

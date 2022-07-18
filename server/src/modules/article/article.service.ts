@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentType, ReturnModelType } from '@typegoose/typegoose';
-import { Article, ArticleUpStatus } from '../../models/article.entity';
+import { Article } from '../../models/article.entity';
 import { Tag } from '../../models/tag.entity';
 import { InjectModel } from 'nestjs-typegoose';
 import { CreateArticleDto as CreateDto } from './dto/create.dto';
@@ -15,10 +15,21 @@ import MarkdownUtils from '../../utils/markdown';
 import { CensorService } from '../../common/censor.service';
 import * as htmlEntities from 'html-entities';
 import { LoggerService } from '../../common/logger.service';
-import { ContentStatus, ContentStatusLabelMap, systemObjectId } from 'src/constants/constants';
+import { ArticleUpStatus, ContentStatus, ContentStatusLabelMap, systemObjectId } from '../../constants/constants';
 import { NotifyService } from '../notify/notify.service';
-import { NotifyActionType, NotifyObjectType } from 'src/models/notify.entiy';
-import { User } from 'src/models/user.entity';
+import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
+
+import { Article as ArticleEntity } from '../../entities/Article';
+import { Tag as TagEntity } from '../../entities/Tag';
+import { ArticleTag as ArticleTagEntity } from '../../entities/ArticleTag';
+import { ArticleMenu as ArticleMenuEntity } from '../../entities/ArticleMenu';
+import { ArticleRead as ArticleReadEntity } from '../../entities/ArticleRead';
+import { ArticleLike as ArticleLikeEntity } from '../../entities/ArticleLike';
+import { ArticleComment as ArticleCommentEntity } from '../../entities/ArticleComment';
+import { ArticleCommentLike as ArticleCommentLikeEntity } from '../../entities/ArticleCommentLike';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, IsNull, Like, Not, Repository } from 'typeorm';
+
 
 @Injectable()
 export class ArticleService {
@@ -29,6 +40,24 @@ export class ArticleService {
     private readonly tagSchema: ReturnModelType<typeof Tag>,
     @InjectModel(ArticleComment)
     private readonly commentSchema: ReturnModelType<typeof ArticleComment>,
+
+    @InjectRepository(ArticleEntity)
+    private articleRepository: Repository<ArticleEntity>,
+    @InjectRepository(TagEntity)
+    private tagRepository: Repository<TagEntity>,
+    @InjectRepository(ArticleTagEntity)
+    private articleTagRepository: Repository<ArticleTagEntity>,
+    @InjectRepository(ArticleMenuEntity)
+    private articleMenuRepository: Repository<ArticleMenuEntity>,
+    @InjectRepository(ArticleLikeEntity)
+    private articleLikeRepository: Repository<ArticleLikeEntity>,
+    @InjectRepository(ArticleReadEntity)
+    private articleReadRepository: Repository<ArticleReadEntity>,
+    @InjectRepository(ArticleCommentEntity)
+    private articleCommentRepository: Repository<ArticleCommentEntity>,
+    @InjectRepository(ArticleCommentLikeEntity)
+    private articleCommentLikeRepository: Repository<ArticleCommentLikeEntity>,
+
     private readonly censorService: CensorService,
     private readonly notifyService: NotifyService,
     private readonly loggerService: LoggerService,
@@ -66,7 +95,7 @@ export class ArticleService {
     });
 
     if (data.status) {
-      return this.changeStatus(String(article._id), ContentStatus.VerifySuccess);
+      return this.changeStatus(article.id, ContentStatus.VerifySuccess);
     }
     // 失败后 进行错误标记
     data.data.forEach(item => {
@@ -92,61 +121,75 @@ export class ArticleService {
       });
     });
     // htmlContent
-    await this.articleSchema.updateOne({ _id: article._id }, {
-      $set: {
-        htmlContent
-      }
-    });
+    await this.articleRepository.update(article.id, article);
     if (data.type === 2) {
-      await this.changeStatus(String(article._id), ContentStatus.VerifyFail);
+      await this.changeStatus(String(article.id), ContentStatus.VerifyFail);
     }
   }
 
   // 创建
-  async create (createDto: CreateDto, userId: ObjectID) {
-    const or = createDto.tags.map(id => ({ _id: new ObjectID(id) }))
-    let tags = [];
-    if (or.length) {
-      // 只选有用的tag
-      tags = (await this.tagSchema.find({ $or: or })).map(item => item._id);
-    }
+  async create (createDto: CreateDto, userId: string) {
+    const article = new ArticleEntity();
+    // 只选有用的tag
+    let findTags = await this.tagRepository.find({
+      where: {
+        id: In(createDto.tags)
+      }
+    });
+    // bind tag
+    const tags = findTags.map(tag => {
+      const articleTag = new ArticleTagEntity();
+      articleTag.tag = tag;
+      articleTag.tagId = tag.id;
+      articleTag.articleId = article.id;
+      return articleTag;
+    });
     // 解析一些对象
     const { menus, menusHtml, summary, markText } = this.contentToArticleAttr(createDto.content);
 
-    const article = new Article();
     article.title = createDto.title;
     article.summary = summary;
     article.content = createDto.content;
     article.htmlContent = menusHtml;
-    article.menus = menus;
-
-    article.coverURL = createDto.coverURL || null;
+    article.menus = menus.map(item => {
+      const menu = new ArticleMenuEntity();
+      // menu.articleId = article.id;
+      menu.title = item.title;
+      menu.target = item.target;
+      menu.type = item.type;
+      return menu;
+    });
+    article.coverUrl = createDto.coverUrl || null;
 
     article.tags = tags;
-    article.user = userId;
+    article.userId = userId;
     article.status = ContentStatus.Verifying;
     article.wordCount = markText.replace(/[\s\n\r\t\f\v]+/g, '').length;
-    return this.articleSchema.create(article);
+    return this.articleRepository.save(article);
   }
 
   async changeStatus (id: string, status: ContentStatus = ContentStatus.Verifying) {
-    const res = await this.articleSchema.findByIdAndUpdate(id, { $set: { status } })
+    const article = await this.findById(id);
+    article.status = status;
+    await this.articleRepository.save(article);
     // notify message
-    this.notifyService.publish(NotifyObjectType.article, NotifyActionType.audit, res._id, systemObjectId, ((res.user as unknown as User)?._id) || res.user as ObjectID, ContentStatusLabelMap[status])
-    return res;
+    this.notifyService.publish(NotifyObjectType.article, NotifyActionType.audit, article.id, systemObjectId, article?.user?.id || article?.userId, ContentStatusLabelMap[status])
+    return article;
   }
 
 
   async changeUpStatus (id: string, status: ArticleUpStatus) {
-    return this.articleSchema.findByIdAndUpdate(id, { $set: { up: status } })
+    const article = await this.findById(id);
+    article.up = status;
+    return this.articleRepository.save(article);
   }
 
   async deleteById (id: string) {
-    return this.articleSchema.deleteOne({ _id: id });
+    return this.articleRepository.delete(id);
   }
 
   async updateById (id: string, createDto: CreateDto, status: ContentStatus = ContentStatus.Verifying) {
-    const article = await this.articleSchema.findById(id);
+    const article = await this.findById(id);
     if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     // const htmlContent = createDto.htmlContent || article.htmlContent;
 
@@ -154,109 +197,164 @@ export class ArticleService {
     const { menus, menusHtml, summary } = this.contentToArticleAttr(createDto.content);
 
     const title = createDto.title || article.title;
-    const coverURL = createDto.coverURL || article.coverURL;
+    const coverUrl = createDto.coverUrl || article.coverUrl;
     const content = createDto.content || article.content;
 
-    const _tag = createDto.tags ? createDto.tags.map(item => new ObjectID(item)) : null;
-    const tags: any = _tag || article.tags;
-    return this.articleSchema.updateOne({ _id: id }, {
-      $set: {
-        // htmlContent,
-        summary,
-        title,
-        coverURL,
-        content,
-        tags,
-        menus,
-        htmlContent: menusHtml,
-        status,
-        updatedAt: new Date()
+    let findTags = await this.tagRepository.find({
+      where: {
+        id: In(createDto.tags)
+      }
+    });
+    // bind tag
+    const tags = findTags.map(tag => {
+      const articleTag = new ArticleTagEntity();
+      articleTag.tag = tag;
+      articleTag.tagId = tag.id;
+      articleTag.articleId = article.id;
+      return articleTag;
+    });
+
+    article.title = title;
+    article.coverUrl = coverUrl;
+    article.summary = summary;
+    article.content = content;
+    article.htmlContent = menusHtml;
+    article.status = status;
+    article.tags = tags;
+    article.menus = menus.map(item => {
+      const menu = new ArticleMenuEntity();
+      // menu.articleId = article.id;
+      menu.title = item.title;
+      menu.target = item.target;
+      menu.type = item.type;
+      return menu;
+    });
+
+
+    return this.articleRepository.save(article);
+  }
+
+  async findById (id: string) {
+    return this.articleRepository
+      .findOne(id, {
+        relations: ['user', 'tags', 'tags.tag', 'menus', 'likes']
+      })
+  }
+  async findBasisById (id: string) {
+    return this.articleRepository
+      .findOne(id)
+  }
+
+  async addViewCount (id: string) {
+    return this.articleRepository.update(id, {
+      browseCount () {
+        return 'browse_count + 1';
       }
     });
   }
 
-  async findById (id: string) {
-    return await this.articleSchema
-      .findById(id)
-      .populate([{ path: 'user', select: "-pass" }])
-      .populate([{ path: 'tags' }])
-  }
-  async findBasisById (id: string) {
-    return await this.articleSchema
-      .findById(id).exec();
-  }
-
-  async addViewCount (id: ObjectID) {
-    return await this.articleSchema.updateOne({ _id: id }, { $inc: { browseCount: 1 } })
-  }
-
-  async pageListByTag (tagId: ObjectID, listDto: ArticleListByTagDto) {
+  async pageListByTag (tagId: string, listDto: ArticleListByTagDto) {
 
     const page_index = Number(listDto.page_index || 1) - 1;
     const page_size = Number(listDto.page_size || 10);
-    const where = {
-      tags: { $elemMatch: { $eq: tagId } },
-      status: ContentStatus.VerifySuccess
-    };
-    const a_list = await this.articleSchema
-      .find(where, '-htmlContent -content -menus')
-      .sort({ _id: -1 })
-      .skip(page_index * page_size)
-      .limit(page_size)
-      .populate([{ path: 'user', select: "-pass" }])
-      .populate([{ path: 'tags' }]);
-    const list_p = a_list.map(async item => {
-      item = item.toJSON() as any;
-      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
-      return item;
-    });
-    const list = await Promise.all(list_p);
-    const total = await this.articleSchema.countDocuments(where);
-    return {
-      list,
-      total
-    }
+    const tag = this.articleTagRepository.find({
+      where: {
+        tagId
+      }
+    })
+
+    const articleList = await this.articleRepository
+      .find({
+        relations: ['user', 'tags', 'menus'],
+        where: {
+          tags: In([tag])
+        },
+        skip: page_index * page_size,
+        take: page_size,
+        order: {
+          createAt: "DESC"
+        }
+      });
+    return articleList;
+
+    // const where = {
+    //   tags: { $elemMatch: { $eq: tagId } },
+    //   status: ContentStatus.VerifySuccess
+    // };
+    // const a_list = await this.articleSchema
+    //   .find(where, '-htmlContent -content -menus')
+    //   .sort({ _id: -1 })
+    //   .skip(page_index * page_size)
+    //   .limit(page_size)
+    //   .populate([{ path: 'user', select: "-pass" }])
+    //   .populate([{ path: 'tags' }]);
+    // const list_p = a_list.map(async item => {
+    //   item = item.toJSON() as any;
+    //   item.commentCount = await this.commentSchema.countDocuments({ sourceId: item.id });
+    //   return item;
+    // });
+    // const list = await Promise.all(list_p);
+    // const total = await this.articleSchema.countDocuments(where);
+    // return {
+    //   list,
+    //   total
+    // }
   }
 
   async pageList (listDto: ArticleListDto, status?: ContentStatus, up?: boolean) {
-    const where: any = {};
-    const sort1: any = { _id: -1, };
+    const where: any = [{}];
+    const sort1: any = { createAt: 'DESC' };
     const sort2: any = {};
     if (status) {
-      where.status = status;
+      where[0].status = status;
     }
     if (up) {
-      sort2.up = -1;
+      sort2.up = 'DESC';
     }
 
     const whereOrKeys = ['title', 'summary'];
     if (listDto.keyword) {
-      const rx = new RegExp(listDto.keyword);
-      where.$or = whereOrKeys.map(key => ({ [key]: rx }))
+      whereOrKeys.forEach((key, index) => {
+        where[index] = {
+          ...where[0],
+          [key]: Like(listDto.keyword),
+        }
+      })
     }
     const page_index = Number(listDto.page_index || 1) - 1;
     const page_size = Number(listDto.page_size || 10);
 
-    const a_list = await this.articleSchema
-      .find(where, '-htmlContent -content -menus')
-      .sort(sort2)
-      .sort(sort1)
-      .skip(page_index * page_size)
-      .limit(page_size)
-      .populate([{ path: 'user', select: "-pass" }])
-      .populate([{ path: 'tags' }])
-      .exec();
+    const a_list = await this.articleRepository
+      .find({
+        where,
+        order: {
+          ...sort1,
+          ...sort2,
+        },
+        skip: page_index * page_size,
+        take: page_size,
+        relations: ['user', 'tags']
+      });
 
     const list_p = a_list.map(async item => {
-      item = item.toJSON() as any;
-      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id, status: ContentStatus.VerifySuccess });
-      return item;
+      const _item = {
+        ...item,
+        commentCount: await this.articleCommentRepository.count({
+          where: {
+            objectId: item.id,
+            status: ContentStatus.VerifySuccess
+          }
+        })
+      };
+      return _item;
     });
     // commentSchema
 
     const list = await Promise.all(list_p);
 
-    const total = await this.articleSchema.countDocuments(where);
+    const total = await this.articleRepository.count({
+      where
+    });
 
     return {
       list,
@@ -265,54 +363,50 @@ export class ArticleService {
   }
 
   async randomList (len: number) {
-    return await this.articleSchema
-      .aggregate([
-        {
-          $match: {
-            status: ContentStatus.VerifySuccess
-          }
-        },
-        { $sample: { size: len } },
-        {
-          $lookup: {
-            from: "users",
-            localField: "user",
-            foreignField: "_id",
-            as: "user"
-          }
-        },
-        { $unwind: "$user" },
-        {
-          $project: {
-            // _id: 1,
-            htmlContent: 0,
-            content: 0,
-            pass: 0,
-            // "user": "$user"
-          }
-        },
-      ]);
+    return await this.articleRepository
+      .createQueryBuilder()
+      .where({
+        status: ContentStatus.VerifySuccess
+      })
+      .orderBy("RAND()")
+      .take(len)
+      .leftJoinAndSelect('Article.user', 'user')
+      .getMany()
   }
 
   async pageHotList () {
-
-    const a_list = await this.articleSchema
-      .find({ coverURL: { $ne: null }, status: ContentStatus.VerifySuccess }, '-htmlContent -content -menus')
-      .populate([{ path: 'user', select: "-pass" }])
-      .populate([{ path: 'tags' }])
-      .sort({ browseCount: -1 })
-      .limit(6)
-      .exec();
+    const where = {
+      coverUrl: Not(IsNull()),
+      status: ContentStatus.VerifySuccess
+    };
+    const a_list = await this.articleRepository
+      .find({
+        where,
+        relations: ['user', 'tags'],
+        order: {
+          browseCount: 'DESC',
+        },
+        take: 6
+      })
 
     const list_p = a_list.map(async item => {
-      item = item.toJSON() as any;
-      item.commentCount = await this.commentSchema.countDocuments({ article: item._id });
-      return item;
+      const data = {
+        ...item,
+        commentCount: await this.articleCommentRepository.count({
+          where: {
+            objectId: item.id,
+            status: ContentStatus.VerifySuccess
+          }
+        })
+      }
+      return data;
     });
 
     const list = await Promise.all(list_p);
 
-    const total = await this.articleSchema.countDocuments();
+    const total = await this.articleRepository.count({
+      where
+    });
 
     return {
       list,
@@ -324,29 +418,39 @@ export class ArticleService {
 
     // 将搜索词进行一个缓存
     const keyRe = new RegExp(keyList.join('|'));
-    return this.articleSchema.find({
-      status: ContentStatus.VerifySuccess,
-      $or: [
+    return this.articleRepository.find({
+      where: [
         {
-          title: keyRe
+          status: ContentStatus.VerifySuccess,
+          title: Like(keyRe),
         },
         {
-          content: keyRe
+          status: ContentStatus.VerifySuccess,
+          summary: Like(keyRe),
         }
-      ]
-    }, '-htmlContent -content -menus -likes')
-      // .populate([{ path: 'user', select: "-pass" }])
-      // .populate([{ path: 'tags' }])
-      .sort({ browseCount: -1 })
+      ],
+      order: {
+        browseCount: 'DESC'
+      }
+    })
   }
 
   async getAllYearAndCount () {
+    return this.articleRepository
+      .createQueryBuilder()
+      .where({
+        status: ContentStatus.VerifySuccess
+      })
+      .groupBy('DATE_FORMAT(create_at, \'%Y\')')
+      .orderBy({
+        createAt: 'DESC'
+      })
     return this.articleSchema.aggregate([
       {
         $match: { status: ContentStatus.VerifySuccess }
       },
       {
-        $project: { year: { $year: '$createdAt' } }
+        $project: { year: { $year: '$createAt' } }
       },
       {
         $group: { _id: "$year", count: { $sum: 1 } }
@@ -356,93 +460,113 @@ export class ArticleService {
   }
 
   async getByYear (year: number) {
-    return this.articleSchema.aggregate([
-      { $match: { status: ContentStatus.VerifySuccess } },
-      { $project: { title: 1, summary: 1, user: 1, createdAt: 1, year: { $year: '$createdAt' } } },
-      { $match: { year } },
-      {
-        $lookup: {
-          from: "users",
-          localField: "user",
-          foreignField: "_id",
-          as: "user",
-        }
-      },
-      { $unwind: "$user" },
-      { $project: { user: { _id: 1, username: 1, avatarURL: 1 }, title: 1, summary: 1, _id: 1, createdAt: 1 } }
-    ]);
+
+    return this.articleRepository
+      .createQueryBuilder()
+      .where({
+        status: ContentStatus.VerifySuccess,
+      })
+      .where(`DATE_TRUNC('year', "create_at") = :date`, { date: '2021-03-27' })
+      // .relation('user')
+      .leftJoinAndSelect('Article.user', 'user')
+      .getMany();
+
+    // return this.articleSchema.aggregate([
+    //   { $match: { status: ContentStatus.VerifySuccess } },
+    //   { $project: { title: 1, summary: 1, user: 1, createAt: 1, year: { $year: '$createAt' } } },
+    //   { $match: { year } },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "user",
+    //       foreignField: "id",
+    //       as: "user",
+    //     }
+    //   },
+    //   { $unwind: "$user" },
+    //   { $project: { user: { _id: 1, username: 1, avatarUrl: 1 }, title: 1, summary: 1, _id: 1, createAt: 1 } }
+    // ]);
   }
 
-  async listByUserId (id: ObjectID | string) {
-    const a_list = await this.articleSchema
-      .find({ user: id }, '-htmlContent -content  -menus')
-      .sort({ _id: -1 })
-      // .populate([{ path: 'user', select: "-pass" }])
-      .populate([{ path: 'tags' }])
-      .exec();
+  async listByUserId (id: string) {
+    const a_list = await this.articleRepository
+      .find({
+        where: {
+          userId: id
+        },
+        order: {
+          createAt: 'DESC'
+        },
+        relations: ['tags']
+      })
 
     const list_p = a_list.map(async item => {
-      item = item.toJSON() as any;
-      item.commentCount = await this.commentSchema.countDocuments({ sourceID: item._id });
-      return item;
+      const data = {
+        ...item,
+        commentCount: await this.articleCommentRepository.count({
+          where: {
+            objectId: item.id,
+            status: ContentStatus.VerifySuccess
+          }
+        })
+      }
+      return data;
     });
 
     const list = await Promise.all(list_p);
     return list;
   }
 
-  async statistics (id: ObjectID) {
-    const data = await this.articleSchema.aggregate([
-      { $match: { user: id } },
-      {
-        $lookup:
-        {
-          from: 'articlecomments',
-          localField: '_id',
-          foreignField: 'sourceID',
-          as: 'comments'
-        },
-      },
-      { $project: { _id: 1, user: 1, wordCount: 1, likes: 1, commentCount: { $size: '$comments' }, likeCount: { "$size": { '$ifNull': ['$likes', []] } }, browseCount: '$browseCount' } },
-      { $group: { _id: '$user', likeCount: { $sum: '$likeCount' }, wordCount: { $sum: '$wordCount' }, browseCount: { $sum: '$browseCount' }, commentCount: { $sum: '$commentCount' }, } },
-    ]).exec();
-    // likeCount: { $size: '$links' },
-    // likeConunt
-    return data[0] || { _id: id, wordCount: 0, browseCount: 0, commentCount: 0 };
-  }
-
-  async hashLikeByUid (aid: ObjectID, uid: ObjectID) {
-    const article = await this.articleSchema.findById(aid);
-
-    if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
-    if (article.likes) {
-      return !!article.likes.find((item: any) => {
-        return uid.equals(item);
+  async statistics (userId: string) {
+    const [list, count] = await this.articleRepository
+      .findAndCount({
+        userId
       });
-    }
-    return false;
+    const articleIds = list.map(item => item.id);
+    const wordCount = list.reduce((pv, item) => pv + item.wordCount, 0);
+    const browseCount = list.reduce((pv, item) => pv + item.browseCount, 0);
+    const commentCount = await this.articleCommentRepository.count({
+      objectId: In(articleIds)
+    });
+    const articleCommentLikeCount = await this.articleCommentLikeRepository.count({
+      objectId: In(articleIds)
+    })
+    const articleLikeCount = await this.articleLikeRepository.count({
+      objectId: In(articleIds)
+    })
+
+    return { id: userId, wordCount, browseCount, commentCount, likeCount: articleCommentLikeCount + articleLikeCount };
   }
 
-  async likeById (aid: ObjectID, uid: ObjectID) {
-    // $push
-    return this.articleSchema.updateOne({ _id: aid }, {
-      $addToSet: {
-        likes: uid
+  async hashLikeByUid (aid: string, uid: string) {
+    const like = await this.articleLikeRepository.findOne({
+      where: {
+        objectId: aid,
+        userId: uid
       }
     });
+
+    return !!like;
   }
 
-  async unlikeById (aid: ObjectID, uid: ObjectID) {
+  async likeById (aid: string, uid: string) {
+    const like = new ArticleLikeEntity()
+    like.objectId = aid;
+    like.userId = uid;
+
+    return this.articleLikeRepository.save(like)
+  }
+
+  async unlikeById (aid: string, uid: string) {
     // $push
-    return this.articleSchema.findByIdAndUpdate(aid, {
-      $pull: {
-        likes: uid
-      }
+    return this.articleLikeRepository.delete({
+      userId: uid,
+      objectId: aid
     });
   }
 
   async allList (status: ContentStatus = ContentStatus.VerifySuccess) {
-    const list = await this.articleSchema.find({
+    const list = await this.articleRepository.find({
       status
     });
 
@@ -451,20 +575,20 @@ export class ArticleService {
 
   async allArticleMarkdownContentToHtmlContent () {
 
-    const alist = await this.articleSchema.find({});
+    const alist = await this.articleRepository.find({});
 
     alist.forEach(article => {
-      this.updateById(String(article._id), {
+      this.updateById(article.id, {
         tags: article.tags as any,
         title: article.title,
         content: article.content,
-        coverURL: article.coverURL
-      }, article.status);
+        coverUrl: article.coverUrl
+      }, article.status as ContentStatus);
     })
 
   }
 
   count () {
-    return this.articleSchema.countDocuments()
+    return this.articleRepository.count()
   }
 }

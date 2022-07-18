@@ -12,20 +12,20 @@
     <!-- threshold: [0.5, 0.75, 1], -->
     <v-img
       :aspect-ratio="18 / 9"
-      v-if="article.coverURL"
+      v-if="article.coverUrl"
       class="article-pic"
-      :src="article.coverURL | imageMogr2(800)"
-      :lazy-src="article.coverURL | imageMogr2(68)"
+      :src="article.coverUrl | imageMogr2(800)"
+      :lazy-src="article.coverUrl | imageMogr2(68)"
     />
 
     <v-card-title>
-      <nuxt-link :to="`/article/${article._id}`" class="title_a">
+      <nuxt-link :to="`/article/${article.id}`" class="title_a">
         <span v-if="article.up == 1" class="body-2">[置顶]</span>
         {{ article.title }}
       </nuxt-link>
     </v-card-title>
     <v-card-subtitle>
-      <span>{{ article.createdAt | format }}</span>
+      <span>{{ article.createAt | format }}</span>
     </v-card-subtitle>
 
     <v-card-text class="text--primary">
@@ -33,11 +33,11 @@
     </v-card-text>
 
     <v-card-actions class="d-flex align-center justify-space-between">
-      <v-btn text color="error" nuxt :to="`/article/${article._id}`"
+      <v-btn text color="error" nuxt :to="`/article/${article.id}`"
         >开始阅读</v-btn
       >
       <div>
-        <v-btn text nuxt :to="`/article/${article._id}`">
+        <v-btn text nuxt :to="`/article/${article.id}`">
           <v-icon left>{{ $icons['mdi-eye'] }}</v-icon>
           {{ article.browseCount }}
         </v-btn>
@@ -54,7 +54,7 @@
           >
           {{ article.likes ? article.likes.length : 0 }}
         </v-btn>
-        <v-btn text nuxt :to="`/article/${article._id}#comment`">
+        <v-btn text nuxt :to="`/article/${article.id}#comment`">
           <v-icon left>{{ $icons['mdi-message'] }}</v-icon>
           {{ article.commentCount }}
         </v-btn>
@@ -73,8 +73,8 @@ export default {
       default () {
         return {
           _id: null,
-          coverURL: null,
-          createdAt: 0,
+          coverUrl: null,
+          createAt: 0,
           summary: '',
           browseCount: 0,
           loveCount: 0,
@@ -98,7 +98,7 @@ export default {
       }
     },
     async handleLike (article) {
-      const aid = article._id;
+      const aid = article.id;
       try {
         const likes = this.changeLike(article.likes);
         await this.$axios.put('/api/article/' + aid + '/like');

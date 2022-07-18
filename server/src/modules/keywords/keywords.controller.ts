@@ -3,7 +3,6 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ErrorCode } from '../../constants/error';
 import { MyHttpException } from '../../core/exception/http.exception';
 import { KeywordsStatus } from '../../models/keywords.entity';
-import { ObjectID } from 'mongodb';
 import { Roles } from '../../core/decorators/roles.decorator';
 import { RolesGuard } from '../../core/guards/roles.guard';
 import { KeywordsListDto } from './dto/list.dto';
@@ -43,7 +42,7 @@ export class KeywordsController {
 
     return this.keywordService.pageList(ListDto.page_index, ListDto.page_size, {
       updatedAt: sortParse(ListDto.sort_updatedAt),
-      createdAt: sortParse(ListDto.sort_createdAt),
+      createAt: sortParse(ListDto.sort_createAt),
       status: sortParse(ListDto.sort_status),
       count: sortParse(ListDto.sort_count),
     });
@@ -54,21 +53,21 @@ export class KeywordsController {
   @UseGuards(RolesGuard)
   @Roles('KeywordRemoveItemById')
   removeItemById (@Param('id') id: string) {
-    return this.keywordService.removeById(new ObjectID(id));
+    return this.keywordService.removeById(id);
   }
 
   @Put(':id/status')
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles('KeywordChangeItemStatusById')
-  changeItemStatusById (@Param('id') id: string, @Query('status') statusQuery: string) {
-    const status = Number(statusQuery)
+  changeItemStatusById (@Param('id') id: string, @Query('status') statusQuery: KeywordsStatus) {
+    const status = statusQuery;
 
     if (!Object.values(KeywordsStatus).includes(status)) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
 
-    return this.keywordService.updateStatusById(new ObjectID(id), status);
+    return this.keywordService.updateStatusById(id, status);
   }
 
   @Get('/list/cloud')

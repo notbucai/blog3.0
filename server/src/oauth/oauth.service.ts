@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { User, UserStatus } from '../models/user.entity';
+import { User } from '../entities/User';
+import { UserLink } from '../entities/UserLink';
 import axios from '../plugins/axios';
 import { ConfigService } from '../config/config.service';
 import { UserService } from '../modules/user/user.service';
@@ -7,7 +8,9 @@ import { CommonService } from '../common/common.service';
 import { LoggerService } from '../common/logger.service';
 import { RedisService } from '../redis/redis.service';
 import { StateEnum } from './oauth.constant';
-
+import { UserStatus } from '../models/user.entity';
+import { MyHttpException } from '../core/exception/http.exception';
+import { ErrorCode } from '../constants/error';
 @Injectable()
 export class OauthService {
   constructor(
@@ -216,7 +219,7 @@ export class OauthService {
     }
     const resData = {
       ..._resUserData.data,
-      id: _resUserData.data._id
+      id: _resUserData.data.id
     }
 
     return resData;
@@ -272,49 +275,49 @@ export class OauthService {
 
   public async findByUser (state: StateEnum, id: string) {
     // let newUser: User = await this.userService.findByGithubId(githubUser.id);
-    const UserInfoMap = {
-      [StateEnum.github]: this.userService.findByGithubId.bind(this.userService),
-      [StateEnum.baidu]: this.userService.findByBaiduId.bind(this.userService),
-      [StateEnum.weibo]: this.userService.findByWeiboId.bind(this.userService),
-      [StateEnum.gitee]: this.userService.findByGiteeId.bind(this.userService),
-      [StateEnum.qq]: this.userService.findByQQId.bind(this.userService),
-      [StateEnum.notbucai]: this.userService.findByNotbucaiId.bind(this.userService),
-    }
-    const fn = UserInfoMap[state];
-    if (typeof fn !== 'function') throw Error('Unauthorized');
-    return fn(id);
+    // const UserInfoMap = {
+    //   [StateEnum.github]: this.userService.findByGithubId.bind(this.userService),
+    //   [StateEnum.baidu]: this.userService.findByBaiduId.bind(this.userService),
+    //   [StateEnum.weibo]: this.userService.findByWeiboId.bind(this.userService),
+    //   [StateEnum.gitee]: this.userService.findByGiteeId.bind(this.userService),
+    //   [StateEnum.qq]: this.userService.findByQQId.bind(this.userService),
+    //   [StateEnum.notbucai]: this.userService.findByNotbucaiId.bind(this.userService),
+    // }
+    // const fn = UserInfoMap[state];
+    // if (typeof fn !== 'function') throw Error('Unauthorized');
+    return this.userService.findUserByLinkLoginId(state, id);
   }
 
   public getUserInfoKey (state: StateEnum) {
     const keysMap = {
       [StateEnum.github]: {
-        avatarURL: "avatar_url",
+        avatarUrl: "avatar_url",
         username: "login",
         personalHomePage: "blog",
         numberroduce: "bio",
       },
       [StateEnum.baidu]: {
-        avatarURL: "portrait",
+        avatarUrl: "portrait",
         username: "uname"
       },
       [StateEnum.weibo]: {
-        avatarURL: "profile_image_url",
+        avatarUrl: "profile_image_url",
         username: "screen_name",
         personalHomePage: "url",
         numberroduce: "remark"
       },
       [StateEnum.qq]: {
-        avatarURL: "figureurl",
+        avatarUrl: "figureurl",
         username: "nickname",
       },
       [StateEnum.gitee]: {
-        avatarURL: "avatar_url",
+        avatarUrl: "avatar_url",
         username: "login",
         personalHomePage: "url",
         numberroduce: "bio"
       },
       [StateEnum.notbucai]: {
-        avatarURL: "avatarUrl",
+        avatarUrl: "avatarUrl",
         username: "nickname",
       }
     }
@@ -324,93 +327,82 @@ export class OauthService {
   public getKeys (state: StateEnum) {
     const keysMap = {
       [StateEnum.github]: {
-        githubID: 'id',
-        githubAvatarURL: 'avatar_url',
-        githubLogin: 'login',
-        githubName: 'name',
+        loginId: 'id',
+        loginAvatar: 'avatar_url',
+        loginName: 'login',
       },
       [StateEnum.baidu]: {
-        baiduID: 'openid',
-        baiduAvatarURL: 'portrait',
-        baiduName: 'uname',
+        loginId: 'openid',
+        loginAvatar: 'portrait',
+        loginName: 'uname',
       },
       [StateEnum.weibo]: {
-        weiboID: 'id',
-        weiboAvatarURL: 'profile_image_url',
-        weiboName: 'name',
-        weiboScreenName: "screen_name",
-        weiboAvatarLarge: "avatar_large",
+        loginId: 'id',
+        loginAvatar: 'profile_image_url',
+        loginName: "screen_name",
       },
       [StateEnum.qq]: {
-        qqID: 'id',
-        qqAvatar: 'figureurl',
-        qqName: 'nickname',
+        loginId: 'id',
+        loginAvatar: 'figureurl',
+        loginName: 'nickname',
       },
       [StateEnum.gitee]: {
-        giteeID: 'id',
-        giteeAvatar: 'avatar_url',
-        giteeName: 'name',
-        giteeLogin: 'login',
-        giteeUrl: 'url',
+        loginId: 'id',
+        loginAvatar: 'avatar_url',
+        loginName: 'name',
       },
       [StateEnum.notbucai]: {
-        notbucaiID: 'id',
-        notbucaiOpenid: 'openid',
-        notbucaiNickname: 'nickname',
-        notbucaiAvatarUrl: 'avatarUrl',
+        loginId: 'id',
+        loginOpenid: 'openid',
+        loginName: 'nickname',
+        loginAvatar: 'avatarUrl',
       }
     }
     const keys = keysMap[state];
     return keys;
   }
   public isBind (state: StateEnum, user: User) {
-    const isBindFns = {
-      [StateEnum.github]: (user: User) => {
-        return user.githubID
-      },
-      [StateEnum.qq]: (user: User) => {
-        return user.qqID
-      },
-      [StateEnum.gitee]: (user: User) => {
-        return user.giteeID
-      },
-      [StateEnum.baidu]: (user: User) => {
-        return user.baiduID
-      },
-      [StateEnum.weibo]: (user: User) => {
-        return user.weiboID
-      },
-      [StateEnum.notbucai]: (user: User) => {
-        return user.notbucaiID
-      }
-    }
-    console.log('isbind user', user);
-    const fn = isBindFns[state];
-
-    if (typeof fn !== 'function') throw Error('Unauthorized');
-    return fn(user)
+    const isBind = this.userService.findLinkByUserId(state, user.id);
+    return isBind
   }
+
   public async updateUser (state: StateEnum, OAuthUser: any, user: User) {
-    const _user: any = {
-      _id: user._id
+    const _userLink = await this.userService.findLinkByUserId(state, user.id);
+    if (!_userLink) {
+      throw new MyHttpException({
+        code: ErrorCode.ERROR.CODE
+      });
     }
+    // const _userLink = new UserLink();
+    _userLink.userId = user.id;
     const keys = this.getKeys(state);
     Object.keys(keys).map(key => {
-      _user[key] = OAuthUser[keys[key]];
+      _userLink[key] = OAuthUser[keys[key]];
     });
 
-    return this.userService.update(_user);
+    await this.userService.updateLink(_userLink);
+    return user;
   }
 
   public async saveUser (state: StateEnum, OAuthUser: any, user: User) {
-    const keys = this.getKeys(state);
-    const userInfokeys = this.getUserInfoKey(state);
-    const allKeys = { ...keys, ...userInfokeys };
-    Object.keys(allKeys).map(key => {
-      user[key] = OAuthUser[allKeys[key]];
+    let _userLink = await this.userService.findLinkByUserId(state, user.id);
+    if (_userLink) {
+      throw new MyHttpException({
+        code: ErrorCode.ERROR.CODE,
+      });
+    }
+    _userLink = new UserLink();
+    _userLink.userId = user.id;
+    const openKeys = this.getKeys(state);
+    const userInfoKeys = this.getUserInfoKey(state);
+    Object.keys(openKeys).map(key => {
+      _userLink[key] = OAuthUser[openKeys[key]];
     });
-
+    Object.keys(userInfoKeys).map(key => {
+      user[key] = OAuthUser[userInfoKeys[key]];
+    });
     user.status = UserStatus.Actived;
+    await this.userService.updateLink(_userLink);
     return this.userService.createUser(user);
   }
 
@@ -434,7 +426,7 @@ export class OauthService {
   //     user.githubAvatarURL = githubUser.avatar_url;
   //     user.githubLogin = githubUser.login;
   //     user.githubName = githubUser.name;
-  //     user.avatarURL = githubUser.avatar_url;
+  //     user.avatarUrl = githubUser.avatar_url;
   //     user.username = githubUser.login;
   //     user.personalHomePage = githubUser.blog;
   //     user.numberroduce = githubUser.bio;
@@ -444,7 +436,7 @@ export class OauthService {
 
   //   }
   //   token = await this.commonService.generateToken(newUser)
-  //   await this.redisService.setUserToken(newUser._id.toString(), token);
+  //   await this.redisService.setUserToken(newUser.id.toString(), token);
   //   await this.redisService.setUser(newUser);
   //   return token;
   // }

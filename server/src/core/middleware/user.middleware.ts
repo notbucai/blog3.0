@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 import { ConfigService } from '../../config/config.service';
 import { RedisService } from '../../redis/redis.service';
 import { ErrorCode } from '../../constants/error';
-import { User } from '../../models/user.entity';
+import { User as UserEntity } from '../../entities/User';
 import { UserService } from '../../modules/user/user.service';
 import { LoggerService } from '../../common/logger.service';
 import { AuthService } from '../../modules/auth/auth.service';
@@ -39,7 +39,7 @@ export class UserMiddleware implements NestMiddleware {
     try {
       const userId = await this.auth.verifyJwt(token);
       let userToken: string;
-      let user: User;
+      let user: UserEntity;
 
       [userToken] = await Promise.all([
         this.redisService.getUserToken(userId),
@@ -59,7 +59,7 @@ export class UserMiddleware implements NestMiddleware {
         data: {
           userId, token,
           userToken, isLogin,
-          user: user?._id,
+          user: user?.id,
           username: user?.username
         }
       });

@@ -2,25 +2,25 @@
  * @Author: bucai
  * @Date: 2021-03-30 19:47:48
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-04-05 22:01:07
+ * @LastEditTime: 2022-07-17 11:58:45
  * @Description:
 -->
 <template>
   <v-container class="friends">
     <v-card elevation="0" class="rounded">
       <v-row class="pl-4 pr-4">
-        <v-col :md="2" :sm="3" :cols="4" v-for="item in list" :key="item._id">
+        <v-col :md="2" :sm="3" :cols="4" v-for="item in list" :key="item.id">
           <v-lazy transition="scale-transition" :value="$isServer">
             <v-card
               class="rounded-lg"
               nuxt
               link
-              :href="'/user/' + item._id"
+              :href="'/user/' + item.id"
               elevation="0"
             >
               <div class="friend-item">
                 <v-avatar color="primary" size="48">
-                  <img :src="item.avatarURL | imageMogr2(60)" />
+                  <img :src="item.avatarUrl | imageMogr2(60)" />
                 </v-avatar>
                 <v-card-title primary-title class="friend-name">{{
                   item.username

@@ -29,7 +29,7 @@
             >
               <v-btn
                 text
-                v-if="!formData.coverURL"
+                v-if="!formData.coverUrl"
                 x-large
                 @click="handleUpload"
                 :loading="fileUploading"
@@ -46,7 +46,7 @@
                 />
               </v-btn>
               <div v-else>
-                <v-img :src="formData.coverURL" :width="240">
+                <v-img :src="formData.coverUrl" :width="240">
                   <div class="d-flex flex-end justify-end">
                     <v-btn :elevation="0" small dark @click="handleDelImage">
                       <v-icon small>{{ $icons['mdi-trash-can'] }}</v-icon>
@@ -72,12 +72,12 @@
                   label
                   :outlined="!item.selectd"
                   v-for="item in taglistSelect"
-                  :key="item._id"
+                  :key="item.id"
                   @click="handleSelectItem(item)"
                   color="primary"
                 >
                   <v-icon x-small left>{{
-                    $icons['mdi-' + item.iconURL]
+                    $icons['mdi-' + item.iconUrl]
                   }}</v-icon>
                   {{ item.name }}
                 </v-chip>
@@ -153,9 +153,9 @@ export default {
     return {
       isUpdate: true,
       formData: {
-        id: data._id,
+        id: data.id,
         title: data.title,
-        coverURL: data.coverURL,
+        coverUrl: data.coverUrl,
         content: data.content,
         tags: data.tags
       },
@@ -166,7 +166,7 @@ export default {
     taglistSelect () {
       return this.taglist.map(item => {
         const isSelectd = (this.formData.tags || []).find(
-          tag => item._id == tag
+          tag => item.id == tag
         );
         return {
           ...item,
@@ -185,7 +185,7 @@ export default {
       bindPhoneModal: false,
       formData: {
         title: '',
-        coverURL: '',
+        coverUrl: '',
         // htmlContent: '',
         content: '',
         tags: []
@@ -219,13 +219,13 @@ export default {
   },
   methods: {
     handleSelectItem (item) {
-      const tag = this.taglist.find(tag => tag._id == item._id);
-      const tagIndex = this.formData.tags.findIndex(tagId => tagId == tag._id);
+      const tag = this.taglist.find(tag => tag.id == item.id);
+      const tagIndex = this.formData.tags.findIndex(tagId => tagId == tag.id);
       this.$set(tag, 'selectd', !item.selectd);
       if (tagIndex >= 0) {
         this.formData.tags.splice(tagIndex, 1);
       } else {
-        this.formData.tags.push(tag._id);
+        this.formData.tags.push(tag.id);
       }
     },
     renderHtml (content = '') {
@@ -246,7 +246,7 @@ export default {
         return this.handleBindPhone();
       }
       const formData = this.formData;
-      formData.tags = this.taglistSelect.filter(item => item.selectd).map(item => item._id);
+      formData.tags = this.taglistSelect.filter(item => item.selectd).map(item => item.id);
       // formData.summary = this.getSummary(formData.content);
       // formData.htmlContent = this.renderHtml(formData.content);
       // tags
@@ -272,11 +272,11 @@ export default {
       localStorage.removeItem('cache_edit');
       // formData
       // TODO: 跳转成功页面
-      this.$router.push('/article/' + (resData._id || formData.id));
+      this.$router.push('/article/' + (resData.id || formData.id));
       this.loading = false;
       this.formData = {
         // htmlContent: '',
-        coverURL: '',
+        coverUrl: '',
         content: '',
         tags: [],
         title: ''
@@ -297,7 +297,7 @@ export default {
       try {
         const url = await this.$axios.post('/api/common/uploadImage', fd);
         // url
-        this.formData.coverURL = 'https:' + url;
+        this.formData.coverUrl = 'https:' + url;
       } catch (error) {
         console.error(error);
       }
@@ -311,7 +311,7 @@ export default {
       });
     },
     handleDelImage () {
-      this.formData.coverURL = '';
+      this.formData.coverUrl = '';
     },
     async handleEditAddImg (pos, $file) {
       this.uploading = true;

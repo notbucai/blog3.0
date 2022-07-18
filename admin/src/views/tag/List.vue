@@ -17,7 +17,7 @@
         cell-class-name="p0"
       >
         <el-table-column
-          prop="_id"
+          prop="id"
           header-align="center"
           show-overflow-tooltip
           label="ID"
@@ -25,7 +25,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="iconURL"
+          prop="iconUrl"
           header-align="center"
           show-overflow-tooltip
           label="图标"
@@ -40,11 +40,11 @@
           max-width="320"
         ></el-table-column>
 
-        <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.createdAt)}}</template>
+        <el-table-column prop="createAt" label="创建时间" width="160" align="center">
+          <template slot-scope="scope">{{filter_format(scope.row.createAt)}}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.updatedAt)}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.updateAt)}}</template>
         </el-table-column>
 
         <el-table-column label="操作" min-width="100">
@@ -64,7 +64,7 @@
           </el-form-item>
 
           <el-form-item label="标签图标">
-            <el-input v-model="current.iconURL" placeholder="请输入tag icon"></el-input>
+            <el-input v-model="current.iconUrl" placeholder="请输入tag icon"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -156,30 +156,30 @@ export default {
     handleAdd() {
       this.dialogFormVisible = true;
       this.current = {
-        iconURL: '',
+        iconUrl: '',
         name: ''
       };
     },
     async handleDelete(item) {
 
       await this.$confirm('是否删除标签' + '“' + item.name + '”？');
-      const [err, data] = await this.$http.tagDelete(item._id);
+      const [err, data] = await this.$http.tagDelete(item.id);
       if (data) {
         this.$notify.success({ title: '删除成功' });
         this.loadData();
       }
     },
     async handleChangeRoleCofirm() {
-      const { iconURL, name } = this.current;
+      const { iconUrl, name } = this.current;
       if (!name) {
         return this.$message.error('标签名不能为空');
       }
       const reqData = {
         name,
-        iconURL
+        iconUrl
       };
       this.changStatusLoading = true;
-      const id = this.current._id;
+      const id = this.current.id;
       let err, data;
       if (id) {
         [err, data] = await this.$http.tagEdit(id, reqData);
@@ -200,7 +200,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  .avatarURL {
+  .avatarUrl {
     width: 32px;
     height: 32px;
   }

@@ -6,7 +6,7 @@ import { ErrorCode } from '../../constants/error';
 import { Roles } from '../../core/decorators/roles.decorator';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { RolesGuard } from '../../core/guards/roles.guard';
-import { User } from '../../models/user.entity';
+import { User } from '../../entities/User';
 import { ApiBearerAuth, ApiTags, ApiParam } from '@nestjs/swagger';
 import { ArticleService } from './article.service';
 import { ReadService } from './read.service';
@@ -18,7 +18,7 @@ import { NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
 import { ChangeArticleUpStatus } from './dto/upStatus.dto';
 import { KeywordsService } from '../keywords/keywords.service';
 import { IpAddress } from '../../core/decorators/ipAddress.decorator';
-import { ContentStatus } from 'src/constants/constants';
+import { ContentStatus } from '../../constants/constants';
 
 @Controller('article')
 @ApiTags('文章')
@@ -103,8 +103,8 @@ export class ArticleController {
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   async created (@Body() createDto: CreateDto, @CurUser() user: User) {
-    const article = await this.articleService.create(createDto, user._id);
-    this.articleService.censor(String(article._id));
+    const article = await this.articleService.create(createDto, user.id);
+    this.articleService.censor(String(article.id));
     return article;
   }
 
@@ -113,16 +113,16 @@ export class ArticleController {
   // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   async like (@Param('id') id: string, @CurUser() user: User) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    const oid = new ObjectID(id);
+    
+    const oid = id;
     const currentArticle = await this.articleService.findBasisById(id);
-    const hasLike = await this.articleService.hashLikeByUid(oid, user._id);
+    const hasLike = await this.articleService.hashLikeByUid(oid, user.id);
 
     if (hasLike) {
-      await this.articleService.unlikeById(oid, user._id);
+      await this.articleService.unlikeById(oid, user.id);
     } else {
-      await this.articleService.likeById(oid, user._id);
-      await this.notifyService.publish(NotifyObjectType.article, NotifyActionType.like, oid, user._id, ((currentArticle.user as unknown as User)?._id) || currentArticle.user as ObjectID);
+      await this.articleService.likeById(oid, user.id);
+      await this.notifyService.publish(NotifyObjectType.article, NotifyActionType.like, oid, user.id, currentArticle.userId);
     }
     return "成功";
   }
@@ -131,7 +131,6 @@ export class ArticleController {
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   async deleted (@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.articleService.deleteById(id);
   }
 
@@ -140,7 +139,7 @@ export class ArticleController {
   // @Roles(UserRole.Normal, UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   @ApiBearerAuth()
   async updated (@Param('id') id: string, @Body() createDto: CreateDto) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    
     const article = await this.articleService.updateById(id, createDto);
     this.articleService.censor(id);
     return article;
@@ -148,12 +147,10 @@ export class ArticleController {
 
   @Get(':id')
   async get (@Param('id') id: string, @IpAddress() ipAddress: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    const _id = new ObjectID(id);
-    await this.articleService.addViewCount(_id);
+    await this.articleService.addViewCount(id);
 
     const article = await this.articleService.findById(id);
-    await this.articleReadService.record(_id, ipAddress);
+    await this.articleReadService.record(id, ipAddress);
     return article;
   }
 
@@ -161,7 +158,6 @@ export class ArticleController {
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
   async basis (@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.articleService.findBasisById(id);
   }
 
@@ -171,7 +167,7 @@ export class ArticleController {
   @Roles('ChangeArticleStatus')
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   async changeStatus (@Param('id') id: string, @Body() body: ChangeArticleStatus) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    
     return this.articleService.changeStatus(id, body.status);
   }
 
@@ -181,7 +177,7 @@ export class ArticleController {
   @Roles('ChangeArticleUpStatus')
   // @Roles(UserRole.Editor, UserRole.Admin, UserRole.SuperAdmin)
   async ChangeUpStatus (@Param('id') id: string, @Body() body: ChangeArticleUpStatus) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
+    
     return this.articleService.changeUpStatus(id, body.status);
   }
 }

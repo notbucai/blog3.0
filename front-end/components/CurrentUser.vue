@@ -1,8 +1,8 @@
 <!--
  * @Author: bucai
  * @Date: 2020-05-04 20:54:03
- * @LastEditors: bucai
- * @LastEditTime: 2021-03-21 21:33:44
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-07-17 11:58:14
  * @Description: 
  -->
 
@@ -10,7 +10,7 @@
   <v-menu :nudge-left="46" :nudge-bottom="10" offset-y>
     <template v-slot:activator="{ on }">
       <v-avatar size="36" color="primary" v-on="on" style="cursor: pointer">
-        <img :src="user.avatarURL" :alt="user.username" />
+        <img :src="user.avatarUrl" :alt="user.username" />
       </v-avatar>
     </template>
     <v-list>
@@ -73,7 +73,7 @@ export default {
       let url = urlMap[key];
       if (!url) {
         if (key == 'account') {
-          url = `/user/${this.user._id}`;
+          url = `/user/${this.user.id}`;
         } else if (key == 'exit') {
           this.$cookies.removeAll('Authorization')
           location.reload();

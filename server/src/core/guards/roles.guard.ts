@@ -24,7 +24,7 @@ export class RolesGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const user = request.user as any;
 
-        if (user && user.isAdmin) {
+        if (user && user?.isAdmin) {
             return true;
         }
         // 强制要求admin
@@ -33,14 +33,14 @@ export class RolesGuard implements CanActivate {
         }
         this.loggerService.info({
             data: {
-                acls: user.role.acls, name: _role.name
+                acls: user?.role?.acls, name: _role?.name
             },
             message: "canActivate"
         });
 
-        if (user.role && user.role.acls) {
+        if (user?.role && user?.role?.acls) {
             const hasRoleFn = (acl: Acl) => acl.name == _role.name;
-            const hasRole = user.role.acls.find(hasRoleFn);
+            const hasRole = user?.role?.acls.find(hasRoleFn);
             if (user && hasRole) {
                 return true;
             }

@@ -20,5 +20,5 @@ export class CreateDto {
   @IsString()
   @Length(1, 50, { message: ErrorCode.ParamsError.MESSAGE })
   @ApiProperty({ description: "icon" })
-  iconURL: string;
+  iconUrl: string;
 }

@@ -4,7 +4,7 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 export class Tag extends Base {
 
   @prop({ default: Date })
-  createdAt: Date;
+  createAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;
@@ -13,7 +13,7 @@ export class Tag extends Base {
   name: string;
 
   @prop({ default: null })
-  iconURL: string;
+  iconUrl: string;
 
   articleCount: number;
 }

@@ -2,7 +2,7 @@
   <div class="ArticleList">
     <v-lazy
       v-for="item in articleStore.list"
-      :key="item._id"
+      :key="item.id"
       min-height="160"
       transition="scale-transition"
       :value="$isServer"

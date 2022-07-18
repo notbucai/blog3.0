@@ -6,25 +6,33 @@ import { ObjectID } from 'mongodb'
 import { DateType } from '../../constants/constants';
 import moment = require('moment');
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { Between, In, IsNull, LessThan, Like, Repository } from 'typeorm';
+import { ArticleRead as ArticleReadEntity } from '../../entities/ArticleRead';
+
 @Injectable()
 export class ReadService {
   constructor(
     @InjectModel(ArticleRead)
     private readonly articleReadSchema: ReturnModelType<typeof ArticleRead>,
+
+    @InjectRepository(ArticleReadEntity)
+    private articleReadRepository: Repository<ArticleReadEntity>
+
   ) { }
 
-  record (id: ObjectID, ip: string) {
-    const ar = new ArticleRead();
-    ar.article = id;
+  record (id: string, ip: string) {
+    const ar = new ArticleReadEntity();
+    ar.articleId = id;
     ar.ip = ip;
 
-    return this.articleReadSchema.create(ar);
+    return this.articleReadRepository.save(ar);
   }
 
 
   async growthData (type: DateType = DateType.day, size: number = 30) {
 
-    const schema = this.articleReadSchema
+    const schema = this.articleReadRepository
 
     const date = moment();
     const list = [];
@@ -34,11 +42,8 @@ export class ReadService {
       const endDate = moment(startDate).add(1, type).format('YYYY-MM-DD');
       console.log('startDate', startDate, endDate, startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00', endDate + ' 23:59:59');
 
-      const findPromise = schema.countDocuments({
-        createdAt: {
-          $gte: new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'),
-          $lt: new Date(endDate + ' 23:59:59'),
-        }
+      const findPromise = schema.count({
+        createAt: Between(new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'),  new Date(endDate + ' 23:59:59'))
       });
 
       list.push(findPromise.then(data => {
@@ -54,7 +59,7 @@ export class ReadService {
 
   historyData (type: DateType = DateType.day, size: number = 30) {
 
-    const schema = this.articleReadSchema
+    const schema = this.articleReadRepository
 
     const date = moment();
     const list = [];
@@ -62,10 +67,8 @@ export class ReadService {
 
       const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
 
-      const findPromise = schema.countDocuments({
-        createdAt: {
-          $gte: new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:00'),
-        }
+      const findPromise = schema.count({
+        createAt: LessThan(new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:00'))
       });
 
       list.push(findPromise.then(data => {
@@ -81,7 +84,7 @@ export class ReadService {
   }
 
   count () {
-    return this.articleReadSchema.countDocuments()
+    return this.articleReadRepository.count()
   }
 
 }

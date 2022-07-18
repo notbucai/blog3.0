@@ -25,7 +25,7 @@
         cell-class-name="p0"
       >
         <el-table-column
-          prop="_id"
+          prop="id"
           header-align="center"
           show-overflow-tooltip
           label="ID"
@@ -79,11 +79,11 @@
           max-width="20"
         ></el-table-column>
 
-        <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.createdAt)}}</template>
+        <el-table-column prop="createAt" label="创建时间" width="160" align="center">
+          <template slot-scope="scope">{{filter_format(scope.row.createAt)}}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.updatedAt)}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.updateAt)}}</template>
         </el-table-column>
 
         <el-table-column prop="status" show-overflow-tooltip label="状态" width="120" align="center">
@@ -208,7 +208,7 @@ export default {
       this.current = item;
     },
     async  handleChangeUpStatus (item, status) {
-      const id = item._id;
+      const id = item.id;
       const [err, data] = await this.$http.changeArticleUpStatus(id, { status });
       this.$notify.success({ title: '操作成功' });
       this.$set(item, 'up', status);
@@ -216,7 +216,7 @@ export default {
     async handleChangeRoleCofirm () {
       this.changStatusLoading = true;
       // TODO: 发送AJAX
-      const id = this.current._id;
+      const id = this.current.id;
       const status = this.currentRadio;
       const [err, data] = await this.$http.changeArticleStatus(id, { status });
       this.dialogFormVisible = false;
@@ -233,7 +233,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  .avatarURL {
+  .avatarUrl {
     width: 32px;
     height: 32px;
   }

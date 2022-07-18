@@ -31,7 +31,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="_id"
+          prop="id"
           header-align="center"
           show-overflow-tooltip
           label="ID"
@@ -46,11 +46,11 @@
           max-width="320"
         ></el-table-column>
 
-        <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.createdAt)}}</template>
+        <el-table-column prop="createAt" label="创建时间" width="160" align="center">
+          <template slot-scope="scope">{{filter_format(scope.row.createAt)}}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.updatedAt)}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.updateAt)}}</template>
         </el-table-column>
 
         <el-table-column label="操作" min-width="100">
@@ -98,7 +98,7 @@
           :data="currentAclTree"
           show-checkbox
           default-expand-all
-          node-key="_id"
+          node-key="id"
           class="mb3"
           ref="tree"
           highlight-current
@@ -152,7 +152,7 @@ export default {
     ...mapState(['user']),
     currentAclIds() {
       if (!this.current || !this.current.acls) return [];
-      return this.current.acls.map(item => item._id);
+      return this.current.acls.map(item => item.id);
     }
   },
   created() {
@@ -200,7 +200,7 @@ export default {
     handleAdd() {
       this.dialogFormVisible = true;
       this.current = {
-        iconURL: '',
+        iconUrl: '',
         name: ''
       };
     },
@@ -214,7 +214,7 @@ export default {
     },
     async handleDelete(item) {
       await this.$confirm('是否删除' + '“' + item.name + '”？');
-      const [err, data] = await this.$http.roleDelete(item._id);
+      const [err, data] = await this.$http.roleDelete(item.id);
       if (data) {
         this.$notify.success({ title: '删除成功' });
         this.loadData();
@@ -229,7 +229,7 @@ export default {
         name
       };
       this.changStatusLoading = true;
-      const id = this.current._id;
+      const id = this.current.id;
       let err, data;
       if (id) {
         [err, data] = await this.$http.roleUpdate(id, reqData);
@@ -250,9 +250,9 @@ export default {
     async handleBindAclConfirm() {
       const nodes = this.$refs.tree.getCheckedNodes();
       const keys = Array.from(
-        new Set(nodes.map(item => [item.parent, item._id]).flat(2))
+        new Set(nodes.map(item => [item.parent, item.id]).flat(2))
       ).filter(item => item);
-      const id = this.current._id;
+      const id = this.current.id;
       const [err, data] = await this.$http.roleBind(id, {
         acls: keys
       });
@@ -270,7 +270,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  .avatarURL {
+  .avatarUrl {
     width: 32px;
     height: 32px;
   }

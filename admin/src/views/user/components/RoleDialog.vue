@@ -17,9 +17,9 @@
       >
         <el-option
           v-for="item in roles"
-          :key="item._id"
+          :key="item.id"
           :label="item.name"
-          :value="item._id"
+          :value="item.id"
         >
         </el-option>
       </el-select>
@@ -62,7 +62,7 @@ export default {
       this.roleLoading = false;
       this.dialogFormVisible = true;
       this.current = current;
-      this.roleId = current.role && current.role._id ? current.role._id : ''
+      this.roleId = current.role && current.role.id ? current.role.id : ''
     },
     async loadRoleData (keyword) {
       this.loadRoleing = true;
@@ -77,7 +77,7 @@ export default {
       // this.tableData = data;
     },
     async handleChangeRoleCofirm () {
-      const id = this.current._id;
+      const id = this.current.id;
       const role = this.roleId;
       this.roleLoading = true;
       const [err, data] = await this.$http.changeRole({ id, role });

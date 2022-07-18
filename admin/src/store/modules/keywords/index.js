@@ -19,7 +19,7 @@ export default {
     tableReqData: {
       page_index: 1,
       page_size: 10,
-      sort_createdAt: 0,
+      sort_createAt: 0,
       sort_updatedAt: 0,
       sort_status: 0,
       sort_count: 0
@@ -47,7 +47,7 @@ export default {
     },
     SET_TABLE_CHANGE_ITEM (state, { id, data }) {
       const itemIndex = state.tableData.list.findIndex(item => {
-        return item._id === id;
+        return item.id === id;
       });
       state.tableData.list.splice(itemIndex, data);
     },
@@ -70,7 +70,7 @@ export default {
     async handleChangeItemStatus ({ dispatch, commit, state }, { id, status }) {
       await keywordsChangeItemStatus(id, status);
       const item = state.tableData.list.find(item => {
-        return item._id === id;
+        return item.id === id;
       });
       commit('SET_TABLE_CHANGE_ITEM', {
         id,

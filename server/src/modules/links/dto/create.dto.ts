@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2020-06-20 11:07:59
- * @LastEditors: bucai
- * @LastEditTime: 2020-06-20 13:36:37
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-06-29 12:01:19
  * @Description: 
  */
 import { IsEnum, IsString, ValidateIf, IsUrl } from "class-validator";
@@ -12,9 +12,9 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateLinkDto {
 
-  @ApiProperty({ description: '类型', enum: LinkType, required: true })
-  @IsEnum(LinkType, { message: ErrorCode.ParamsError.MESSAGE })
-  type: LinkType;
+  // @ApiProperty({ description: '类型', enum: LinkType, required: true })
+  // @IsEnum(LinkType, { message: ErrorCode.ParamsError.MESSAGE })
+  // type: LinkType;
 
   @ApiProperty({ description: '标题', required: true })
   @IsString()

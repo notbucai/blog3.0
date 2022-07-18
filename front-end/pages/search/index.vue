@@ -66,8 +66,8 @@
               <div class="search-article-list-container">
                 <ArticleItem
                   v-for="item in searchArticleData.list"
-                  :key="item._id"
-                  :id="item._id"
+                  :key="item.id"
+                  :id="item.id"
                   :title="item.title"
                   :content="item.summary"
                   :keywords="searchArticleData.keyList"
@@ -93,7 +93,7 @@
                 <div class="words_cloud-list d-flex align-center flex-wrap">
                   <v-btn
                     v-for="item in hotKeywordsList"
-                    :key="item._id"
+                    :key="item.id"
                     color="primary"
                     class="mb-1"
                     plain
@@ -112,7 +112,7 @@
               <div class="words_cloud-all d-flex align-center flex-wrap">
                 <template v-for="item in cloudKeywordsList">
                   <v-btn
-                    :key="item._id"
+                    :key="item.id"
                     color="blue-grey darken-2"
                     class="mb-2 my-2 words_cloud-list-item"
                     :style="`opacity: ${

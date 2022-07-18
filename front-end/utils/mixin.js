@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2020-07-01 15:48:05
- * @LastEditors: bucai
- * @LastEditTime: 2020-07-02 13:08:47
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-07-17 22:58:39
  * @Description: 
  */
 export default {
@@ -11,8 +11,8 @@ export default {
       if (!Array.isArray(likes)) return false;
       const user = this.$store.state.user;
       if (!user) return false;
-      const id = user._id;
-      return !!likes.find(item => item == id);
+      const id = user.id;
+      return !!likes.find(item => item.userId == id);
     },
     changeLike (likes = []) {
       const user = this.$store.state.user;
@@ -23,7 +23,7 @@ export default {
         throw new Error('未登陆');
         return likes;
       }
-      const id = user._id;
+      const id = user.id;
       const index = likes.findIndex(item => item == id);
       console.log('index', index);
 

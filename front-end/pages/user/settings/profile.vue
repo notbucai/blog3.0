@@ -9,7 +9,7 @@
           <v-col>
             <div class="d-flex align-center flex-grow-1 _profile_avatar">
               <v-avatar :size="48" color="blue">
-                <img :src="user.avatarURL" alt="alt" />
+                <img :src="user.avatarUrl" alt="alt" />
               </v-avatar>
               <div class="d-flex justify-space-between flex-grow-1 align-center pl-4 pr-2">
                 <p class="caption text--secondary mb-0">
@@ -255,7 +255,7 @@ export default {
           fd.append('file', file);
           const fileurl = await this.$axios.post('/api/common/uploadImage', fd);
           // 发送更新信息
-          await this.handleUpdateUserInfo('avatarURL', 'https:' + fileurl);
+          await this.handleUpdateUserInfo('avatarUrl', 'https:' + fileurl);
           this.cropperDialog = false;
         } catch (error) {
           console.log('error', error);

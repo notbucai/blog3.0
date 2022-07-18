@@ -44,7 +44,6 @@ export class RoleController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('role', true)
   async delete(@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.roleService.delete(id);
   }
 
@@ -63,7 +62,6 @@ export class RoleController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('role', true)
   async aclRoleList(@Query('id') id?: string) {
-    // if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.aclService.roleList(id);
   }
 
@@ -73,7 +71,6 @@ export class RoleController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('role', true)
   async bindAcls(@Param('id') id: string, @Body() bindAclDto: BindAclDto) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ERROR.CODE })
     return this.roleService.bindAcls(id, bindAclDto);
   }
 
@@ -101,7 +98,6 @@ export class RoleController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('role', true)
   async updateAcl(@Param('id') id: string, @Body() aclDto: CreateAclDto) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.aclService.update(id, aclDto);
   }
 
@@ -111,7 +107,6 @@ export class RoleController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('role', true)
   async deleteAcl(@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     return this.aclService.delete(id);
   }
 

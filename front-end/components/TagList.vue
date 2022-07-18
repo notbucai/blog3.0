@@ -13,7 +13,7 @@
         :key="index"
       >
         <v-chip class="ma-2" label>
-          <v-icon left small>{{ $icons['mdi-' + item.iconURL] }}</v-icon>
+          <v-icon left small>{{ $icons['mdi-' + item.iconUrl] }}</v-icon>
           {{ item.name }}
         </v-chip>
       </nuxt-link>

@@ -6,7 +6,7 @@
  * @Description: 
 -->
 <template>
-  <div class="auth-page text-center pt-8 body-2" v-if="!token || !user || !user._id">登录失效，请点击右上角进行登录</div>
+  <div class="auth-page text-center pt-8 body-2" v-if="!token || !user || !user.id">登录失效，请点击右上角进行登录</div>
 </template>
 <script>
 import { mapState, mapMutations } from 'vuex';
@@ -24,7 +24,7 @@ export default {
   created () {
     if (!this.$isServer) {
       this.$router.replace('/')
-      if(!this.token || !this.user || !this.user._id){
+      if(!this.token || !this.user || !this.user.id){
         this.SET_LOGIN_OR_REGISTER_DIALOG();
       }
     }

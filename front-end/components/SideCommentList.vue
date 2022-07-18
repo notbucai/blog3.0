@@ -10,12 +10,12 @@
         class="article-item"
         v-for="(item, index) in cList"
         :key="index"
-        @click.prevent="$router.push('/article/' + item.sourceID + '#comment')"
+        @click.prevent="$router.push('/article/' + item.sourceId + '#comment')"
       >
-        <user-card :userId="item.user._id">
+        <user-card :userId="item.user.id">
           <nuxt-link
             class="article-item-left rounded-sm"
-            :to="item.user ? '/user/' + item.user._id : ''"
+            :to="item.user ? '/user/' + item.user.id : ''"
             @click.native.stop
           >
             <div class="left-month">User</div>
@@ -25,13 +25,13 @@
           </nuxt-link>
         </user-card>
         <nuxt-link
-          :to="'/article/' + item.sourceID + '#comment'"
+          :to="'/article/' + item.sourceId + '#comment'"
           v-ripple
           class="article-item-right"
           @click.stop
         >
           <div class="right-name">{{ item.htmlContent | htmlFilter }}</div>
-          <div class="right-user">{{ item.updatedAt | format }}</div>
+          <div class="right-user">{{ item.updateAt | format }}</div>
         </nuxt-link>
       </div>
     </v-card>

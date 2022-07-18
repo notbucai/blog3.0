@@ -97,12 +97,12 @@ export class UpdateUserInfoDto {
     readonly personalHomePage: string;
 
     @ValidateIf(obj => {
-        return obj && typeof obj.avatarURL !== 'undefined';
+        return obj && typeof obj.avatarUrl !== 'undefined';
     })
     @IsUrl({
         protocols: ['https'],
         require_protocol: true,
     })
     @ApiProperty({ description: '头像', example: '无' })
-    readonly avatarURL: string;
+    readonly avatarUrl: string;
 }

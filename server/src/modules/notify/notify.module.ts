@@ -9,6 +9,13 @@ import { NotifyService } from './notify.service';
 import { RedisModule } from '../../redis/redis.module';
 import { GatewayModule } from '../gateway/gateway.module';
 import { ConfigModule } from '../../config/config.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { Article as ArticleEntity } from '../../entities/Article';
+import { ArticleComment as ArticleCommentEntity } from '../../entities/ArticleComment';
+import { LeaveWord as LeaveWordEntity } from '../../entities/LeaveWord';
+import { User as UserEntity } from '../../entities/User';
+import { Notifies as NotifiesEntity } from '../../entities/Notifies';
 
 @Module({
   imports: [
@@ -17,6 +24,7 @@ import { ConfigModule } from '../../config/config.module';
     ConfigModule,
     forwardRef(() => GatewayModule),
     TypegooseModule.forFeature([Notify, Article, ArticleComment, MessageComment, User]),
+    TypeOrmModule.forFeature([NotifiesEntity, UserEntity, ArticleEntity, ArticleCommentEntity, LeaveWordEntity])
   ],
   providers: [NotifyService],
   exports: [NotifyService]

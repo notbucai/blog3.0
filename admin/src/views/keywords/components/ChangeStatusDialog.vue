@@ -55,7 +55,7 @@ export default {
     async handleChangeRoleCofirm () {
       // handleChangeItemStatus
       await this.handleChangeItemStatus({
-        id: this.current._id,
+        id: this.current.id,
         status: this.currentRadio
       });
       this.$notify.success({ title: '改变状态成功' });

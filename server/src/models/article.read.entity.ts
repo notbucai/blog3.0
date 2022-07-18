@@ -11,7 +11,7 @@ import { Article } from './article.entity';
 
 export class ArticleRead extends Base {
   @prop({ default: Date })
-  createdAt: Date;
+  createAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;

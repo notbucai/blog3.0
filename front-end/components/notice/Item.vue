@@ -11,7 +11,7 @@
           <v-avatar size="42">
             <v-img
               :lazy-src="$config.WEBSITE_LOGO"
-              :src="notice.sender.avatarURL | imageMogr2(56)"
+              :src="notice.sender.avatarUrl | imageMogr2(56)"
             ></v-img>
           </v-avatar>
         </v-lazy>
@@ -20,7 +20,7 @@
             <v-btn
               v-if="notice.sender"
               nuxt
-              :to="'/user/' + notice.sender._id"
+              :to="'/user/' + notice.sender.id"
               color="success"
               plain
               small
@@ -41,7 +41,7 @@
               v-if="notice.objectType"
               nuxt
               small
-              :to="url(notice.objectType, notice.objectID)"
+              :to="url(notice.objectType, notice.objectId)"
               color="success"
               plain
             >
@@ -54,7 +54,7 @@
           </div>
           <div class="pl-3 d-flex align-center">
             <span class="caption text--secondary">{{
-              notice.createdAt | format
+              notice.createAt | format
             }}</span>
           </div>
         </div>

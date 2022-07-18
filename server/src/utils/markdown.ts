@@ -27,7 +27,7 @@ class MarkdownUtils {
     const $ = cheerio.load(htmlStr);
     const hns = $('h2,h3,h4,h5,h6').toArray();
 
-    const menus = [];
+    const menus: { type: string; target: string; title: string; }[] = [];
     hns.forEach((item: cheerio.TagElement, i) => {
       var tag = item.tagName.toLowerCase();
       $(item).attr('id', 'wow' + i);

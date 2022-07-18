@@ -23,12 +23,12 @@
               <v-img
                 :src="
                   (data
-                    ? data.avatarURL
+                    ? data.avatarUrl
                     : 'https://image.notbucai.com/logo.png') | imageMogr2(68)
                 "
                 :lazy-src="
                   (data
-                    ? data.avatarURL
+                    ? data.avatarUrl
                     : 'https://image.notbucai.com/logo.png') | imageMogr2(10)
                 "
               />

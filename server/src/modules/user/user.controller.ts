@@ -9,7 +9,7 @@ import { ErrorCode } from '../../constants/error';
 import { RedisService } from '../../redis/redis.service';
 import { ConfigService } from '../../config/config.service';
 import { CommonService } from '../../common/common.service';
-import { User, } from '../../models/user.entity';
+import { User } from '../../entities/User';
 import { RepassDto } from './dto/repass.dto';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { CurUser } from '../../core/decorators/user.decorator';
@@ -25,6 +25,7 @@ import { ArticleService } from '../article/article.service';
 import { NotifyService } from '../notify/notify.service';
 import { RoleService } from '../role/role.service';
 import { Role } from '../../models/role.entity';
+import { Role as RoleEntity } from '../../entities/Role';
 import { AclService } from '../role/acl.service';
 
 @Controller('users')
@@ -88,8 +89,8 @@ export class UserController {
     const user = await this.userService.create(signupDto);
     const token = await this.commonService.generateToken(user);
     // 更新登录时间,异步即可
-    this.userService.updateLoginTime(user._id);
-    await this.redisService.setUserToken(user._id.toString(), token);
+    this.userService.updateLoginTime(user.id);
+    await this.redisService.setUserToken(user.id.toString(), token);
     await this.redisService.setUser(user);
     return token;
   }
@@ -121,8 +122,8 @@ export class UserController {
     }
     const token = await this.commonService.generateToken(user);
     // 更新登录时间
-    this.userService.updateLoginTime(user._id);
-    await this.redisService.setUserToken(user._id.toString(), token);
+    this.userService.updateLoginTime(user.id);
+    await this.redisService.setUserToken(user.id.toString(), token);
     await this.redisService.setUser(user);
     return token;
   }
@@ -140,13 +141,13 @@ export class UserController {
   @ApiOperation({ summary: "当前用户角色权限信息" })
   @ApiBearerAuth()
   public async permissions (@CurUser() user: User) {
-    let role = user.role;
+    let role = user.userRoles?.[0]?.role;
     if (user.isAdmin) {
       // 获取所有权限
       // this.roleService.list()
-      role = new Role();
+      role = new RoleEntity();
       role.name = "SYSTEM";
-      role.acls = await this.aclService.findAll();
+      // role.roleAcls = await this.aclService.findAll();
     }
     return role || {};
   }
@@ -159,7 +160,7 @@ export class UserController {
   @ApiOperation({ summary: " 更新用户信息(头像、职位、公司、个人介绍、个人主页)" })
   @ApiBearerAuth()
   async updateUserInfo (@CurUser() user: User, @Body() updateUserInfoDto: UpdateUserInfoDto) {
-    await this.userService.updateUserInfo(user._id, updateUserInfoDto);
+    await this.userService.updateUserInfo(user.id, updateUserInfoDto);
     return {};
   }
 
@@ -171,7 +172,7 @@ export class UserController {
   @ApiOperation({ summary: "获取用户消息数量" })
   @ApiBearerAuth()
   async notifyCount (@CurUser() user: User) {
-    const count = await this.notifyService.getNoReadNotifyCountByUId(user._id);
+    const count = await this.notifyService.getNoReadNotifyCountByUId(user.id);
     return {
       unread: count || 0
     };
@@ -185,8 +186,8 @@ export class UserController {
   @ApiOperation({ summary: "获取用户消息列表" })
   @ApiBearerAuth()
   async notifyList (@CurUser() user: User) {
-    await this.notifyService.readAllByUserId(user._id);
-    const list = await this.notifyService.getNotifyListByUserId(user._id);
+    await this.notifyService.readAllByUserId(user.id);
+    const list = await this.notifyService.getNotifyListByUserId(user.id);
     return list;
   }
 
@@ -198,7 +199,7 @@ export class UserController {
   @ApiOperation({ summary: "清空消息列表" })
   @ApiBearerAuth()
   async notifyClear (@CurUser() user: User) {
-    return await this.notifyService.clearNotifyListByUserId(user._id);
+    return await this.notifyService.clearNotifyListByUserId(user.id);
   }
 
   /**
@@ -209,9 +210,8 @@ export class UserController {
   @ApiOperation({ summary: "清空消息列表" })
   @ApiBearerAuth()
   async notifyRemoveById (@CurUser() user: User, @Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    const nid = new ObjectID(id);
-    return await this.notifyService.delNotifyListById(user._id, nid);
+    const nid = id;
+    return await this.notifyService.delNotifyListById(user.id, nid);
   }
 
   /**
@@ -227,7 +227,7 @@ export class UserController {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     }
     return this.userService.findList(listDto, {
-      createdAt: -1
+      createAt: -1
     });
   }
 
@@ -248,7 +248,7 @@ export class UserController {
     if (!id) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
-    const user = await this.userService.getBasiceUser(id);
+    const user = await this.userService.getBasicUser(id);
     if (typeof user == 'undefined' || user === null) {
       throw new MyHttpException({ code: ErrorCode.UserNoExists.CODE });
     }
@@ -261,14 +261,12 @@ export class UserController {
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('ChangeStatus')
   async changeStatus (@Param('id') id: string, @Body() body: ChangeUserStatus) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.userService.changeStatus(id, body.status);
   }
 
   @Get(':id/achievement')
   @ApiOperation({ summary: "获取用户成就" })
   async achievement (@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.userService.achievement(id);
   }
 
@@ -276,14 +274,12 @@ export class UserController {
   @Get(':id/article')
   @ApiOperation({ summary: "获取用户文章" })
   async articleList (@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.articleService.listByUserId(id);
   }
 
   @Get(':id/:source/comment')
   @ApiOperation({ summary: "获取用户评论" })
   async commentlist (@Param('id') id: string, @Param('source') source: string) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     if (!this.commentService.isValidSource(source)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     return this.commentService.getListByUserId(source, id);
   }
@@ -335,7 +331,7 @@ export class UserController {
         code: ErrorCode.UserNoExists.CODE,
       });
     }
-    await this.userService.repass(existUser._id, repassDto.pass);
+    await this.userService.repass(existUser.id, repassDto.pass);
     return {};
   }
 
@@ -345,7 +341,7 @@ export class UserController {
   @ApiOperation({ summary: "修改用户权限" })
   @ApiBearerAuth()
   async changeRole (@Body() RoleDto: UserChangeRoleDto, @CurUser() user: User) {
-    if (user._id.toHexString() === RoleDto.id) {
+    if (user.id === RoleDto.id) {
       throw new MyHttpException({ message: "不能给自己操作" })
     }
     return this.userService.changeRole(RoleDto.id, RoleDto.role);

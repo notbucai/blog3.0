@@ -31,7 +31,7 @@
         <v-avatar size="82">
           <v-img
             :src="
-              (user && user.avatarURL) || 'https://image.notbucai.com/logo.png'
+              (user && user.avatarUrl) || 'https://image.notbucai.com/logo.png'
             "
           ></v-img>
         </v-avatar>
@@ -66,7 +66,7 @@
         <v-btn block color="primary" @click="handleLogin" v-if="!user"
           >Login</v-btn
         >
-        <v-btn block color="primary" :to="`/user/${user._id}`" v-else
+        <v-btn block color="primary" :to="`/user/${user.id}`" v-else
           >我的账号</v-btn
         >
       </div>

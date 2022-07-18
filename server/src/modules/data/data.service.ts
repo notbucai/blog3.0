@@ -87,7 +87,7 @@ export class DataService {
   }
 
   // -类别组成
-  articleTags () {
+  tags () {
     return this.tagService.tagsArticleData();
   }
 

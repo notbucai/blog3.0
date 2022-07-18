@@ -29,27 +29,27 @@
         cell-class-name="p0"
       >
         <el-table-column
-          prop="_id"
+          prop="id"
           header-align="center"
           show-overflow-tooltip
           label="ID"
           max-width="200"
         ></el-table-column>
         <el-table-column
-          prop="avatarURL"
+          prop="avatarUrl"
           label="头像"
           width="80"
           align="center"
         >
           <template slot-scope="scope">
             <el-image
-              class="avatarURL"
-              v-if="scope.row.avatarURL"
-              :src="filter_imageMogr2(scope.row.avatarURL, 60)"
+              class="avatarUrl"
+              v-if="scope.row.avatarUrl"
+              :src="filter_imageMogr2(scope.row.avatarUrl, 60)"
             ></el-image>
           </template>
         </el-table-column>
-        <!-- avatarURL -->
+        <!-- avatarUrl -->
         <el-table-column
           prop="username"
           label="用户名"
@@ -90,13 +90,13 @@
           }}</template>
         </el-table-column>
         <el-table-column
-          prop="createdAt"
+          prop="createAt"
           label="创建时间"
           width="160"
           align="center"
         >
           <template slot-scope="scope">{{
-            filter_format(scope.row.createdAt)
+            filter_format(scope.row.createAt)
           }}</template>
         </el-table-column>
         <el-table-column
@@ -106,7 +106,7 @@
           align="center"
         >
           <template slot-scope="scope">{{
-            filter_format(scope.row.createdAt)
+            filter_format(scope.row.createAt)
           }}</template>
         </el-table-column>
         <el-table-column
@@ -251,14 +251,14 @@ export default {
       // TODO: 激活解冻
       let msg = '激活';
       let status = 2;
-      let id = item._id;
+      let id = item.id;
       if (item.status === 2) {
         // 冻结
         msg = '冻结';
         status = 3;
       }
       await this.$confirm('是否' + msg + '“' + item.username + '”？');
-      const [err, data] = await this.$http.changeUserStatus(item._id, {
+      const [err, data] = await this.$http.changeUserStatus(item.id, {
         status
       });
       if (err) {
@@ -285,7 +285,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  .avatarURL {
+  .avatarUrl {
     width: 32px;
     height: 32px;
   }

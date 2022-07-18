@@ -35,17 +35,17 @@
         cell-class-name="p0"
       >
         <el-table-column
-          prop="_id"
+          prop="id"
           header-align="center"
           show-overflow-tooltip
           label="ID"
           max-width="200"
         ></el-table-column>
         <el-table-column
-          prop="sourceID"
+          prop="sourceId"
           header-align="center"
           show-overflow-tooltip
-          label="sourceID"
+          label="sourceId"
           max-width="200"
         ></el-table-column>
 
@@ -77,11 +77,11 @@
           max-width="320"
         ></el-table-column>
 
-        <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.createdAt)}}</template>
+        <el-table-column prop="createAt" label="创建时间" width="160" align="center">
+          <template slot-scope="scope">{{filter_format(scope.row.createAt)}}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.updatedAt)}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.updateAt)}}</template>
         </el-table-column>
 
         <el-table-column prop="status" show-overflow-tooltip label="状态" width="120" align="center">
@@ -215,7 +215,7 @@ export default {
     async handleChangeRoleCofirm() {
       this.changStatusLoading = true;
       // TODO: 发送AJAX
-      const id = this.current._id;
+      const id = this.current.id;
       const status = this.currentRadio;
       const [err, data] = await this.$http.changeCommentStatus(
         this.source,
@@ -236,7 +236,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  .avatarURL {
+  .avatarUrl {
     width: 32px;
     height: 32px;
   }

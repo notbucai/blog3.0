@@ -26,7 +26,7 @@ export class KeywordsListDto {
   page_index?: number = 1;
 
   @ApiProperty({ description: '创建时间排序', example: 1, required: false })
-  sort_createdAt?: number = 1;
+  sort_createAt?: number = 1;
 
   @ApiProperty({ description: '更新时间排序', example: 1, required: false })
   sort_updatedAt?: number = 1;

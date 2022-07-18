@@ -152,7 +152,7 @@
           <h2 class="m0">类别组成</h2>
           <div>
             <VeRing
-              :data="articleTags"
+              :data="tags"
               :settings="{
                 radius: [90, 120],
               }"
@@ -218,7 +218,7 @@ export default {
       d: {},
       growth: { columns: [], rows: [] },
       histoy: { columns: [], rows: [] },
-      articleTags: { columns: [], rows: [] },
+      tags: { columns: [], rows: [] },
       userTypes: { columns: [], rows: [] },
       author: { columns: [], rows: [] },
     }
@@ -285,20 +285,20 @@ export default {
     this.histoy = histoy;
 
 
-    const articleTags = {
+    const tags = {
       columns: ['类别', '数据'],
       rows: [],
     };
 
-    d.articleTags.forEach((item, index) => {
-      articleTags.rows[index] = articleTags.rows[index] || {};
-      articleTags.rows[index]['类别'] = item.name;
-      articleTags.rows[index]['数据'] = item.count;
+    d.tags.forEach((item, index) => {
+      tags.rows[index] = tags.rows[index] || {};
+      tags.rows[index]['类别'] = item.name;
+      tags.rows[index]['数据'] = item.count;
     });
 
-    articleTags.rows.reverse()
+    tags.rows.reverse()
 
-    this.articleTags = articleTags;
+    this.tags = tags;
 
 
     const userTypes = {

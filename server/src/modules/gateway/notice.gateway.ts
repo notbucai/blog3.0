@@ -7,7 +7,7 @@ import { RedisService } from '../../redis/redis.service';
 import { LoggerService } from '../../common/logger.service';
 import { format } from 'util';
 import { NotifyService } from '../notify/notify.service';
-import { User } from '../../models/user.entity';
+import { User } from '../../entities/User';
 import { AuthService } from '../auth/auth.service';
 import { EMIT_NOTIFY_COUNT, ON_INIT_COUNT } from '../../constants/wsEvents';
 import { ObjectID } from 'mongodb';
@@ -32,13 +32,13 @@ export class NoticeGateway {
     payload: any
   ) {
     const user = client.data?.user as User;
-    const count = await this.notifyService.getNoReadNotifyCountByUId(user?._id);
+    const count = await this.notifyService.getNoReadNotifyCountByUId(user?.id);
     const emitStatus = client.emit(EMIT_NOTIFY_COUNT, count);
 
     this.loggerService.info({
-      message: format('handleNotifyCountMessage user(%s) client no find ', user?._id),
+      message: format('handleNotifyCountMessage user(%s) client no find ', user?.id),
       data: {
-        userId: user?._id,
+        userId: user?.id,
         notifyCount: count,
         emitStatus,
       }
@@ -50,7 +50,7 @@ export class NoticeGateway {
     const socketCountOfRoom = (await socket.fetchSockets()).length;
     let emitStatus = null;
     if (socketCountOfRoom) {
-      const count = await this.notifyService.getNoReadNotifyCountByUId(new ObjectID(userId));
+      const count = await this.notifyService.getNoReadNotifyCountByUId(userId);
       emitStatus = socket.emit(EMIT_NOTIFY_COUNT, count);
     }
     this.loggerService.info({

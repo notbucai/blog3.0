@@ -17,7 +17,7 @@
         @sort-change="onSortChange"
       >
         <el-table-column
-          prop="_id"
+          prop="id"
           header-align="center"
           show-overflow-tooltip
           label="ID"
@@ -43,14 +43,14 @@
         ></el-table-column>
 
         <el-table-column
-          prop="createdAt"
+          prop="createAt"
           label="创建时间"
           width="160"
           align="center"
           sortable="custom"
         >
           <template slot-scope="scope">{{
-            filter_format(scope.row.createdAt)
+            filter_format(scope.row.createAt)
           }}</template>
         </el-table-column>
         <el-table-column
@@ -61,7 +61,7 @@
           sortable="custom"
         >
           <template slot-scope="scope">{{
-            filter_format(scope.row.updatedAt)
+            filter_format(scope.row.updateAt)
           }}</template>
         </el-table-column>
 
@@ -182,7 +182,7 @@ export default {
       this.$refs['ChangeStatusDialog'].open(item);
     },
     async onChangeItemRemove (item) {
-      await this.handleItemRemove(item._id);
+      await this.handleItemRemove(item.id);
       this.$notify.success({ title: '删除成功' });
       this.loadData();
     },
@@ -192,7 +192,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  .avatarURL {
+  .avatarUrl {
     width: 32px;
     height: 32px;
   }

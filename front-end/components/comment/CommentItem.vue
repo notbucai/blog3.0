@@ -1,16 +1,16 @@
 <template>
   <div class="comment-item pa-6 pb-2 pt-4">
     <div class="comment-user d-flex align-center justify-space-between">
-      <user-card :userId="comment.user._id">
+      <user-card :userId="comment.user.id">
         <nuxt-link
-          :to="`/user/${comment.user._id}`"
+          :to="`/user/${comment.user.id}`"
           class="d-flex align-start text-decoration-none"
         >
-          <div class="mr-2" v-if="comment.user.avatarURL">
+          <div class="mr-2" v-if="comment.user.avatarUrl">
             <v-avatar size="42">
               <v-img
                 :lazy-src="$config.WEBSITE_LOGO"
-                :src="comment.user.avatarURL | imageMogr2(68)"
+                :src="comment.user.avatarUrl | imageMogr2(68)"
               ></v-img>
             </v-avatar>
           </div>
@@ -20,7 +20,7 @@
                 v-if="
                   source === 'article' &&
                   sourceData &&
-                  sourceData.user._id === comment.user._id
+                  sourceData.user.id === comment.user.id
                 "
                 outlined
                 x-small
@@ -38,7 +38,7 @@
       <div
         class="comment-operate"
         v-if="
-          (user && comment.user && comment.user._id == user._id) ||
+          (user && comment.user && comment.user.id == user.id) ||
           type !== 'user'
         "
       >
@@ -72,7 +72,7 @@
                 text
                 @click="handleDelete(comment)"
                 :loading="deleteIng"
-                v-if="user && comment.user && comment.user._id == user._id"
+                v-if="user && comment.user && comment.user.id == user.id"
                 >删除</v-btn
               >
             </div>
@@ -84,7 +84,7 @@
       <div v-html="comment.htmlContent" class="markdown-body body-1"></div>
       <div class="mt-1 d-flex align-center">
         <span class="caption text--secondary">{{
-          comment.createdAt | format
+          comment.createAt | format
         }}</span>
         <div class="ml-2 d-flex align-center comment-like">
           <v-btn text x-small :ripple="false" @click="handleClickLike(comment)">
@@ -105,7 +105,7 @@
     <div class="comment-item-reply-box mt-3 pl-3" v-if="comment.replylist">
       <template v-for="_item in comment.replylist">
         <comment-item
-          :key="_item._id"
+          :key="_item.id"
           :comment="_item"
           :source="source"
           @reply="handleReply"
@@ -150,7 +150,7 @@ export default {
       default () {
         return {
           _id: null,
-          createdAt: 0,
+          createAt: 0,
           htmlContent: ''
         };
       }
@@ -184,9 +184,9 @@ export default {
       }
       this.$set(comment, 'isFetReplyIng', true);
 
-      const id = comment._id;
+      const id = comment.id;
       const resData = await this.$axios(
-        `/api/comment/list/${this.source}?rootID=${id}`
+        `/api/comment/list/${this.source}?rootId=${id}`
       );
       this.$set(comment, 'replylist', resData);
     },
@@ -194,12 +194,12 @@ export default {
       // 执行删除
       this.deleteIng = true;
       try {
-        await this.$axios.delete(`/api/comment/${this.source}/${comment._id}`);
+        await this.$axios.delete(`/api/comment/${this.source}/${comment.id}`);
         if (parent) {
           // 在当前列表中移除
           // this.comment.replylist.
           const index = this.comment.replylist.findIndex(
-            item => item._id == comment._id
+            item => item.id == comment.id
           );
           this.comment.replylist.splice(index, 1);
         } else {
@@ -215,7 +215,7 @@ export default {
       this.$emit('reply', comment);
     },
     async handleClickLike (comment) {
-      const id = comment._id;
+      const id = comment.id;
       try {
         const likes = this.changeLike(comment.likes);
         await this.$axios.put('/api/comment/' + this.source + '/' + id + '/like');

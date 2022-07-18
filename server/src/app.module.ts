@@ -25,6 +25,7 @@ import { DataModule } from './modules/data/data.module';
 import { NotifyModule } from './modules/notify/notify.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GatewayModule } from './modules/gateway/gateway.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -38,14 +39,19 @@ import { GatewayModule } from './modules/gateway/gateway.module';
       },
       inject: [ConfigService],
     }),
-    // TypeOrmModule.forRootAsync({
-    //   useFactory: async (configService: ConfigService) => {
-    //     // typeorm bug, https://github.com/nestjs/nest/issues/1119
-    //     // 将 type 定义为 type: 'mysql' | 'mariadb'; 解决此issue
-    //     return configService.db;
-    //   },
-    //   inject: [ConfigService],
-    // }),
+    TypeOrmModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => {
+        // typeorm bug, https://github.com/nestjs/nest/issues/1119
+        // 将 type 定义为 type: 'mysql' | 'mariadb'; 解决此issue
+        console.log('configService.mysql',configService.mysql);
+        
+        return {
+          ...configService.mysql,
+          autoLoadEntities: true,
+        };
+      },
+      inject: [ConfigService],
+    }),
     RedisModule.forRootAsync({
       useFactory: async (configService: ConfigService): Promise<ConfigService> => {
         return configService;

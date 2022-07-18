@@ -33,7 +33,7 @@ export class DataController {
     list[11] = this.dataService.historyComment();
     list[12] = this.dataService.historyUser();
 
-    list[13] = this.dataService.articleTags();
+    list[13] = this.dataService.tags();
     list[14] = this.dataService.userType();
     list[15] = this.dataService.author();
 
@@ -42,7 +42,7 @@ export class DataController {
       growthBrowse, growthComment, growthUser,
       growthBrowseRecent, growthCommentRecent, growthUserRecent,
       historyBrowse, historyComment, historyUser,
-      articleTags, userType, author
+      tags, userType, author
     ] = await Promise.all(list);
 
     return {
@@ -50,7 +50,7 @@ export class DataController {
       growthBrowse, growthComment, growthUser,
       growthBrowseRecent, growthCommentRecent, growthUserRecent,
       historyBrowse, historyComment, historyUser,
-      articleTags, userType, author
+      tags, userType, author
     }
   }
 }

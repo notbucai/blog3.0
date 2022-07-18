@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as Redis from 'ioredis';
 import * as util from 'util';
 import * as _ from 'lodash';
-import { User } from '../models/user.entity';
+import { User } from '../entities/User';
 import { ConfigService } from '../config/config.service';
 // import { Category } from '../entity/category.entity';
 
@@ -25,8 +25,8 @@ export class RedisService {
         this.cacheKeys = new CacheKeys();
     }
 
-    async getUser (userID: string): Promise<User> {
-        const cacheKey = util.format(this.cacheKeys.user, userID);
+    async getUser (userId: string): Promise<User> {
+        const cacheKey = util.format(this.cacheKeys.user, userId);
         const userStr = await this.client.get(cacheKey);
         if (!userStr) {
             return null;
@@ -36,7 +36,7 @@ export class RedisService {
     }
 
     async setUser (user: User) {
-        const cacheKey = util.format(this.cacheKeys.user, user._id);
+        const cacheKey = util.format(this.cacheKeys.user, user.id);
         return await this.client.set(cacheKey, JSON.stringify(user), 'EX', 1 * 60 * 60);
     }
 
@@ -60,19 +60,19 @@ export class RedisService {
         return await this.client.get(cacheKey);
     }
 
-    async setUserToken (userID: string, token: string) {
-        const cacheKey = util.format(this.cacheKeys.userToken, userID);
+    async setUserToken (userId: string, token: string) {
+        const cacheKey = util.format(this.cacheKeys.userToken, userId);
         const tokenMaxAge: number = this.configService.server.tokenMaxAge;
         return await this.client.set(cacheKey, token, 'EX', Math.floor(tokenMaxAge / 1000));
     }
 
-    async getUserToken (userID: string) {
-        const cacheKey = util.format(this.cacheKeys.userToken, userID);
+    async getUserToken (userId: string) {
+        const cacheKey = util.format(this.cacheKeys.userToken, userId);
         return await this.client.get(cacheKey);
     }
 
-    async setPublishArticle (userID: string, article) {
-        const cacheKey = util.format(this.cacheKeys.publishArticle, userID);
+    async setPublishArticle (userId: string, article) {
+        const cacheKey = util.format(this.cacheKeys.publishArticle, userId);
         return await this.client.set(cacheKey, JSON.stringify(article), 'EX', 60 * 60);
     }
 

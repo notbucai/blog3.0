@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { OauthService } from './oauth.service';
 import { LoggerService } from '../common/logger.service';
 import { CurUser } from '../core/decorators/user.decorator';
-import { User } from '../models/user.entity';
+import { User } from '../entities/User';
 import { Roles } from '../core/decorators/roles.decorator';
 import { ActiveGuard } from '../core/guards/active.guard';
 import { RolesGuard } from '../core/guards/roles.guard';
@@ -48,9 +48,9 @@ export class OauthController {
     }
     const token = await this.commonService.generateToken(localUserinfo);
     // 更新登录时间
-    this.userService.updateLoginTime(localUserinfo._id);
+    this.userService.updateLoginTime(localUserinfo.id);
 
-    await this.redisService.setUserToken(String(localUserinfo._id), token);
+    await this.redisService.setUserToken(String(localUserinfo.id), token);
     await this.redisService.setUser(localUserinfo);
     return token;
   }
@@ -86,7 +86,7 @@ export class OauthController {
   @ApiOperation({ summary: 'oauth解绑' })
   public async unbind (@CurUser() user: User, @Query('state') state: StateEnum) {
     // 判断用户是否已经绑定
-    const isBind = this.oauthService.isBind(state, user);
+    const isBind = await this.oauthService.isBind(state, user);
     if (!isBind) {
       throw new MyHttpException({ code: ErrorCode.UserUnBind.CODE });
     }

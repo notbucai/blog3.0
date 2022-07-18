@@ -1,4 +1,4 @@
-import { IsString, Length, IsArray, IsMongoId, ValidateIf, MinLength, IsUrl } from "class-validator";
+import { IsString, Length, IsArray, IsMongoId, ValidateIf, MinLength, IsUrl, IsUUID } from "class-validator";
 import { ErrorCode } from "../../../constants/error";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -9,13 +9,13 @@ export class CreateArticleDto {
   @ApiProperty({ description: "title" })
   title: string;
 
-  @ValidateIf(o => typeof o.coverURL === 'string' && o.coverURL.length)
+  @ValidateIf(o => typeof o.coverUrl === 'string' && o.coverUrl.length)
   @IsUrl({
     protocols: ['https'],
     require_protocol: false,
   }, { message: "图片必须为url" })
-  @ApiProperty({ description: "coverURL" })
-  coverURL: string
+  @ApiProperty({ description: "coverUrl" })
+  coverUrl: string
 
   // @ApiProperty({ description: "summary" })
   // @Length(0, 200, { message: ErrorCode.ParamsError.MESSAGE })
@@ -32,7 +32,7 @@ export class CreateArticleDto {
   // htmlContent: string;
 
   @ValidateIf(o => Array.isArray(o.tags))
-  @IsMongoId({ each: true, message: ErrorCode.ParamsError.MESSAGE })
+  @IsUUID("4", { each: true, message: ErrorCode.ParamsError.MESSAGE })
   @ApiProperty({ description: "tags" })
   tags: string[]
 }

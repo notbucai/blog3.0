@@ -67,11 +67,11 @@ export default {
       // item.type
       const itemGen = {
         1: {
-          key: "_id",
+          key: "id",
           url: "/article/"
         },
         2: {
-          key: "sourceID",
+          key: "sourceId",
           url: "/article/"
         },
         3: {
@@ -79,7 +79,7 @@ export default {
           url: "/message"
         },
         61: {
-          key: "sourceID",
+          key: "sourceId",
           url: "/article/"
         },
         62: {
@@ -87,7 +87,7 @@ export default {
           url: "/message"
         },
         7: {
-          key: "_id",
+          key: "id",
           url: "/article/"
         },
       }[type];

@@ -256,7 +256,7 @@ export class OpenapiService {
         // 获取客户端
         const client = await this.getClientByClientId(authorizeData.client_id);
         // 关联到客户端
-        await this.bindUserToClient(user.id, client._id);
+        await this.bindUserToClient(user.id, client.id);
         // 修改状态
         await this.setStatus(dto.token, AuthStatus.RESOLVE);
         // 生成code并缓存

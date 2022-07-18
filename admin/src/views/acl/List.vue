@@ -18,7 +18,7 @@
         @expand-change="expandChange"
       >
         <el-table-column
-          prop="_id"
+          prop="id"
           header-align="center"
           show-overflow-tooltip
           label="ID"
@@ -47,11 +47,11 @@
           max-width="320"
         ></el-table-column>
 
-        <el-table-column prop="createdAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.createdAt)}}</template>
+        <el-table-column prop="createAt" label="创建时间" width="160" align="center">
+          <template slot-scope="scope">{{filter_format(scope.row.createAt)}}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.updatedAt)}}</template>
+          <template slot-scope="scope">{{filter_format(scope.row.updateAt)}}</template>
         </el-table-column>
 
         <el-table-column label="操作" min-width="100">
@@ -176,13 +176,13 @@ export default {
     handleAdd() {
       this.dialogFormVisible = true;
       this.current = {
-        iconURL: '',
+        iconUrl: '',
         name: ''
       };
     },
     async handleDelete(item) {
       await this.$confirm('是否删除' + '“' + item.name + '”？');
-      const [err, data] = await this.$http.aclDelete(item._id);
+      const [err, data] = await this.$http.aclDelete(item.id);
       if (data) {
         this.$notify.success({ title: '删除成功' });
         this.loadData();
@@ -198,7 +198,7 @@ export default {
         title
       };
       this.changStatusLoading = true;
-      const id = this.current._id;
+      const id = this.current.id;
       if (parent) {
         reqData.parent = parent;
       }
@@ -222,7 +222,7 @@ export default {
 
 <style lang="scss" scoped>
 .table {
-  .avatarURL {
+  .avatarUrl {
     width: 32px;
     height: 32px;
   }

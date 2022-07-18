@@ -47,7 +47,7 @@ export const mutations = {
 }
 export const actions = {
   hasLike ({ commit, state }, likes) {
-    const uId = state.user._id;
+    const uId = state.user.id;
     return Array.isArray(likes) ? likes.find(item => item == uId) : false;
   },
   // nuxtServerInit，用以初始化数据

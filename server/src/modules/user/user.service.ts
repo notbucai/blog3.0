@@ -18,6 +18,12 @@ import { ListDto } from './dto/list.dto';
 import { ArticleService } from '../article/article.service';
 import { DateType } from '../../constants/constants';
 import moment = require('moment');
+import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Not, Repository, IsNull } from 'typeorm';
+import { User as UserEntity } from '../../entities/User';
+import { UserLink as UserLinkEntity } from '../../entities/UserLink';
+import { UserRole as UserRoleEntity } from '../../entities/UserRole';
+import { StateEnum } from '../../oauth/oauth.constant';
 
 @Injectable()
 export class UserService {
@@ -25,42 +31,46 @@ export class UserService {
     private readonly configService: ConfigService,
     private readonly articleService: ArticleService,
     @InjectModel(User) public readonly userSchema: ReturnModelType<typeof User>,
+
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    @InjectRepository(UserLinkEntity)
+    private userLinkRepository: Repository<UserLinkEntity>,
+    @InjectRepository(UserRoleEntity)
+    private userRoleRepository: Repository<UserRoleEntity>,
   ) { };
 
+  // async t(){
+  //   const d = await this.userRepository.findOne( {
+  //     relations: ['userRoles', 'userRoles.role', 'userRoles.role.roleAcls']
+  //   });
+  //   console.log('d---', d);
+  // }
   async getUser (id: string) {
-    const user = await this.userSchema.findById(id).populate({ path: 'role', populate: 'acls' });
+    const user = await this.userRepository.findOneOrFail(id, {
+      relations: ['userRoles', 'userRoles.role', 'userRoles.role.roleAcls']
+    });
     return user;
   }
-  async getBasiceUser (id: string) {
-    const user = await this.userSchema.findById(id, '-pass')
+  async getBasicUser (id: string) {
+    const user = await this.userRepository.findOneOrFail(id);
     return user;
   }
-  async update (user: User) {
-    return this.userSchema.updateOne({
-      _id: user._id,
-    }, {
-      $set: {
-        ...user,
-        updatedAt: new Date()
-      }
-    });
+  async update (user: UserEntity) {
+    return this.userRepository.save(user);
   }
-  async updateLoginTime (id: ObjectID) {
-    return this.userSchema.updateOne({
-      _id: id,
-    }, {
-      $set: {
-        loginAt: new Date()
-      }
-    });
+  async updateLoginTime (id: string) {
+    const user = await this.userRepository.findOneOrFail(id);
+    user.loginAt = new Date();
+    return this.userRepository.save(user);
   }
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
     */
-  async updateUserInfo (userID: ObjectID | string, updateUserInfoDto: UpdateUserInfoDto) {
-    const updateData: any = {};
-    if (typeof updateUserInfoDto.avatarURL !== 'undefined') {
-      updateData.avatarURL = updateUserInfoDto.avatarURL;
+  async updateUserInfo (userId: string, updateUserInfoDto: UpdateUserInfoDto) {
+    const updateData = await this.userRepository.findOneOrFail(userId);
+    if (typeof updateUserInfoDto.avatarUrl !== 'undefined') {
+      updateData.avatarUrl = updateUserInfoDto.avatarUrl;
     }
     if (typeof updateUserInfoDto.job !== 'undefined') {
       updateData.job = updateUserInfoDto.job;
@@ -72,12 +82,11 @@ export class UserService {
       updateData.introduce = updateUserInfoDto.introduce;
     }
     if (typeof updateUserInfoDto.personalHomePage !== 'undefined') {
-      updateData.personalHomePage = updateUserInfoDto.personalHomePage;
+      updateData.website = updateUserInfoDto.personalHomePage;
     }
     if (typeof updateUserInfoDto.username !== 'undefined') {
       updateData.username = updateUserInfoDto.username;
-      const theUser: User = await this.userSchema.findOne({
-        select: ['_id'],
+      const theUser: UserEntity = await this.userRepository.findOneOrFail({
         where: { username: updateData.username },
       });
       if (theUser) {
@@ -87,18 +96,17 @@ export class UserService {
         });
       }
     }
-    return this.userSchema.update({
-      _id: userID,
-    }, {
-      $set: {
-        ...updateData,
-        updatedAt: Date.now()
-      }
-    });
+    return this.userRepository.save(updateData);
   }
 
-  async changeRole (id: string, role: string) {
-    return this.userSchema.findByIdAndUpdate(id, { $set: { role: new ObjectID(role) } });
+  async changeRole (id: string, roleId: string) {
+    const user = await this.userRepository.findOneOrFail(id);
+    const userRole = new UserRoleEntity();
+    userRole.roleId = roleId;
+    userRole.userId = user.id;
+    user.userRoles = [userRole];
+
+    return this.userRepository.save(user);
   }
 
   async findList (listDto: ListDto, sort: any = {}) {
@@ -108,18 +116,26 @@ export class UserService {
     listDto.page_size = Number(listDto.page_size) || 20;
 
     if (listDto.keyword) {
-      const keyRe = new RegExp(listDto.keyword);
-      query = {
-        $or: [
-          { username: keyRe },
-          { phone: keyRe },
-          { githubLogin: keyRe },
-          { githubName: keyRe },
-        ]
-      };
+      const keyLike = Like(listDto.keyword)
+      query = [
+        { username: keyLike },
+        { phone: keyLike },
+      ];
     }
-    const list = await this.userSchema.find(query).sort(sort).skip((listDto.page_index - 1) * listDto.page_size).limit(listDto.page_size).populate({ path: 'role' });
-    const total = await this.userSchema.countDocuments(query);
+    const list = await this.userRepository
+      .createQueryBuilder()
+      .where(query)
+      .orderBy(sort)
+      .skip((listDto.page_index - 1) * listDto.page_size)
+      .take(listDto.page_size)
+      .leftJoinAndSelect('User.userRoles', 'user')
+      .leftJoinAndSelect('User.userRoles.role', 'role')
+      .leftJoinAndSelect('User.userRoles.roleAcls', 'roleAcls')
+      .getMany()
+    const total = await this.userRepository
+      .createQueryBuilder()
+      .where(query)
+      .getCount();
     return {
       list,
       total,
@@ -127,18 +143,21 @@ export class UserService {
   }
 
   async findNowLoginList () {
-    const list = await this.userSchema.find({
-      loginAt: {
-        $ne: null
-      },
-    }).sort({
-      loginAt: -1
-    }).skip(0).limit(60).select(['_id', 'username', 'loginAt', 'avatarURL']);
+    const list = await this.userRepository
+    .createQueryBuilder()
+    .where({
+      loginAt: Not(IsNull()),
+    })
+    .orderBy({
+      login_at: 'DESC'
+    })
+    .take(60)
+    .getMany()
     return list;
   }
 
-  async findByPhone (phone: string): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne({
+  async findByPhone (phone: string): Promise<UserEntity | undefined> {
+    const user: UserEntity = await this.userRepository.findOne({
       phone
     });
 
@@ -147,9 +166,9 @@ export class UserService {
     }
     return undefined;
   }
-  async findByPhoneOrUsername (phone: string, username: string): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne({
-      $or: [{ phone }, { username }]
+  async findByPhoneOrUsername (phone: string, username: string): Promise<UserEntity | undefined> {
+    const user = await this.userRepository.findOne({
+      where: [{ phone }, { username }]
     });
 
     if (user) {
@@ -158,36 +177,9 @@ export class UserService {
     return undefined;
   }
 
-  async findByObj (obj: object): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne(obj);
-
-    if (user) {
-      return user;
-    }
-    return undefined;
-  }
-
-  async findByGithubId (githubID: string): Promise<User | undefined> {
-    const githubIDNum: any = parseInt(githubID) as any;
-    const user: User = await this.userSchema.findOne({
-      $or: [
-        {
-          githubID: githubIDNum
-        },
-        {
-          githubID
-        }
-      ]
-    });
-    if (user) {
-      return user;
-    }
-    return undefined;
-  }
-
-  async findByBaiduId (baiduID: string): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne({
-      baiduID
+  async findByObj (obj: object) {
+    const user = await this.userRepository.findOne({
+      where: obj
     });
 
     if (user) {
@@ -196,76 +188,59 @@ export class UserService {
     return undefined;
   }
 
-  async findByWeiboId (weiboID: string): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne({
-      weiboID
+  async findLinkByUserId(type: StateEnum, userId: string) {
+    const userLink = await this.userLinkRepository.findOne({
+      where: {
+        type,
+        userId
+      },
+      // relations: ['user']
     });
-
-    if (user) {
-      return user;
-    }
-    return undefined;
+    return userLink;
   }
 
-  async findByQQId (qqID: string): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne({
-      qqID
+  async findUserByLinkLoginId(type: StateEnum, loginId: string) {
+    const userLink = await this.userLinkRepository.findOne({
+      where: {
+        type,
+        loginId
+      },
+      relations: ['user']
     });
-
-    if (user) {
-      return user;
-    }
-    return undefined;
+    return userLink?.user;
   }
 
-  async findByNotbucaiId (notbucaiID: string): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne({
-      notbucaiID
-    });
-
-    if (user) {
-      return user;
-    }
-    return undefined;
-  }
-
-  async findByGiteeId (giteeID: string): Promise<User | undefined> {
-    const user: User = await this.userSchema.findOne({
-      giteeID
-    });
-
-    if (user) {
-      return user;
-    }
-    return undefined;
+  async updateLink (userLink: UserLinkEntity) {
+    return this.userLinkRepository.save(userLink);
   }
 
   async create (signupDto: SignUpDto) {
-    const newUser = new User();
-    newUser.createdAt = new Date();
-    newUser.updatedAt = newUser.createdAt;
-    newUser.activatedAt = newUser.createdAt;
+    const newUser = new UserEntity();
+    newUser.activateAt = newUser.activateAt;
     newUser.phone = signupDto.phone;
     newUser.username = signupDto.username.replace(/\s+/g, ''); // 用户名中不能有空格
     newUser.pass = this.generateHashPassword(signupDto.pass);
     // newUser.role = UserRole.Normal;
     newUser.status = UserStatus.Actived;
-    newUser.commentCount = 0;
     newUser.sex = UserSex.Unknown;
-    newUser.avatarURL = `${this.configService.static.imgPath}/avatar.jpg`;
-    return this.userSchema.create(newUser);
+    newUser.avatarUrl = `${this.configService.static.imgPath}/avatar.jpg`;
+    return this.userRepository.save(newUser);
   }
 
   async changeStatus (id: string, status: UserStatus) {
-    return this.userSchema.findByIdAndUpdate(id, { status });
+    const user = await this.userRepository.findOneOrFail(id);
+    user.status = status;
+    this.userRepository.save(user);
   }
 
-  async createUser (user: User): Promise<User> {
-    return await this.userSchema.create(user);
+  async createUser (user: UserEntity) {
+    return this.userRepository.save(user);
   }
-  async repass (userId: ObjectID, pass: string) {
+  async repass (userId: string, pass: string) {
     pass = this.generateHashPassword(pass);
-    return this.userSchema.update({ _id: userId }, { pass, updatedAt: new Date() });
+    const user = await this.userRepository.findOneOrFail(userId);
+    user.pass = pass;
+    return this.userRepository.save(user);
   }
 
   generateHashPassword (password: string) {
@@ -292,8 +267,8 @@ export class UserService {
     return this.encryptPassword(password, salt, this.configService.server.passSalt) === hashedPass;
   }
 
-  achievement (id: ObjectID | string) {
-    const oid = new ObjectID(id);
+  achievement (id: string) {
+    const oid = id;
     return this.articleService.statistics(oid);
   }
 
@@ -309,7 +284,7 @@ export class UserService {
       const endDate = moment(startDate).add(1, type).format('YYYY-MM-DD');
 
       const findPromise = schema.countDocuments({
-        createdAt: {
+        createAt: {
           $gte: new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'),
           $lt: new Date(endDate + ' 23:59:59'),
         }
@@ -337,7 +312,7 @@ export class UserService {
       const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
 
       const findPromise = schema.countDocuments({
-        createdAt: {
+        createAt: {
           $gte: new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:59'),
         }
       });
@@ -398,6 +373,6 @@ export class UserService {
   }
 
   count () {
-    return this.userSchema.countDocuments()
+    return this.userRepository.count()
   }
 }

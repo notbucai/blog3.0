@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2020-03-26 16:54:02
- * @LastEditors: bucai
- * @LastEditTime: 2020-03-26 20:38:56
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-07-17 12:21:07
  * @Description: 
  */
 import {
@@ -12,7 +12,7 @@ import {
   MaxLength,
   ValidateIf,
   Length,
-  IsMongoId,
+  IsUUID,
 } from 'class-validator';
 import { CommentConstants } from '../../../constants/comment';
 import { ApiProperty } from '@nestjs/swagger';
@@ -30,7 +30,7 @@ export class CreateAclDto {
   @ApiProperty({ description: "title" })
   title: string;
 
-  @IsMongoId({ message: ErrorCode.ParamsError.MESSAGE })
+  @IsUUID("4", { message: ErrorCode.ParamsError.MESSAGE })
   @ValidateIf(o => o.parent != undefined)
   @ApiProperty({ description: "parent" })
   parent: string

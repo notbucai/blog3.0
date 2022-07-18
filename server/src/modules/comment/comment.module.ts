@@ -7,12 +7,20 @@ import { ArticleComment, MessageComment } from '../../models/comment.entity';
 import { ArticleModule } from '../article/article.module';
 import { NotifyModule } from '../notify/notify.module';
 
+import { LeaveWord } from '../../entities/LeaveWord';
+import { LeaveWordLike } from '../../entities/LeaveWordLike';
+import { ArticleComment as ArticleCommentEntity } from '../../entities/ArticleComment';
+import { ArticleCommentLike } from '../../entities/ArticleCommentLike';
+
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 @Module({
   imports: [
     CommonModule,
     NotifyModule,
     ArticleModule,
-    TypegooseModule.forFeature([ArticleComment, MessageComment])
+    TypegooseModule.forFeature([ArticleComment, MessageComment]),
+    TypeOrmModule.forFeature([LeaveWord, LeaveWordLike, ArticleCommentEntity, ArticleCommentLike])
   ],
   providers: [CommentService],
   controllers: [CommentController],

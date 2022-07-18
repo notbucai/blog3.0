@@ -1,5 +1,3 @@
-import { ObjectID } from "mongodb";
-
 export class UserConstants {
     static readonly USERNAME_MIN_LENGTH: number = 2;
     static readonly USERNAME_MAX_LENGTH: number = 16;
@@ -23,14 +21,25 @@ export enum DateType {
     month = 'month',
     day = 'day'
 }
+// "Verifying" | "VerifySuccess" | "VerifyFail"
 export enum ContentStatus {
-    Verifying = 1, // 审核中
-    VerifySuccess = 2, // 审核通过
-    VerifyFail = 3, // 审核未通过
+    Verifying = 'Verifying', // 审核中
+    VerifySuccess = 'VerifySuccess', // 审核通过
+    VerifyFail = 'VerifyFail', // 审核未通过
 }
+
+export enum ArticleUpStatus {
+    Default = 'Default', // 默认
+    Up = 'Up', // 置顶
+}
+export enum NotifyStatus {
+    Read = 'Read',
+    New = 'New',
+}
+
 export const ContentStatusLabelMap = {
     [ContentStatus.Verifying]: "审核中",
     [ContentStatus.VerifySuccess]: "审核通过",
     [ContentStatus.VerifyFail]: "审核未通过",
 }
-export const systemObjectId = new ObjectID('000000000000000000000000');
+export const systemObjectId = '00000000-0000-0000-0000-000000000000'

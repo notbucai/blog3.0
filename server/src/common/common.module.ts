@@ -13,10 +13,12 @@ import { User } from '../models/user.entity';
 import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 import { WechatService } from './wechat/wechat.service';
 import { CensorService } from './censor.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    TypegooseModule.forFeature([Notify, Article, ArticleComment, MessageComment,User])
+    TypegooseModule.forFeature([Notify, Article, ArticleComment, MessageComment, User]),
+    TypeOrmModule.forFeature([])
   ],
   controllers: [
     CommonController

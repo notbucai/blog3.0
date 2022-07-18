@@ -10,21 +10,21 @@ class UserScoreDef {
 export const UserScore = new UserScoreDef();
 
 export enum UserStatus {
-    InActive = 1, // 未激活
-    Actived = 2, // 已激活
-    Frozen = 3, // 已冻结
+    InActive = "InActive", // 未激活
+    Actived = "Actived", // 已激活
+    Frozen = "Frozen", // 已冻结
 }
 
 export enum UserSex {
-    Male = 0, // 男
-    Female = 1, // 女
-    Unknown = 2, // 未知
+    Male = 'Male', // 男
+    Female = 'Female', // 女
+    Unknown = 'Unknown', // 未知
 }
 
 export class User extends Base {
 
     @prop({ default: Date })
-    createdAt: Date;
+    createAt: Date;
 
     @prop({ default: Date })
     updatedAt: Date;
@@ -73,7 +73,7 @@ export class User extends Base {
     status: UserStatus; // 用户状态
 
     @prop()
-    avatarURL: string; // 头像
+    avatarUrl: string; // 头像
 
     @prop()
     sex: UserSex;

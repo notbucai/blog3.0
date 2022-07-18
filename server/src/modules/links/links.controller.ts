@@ -8,6 +8,7 @@ import { RolesGuard } from '../../core/guards/roles.guard';
 import { ObjectID } from 'mongodb';
 import { MyHttpException } from '../../core/exception/http.exception';
 import { ErrorCode } from '../../constants/error';
+import { ClickLinkDto } from './dto/click.dto';
 
 @Controller('links')
 @ApiTags('links')
@@ -30,8 +31,13 @@ export class LinksController {
     return this.linksService.findAll();
   }
 
+  @Post('click')
+  click (@Body() clickLinkDto: ClickLinkDto) {
+    return this.linksService.click(clickLinkDto.id);
+  }
+
   @Get(':id')
-  find (@Param('id') id: ObjectID) {
+  find (@Param('id') id: string) {
     return this.linksService.findById(id);
   }
 
@@ -39,18 +45,15 @@ export class LinksController {
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('links/update', true)
-  update (@Param('id') id: string,@Body() createLinkDto: CreateLinkDto) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
-    const objId = new ObjectID(id);
-    return this.linksService.updateById(objId, createLinkDto);
+  update (@Param('id') id: string, @Body() createLinkDto: CreateLinkDto) {
+    return this.linksService.updateById(id, createLinkDto);
   }
 
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(ActiveGuard, RolesGuard)
   @Roles('links/delete', true)
-  delete (@Param('id') id: ObjectID) {
-    if (!ObjectID.isValid(id)) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
+  delete (@Param('id') id: string) {
     return this.linksService.deleteById(id);
   }
 }

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-07-05 18:24:48
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-04-10 16:10:10
+ * @LastEditTime: 2022-07-16 21:33:59
  * @Description: 
  */
 import { prop, Ref } from '@typegoose/typegoose';
@@ -10,10 +10,11 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 import { ObjectID } from 'mongodb';
 import { User } from './user.entity';
 
+// "article" | "article_comment" | "leave_word"
 export enum NotifyObjectType {
   article = 'article', // 文章
-  comment = 'comment', // 评论
-  message = 'message', // 留言
+  comment = 'article_comment', // 评论
+  message = 'leave_word', // 留言
   user = 'user', // 用户
 }
 
@@ -32,7 +33,7 @@ export enum NotifyStatus {
 export class Notify extends Base {
 
   @prop({ default: Date })
-  createdAt: Date;
+  createAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;
@@ -47,7 +48,7 @@ export class Notify extends Base {
   senderAction: NotifyActionType; // 操作者的动作，如：捐款、更新、评论、收藏；
 
   @prop({ required: true })
-  objectID: ObjectID; // 目标对象ID
+  objectId: ObjectID; // 目标对象ID
 
   @prop({ required: false })
   object: string; // 目标对象内容或简介，比如：文章标题；

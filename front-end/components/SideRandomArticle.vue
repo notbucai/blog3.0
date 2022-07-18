@@ -7,7 +7,7 @@
     </v-container>
     <v-card class="mx-auto mb-6 pa-2">
       <nuxt-link
-        :to="'/article/'+item._id"
+        :to="'/article/'+item.id"
         v-for="(item, index) in list"
         :key="index"
         v-ripple

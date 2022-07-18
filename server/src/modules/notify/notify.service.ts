@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { Notify, NotifyActionType, NotifyObjectType, NotifyStatus } from '../../models/notify.entiy';
+import { Notify, NotifyActionType, NotifyObjectType } from '../../models/notify.entiy';
 import { ObjectID } from 'mongodb';
 import { Article } from '../../models/article.entity';
 import { MessageComment, ArticleComment } from '../../models/comment.entity';
@@ -13,7 +13,18 @@ import { NoticeGateway } from '../gateway/notice.gateway';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { SMSService } from '../../common/sms.service';
 import { ConfigService } from '../../config/config.service';
-import { ContentStatus, systemObjectId } from 'src/constants/constants';
+import { ContentStatus, NotifyStatus, systemObjectId } from '../../constants/constants';
+
+import { Article as ArticleEntity } from '../../entities/Article';
+import { ArticleComment as ArticleCommentEntity } from '../../entities/ArticleComment';
+import { LeaveWord as LeaveWordEntity } from '../../entities/LeaveWord';
+import { User as UserEntity } from '../../entities/User';
+import { Notifies as NotifiesEntity } from '../../entities/Notifies';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, IsNull, Like, Not, Repository } from 'typeorm';
+
+
+type ObjectType = ArticleEntity | ArticleCommentEntity | LeaveWordEntity;
 
 @Injectable()
 export class NotifyService {
@@ -24,6 +35,19 @@ export class NotifyService {
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
     @InjectModel(ArticleComment) public readonly articleCommentSchema: ReturnModelType<typeof ArticleComment>,
     @InjectModel(User) public readonly userSchema: ReturnModelType<typeof User>,
+
+    @InjectRepository(NotifiesEntity)
+    private notifiesRepository: Repository<NotifiesEntity>,
+
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    @InjectRepository(ArticleEntity)
+    private articleRepository: Repository<ArticleEntity>,
+    @InjectRepository(ArticleCommentEntity)
+    private articleCommentRepository: Repository<ArticleCommentEntity>,
+    @InjectRepository(LeaveWordEntity)
+    private leaveWordRepository: Repository<LeaveWordEntity>,
+
     @Inject(forwardRef(() => NoticeGateway))
     private readonly noticeGateway: NoticeGateway,
     private readonly logger: LoggerService,
@@ -32,27 +56,23 @@ export class NotifyService {
     private schedulerRegistry: SchedulerRegistry,
   ) { }
 
-  private async getObject (type: NotifyObjectType, objectID: ObjectID) {
+  private async getObject (type: NotifyObjectType, objectId: string) {
 
     const schemas = {
-      [NotifyObjectType.article]: this.articleSchema,
-      [NotifyObjectType.comment]: this.articleCommentSchema,
-      [NotifyObjectType.message]: this.messageCommentSchema
+      [NotifyObjectType.article]: this.articleRepository,
+      [NotifyObjectType.comment]: this.articleCommentRepository,
+      [NotifyObjectType.message]: this.leaveWordRepository
     };
-    const schema: any = schemas[type];
+    const schema: Repository<ObjectType> = schemas[type];
 
     if (!schema) {
       throw new Error("schema not fined, please examine type.");
     }
 
-    return schema.findOne
-      .call(schema, {
-        _id: new ObjectID(objectID)
-      })
-      .populate([{ path: 'user', select: "username avatarURL" }])
+    return schema.findOne(objectId);
   }
 
-  private getTitleByType (type: NotifyObjectType, object: Article | MessageComment | ArticleComment) {
+  private getTitleByType (type: NotifyObjectType, object: ObjectType) {
 
     const key = {
       [NotifyObjectType.article]: 'title',
@@ -78,18 +98,18 @@ export class NotifyService {
   }
 
   public async getSystemUser () {
-    const user = new User();
+    const user = new UserEntity();
     // 构建一个系统内存用户
-    user._id = systemObjectId;
+    user.id = systemObjectId;
     user.username = 'System';
     user.email = this.configService.email?.auth?.user;
-    user.avatarURL = 'https://image.notbucai.com/logo.png';
+    user.avatarUrl = 'https://image.notbucai.com/logo.png';
     return user;
   }
 
-  public async publish (type: NotifyObjectType, action: NotifyActionType, objectID: ObjectID, senderID: ObjectID, recipientID: ObjectID, message?: string) {
+  public async publish (type: NotifyObjectType, action: NotifyActionType, objectId: string, senderID: string, recipientID: string, message?: string) {
 
-    if (systemObjectId.equals(objectID)) {
+    if (systemObjectId === objectId) {
       // todo 直接发送到管理员邮箱
       this.logger.info({
         message: 'send to admin email',
@@ -100,7 +120,7 @@ export class NotifyService {
 
     const typeDesc = this.getDescByType(type);
 
-    const object: Article | MessageComment | ArticleComment = await this.getObject(type, objectID);
+    const object = await this.getObject(type, objectId);
 
     if (!object) throw new Error("object not undefined");
 
@@ -109,8 +129,8 @@ export class NotifyService {
       data: arguments
     });
 
-    const sender = senderID.equals(systemObjectId) ? await this.getSystemUser() : await this.userSchema.findById(senderID);
-    const recipient = await this.userSchema.findById(recipientID);
+    const sender = senderID === systemObjectId ? await this.getSystemUser() : await this.userRepository.findOne(senderID);
+    const recipient = await this.userRepository.findOne(recipientID);
 
     if (!sender) throw new Error("sender not undefined");
     if (!recipient) throw new Error("recipient not undefined");
@@ -120,22 +140,22 @@ export class NotifyService {
     const template = publish[action];
     // if (!template) throw Error("template not fined");
     const objectMessage = message || format(template, sender.username, typeDesc)
-    const notify = new Notify();
+    const notify = new NotifiesEntity();
 
-    notify.objectID = objectID;
+    notify.objectId = objectId;
     notify.objectType = type;
     notify.senderAction = action;
-    notify.sender = senderID;
-    notify.recipient = recipientID;
+    notify.senderId = senderID;
+    notify.recipientId = recipientID;
 
-    notify.object = title;
+    notify.content = title;
     notify.message = objectMessage;
 
-    const createRow = await this.notifySchema.create(notify);
+    const createRow = await this.notifiesRepository.save(notify);
 
-    const notifyUserId = ((recipientID as any)?._id || recipientID).toString();
+    const notifyUserId = recipientID;
     // 如果发送和接受相等就没必要提示了
-    if (!new ObjectID(senderID).equals(recipientID)) {
+    if (senderID !== recipientID) {
       this.noticeGateway.noticeNoReadCount(notifyUserId);
       if (action === NotifyActionType.audit) {
         // 单独通知
@@ -159,7 +179,7 @@ export class NotifyService {
     });
     if (!doesExist) {
       // 有手机号才通知，其他平台后续考虑再接入
-      const notifyUser = await this.userSchema.findById(userId);
+      const notifyUser = await this.userRepository.findOne(userId);
       if (!notifyUser?.phone) return;
       // 不存在才创建任务, 存在就忽略
       const timeoutId = setTimeout(async () => {
@@ -185,12 +205,12 @@ export class NotifyService {
     }
   }
 
-  private async notifyAudit (userId: string, content: Article | MessageComment | ArticleComment) {
+  private async notifyAudit (userId: string, content: ObjectType) {
 
     try {
-      const notifyUser = await this.userSchema.findById(userId);
+      const notifyUser = await this.userRepository.findOne(userId);
       if (!notifyUser?.phone) return;
-      const title = content instanceof Article ? content.title : content.content;
+      const title = content instanceof ArticleEntity ? content.title : content.content;
       this.logger.info({
         message: 'notifyAudit: ',
         data: {
@@ -198,7 +218,7 @@ export class NotifyService {
           title
         }
       });
-      const res = await this.smsService.sendAudit(notifyUser.phone, title, content.status)
+      const res = await this.smsService.sendAudit(notifyUser.phone, title, content.status as ContentStatus)
       this.logger.info({
         message: 'notifyAudit: res',
         data: res
@@ -213,12 +233,12 @@ export class NotifyService {
    * 是否有已读消息
    * @param id 用户id
    */
-  public async getNoReadNotifyCountByUId (id: ObjectID) {
-    return this.notifySchema.countDocuments({
-      recipient: id,
-      status: NotifyStatus.new,
-      sender: {
-        $ne: id
+  public async getNoReadNotifyCountByUId (id: string) {
+    return this.notifiesRepository.count({
+      where: {
+        recipientId: id,
+        status: NotifyStatus.New,
+        senderId: Not(id)
       }
     });
   }
@@ -227,21 +247,21 @@ export class NotifyService {
    * 更新所有该用户的未读消息
    * @param id 用户id
    */
-  public async readAllByUserId (id: ObjectID) {
-    return this.notifySchema.updateMany({
-      recipient: id,
-      status: NotifyStatus.new
-    }, {
-      $set: {
-        readAt: new Date(),
-        status: NotifyStatus.read
+  public async readAllByUserId (id: string) {
+    const notify = await this.notifiesRepository.findOneOrFail({
+      where: {
+        id,
+        status: NotifyStatus.New
       }
     });
+    notify.readAt = new Date();
+    notify.status = NotifyStatus.Read;
+    return this.notifiesRepository.save(notify);
   }
 
-  private async getNotifySourceIdByType (type: NotifyObjectType, source: ObjectID) {
-    let object = await this.getObject(type, source);
-    const s = object.toJSON();
+  private async getNotifySourceIdByType (type: NotifyObjectType, sourceId: string) {
+    let object = await this.getObject(type, sourceId);
+    const s = object;
     delete s.htmlContent;
     delete s.content;
     return s;
@@ -251,26 +271,26 @@ export class NotifyService {
    * 获取该用户的所有消息
    * @param id 用户id
    */
-  public async getNotifyListByUserId (id: ObjectID) {
-    const list = await this.notifySchema.find({
-      recipient: id,
-      sender: {
-        $ne: id
-      }
-    })
-      .sort({
-        _id: -1
-      })
-      .populate([{ path: 'sender', select: "username avatarURL" }])
-      .populate([{ path: 'recipient', select: "username avatarURL" }])
-      .exec();
+  public async getNotifyListByUserId (id: string) {
+    const list = await this.notifiesRepository.find({
+      where: {
+        recipientId: id,
+        senderId: Not(id)
+      },
+      order: {
+        createAt: 'DESC'
+      },
+      relations: ['sender', 'recipient']
+    });
 
-    const jsonArray = list.map(item => item.toJSON());
-    const resList = jsonArray.map(async (item: any) => {
-      const { objectType, objectID } = item;
-      const $source_temp = await this.getNotifySourceIdByType(objectType, objectID);
-      item.source = $source_temp;
-      return item;
+    const resList = list.map(async (item) => {
+      const { objectType, objectId } = item;
+      const $source_temp = await this.getNotifySourceIdByType(objectType as NotifyObjectType, objectId);
+
+      return {
+        ...item,
+        source: $source_temp
+      };
     });
 
     return Promise.all(resList);
@@ -280,26 +300,24 @@ export class NotifyService {
    * 删除消息
    * @param id 消息id
    */
-  public async delNotifyListById (uid: ObjectID, id: ObjectID) {
+  public async delNotifyListById (uid: string, id: string) {
     this.logger.info({
       data: {
         uid, id
       },
       message: "delNotifyListById"
     });
-    return this.notifySchema.findOneAndRemove({
-      recipient: uid,
-      _id: id
-    });
+    return this.notifiesRepository.delete(id);
   }
 
   /**
    * 清空消息
    * @param id 消息id
    */
-  public async clearNotifyListByUserId (uid: ObjectID) {
-    return this.notifySchema.deleteMany({
-      recipient: uid,
+  public async clearNotifyListByUserId (uid: string) {
+    const notifyList = await this.notifiesRepository.find({
+      recipientId: uid
     });
+    return this.notifiesRepository.delete(notifyList.map(item => item.id));
   }
 }

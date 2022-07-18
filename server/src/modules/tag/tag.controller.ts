@@ -56,9 +56,6 @@ export class TagController {
   @Get(':id')
   @ApiOperation({ summary: '通过id获取tag' })
   async getById(@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) {
-      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    }
     return this.tagService.findById(id);
   }
 
@@ -68,9 +65,6 @@ export class TagController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '通过id更新' })
   async updateById(@Param('id') id: string, @Body() tagDto: CreateDto) {
-    if (!ObjectID.isValid(id)) {
-      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    }
     return this.tagService.update(id, tagDto);
   }
 
@@ -81,9 +75,6 @@ export class TagController {
   @ApiOperation({ summary: '通过id删除' })
   @ApiBearerAuth()
   async delById(@Param('id') id: string) {
-    if (!ObjectID.isValid(id)) {
-      throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
-    }
     return this.tagService.delete(id);
   }
 
@@ -98,7 +89,7 @@ export class TagController {
     if (!tagList.length) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });
     }
-    return this.articleService.pageListByTag(tagList[0]._id, articleListByTagDto);
+    return this.articleService.pageListByTag(tagList?.[0]?.id, articleListByTagDto);
   }
 
 }

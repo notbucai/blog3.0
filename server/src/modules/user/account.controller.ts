@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2020-06-03 11:21:49
- * @LastEditors: bucai
- * @LastEditTime: 2020-07-06 16:34:56
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2022-06-30 13:28:58
  * @Description: 
  */
 import { Controller, Post, UseGuards, Body } from "@nestjs/common";
@@ -17,7 +17,7 @@ import { ArticleService } from "../article/article.service";
 import { CommentService } from "../comment/comment.service";
 import { UnbindPhone, BindPhone } from "./dto/bind.dto";
 import { CurUser } from "../../core/decorators/user.decorator";
-import { User } from "../../models/user.entity";
+import { User } from "../../entities/User";
 import { MyHttpException } from "../../core/exception/http.exception";
 import { ErrorCode } from '../../constants/error';
 
@@ -47,7 +47,8 @@ export class AccountController {
       });
     }
     // 绑定数据
-    return await this.userService.update({ _id: user._id, phone: null } as User)
+    user.phone = null;
+    return await this.userService.update(user);
   }
 
 
@@ -84,10 +85,10 @@ export class AccountController {
       });
     }
     // 判断手机号是否已经绑定用户
-    this.userService.findByPhone(bindDto.phone);
-
+    // const userData = this.userService.findByPhone(bindDto.phone);
+    user.phone = bindDto.phone
     // 绑定数据
-    return await this.userService.update({ _id: user._id, phone: bindDto.phone } as User)
+    return await this.userService.update(user);
   }
 
 }

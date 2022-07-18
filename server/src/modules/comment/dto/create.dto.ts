@@ -5,6 +5,7 @@ import {
   MaxLength,
   ValidateIf,
   IsMongoId,
+  IsUUID,
 } from 'class-validator';
 import { CommentConstants } from '../../../constants/comment';
 import { ApiProperty } from '@nestjs/swagger';
@@ -12,23 +13,23 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateCommentDto {
 
 
-  @ValidateIf(o => o.sourceID !== undefined)
+  @ValidateIf(o => o.sourceId !== undefined)
   @IsString({
-    message: '无效的sourceID',
+    message: '无效的sourceId',
   })
-  @ApiProperty({ description: "sourceID" })
-  @IsMongoId({ message: '无效的sourceID' })
-  readonly sourceID: string;
+  @ApiProperty({ description: "sourceId" })
+  @IsUUID("4",{ message: '无效的sourceId UUID' })
+  readonly sourceId: string;
 
-  @ValidateIf(o => o.parentID !== undefined)
-  @IsMongoId({ message: '无效的parentID' })
-  @ApiProperty({ description: "parentID" })
-  readonly parentID: string;
+  @ValidateIf(o => o.parentId !== undefined)
+  @IsUUID("4", { message: '无效的parentId' })
+  @ApiProperty({ description: "parentId" })
+  readonly parentId: string;
 
-  @ValidateIf(o => o.rootID !== undefined)
-  @IsMongoId({ message: '无效的rootID' })
-  @ApiProperty({ description: "rootID" })
-  readonly rootID: string;
+  @ValidateIf(o => o.rootId !== undefined)
+  @IsUUID("4", { message: '无效的rootId' })
+  @ApiProperty({ description: "rootId" })
+  readonly rootId: string;
 
   @MinLength(CommentConstants.MinContentLength, {
     message: '评论内容过少哦',

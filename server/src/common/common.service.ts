@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../models/user.entity';
+import { User } from '../entities/User';
 import { ConfigService } from '../config/config.service';
 import * as jwt from 'jsonwebtoken';
 
@@ -14,7 +14,7 @@ export class CommonService {
       // HMAC using SHA-256 hash algorithm
       // token 过期时间，单位秒
       jwt.sign({
-        id: user._id,
+        id: user.id,
         exp: Math.floor((Date.now() + tokenMaxAge) / 1000),
       }, tokenSecret, { algorithm: 'HS256' }, (err, token: string) => {
         if (err) {

@@ -14,15 +14,15 @@
     <v-carousel-item v-for="(item, i) in recommendedList" :key="i">
       <v-img
         class="align-end carousel-image"
-        :src="item.coverURL | imageMogr2(600)"
-        :lazy-src="item.coverURL | imageMogr2(68)"
+        :src="item.coverUrl | imageMogr2(600)"
+        :lazy-src="item.coverUrl | imageMogr2(68)"
         height="100%"
       >
         <v-container fluid>
           <v-row align="end">
             <div class="carousel-info-box">
               <h1>{{ item.title }}</h1>
-              <v-btn color="error" rounded nuxt :to="`/article/${item._id}`"
+              <v-btn color="error" rounded nuxt :to="`/article/${item.id}`"
                 >阅读全文</v-btn
               >
             </div>

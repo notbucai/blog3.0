@@ -27,7 +27,7 @@
             @reply="handleReply"
             @delete="handleDelete"
             v-for="item in comments"
-            :key="item._id"
+            :key="item.id"
             :source-data="sourceData"
           />
         </transition-group>
@@ -95,15 +95,15 @@ export default {
       const id = this.cid;
       const reply = this.reply;
       const formData = {
-        sourceID: id,
+        sourceId: id,
         content
       };
-      let rootID;
+      let rootId;
       if (reply) {
-        formData['parentID'] = reply._id;
-        rootID = formData['rootID'] = reply.parent
-          ? reply.parent._id
-          : reply._id;
+        formData['parentId'] = reply.id;
+        rootId = formData['rootId'] = reply.parent
+          ? reply.parent.id
+          : reply.id;
       }
       console.log('this.user.phone', this.user.phone);
       if (!this.user.phone) {
@@ -121,9 +121,9 @@ export default {
         if (reply) {
           resData.parent = reply.parent || reply;
           let replyObj = reply;
-          if (rootID) {
-            const curr = this.comments.find(item => item._id == rootID);
-            console.log('curr', reply, rootID, curr, this.comments);
+          if (rootId) {
+            const curr = this.comments.find(item => item.id == rootId);
+            console.log('curr', reply, rootId, curr, this.comments);
 
             replyObj = curr;
           }
@@ -140,10 +140,10 @@ export default {
       this.submitIng = false;
     },
     handleDelete (comment) {
-      const index = this.comments.findIndex(item => comment._id == item._id);
+      const index = this.comments.findIndex(item => comment.id == item.id);
       this.comments.splice(index, 1);
       if (this.reply && comment) {
-        if (this.reply._id === comment._id) {
+        if (this.reply.id === comment.id) {
           this.reply = null;
         }
       }

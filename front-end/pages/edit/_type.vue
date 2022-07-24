@@ -157,7 +157,7 @@ export default {
         title: data.title,
         coverUrl: data.coverUrl,
         content: data.content,
-        tags: data.tags
+        tags: data.tags && data.tags.map(item => item.tagId) || []
       },
     };
   },
@@ -196,7 +196,7 @@ export default {
     formData: {
       deep: true,
       handler (v) {
-        if (process.client) {
+        if (process.client && this.$route.params.type === 'new') {
           localStorage.setItem('cache_edit', JSON.stringify(v));
         }
       }
@@ -205,7 +205,7 @@ export default {
   async mounted () {
     const resData = await this.$axios.get('/api/tag/list');
     this.taglist = resData;
-    if (process.client) {
+    if (process.client && this.$route.params.type === 'new') {
       const strData = localStorage.getItem('cache_edit')
       try {
         if (strData) {

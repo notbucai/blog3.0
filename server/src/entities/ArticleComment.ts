@@ -4,7 +4,8 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,PrimaryGeneratedColumn }  from "typeorm";
+  OneToMany, PrimaryGeneratedColumn
+} from "typeorm";
 import { User } from "./User";
 import { Article } from "./Article";
 import { ArticleCommentLike } from "./ArticleCommentLike";
@@ -13,7 +14,7 @@ import { ArticleCommentLike } from "./ArticleCommentLike";
 @Index("FK_5206717892f9b654d3db0417d3b2", ["objectId"], {})
 @Index("FK_6472c40c562f7fab6024dc264bc3", ["parentId"], {})
 @Index("FK_a55c2cebc263800c7ee408045b74", ["rootId"], {})
-@Entity("article_comment", { schema: "blog" })
+@Entity("article_comment")
 export class ArticleComment {
   @Column("timestamp", {
     name: "create_at",
@@ -97,7 +98,10 @@ export class ArticleComment {
 
   @OneToMany(
     () => ArticleCommentLike,
-    (articleCommentLike) => articleCommentLike.object
+    (articleCommentLike) => articleCommentLike.object,
+    {
+      cascade: true
+    }
   )
   likes: ArticleCommentLike[];
 }

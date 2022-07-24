@@ -37,43 +37,43 @@ export class RedisService {
 
     async setUser (user: User) {
         const cacheKey = util.format(this.cacheKeys.user, user.id);
-        return await this.client.set(cacheKey, JSON.stringify(user), 'EX', 1 * 60 * 60);
+        return this.client.set(cacheKey, JSON.stringify(user), 'EX', 1 * 60 * 60);
     }
 
     async setValidationCode (phone: string, code: string, timeout = 10) {
         const cacheKey = util.format(this.cacheKeys.validationCode, phone);
-        return await this.client.set(cacheKey, code, 'EX', timeout * 60);
+        return this.client.set(cacheKey, code, 'EX', timeout * 60);
     }
 
     async getValidationCode (phone: string): Promise<string> {
         const cacheKey = util.format(this.cacheKeys.validationCode, phone);
-        return await this.client.get(cacheKey);
+        return this.client.get(cacheKey);
     }
 
     async setValidationCodeTime (phone: string, timeout = 10): Promise<string> {
         const cacheKey = util.format(this.cacheKeys.validationCodeTime, phone);
-        return await this.client.set(cacheKey, Date.now(), 'EX', timeout);
+        return this.client.set(cacheKey, Date.now(), 'EX', timeout);
     }
 
     async getValidationCodeTime (phone: string): Promise<string> {
         const cacheKey = util.format(this.cacheKeys.validationCodeTime, phone);
-        return await this.client.get(cacheKey);
+        return this.client.get(cacheKey);
     }
 
     async setUserToken (userId: string, token: string) {
         const cacheKey = util.format(this.cacheKeys.userToken, userId);
         const tokenMaxAge: number = this.configService.server.tokenMaxAge;
-        return await this.client.set(cacheKey, token, 'EX', Math.floor(tokenMaxAge / 1000));
+        return this.client.set(cacheKey, token, 'EX', Math.floor(tokenMaxAge / 1000));
     }
 
     async getUserToken (userId: string) {
         const cacheKey = util.format(this.cacheKeys.userToken, userId);
-        return await this.client.get(cacheKey);
+        return this.client.get(cacheKey);
     }
 
     async setPublishArticle (userId: string, article) {
         const cacheKey = util.format(this.cacheKeys.publishArticle, userId);
-        return await this.client.set(cacheKey, JSON.stringify(article), 'EX', 60 * 60);
+        return this.client.set(cacheKey, JSON.stringify(article), 'EX', 60 * 60);
     }
 
     // async getCategories(): Promise<Category[]> {
@@ -85,7 +85,7 @@ export class RedisService {
     // }
 
     // async setCategories(categories: Category[]) {
-    //     return await this.client.set(this.cacheKeys.categories, JSON.stringify(categories), 'EX', 1 * 60 * 60);
+    //     return this.client.set(this.cacheKeys.categories, JSON.stringify(categories), 'EX', 1 * 60 * 60);
     // }
 
     async setJson (key: string, value: object, expire: number) {
@@ -109,15 +109,15 @@ export class RedisService {
     }
 
     async setCache (key: string, value: string, expire: number) {
-        return await this.client.set(key, value, 'EX', expire);
+        return this.client.set(key, value, 'EX', expire);
     }
 
     async getCache (key: string) {
-        return await this.client.get(key);
+        return this.client.get(key);
     }
 
     async delCache (key: string) {
-        return await this.client.del(key);
+        return this.client.del(key);
     }
 
 }

@@ -3,7 +3,7 @@ import { User } from "./User";
 
 @Index("n_r_user_id", ["recipientId"], {})
 @Index("n_user_id", ["senderId"], {})
-@Entity("notifies", { schema: "blog" })
+@Entity("notifies")
 export class Notifies {
   @Column("timestamp", {
     name: "create_at",

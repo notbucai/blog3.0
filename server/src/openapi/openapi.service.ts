@@ -80,7 +80,7 @@ export class OpenapiService {
         message: ErrorCode.WeChatLoginQrUseLessError.MESSAGE,
       })
     }
-    return await this.clientSchema.findOne({
+    return this.clientSchema.findOne({
       clientId: data.client_id
     });
   }
@@ -145,7 +145,7 @@ export class OpenapiService {
     return Number.isNaN(_int) ? status : _int;
   }
   async getAuthCode (tempCode: string) {
-    return await this.redisService.getCache(tempCode + '_auth_code');
+    return this.redisService.getCache(tempCode + '_auth_code');
   }
 
   async setStatus (qrCode: string, status: AuthStatus) {
@@ -176,7 +176,7 @@ export class OpenapiService {
     user.nickname = user.nickname || (user as any).nickName;
     const data = await this.wechatService.code2Session(code);
     const openid = data.openid;
-    return await this.userSchema.findOneAndUpdate({
+    return this.userSchema.findOneAndUpdate({
       openid
     }, user, {
       new: true,

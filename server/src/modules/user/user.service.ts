@@ -46,29 +46,30 @@ export class UserService {
   //   });
   //   console.log('d---', d);
   // }
-  async getUser (id: string) {
-    const user = await this.userRepository.findOneOrFail(id, {
+  async getUser(id: string) {
+    const user = await this.userRepository.findOneOrFail({
+      where: { id },
       relations: ['userRoles', 'userRoles.role', 'userRoles.role.roleAcls']
     });
     return user;
   }
-  async getBasicUser (id: string) {
-    const user = await this.userRepository.findOneOrFail(id);
+  async getBasicUser(id: string) {
+    const user = await this.userRepository.findOneByOrFail({ id });
     return user;
   }
-  async update (user: UserEntity) {
+  async update(user: UserEntity) {
     return this.userRepository.save(user);
   }
-  async updateLoginTime (id: string) {
-    const user = await this.userRepository.findOneOrFail(id);
+  async updateLoginTime(id: string) {
+    const user = await this.userRepository.findOneByOrFail({ id });
     user.loginAt = new Date();
     return this.userRepository.save(user);
   }
   /**
     * 更新用户信息(头像、职位、公司、个人介绍、个人主页)
     */
-  async updateUserInfo (userId: string, updateUserInfoDto: UpdateUserInfoDto) {
-    const updateData = await this.userRepository.findOneOrFail(userId);
+  async updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto) {
+    const updateData = await this.userRepository.findOneByOrFail({ id: userId });
     if (typeof updateUserInfoDto.avatarUrl !== 'undefined') {
       updateData.avatarUrl = updateUserInfoDto.avatarUrl;
     }
@@ -99,8 +100,8 @@ export class UserService {
     return this.userRepository.save(updateData);
   }
 
-  async changeRole (id: string, roleId: string) {
-    const user = await this.userRepository.findOneOrFail(id);
+  async changeRole(id: string, roleId: string) {
+    const user = await this.userRepository.findOneByOrFail({ id });
     const userRole = new UserRoleEntity();
     userRole.roleId = roleId;
     userRole.userId = user.id;
@@ -109,29 +110,39 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async findList (listDto: ListDto, sort: any = {}) {
+  async findList(listDto: ListDto, order: 'DESC' | 'ASC' = 'DESC') {
     let query = {};
 
     listDto.page_index = Number(listDto.page_index) || 1;
     listDto.page_size = Number(listDto.page_size) || 20;
 
     if (listDto.keyword) {
-      const keyLike = Like(listDto.keyword)
+      const keyLike = Like(`%${listDto.keyword}%`)
       query = [
         { username: keyLike },
         { phone: keyLike },
       ];
     }
     const list = await this.userRepository
-      .createQueryBuilder()
-      .where(query)
-      .orderBy(sort)
-      .skip((listDto.page_index - 1) * listDto.page_size)
-      .take(listDto.page_size)
-      .leftJoinAndSelect('User.userRoles', 'user')
-      .leftJoinAndSelect('User.userRoles.role', 'role')
-      .leftJoinAndSelect('User.userRoles.roleAcls', 'roleAcls')
-      .getMany()
+      .find({
+        where: query,
+        order: {
+          createAt: order
+        },
+        skip: (listDto.page_index - 1) * listDto.page_size,
+        take: listDto.page_size,
+        relations: ['userRoles', 'userRoles.role', 'userRoles.role.roleAcls'],
+      })
+    // .createQueryBuilder()
+    // .where(query)
+    // .addOrderBy('User_create_at', order)
+    // .addSelect('createAt', 'createAt')
+    // .offset((listDto.page_index - 1) * listDto.page_size)
+    // .limit(listDto.page_size)
+    // .leftJoinAndSelect('User.userRoles', 'userRoles')
+    // .leftJoinAndSelect('User.userRoles.role', 'role')
+    // .leftJoinAndSelect('User.userRoles.roleAcls', 'roleAcls')
+    // .getMany()
     const total = await this.userRepository
       .createQueryBuilder()
       .where(query)
@@ -142,22 +153,22 @@ export class UserService {
     }
   }
 
-  async findNowLoginList () {
+  async findNowLoginList() {
     const list = await this.userRepository
-    .createQueryBuilder()
-    .where({
-      loginAt: Not(IsNull()),
-    })
-    .orderBy({
-      login_at: 'DESC'
-    })
-    .take(60)
-    .getMany()
+      .createQueryBuilder()
+      .where({
+        loginAt: Not(IsNull()),
+      })
+      .orderBy({
+        login_at: 'DESC'
+      })
+      .take(60)
+      .getMany()
     return list;
   }
 
-  async findByPhone (phone: string): Promise<UserEntity | undefined> {
-    const user: UserEntity = await this.userRepository.findOne({
+  async findByPhone(phone: string): Promise<UserEntity | undefined> {
+    const user: UserEntity = await this.userRepository.findOneBy({
       phone
     });
 
@@ -166,7 +177,7 @@ export class UserService {
     }
     return undefined;
   }
-  async findByPhoneOrUsername (phone: string, username: string): Promise<UserEntity | undefined> {
+  async findByPhoneOrUsername(phone: string, username: string): Promise<UserEntity | undefined> {
     const user = await this.userRepository.findOne({
       where: [{ phone }, { username }]
     });
@@ -177,10 +188,23 @@ export class UserService {
     return undefined;
   }
 
-  async findByObj (obj: object) {
+  async findByObj(obj: object) {
     const user = await this.userRepository.findOne({
-      where: obj
+      where: obj,
     });
+
+    if (user) {
+      return user;
+    }
+    return undefined;
+  }
+
+  async findByUnSafeObj(obj: object) {
+    const user = await this.userRepository
+      .createQueryBuilder()
+      .where(obj)
+      .addSelect('User.pass')
+      .getOne();
 
     if (user) {
       return user;
@@ -210,11 +234,18 @@ export class UserService {
     return userLink?.user;
   }
 
-  async updateLink (userLink: UserLinkEntity) {
+  async updateLink(userLink: UserLinkEntity) {
     return this.userLinkRepository.save(userLink);
   }
 
-  async create (signupDto: SignUpDto) {
+  // 账户关联列表信息
+  async findUserLinkList(uid: string) {
+    return this.userLinkRepository.findBy({
+      userId: uid
+    });
+  }
+
+  async create(signupDto: SignUpDto) {
     const newUser = new UserEntity();
     newUser.activateAt = newUser.activateAt;
     newUser.phone = signupDto.phone;
@@ -227,30 +258,30 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  async changeStatus (id: string, status: UserStatus) {
-    const user = await this.userRepository.findOneOrFail(id);
+  async changeStatus(id: string, status: UserStatus) {
+    const user = await this.userRepository.findOneByOrFail({ id });
     user.status = status;
     this.userRepository.save(user);
   }
 
-  async createUser (user: UserEntity) {
+  async createUser(user: UserEntity) {
     return this.userRepository.save(user);
   }
-  async repass (userId: string, pass: string) {
+  async repass(userId: string, pass: string) {
     pass = this.generateHashPassword(pass);
-    const user = await this.userRepository.findOneOrFail(userId);
+    const user = await this.userRepository.findOneByOrFail({ id: userId });
     user.pass = pass;
     return this.userRepository.save(user);
   }
 
-  generateHashPassword (password: string) {
+  generateHashPassword(password: string) {
     let codeArr = _.shuffle(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']);
     codeArr = codeArr.slice(0, 10);
     const salt: string = codeArr.join('');
     return this.encryptPassword(password, salt, this.configService.server.passSalt);
   }
 
-  private encryptPassword (password: string, salt: string, configSalt: string) {
+  private encryptPassword(password: string, salt: string, configSalt: string) {
     const m1 = crypto.createHash('md5');
     const pass = m1.update(password).digest('hex');
     let hash = salt + pass + configSalt;
@@ -259,20 +290,20 @@ export class UserService {
     return hash;
   }
 
-  verifyPassword (password: string, hashedPass: string) {
+  verifyPassword(password: string, hashedPass: string) {
     if (!password || !hashedPass) {
       return false;
     }
-    const salt = hashedPass.substr(0, 10);
+    const salt = hashedPass.substring(0, 10);    
     return this.encryptPassword(password, salt, this.configService.server.passSalt) === hashedPass;
   }
 
-  achievement (id: string) {
+  achievement(id: string) {
     const oid = id;
     return this.articleService.statistics(oid);
   }
 
-  async growthData (type: DateType = DateType.day, size: number = 30) {
+  async growthData(type: DateType = DateType.day, size: number = 30) {
 
     const schema = this.userSchema
 
@@ -301,7 +332,7 @@ export class UserService {
     return Promise.all(list);
   }
 
-  async historyData (type: DateType = DateType.day, size: number = 30) {
+  async historyData(type: DateType = DateType.day, size: number = 30) {
 
     const schema = this.userSchema
 
@@ -328,7 +359,7 @@ export class UserService {
     return Promise.all(list);
   }
 
-  userTypeData () {
+  userTypeData() {
     const types = ['github', 'gitee', 'baidu', 'weibo', 'qq', 'notbucai'];
     const schema = this.userSchema;
 
@@ -347,7 +378,7 @@ export class UserService {
     return Promise.all(list);
   }
 
-  async authorData (size: number = 10) {
+  async authorData(size: number = 10) {
     const list = await this.userSchema.aggregate([
       {
         $lookup:
@@ -372,7 +403,7 @@ export class UserService {
     return list;
   }
 
-  count () {
+  count() {
     return this.userRepository.count()
   }
 }

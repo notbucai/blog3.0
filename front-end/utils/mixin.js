@@ -24,11 +24,12 @@ export default {
         return likes;
       }
       const id = user.id;
-      const index = likes.findIndex(item => item == id);
-      console.log('index', index);
+      const index = likes.findIndex(item => item.userId == id);
 
       if (index < 0) {
-        likes.push(id);
+        likes.push({
+          userId: id
+        });
       } else {
         likes.splice(index, 1);
       }

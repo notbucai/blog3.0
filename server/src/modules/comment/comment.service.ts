@@ -34,6 +34,11 @@ export class CommentService {
     @InjectRepository(ArticleCommentEntity)
     private readonly articleCommentRepository: Repository<ArticleCommentEntity>,
 
+    @InjectRepository(LeaveWordLike)
+    private readonly leaveWordLikeRepository: Repository<LeaveWordLike>,
+    @InjectRepository(ArticleCommentLike)
+    private readonly articleCommentLikeRepository: Repository<ArticleCommentLike>,
+
     @InjectModel(ArticleComment) public readonly articleCommentSchema: ReturnModelType<typeof ArticleComment>,
     @InjectModel(MessageComment) public readonly messageCommentSchema: ReturnModelType<typeof MessageComment>,
 
@@ -43,7 +48,7 @@ export class CommentService {
     private readonly censorService: CensorService,
   ) { }
 
-  private getCommentSchema (source: string) {
+  private getCommentSchema(source: string) {
     let commentRepository: Repository<LeaveWord | ArticleCommentEntity>;
     if (source === CommentConstants.SourceArticle) {
       commentRepository = this.articleCommentRepository;
@@ -53,7 +58,17 @@ export class CommentService {
     return commentRepository;
   }
 
-  private getCommentEntity (source: string) {
+  private getCommentLikeSchema(source: string) {
+    let commentRepository: Repository<LeaveWordLike | ArticleCommentLike>;
+    if (source === CommentConstants.SourceArticle) {
+      commentRepository = this.articleCommentLikeRepository;
+    } else if (source === CommentConstants.SourceMessage) {
+      commentRepository = this.leaveWordLikeRepository;
+    }
+    return commentRepository;
+  }
+
+  private getCommentEntity(source: string) {
     let entity: LeaveWord | ArticleCommentEntity;
     if (source === CommentConstants.SourceArticle) {
       entity = new ArticleCommentEntity();
@@ -63,7 +78,7 @@ export class CommentService {
     return entity;
   }
 
-  private getCommentLikeEntity (source: string) {
+  private getCommentLikeEntity(source: string) {
     let entity: ArticleCommentLike | LeaveWordLike;
     if (source === CommentConstants.SourceArticle) {
       entity = new ArticleCommentLike();
@@ -73,9 +88,9 @@ export class CommentService {
     return entity;
   }
 
-  async censor (source: string, id: string) {
+  async censor(source: string, id: string) {
     const schema = this.getCommentSchema(source)
-    const object = await schema.findOneOrFail(id)
+    const object = await schema.findOneByOrFail({ id })
 
     const content = object.content;
 
@@ -91,7 +106,7 @@ export class CommentService {
   /**
    * 创建评论
    */
-  async create (source: string, createCommentDto: CreateCommentDto, userId: string) {
+  async create(source: string, createCommentDto: CreateCommentDto, userId: string) {
     const commentRepository = this.getCommentSchema(source);
     // sourceId 文章的时候是文章id 
     // parentId 表示父级评论id
@@ -117,18 +132,18 @@ export class CommentService {
 
     return commentRepository.save(comment);
   }
-  async getUserIdBySourceId (source: CommentConstants, id: string): Promise<string | null> {
+  async getUserIdBySourceId(source: CommentConstants, id: string): Promise<string | null> {
     // articleService
     let object: LeaveWord | ArticleCommentEntity;
     if (source === CommentConstants.SourceArticle) {
-      object = await this.articleCommentRepository.findOneOrFail(id);
+      object = await this.articleCommentRepository.findOneByOrFail({ id });
     } else if (source === CommentConstants.SourceMessage) {
-      object = await this.leaveWordRepository.findOneOrFail(id);
+      object = await this.leaveWordRepository.findOneByOrFail({ id });
     }
     return object?.userId;
   }
 
-  async notifyComment (source: string, createCommentDto: CreateCommentDto, userId: string) {
+  async notifyComment(source: string, createCommentDto: CreateCommentDto, userId: string) {
 
     // 判断是一级回复，还是二级回复
     // 一级评论直接给资源用户发布
@@ -170,16 +185,16 @@ export class CommentService {
     }
   }
 
-  async changeStatus (source: string, id: string, status: ContentStatus = ContentStatus.Verifying) {
+  async changeStatus(source: string, id: string, status: ContentStatus = ContentStatus.Verifying) {
     const commentRepository = this.getCommentSchema(source);
-    const comment = await commentRepository.findOneOrFail(id);
+    const comment = await commentRepository.findOneByOrFail({ id });
     comment.status = status;
     commentRepository.save(comment);
     this.notifyService.publish(NotifyObjectType.article, NotifyActionType.audit, comment.id, systemObjectId, comment.userId, ContentStatusLabelMap[status])
     return comment;
   }
 
-  async getListByUserId (source: string, id: string) {
+  async getListByUserId(source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository.find({
       where: { userId: id },
@@ -187,7 +202,7 @@ export class CommentService {
     });
   }
 
-  async findList (source: string, listDto: AllListDto) {
+  async findList(source: string, listDto: AllListDto) {
     const commentRepository = this.getCommentSchema(source);
 
     let query = {};
@@ -196,10 +211,14 @@ export class CommentService {
     listDto.page_size = Number(listDto.page_size) || 20;
 
     if (listDto.keyword) {
-      const keyRe = new RegExp(listDto.keyword);
+      const keyRe = listDto.keyword;
       query = [
-        { content: Like(keyRe) },
-        { 'user.username': Like(keyRe) },
+        { content: Like(`%${keyRe}%`) },
+        {
+          user: {
+            username: Like(`%${keyRe}%`)
+          }
+        },
       ];
     }
     const list = await commentRepository
@@ -207,7 +226,7 @@ export class CommentService {
         where: query,
         skip: (listDto.page_index - 1) * listDto.page_size,
         take: listDto.page_size,
-        relations: ['article', 'parent', 'root', 'user', 'root.user', 'article.user', 'parent.user']
+        relations: ['parent', 'root', 'user', 'root.user', 'parent.user'].concat(source === CommentConstants.SourceArticle ? ['object', 'object.user'] : [])
       })
     const total = await commentRepository.count({
       where: query
@@ -218,51 +237,52 @@ export class CommentService {
     }
   }
 
-  async getById (source: string, id: string) {
+  async getById(source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
 
-    return commentRepository.findOneOrFail(id, {
+    return commentRepository.findOneOrFail({
+      where: { id },
       relations: ['article', 'parent', 'root', 'user', 'root.user', 'article.user', 'parent.user']
     });
   }
 
-  async delById (source: string, id: string) {
+  async delById(source: string, id: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository.delete(id)
   }
 
-  async updateById (source: string, id: string, content: string) {
+  async updateById(source: string, id: string, content: string) {
     const commentRepository = this.getCommentSchema(source);
     const htmlContent = MarkDownUtils.markdown(content);
 
-    const comment = await commentRepository.findOneOrFail(id);
+    const comment = await commentRepository.findOneByOrFail({ id });
     comment.content = htmlContent;
     return commentRepository.save(comment);
   }
 
   // 查询子评论
-  async getChildCommentList (source: string, rootId: string) {
+  async getChildCommentList(source: string, rootId: string) {
     const commentRepository = this.getCommentSchema(source);
     return commentRepository
       .find({
         where: {
           rootId, status: ContentStatus.VerifySuccess
         },
-        relations: ['parent', 'parent.user', 'user']
+        relations: ['parent', 'parent.user', 'user', 'likes']
       });
   }
 
   /**
    * 查询一级评论,分页
    */
-  async getRootCommentList (source: string, sourceId?: string, lastCommentID?: string, limit: number = 10) {
+  async getRootCommentList(source: string, sourceId?: string, lastCommentID?: string, limit: number = 10) {
     const commentRepository = this.getCommentSchema(source);
     const query: any = {
       rootId: IsNull(),
       status: ContentStatus.VerifySuccess
     };
     if (lastCommentID) {
-      const lastComment = await commentRepository.findOne(lastCommentID);
+      const lastComment = await commentRepository.findOneBy({ id: lastCommentID });
       query.createAt = MoreThan(lastComment.createAt);
     }
     if (sourceId && sourceId !== CommentConstants.CommonMessageID && source === CommentConstants.SourceArticle) {
@@ -275,12 +295,11 @@ export class CommentService {
           createAt: 'DESC'
         },
         take: limit,
-        relations: ['user']
+        relations: ['user', 'likes']
       });
-    
-    
+
     const counts_p = list.map(item => {
-      return commentRepository.count({
+      return commentRepository.countBy({
         status: ContentStatus.VerifySuccess,
         rootId: item.id
       })
@@ -298,7 +317,7 @@ export class CommentService {
     return comments;
   }
 
-  getRootNewList (source: string) {
+  getRootNewList(source: string) {
     const commentRepository = this.getCommentSchema(source);
     const list = commentRepository
       .find({
@@ -317,7 +336,7 @@ export class CommentService {
   /**
    * 是否是有效的评论源
    */
-  isValidSource (source: string) {
+  isValidSource(source: string) {
     if ([CommentConstants.SourceArticle, CommentConstants.SourceMessage].indexOf(source) >= 0) {
       return true;
     }
@@ -325,10 +344,11 @@ export class CommentService {
   }
 
 
-  async hashLikeByUid (source: string, aid: string, uid: string) {
+  async hashLikeByUid(source: string, cid: string, uid: string) {
     const commentRepository = this.getCommentSchema(source);
 
-    const sourceObj = await commentRepository.findOneOrFail(aid, {
+    const sourceObj = await commentRepository.findOneOrFail({
+      where: { id: cid },
       relations: ['likes']
     });
 
@@ -340,14 +360,15 @@ export class CommentService {
     return false;
   }
 
-  async likeById (source: string, cid: string, uid: string) {
+  async likeById(source: string, cid: string, uid: string) {
     const commentRepository = this.getCommentSchema(source);
-    const data = await commentRepository.findOneOrFail(cid, {
+    const data = await commentRepository.findOneOrFail({
+      where: { id: cid },
       relations: ['likes']
     });
     const like = this.getCommentLikeEntity(source);
     like.userId = uid;
-    like.objectId = source;
+    like.objectId = cid;
 
     data.likes = [...data.likes, like] as any[];
     await commentRepository.save(data);
@@ -367,17 +388,16 @@ export class CommentService {
     return like;
   }
 
-  async unlikeById (source: string, aid: string, uid: string) {
-    const commentRepository = this.getCommentSchema(source);
-    const data = await commentRepository.findOneOrFail(aid, {
-      relations: ['likes']
+  async unlikeById(source: string, cid: string, uid: string) {
+    const commentRepository = this.getCommentLikeSchema(source);
+
+    return commentRepository.delete({
+      userId: uid,
+      objectId: cid
     });
-    const index = data.likes.findIndex(item => item.userId === uid)
-    data.likes.splice(index, 1);
-    return commentRepository.save(data);
   }
 
-  async allMarkdownContentToHtmlContent (source: string) {
+  async allMarkdownContentToHtmlContent(source: string) {
 
     const commentSchema = this.getCommentSchema(source);
     const list = await commentSchema.find({});
@@ -388,7 +408,7 @@ export class CommentService {
 
   }
 
-  async count () {
+  async count() {
     const { SourceArticle, SourceMessage } = CommentConstants;
     const list = [SourceArticle, SourceMessage];
     const pList = list.map(item => this.getCommentSchema(item).count());
@@ -399,7 +419,7 @@ export class CommentService {
     }
   }
 
-  async growthData (type: DateType = DateType.day, size: number = 30) {
+  async growthData(type: DateType = DateType.day, size: number = 30) {
     const { SourceArticle, SourceMessage } = CommentConstants;
     const _list = [SourceArticle, SourceMessage].map(item => {
       const schema = this.getCommentSchema(item);
@@ -411,7 +431,7 @@ export class CommentService {
         const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
         const endDate = moment(startDate).add(1, type).format('YYYY-MM-DD');
 
-        const findPromise = schema.count({
+        const findPromise = schema.countBy({
           createAt: Between(new Date(startDate + (type === DateType.day ? '' : '-01') + ' 00:00:00'), new Date(endDate + ' 23:59:59'))
         });
 
@@ -429,7 +449,7 @@ export class CommentService {
     return Promise.all(_list);
   }
 
-  async historyData (type: DateType = DateType.day, size: number = 30) {
+  async historyData(type: DateType = DateType.day, size: number = 30) {
     const { SourceArticle, SourceMessage } = CommentConstants;
     const _list = [SourceArticle, SourceMessage].map(item => {
       const schema = this.getCommentSchema(item);
@@ -440,7 +460,7 @@ export class CommentService {
 
         const startDate = date.format(type === DateType.day ? 'YYYY-MM-DD' : 'YYYY-MM');
 
-        const findPromise = schema.count({
+        const findPromise = schema.countBy({
           createAt: LessThan(new Date(startDate + (type === DateType.day ? '' : '-30') + ' 23:59:59'))
         });
 

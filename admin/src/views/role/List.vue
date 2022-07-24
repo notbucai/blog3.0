@@ -24,9 +24,10 @@
               <el-tag
                 type="success"
                 class="mr1 mb1"
-                v-for="(item, index) in props.row.acls"
+                size="mini" 
+                v-for="(item, index) in props.row.roleAcls"
                 :key="index"
-              >{{item.title}}</el-tag>
+              >{{item.acl.name}}</el-tag>
             </div>
           </template>
         </el-table-column>
@@ -36,6 +37,14 @@
           show-overflow-tooltip
           label="ID"
           max-width="200"
+        ></el-table-column>
+
+        <el-table-column
+          prop="code"
+          header-align="center"
+          show-overflow-tooltip
+          label="标识"
+          max-width="320"
         ></el-table-column>
 
         <el-table-column
@@ -75,6 +84,9 @@
     <el-dialog title="修改" :visible.sync="dialogFormVisible" width="30%">
       <div class="tc" v-if="current">
         <el-form ref="form" :model="current" label-width="80px">
+        <el-form-item label="标识">
+            <el-input v-model="current.code" placeholder="请输入角色标识"></el-input>
+          </el-form-item>
           <el-form-item label="角色名">
             <el-input v-model="current.name" placeholder="请输入角色名称"></el-input>
           </el-form-item>
@@ -126,7 +138,7 @@ export default {
       currentAclTree: [],
       defaultProps: {
         children: 'children',
-        label: 'title'
+        label: 'name'
       },
       currentRadio: 1,
       changStatusLoading: false,
@@ -151,8 +163,8 @@ export default {
   computed: {
     ...mapState(['user']),
     currentAclIds() {
-      if (!this.current || !this.current.acls) return [];
-      return this.current.acls.map(item => item.id);
+      if (!this.current || !this.current.roleAcls) return [];
+      return this.current.roleAcls.map(item => item.acl.id);
     }
   },
   created() {
@@ -221,12 +233,13 @@ export default {
       }
     },
     async handleChangeRoleCofirm() {
-      const { name } = this.current;
-      if (!name) {
-        return this.$message.error('名称不能为空');
+      const { name, code } = this.current;
+      if (!name || !code) {
+        return this.$message.error('表单不能为空');
       }
       const reqData = {
-        name
+        name,
+        code
       };
       this.changStatusLoading = true;
       const id = this.current.id;

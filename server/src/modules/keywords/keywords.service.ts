@@ -182,12 +182,12 @@ export class KeywordsService {
   }
 
   async removeById (id: string) {
-    const data = await this.keywordRepository.findOne(id);
+    const data = await this.keywordRepository.findOneBy({ id });
     return this.keywordRepository.remove(data);
   }
 
   async updateStatusById (id: string, status: KeywordsStatus) {
-    const data = await this.keywordRepository.findOne(id);
+    const data = await this.keywordRepository.findOneBy({ id });
     data.status = status;
     return this.keywordRepository.save(data);
   }

@@ -10,7 +10,7 @@ import { Notifies } from "./Notifies";
 import { UserLink } from "./UserLink";
 import { UserRole } from "./UserRole";
 
-@Entity("user", { schema: "blog" })
+@Entity("user")
 export class User {
   @Column("timestamp", {
     name: "create_at",
@@ -41,10 +41,10 @@ export class User {
   @Column("varchar", { name: "email", nullable: true, length: 255 })
   email: string | null;
 
-  @Column("char", { name: "phone", length: 36 })
+  @Column("char", { name: "phone", length: 36, nullable: true  })
   phone: string;
 
-  @Column("varchar", { name: "pass", nullable: true, length: 255 })
+  @Column("varchar", { name: "pass", nullable: true, length: 255, select: false })
   pass: string | null;
 
   @Column("enum", {
@@ -114,7 +114,7 @@ export class User {
   @OneToMany(() => UserLink, (userLink) => userLink.user)
   userLinks: UserLink[];
 
-  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  @OneToMany(() => UserRole, (userRole) => userRole.user, { cascade: true })
   userRoles: UserRole[];
 
   @OneToMany(() => Notifies, (notifies) => notifies.recipient)

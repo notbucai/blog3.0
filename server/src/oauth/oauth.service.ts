@@ -11,6 +11,7 @@ import { StateEnum } from './oauth.constant';
 import { UserStatus } from '../models/user.entity';
 import { MyHttpException } from '../core/exception/http.exception';
 import { ErrorCode } from '../constants/error';
+import { DataSource } from 'typeorm';
 @Injectable()
 export class OauthService {
   constructor(
@@ -18,12 +19,14 @@ export class OauthService {
     private readonly userService: UserService,
     private readonly commonService: CommonService,
     private readonly logger: LoggerService,
-    private readonly redisService: RedisService
+    private readonly redisService: RedisService,
+
+    private readonly dataSource: DataSource
 
   ) { }
 
 
-  public async githubUserData (code: string) {
+  public async githubUserData(code: string) {
 
     const result = await axios.post(this.configService.github.accessTokenURL, {
       code,
@@ -50,7 +53,7 @@ export class OauthService {
     return userResult.data;
   }
 
-  public async baiduUserData (code: string, redirect_uri: string) {
+  public async baiduUserData(code: string, redirect_uri: string) {
 
     const result = await axios.get(this.configService.baidu.accessTokenURL, {
       params: {
@@ -89,7 +92,7 @@ export class OauthService {
     return resData;
   }
 
-  public async weiboUserData (code: string, redirect_uri: string) {
+  public async weiboUserData(code: string, redirect_uri: string) {
     const result = await axios.post(this.configService.weibo.accessTokenURL, {}, {
       params: {
         code,
@@ -125,7 +128,7 @@ export class OauthService {
     return resData;
   }
 
-  public async qqUserData (code: string, redirect_uri: string) {
+  public async qqUserData(code: string, redirect_uri: string) {
     const result = await axios.get(this.configService.qq.accessTokenURL, {
       params: {
         code,
@@ -178,7 +181,7 @@ export class OauthService {
     return resData;
   }
 
-  public async notbucaiUserData (code: string, redirect_uri: string) {
+  public async notbucaiUserData(code: string, redirect_uri: string) {
     const result = await axios.post(this.configService.wxmp.accessTokenURL, {
       code,
       redirect_uri,
@@ -225,7 +228,7 @@ export class OauthService {
     return resData;
   }
 
-  public async giteeUserData (code: string, redirect_uri: string) {
+  public async giteeUserData(code: string, redirect_uri: string) {
     const result = await axios.post(this.configService.gitee.accessTokenURL, {}, {
       params: {
         code,
@@ -259,7 +262,7 @@ export class OauthService {
     return resData;
   }
 
-  public async getOAuthUserInfo (state: StateEnum, code: string, redirect_uri: string) {
+  public async getOAuthUserInfo(state: StateEnum, code: string, redirect_uri: string) {
     const UserInfoMap = {
       [StateEnum.github]: this.githubUserData.bind(this),
       [StateEnum.baidu]: this.baiduUserData.bind(this),
@@ -273,7 +276,7 @@ export class OauthService {
     return fn(code, redirect_uri);
   }
 
-  public async findByUser (state: StateEnum, id: string) {
+  public async findByUser(state: StateEnum, id: string) {
     // let newUser: User = await this.userService.findByGithubId(githubUser.id);
     // const UserInfoMap = {
     //   [StateEnum.github]: this.userService.findByGithubId.bind(this.userService),
@@ -288,7 +291,7 @@ export class OauthService {
     return this.userService.findUserByLinkLoginId(state, id);
   }
 
-  public getUserInfoKey (state: StateEnum) {
+  public getUserInfoKey(state: StateEnum) {
     const keysMap = {
       [StateEnum.github]: {
         avatarUrl: "avatar_url",
@@ -324,7 +327,7 @@ export class OauthService {
     const keys = keysMap[state];
     return keys;
   }
-  public getKeys (state: StateEnum) {
+  public getKeys(state: StateEnum) {
     const keysMap = {
       [StateEnum.github]: {
         loginId: 'id',
@@ -361,49 +364,60 @@ export class OauthService {
     const keys = keysMap[state];
     return keys;
   }
-  public isBind (state: StateEnum, user: User) {
+  public isBind(state: StateEnum, user: User) {
     const isBind = this.userService.findLinkByUserId(state, user.id);
     return isBind
   }
 
-  public async updateUser (state: StateEnum, OAuthUser: any, user: User) {
-    const _userLink = await this.userService.findLinkByUserId(state, user.id);
-    if (!_userLink) {
+  public async updateUser(state: StateEnum, OAuthUser: any, user: User) {
+    const userLink = await this.userService.findLinkByUserId(state, user.id);
+    if (!userLink) {
       throw new MyHttpException({
         code: ErrorCode.ERROR.CODE
       });
     }
-    // const _userLink = new UserLink();
-    _userLink.userId = user.id;
+    // const userLink = new UserLink();
+    userLink.userId = user.id;
     const keys = this.getKeys(state);
     Object.keys(keys).map(key => {
-      _userLink[key] = OAuthUser[keys[key]];
+      userLink[key] = OAuthUser[keys[key]];
     });
 
-    await this.userService.updateLink(_userLink);
+    await this.userService.updateLink(userLink);
     return user;
   }
 
-  public async saveUser (state: StateEnum, OAuthUser: any, user: User) {
-    let _userLink = await this.userService.findLinkByUserId(state, user.id);
-    if (_userLink) {
-      throw new MyHttpException({
-        code: ErrorCode.ERROR.CODE,
+  public async saveUser(state: StateEnum, OAuthUser: any) {
+    // 开启事务
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+    try {
+      // create user
+      const saveUser = new User();
+      saveUser.status = UserStatus.Actived;
+      const userInfoKeys = this.getUserInfoKey(state);
+      Object.keys(userInfoKeys).map(key => {
+        saveUser[key] = OAuthUser[userInfoKeys[key]];
       });
+      const user = await queryRunner.manager.save(saveUser);
+      // create like data
+      const saveUserLink = new UserLink();
+      saveUserLink.userId = user.id;
+      saveUserLink.type = state;
+      const openKeys = this.getKeys(state);
+      Object.keys(openKeys).map(key => {
+        saveUserLink[key] = OAuthUser[openKeys[key]];
+      });
+      await queryRunner.manager.save(saveUserLink);
+      await queryRunner.commitTransaction();
+      return user;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      // you need to release a queryRunner which was manually instantiated
+      await queryRunner.release();
     }
-    _userLink = new UserLink();
-    _userLink.userId = user.id;
-    const openKeys = this.getKeys(state);
-    const userInfoKeys = this.getUserInfoKey(state);
-    Object.keys(openKeys).map(key => {
-      _userLink[key] = OAuthUser[openKeys[key]];
-    });
-    Object.keys(userInfoKeys).map(key => {
-      user[key] = OAuthUser[userInfoKeys[key]];
-    });
-    user.status = UserStatus.Actived;
-    await this.userService.updateLink(_userLink);
-    return this.userService.createUser(user);
   }
 
   // public async github (code: string) {

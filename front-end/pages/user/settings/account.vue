@@ -16,31 +16,13 @@
           <v-row align="center" class="pa-4" :key="item.key">
             <v-col :cols="2">{{ item.label }}</v-col>
             <v-col>
-              <input
-                style="width: 100%"
-                type="text"
-                :value="user[item.key]"
-                disabled
-              />
+              <input style="width: 100%" type="text" :value="renderValue(item.state, item.type)" disabled />
             </v-col>
             <v-col :cols="2">
               <div class="text-right">
-                <v-btn
-                  v-if="!user[item.key]"
-                  color="primary"
-                  x-small
-                  text
-                  @click="handleBind(item.type, item.state)"
-                  >绑定</v-btn
-                >
-                <v-btn
-                  v-else
-                  color="primary"
-                  x-small
-                  text
-                  @click="handleUnbind(item.type, item.state)"
-                  >解除绑定</v-btn
-                >
+                <v-btn v-if="!renderValue(item.state, item.type)" color="primary" x-small text @click="handleBind(item.type, item.state)">绑定
+                </v-btn>
+                <v-btn v-else color="primary" x-small text @click="handleUnbind(item.type, item.state)">解除绑定</v-btn>
               </div>
             </v-col>
           </v-row>
@@ -48,10 +30,7 @@
       </div>
     </v-card>
     <client-only>
-      <BindPhone
-        :visible.sync="showPhoneBindDialog"
-        @success="handleBindPhoneSuccess"
-      />
+      <BindPhone :visible.sync="showPhoneBindDialog" @success="handleBindPhoneSuccess" />
     </client-only>
   </div>
 </template>
@@ -59,26 +38,40 @@
 import { mapState } from 'vuex';
 
 export default {
+  async asyncData({ $axios, params }) {
+    const data = await $axios.get('/api/user/account/links')
+    return {
+      bindLinkList: data
+    }
+  },
   middleware: 'auth',
   computed: {
-    ...mapState(['user'])
+    ...mapState(['user']),
+    bindLinkMap() {
+      const bindLinkList = this.bindLinkList || []
+      return bindLinkList.reduce((pv, cv) => {
+        pv[cv.type] = cv;
+        return pv;
+      }, {});
+    }
   },
   components: {
     BindPhone: () => import('@/components/user/BindPhone.vue')
   },
-  data () {
+  data() {
     return {
       submitIng: false,
 
       showPhoneBindDialog: false,
 
       selectObj: {},
+      bindLinkList: [],
       formShowJson: [
         {
           label: "手机",
           key: "phone",
           state: "phone",
-          type: "phone"
+          type: "user"
         },
         {
           label: "GitHub",
@@ -122,7 +115,13 @@ export default {
     }
   },
   methods: {
-    async handleOauthBind (state) {
+    renderValue(state, type) {
+      const data = this.bindLinkMap[state] || {};
+      const user = this.user || {};
+
+      return type === 'user' ? user[state] : data.loginName
+    },
+    async handleOauthBind(state) {
       console.log(state);
       const url = this.$constant.STATE_LIST['bind_' + state];
       const sonWin = window.open(url, '绑定');
@@ -133,7 +132,7 @@ export default {
         }
       }, 100);
     },
-    async handleOauthUnBind (state) {
+    async handleOauthUnBind(state) {
       const isUnBind = confirm("是否解绑?");
       if (!isUnBind) return;
       await this.$axios.get('/api/oauth/unbind', {
@@ -145,10 +144,10 @@ export default {
       location.reload();
     },
 
-    showBindPhoneDialog () {
+    showBindPhoneDialog() {
       this.showPhoneBindDialog = true;
     },
-    async unbindPhone () {
+    async unbindPhone() {
       const isUnBind = confirm("是否解绑?");
       if (!isUnBind) return;
       await this.$axios.post('/api/user/account/unbind/phone');
@@ -156,23 +155,23 @@ export default {
       location.reload();
     },
 
-    handleBind (type, state) {
+    handleBind(type, state) {
       if (type == 'oauth2') {
         this.handleOauthBind(state);
-      } else if (type == 'phone') {
+      } else if (type == 'user' && state === 'phone') {
         this.showBindPhoneDialog();
       }
     },
 
-    async handleUnbind (type, state) {
+    async handleUnbind(type, state) {
       if (type == 'oauth2') {
         this.handleOauthUnBind(state);
-      } else if (type == 'phone') {
+      } else if (type == 'user' && state === 'phone') {
         this.unbindPhone(state);
       }
     },
 
-    async handleBindPhoneSuccess () {
+    async handleBindPhoneSuccess() {
       location.reload();
     }
   },

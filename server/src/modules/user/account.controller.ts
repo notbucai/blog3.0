@@ -5,16 +5,13 @@
  * @LastEditTime: 2022-06-30 13:28:58
  * @Description: 
  */
-import { Controller, Post, UseGuards, Body } from "@nestjs/common";
+import { Controller, Post, UseGuards, Body, Get } from "@nestjs/common";
 import { ApiTags, ApiOperation } from "@nestjs/swagger";
 import { UserService } from "./user.service";
-import { CommonService } from "../../common/common.service";
 import { LoggerService } from "../../common/logger.service";
 import { ActiveGuard } from "../../core/guards/active.guard";
 import { RedisService } from "../../redis/redis.service";
 import { ConfigService } from "../../config/config.service";
-import { ArticleService } from "../article/article.service";
-import { CommentService } from "../comment/comment.service";
 import { UnbindPhone, BindPhone } from "./dto/bind.dto";
 import { CurUser } from "../../core/decorators/user.decorator";
 import { User } from "../../entities/User";
@@ -31,10 +28,16 @@ export class AccountController {
     private readonly userService: UserService,
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
-    private readonly commonService: CommonService,
-    private readonly articleService: ArticleService,
-    private readonly commentService: CommentService
   ) { };
+
+
+
+  @Get('/links')
+  @UseGuards(ActiveGuard)
+  @ApiOperation({ summary: '关联数据' })
+  async links (@CurUser() user: User) {
+    return this.userService.findUserLinkList(user.id);
+  }
 
   @Post('/unbind/phone')
   @UseGuards(ActiveGuard)
@@ -48,7 +51,7 @@ export class AccountController {
     }
     // 绑定数据
     user.phone = null;
-    return await this.userService.update(user);
+    return this.userService.update(user);
   }
 
 
@@ -85,10 +88,15 @@ export class AccountController {
       });
     }
     // 判断手机号是否已经绑定用户
-    // const userData = this.userService.findByPhone(bindDto.phone);
+    const isBindData = await this.userService.findByPhone(bindDto.phone);
+    if (isBindData) {
+      throw new MyHttpException({
+        code: ErrorCode.PhoneExists.CODE
+      });
+    }
     user.phone = bindDto.phone
     // 绑定数据
-    return await this.userService.update(user);
+    return this.userService.update(user);
   }
 
 }

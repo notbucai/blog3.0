@@ -4,7 +4,7 @@ import { User } from "./User";
 
 @Index("FK_6d4744e365acc9a30eea3b7bc602", ["objectId"], {})
 @Index("FK_e5fad51a417a7d1ca2e3bdc868a1", ["userId"], {})
-@Entity("leave_word_like", { schema: "blog" })
+@Entity("leave_word_like")
 export class LeaveWordLike {
   @Column("timestamp", {
     name: "create_at",

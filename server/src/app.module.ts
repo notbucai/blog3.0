@@ -40,7 +40,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         // typeorm bug, https://github.com/nestjs/nest/issues/1119
         // 将 type 定义为 type: 'mysql' | 'mariadb'; 解决此issue
         console.log('configService.mysql',configService.mysql);

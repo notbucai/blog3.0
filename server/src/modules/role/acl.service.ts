@@ -4,14 +4,12 @@ import { Role } from '../../models/role.entity';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Acl } from '../../models/acl.entity';
 import { CreateAclDto } from './dto/acl.dto';
-import { ObjectID } from 'mongodb';
-import { CreateRoleDto } from './dto/role.dto';
 import { RoleListDto } from './dto/list.dto';
 import { Role as RoleEntity } from '../../entities/Role';
 import { Acl as AclEntity } from '../../entities/Acl';
 import { RoleAcl as RoleAclEntity } from '../../entities/RoleAcl';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, IsNull, LessThan, Like, Repository } from 'typeorm';
+import { FindOperator, IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class AclService {
@@ -34,8 +32,8 @@ export class AclService {
    */
   create (aclDto: CreateAclDto) {
     const acl = new AclEntity();
-    acl.code = aclDto.name;
-    acl.name = aclDto.title;
+    acl.code = aclDto.code;
+    acl.name = aclDto.name;
     // TODO: 严格判断
     if (aclDto.parent) {
       acl.parentId = aclDto.parent;
@@ -46,7 +44,14 @@ export class AclService {
   /**
    * 删除权限点
    */
-  delete (id: string) {
+  async delete (id: string) {
+    // 去掉绑定
+    await this.roleAclRepository.delete({
+      aclId: id
+    })
+    await this.aclRepository.delete({
+      parentId: id
+    });
     return this.aclRepository.delete(id);
   }
 
@@ -54,15 +59,15 @@ export class AclService {
    * 修改权限点
    */
   async update (id: string, aclDto: CreateAclDto) {
-    const { title, name, parent } = aclDto;
+    const { code, name, parent } = aclDto;
     const _set = {};
-    title && (_set['title'] = title);
+    code && (_set['code'] = code);
     name && (_set['name'] = name);
     parent && (_set['parent'] = parent);
 
-    const alc = await this.aclRepository.findOneOrFail(id);
-    alc.code = aclDto.name;
-    alc.name = aclDto.title;
+    const alc = await this.aclRepository.findOneByOrFail({ id });
+    alc.code = aclDto.code;
+    alc.name = aclDto.name;
     alc.parentId = aclDto.parent;
 
     return this.aclRepository.save(alc);
@@ -82,7 +87,7 @@ export class AclService {
         take: page_size
       })
     // .populate('parent');
-    const total = await this.aclRepository.count({});
+    const total = await this.aclRepository.countBy({});
     return {
       list,
       total
@@ -90,15 +95,15 @@ export class AclService {
   }
 
   async findAll () {
-    return await this.aclRepository.find();
+    return this.aclRepository.find();
   }
 
   /**
    * 查询权限关系列表, 可无限层级
    */
-  async roleList (parentId: string = null) {
+  async roleList (parentId: string | FindOperator<any> = IsNull()) {
     const root_list = await this.aclRepository
-      .find({ parentId });
+      .findBy({ parentId });
     return Promise.all(root_list.map(async (item) => {
       return {
         ...item,

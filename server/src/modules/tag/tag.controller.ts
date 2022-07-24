@@ -80,7 +80,7 @@ export class TagController {
 
 
   @Post(':name/article')
-  @ApiOperation({ summary: '通过id获取tag' })
+  @ApiOperation({ summary: '通过name获取tag' })
   async getArticleById(@Param('name') name: string, @Body() articleListByTagDto: ArticleListByTagDto) {
     if (typeof name !== 'string' || name.length < 1) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE });

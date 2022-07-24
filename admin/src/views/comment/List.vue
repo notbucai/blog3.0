@@ -42,18 +42,19 @@
           max-width="200"
         ></el-table-column>
         <el-table-column
-          prop="sourceId"
+          prop="objectId"
           header-align="center"
           show-overflow-tooltip
-          label="sourceId"
+          label="文章"
           max-width="200"
+          v-if="source === 'article'"
         ></el-table-column>
 
         <el-table-column
-          prop="parent"
+          prop="parentId"
           header-align="center"
           show-overflow-tooltip
-          label="parent"
+          label="上级"
           max-width="200"
         ></el-table-column>
 
@@ -86,7 +87,7 @@
 
         <el-table-column prop="status" show-overflow-tooltip label="状态" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag type="info">{{filter_articleStatus(scope.row.status)}}</el-tag>
+            <el-tag type="info" size="mini">{{filter_articleStatus(scope.row.status)}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="100">

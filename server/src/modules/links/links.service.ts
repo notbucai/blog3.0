@@ -37,7 +37,7 @@ export class LinksService {
   }
 
   async updateById (id: string, link: CreateLinkDto) {
-    const linkData = await this.linkRepository.findOneOrFail(id);
+    const linkData = await this.linkRepository.findOneByOrFail({ id });
     Object.assign(linkData, link);
     return this.linkRepository.save(linkData);
   }
@@ -47,13 +47,13 @@ export class LinksService {
   }
 
   findById (id: string) {
-    return this.linkRepository.findOneOrFail(id);
+    return this.linkRepository.findOneByOrFail({ id });
   }
 
   async click (id: string) {
     console.log('id-->', id);
     
-    const linkData = await this.linkRepository.findOneOrFail(id);
+    const linkData = await this.linkRepository.findOneByOrFail({ id });
     if (!linkData) {
       throw new MyHttpException({
         code: ErrorCode.ParamsError.CODE

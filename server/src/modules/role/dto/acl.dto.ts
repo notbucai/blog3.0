@@ -27,8 +27,8 @@ export class CreateAclDto {
 
   @IsString()
   @Length(1, 50, { message: ErrorCode.ParamsError.MESSAGE })
-  @ApiProperty({ description: "title" })
-  title: string;
+  @ApiProperty({ description: "code" })
+  code: string;
 
   @IsUUID("4", { message: ErrorCode.ParamsError.MESSAGE })
   @ValidateIf(o => o.parent != undefined)

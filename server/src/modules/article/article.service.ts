@@ -28,7 +28,7 @@ import { ArticleLike as ArticleLikeEntity } from '../../entities/ArticleLike';
 import { ArticleComment as ArticleCommentEntity } from '../../entities/ArticleComment';
 import { ArticleCommentLike as ArticleCommentLikeEntity } from '../../entities/ArticleCommentLike';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, IsNull, Like, Not, Repository } from 'typeorm';
+import { In, IsNull, Like, Not, Raw, Repository } from 'typeorm';
 
 
 @Injectable()
@@ -64,7 +64,7 @@ export class ArticleService {
   ) { }
 
   // 解析一些对象
-  contentToArticleAttr (content: string) {
+  contentToArticleAttr(content: string) {
     const htmlStr = MarkdownUtils.markdown(content);
     const { html: menusHtml, menus } = MarkdownUtils.markdownRender(htmlStr);
     const markText = MarkdownUtils.htmlStrToText(htmlStr);
@@ -78,7 +78,7 @@ export class ArticleService {
     }
   }
 
-  async censor (id: string) {
+  async censor(id: string) {
     const article = await this.findById(id)
     let title = article.title
     let content = title + '\n' + article.content
@@ -128,7 +128,7 @@ export class ArticleService {
   }
 
   // 创建
-  async create (createDto: CreateDto, userId: string) {
+  async create(createDto: CreateDto, userId: string) {
     const article = new ArticleEntity();
     // 只选有用的tag
     let findTags = await this.tagRepository.find({
@@ -168,7 +168,7 @@ export class ArticleService {
     return this.articleRepository.save(article);
   }
 
-  async changeStatus (id: string, status: ContentStatus = ContentStatus.Verifying) {
+  async changeStatus(id: string, status: ContentStatus = ContentStatus.Verifying) {
     const article = await this.findById(id);
     article.status = status;
     await this.articleRepository.save(article);
@@ -178,17 +178,17 @@ export class ArticleService {
   }
 
 
-  async changeUpStatus (id: string, status: ArticleUpStatus) {
+  async changeUpStatus(id: string, status: ArticleUpStatus) {
     const article = await this.findById(id);
     article.up = status;
     return this.articleRepository.save(article);
   }
 
-  async deleteById (id: string) {
+  async deleteById(id: string) {
     return this.articleRepository.delete(id);
   }
 
-  async updateById (id: string, createDto: CreateDto, status: ContentStatus = ContentStatus.Verifying) {
+  async updateById(id: string, createDto: CreateDto, status: ContentStatus = ContentStatus.Verifying) {
     const article = await this.findById(id);
     if (!article) throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     // const htmlContent = createDto.htmlContent || article.htmlContent;
@@ -234,48 +234,63 @@ export class ArticleService {
     return this.articleRepository.save(article);
   }
 
-  async findById (id: string) {
+  async findById(id: string) {
     return this.articleRepository
-      .findOne(id, {
+      .findOne({
+        where: { id },
         relations: ['user', 'tags', 'tags.tag', 'menus', 'likes']
       })
   }
-  async findBasisById (id: string) {
+  async findBasisById(id: string) {
     return this.articleRepository
-      .findOne(id)
+      .findOne({ where: { id }, relations: ['tags'] })
   }
 
-  async addViewCount (id: string) {
+  async addViewCount(id: string) {
     return this.articleRepository.update(id, {
-      browseCount () {
+      browseCount() {
         return 'browse_count + 1';
       }
     });
   }
 
-  async pageListByTag (tagId: string, listDto: ArticleListByTagDto) {
+  async pageListByTag(tagId: string, listDto: ArticleListByTagDto) {
 
     const page_index = Number(listDto.page_index || 1) - 1;
     const page_size = Number(listDto.page_size || 10);
-    const tag = this.articleTagRepository.find({
+    const articles = await this.articleTagRepository.find({
+      relations: ['article', 'article.user', 'article.tags', 'article.tags.tag', 'article.menus', 'article.likes'],
       where: {
-        tagId
-      }
-    })
+        tagId,
+      },
+      skip: page_index * page_size,
+      take: page_size,
+      order: {
+        createAt: "DESC"
+      },
+    });
+    const total = await this.articleTagRepository.countBy({
+      tagId,
+    });
 
-    const articleList = await this.articleRepository
-      .find({
-        relations: ['user', 'tags', 'menus'],
-        where: {
-          tags: In([tag])
-        },
-        skip: page_index * page_size,
-        take: page_size,
-        order: {
-          createAt: "DESC"
-        }
-      });
-    return articleList;
+    const aList = articles.map(item => item.article);
+
+    const listPromise = aList.map(async item => {
+      const _item = {
+        ...item,
+        commentCount: await this.articleCommentRepository.countBy({
+          objectId: item.id,
+          status: ContentStatus.VerifySuccess
+        })
+      };
+      return _item;
+    });
+    const list = await Promise.all(listPromise);
+
+    return {
+      list,
+      total
+    };
 
     // const where = {
     //   tags: { $elemMatch: { $eq: tagId } },
@@ -301,12 +316,14 @@ export class ArticleService {
     // }
   }
 
-  async pageList (listDto: ArticleListDto, status?: ContentStatus, up?: boolean) {
-    const where: any = [{}];
+  async pageList(listDto: ArticleListDto, status?: ContentStatus, up?: boolean) {
+    const where: any[] = [{}];
     const sort1: any = { createAt: 'DESC' };
     const sort2: any = {};
     if (status) {
       where[0].status = status;
+    } else {
+      where.splice(0, 1);
     }
     if (up) {
       sort2.up = 'DESC';
@@ -316,34 +333,47 @@ export class ArticleService {
     if (listDto.keyword) {
       whereOrKeys.forEach((key, index) => {
         where[index] = {
-          ...where[0],
-          [key]: Like(listDto.keyword),
+          ...(where[0] || {}),
+          [key]: Like(`%${listDto.keyword}%`),
         }
       })
     }
     const page_index = Number(listDto.page_index || 1) - 1;
     const page_size = Number(listDto.page_size || 10);
-
     const a_list = await this.articleRepository
       .find({
-        where,
+        where: where.length ? where : {},
         order: {
-          ...sort1,
           ...sort2,
+          ...sort1,
         },
         skip: page_index * page_size,
         take: page_size,
-        relations: ['user', 'tags']
+        relations: ['user', 'tags', 'tags.tag', 'likes'],
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          coverUrl: true,
+          status: true,
+          up: true,
+          browseCount: true,
+          createAt: true,
+          tags: true,
+          likes: true,
+          user: {
+            id: true,
+            username: true,
+          },
+        },
       });
 
     const list_p = a_list.map(async item => {
       const _item = {
         ...item,
-        commentCount: await this.articleCommentRepository.count({
-          where: {
-            objectId: item.id,
-            status: ContentStatus.VerifySuccess
-          }
+        commentCount: await this.articleCommentRepository.countBy({
+          objectId: item.id,
+          status: ContentStatus.VerifySuccess
         })
       };
       return _item;
@@ -352,9 +382,7 @@ export class ArticleService {
 
     const list = await Promise.all(list_p);
 
-    const total = await this.articleRepository.count({
-      where
-    });
+    const total = await this.articleRepository.countBy(where.length ? where : {});
 
     return {
       list,
@@ -362,19 +390,20 @@ export class ArticleService {
     }
   }
 
-  async randomList (len: number) {
-    return await this.articleRepository
-      .createQueryBuilder()
-      .where({
-        status: ContentStatus.VerifySuccess
-      })
-      .orderBy("RAND()")
-      .take(len)
-      .leftJoinAndSelect('Article.user', 'user')
-      .getMany()
+  async randomList(len: number) {
+    const list = await  this.articleRepository
+    .createQueryBuilder()
+    .where({
+      status: ContentStatus.VerifySuccess
+    })
+    .orderBy("RAND()")
+    .select(['Article.id', 'Article.title', 'Article.summary', 'Article.browseCount'])
+    .take(len)
+    .getMany();
+    return list;
   }
 
-  async pageHotList () {
+  async pageHotList() {
     const where = {
       coverUrl: Not(IsNull()),
       status: ContentStatus.VerifySuccess
@@ -384,19 +413,34 @@ export class ArticleService {
         where,
         relations: ['user', 'tags'],
         order: {
+          up: 'DESC',
           browseCount: 'DESC',
         },
-        take: 6
+        take: 6,
+        select: {
+          id: true,
+          title: true,
+          coverUrl: true,
+          summary: true,
+          status: true,
+          up: true,
+          browseCount: true,
+          createAt: true,
+          tags: true,
+          likes: true,
+          user: {
+            id: true,
+            username: true,
+          },
+        },
       })
 
     const list_p = a_list.map(async item => {
       const data = {
         ...item,
-        commentCount: await this.articleCommentRepository.count({
-          where: {
-            objectId: item.id,
-            status: ContentStatus.VerifySuccess
-          }
+        commentCount: await this.articleCommentRepository.countBy({
+          objectId: item.id,
+          status: ContentStatus.VerifySuccess
         })
       }
       return data;
@@ -404,9 +448,7 @@ export class ArticleService {
 
     const list = await Promise.all(list_p);
 
-    const total = await this.articleRepository.count({
-      where
-    });
+    const total = await this.articleRepository.countBy(where);
 
     return {
       list,
@@ -414,19 +456,19 @@ export class ArticleService {
     }
   }
 
-  async search (keyList: Array<string>) {
+  async search(keyList: Array<string>) {
 
     // 将搜索词进行一个缓存
-    const keyRe = new RegExp(keyList.join('|'));
+    const regex = keyList.join('|');
     return this.articleRepository.find({
       where: [
         {
           status: ContentStatus.VerifySuccess,
-          title: Like(keyRe),
+          title: Raw(alias => `${alias} REGEXP :regex`, { regex }),
         },
         {
           status: ContentStatus.VerifySuccess,
-          summary: Like(keyRe),
+          summary: Raw(alias => `${alias} REGEXP :regex`, { regex }),
         }
       ],
       order: {
@@ -435,7 +477,7 @@ export class ArticleService {
     })
   }
 
-  async getAllYearAndCount () {
+  async getAllYearAndCount() {
     return this.articleRepository
       .createQueryBuilder()
       .where({
@@ -459,7 +501,7 @@ export class ArticleService {
     ]);
   }
 
-  async getByYear (year: number) {
+  async getByYear(year: number) {
 
     return this.articleRepository
       .createQueryBuilder()
@@ -488,7 +530,7 @@ export class ArticleService {
     // ]);
   }
 
-  async listByUserId (id: string) {
+  async listByUserId(id: string) {
     const a_list = await this.articleRepository
       .find({
         where: {
@@ -503,11 +545,9 @@ export class ArticleService {
     const list_p = a_list.map(async item => {
       const data = {
         ...item,
-        commentCount: await this.articleCommentRepository.count({
-          where: {
-            objectId: item.id,
-            status: ContentStatus.VerifySuccess
-          }
+        commentCount: await this.articleCommentRepository.countBy({
+          objectId: item.id,
+          status: ContentStatus.VerifySuccess
         })
       }
       return data;
@@ -517,28 +557,28 @@ export class ArticleService {
     return list;
   }
 
-  async statistics (userId: string) {
+  async statistics(userId: string) {
     const [list, count] = await this.articleRepository
-      .findAndCount({
+      .findAndCountBy({
         userId
       });
     const articleIds = list.map(item => item.id);
     const wordCount = list.reduce((pv, item) => pv + item.wordCount, 0);
     const browseCount = list.reduce((pv, item) => pv + item.browseCount, 0);
-    const commentCount = await this.articleCommentRepository.count({
+    const commentCount = await this.articleCommentRepository.countBy({
       objectId: In(articleIds)
     });
-    const articleCommentLikeCount = await this.articleCommentLikeRepository.count({
+    const articleCommentLikeCount = await this.articleCommentLikeRepository.countBy({
       objectId: In(articleIds)
     })
-    const articleLikeCount = await this.articleLikeRepository.count({
+    const articleLikeCount = await this.articleLikeRepository.countBy({
       objectId: In(articleIds)
     })
 
     return { id: userId, wordCount, browseCount, commentCount, likeCount: articleCommentLikeCount + articleLikeCount };
   }
 
-  async hashLikeByUid (aid: string, uid: string) {
+  async hashLikeByUid(aid: string, uid: string) {
     const like = await this.articleLikeRepository.findOne({
       where: {
         objectId: aid,
@@ -549,7 +589,7 @@ export class ArticleService {
     return !!like;
   }
 
-  async likeById (aid: string, uid: string) {
+  async likeById(aid: string, uid: string) {
     const like = new ArticleLikeEntity()
     like.objectId = aid;
     like.userId = uid;
@@ -557,7 +597,7 @@ export class ArticleService {
     return this.articleLikeRepository.save(like)
   }
 
-  async unlikeById (aid: string, uid: string) {
+  async unlikeById(aid: string, uid: string) {
     // $push
     return this.articleLikeRepository.delete({
       userId: uid,
@@ -565,17 +605,17 @@ export class ArticleService {
     });
   }
 
-  async allList (status: ContentStatus = ContentStatus.VerifySuccess) {
-    const list = await this.articleRepository.find({
+  async allList(status: ContentStatus = ContentStatus.VerifySuccess) {
+    const list = await this.articleRepository.findBy({
       status
     });
 
     return list;
   }
 
-  async allArticleMarkdownContentToHtmlContent () {
+  async allArticleMarkdownContentToHtmlContent() {
 
-    const alist = await this.articleRepository.find({});
+    const alist = await this.articleRepository.findBy({});
 
     alist.forEach(article => {
       this.updateById(article.id, {
@@ -588,7 +628,7 @@ export class ArticleService {
 
   }
 
-  count () {
+  count() {
     return this.articleRepository.count()
   }
 }

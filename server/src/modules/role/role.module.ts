@@ -8,13 +8,14 @@ import { Role } from '../../models/role.entity';
 import { Role as RoleEntity } from '../../entities/Role';
 import { Acl as AclEntity } from '../../entities/Acl';
 import { RoleAcl as RoleAclEntity } from '../../entities/RoleAcl';
+import { UserRole as UserRoleEntity } from '../../entities/UserRole';
 import { CommonModule } from '../../common/common.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
     TypegooseModule.forFeature([Acl, Role]),
-    TypeOrmModule.forFeature([AclEntity, RoleEntity, RoleAclEntity]),
+    TypeOrmModule.forFeature([AclEntity, RoleEntity, RoleAclEntity, UserRoleEntity]),
     CommonModule,
   ],
   providers: [RoleService, AclService],

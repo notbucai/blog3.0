@@ -16,7 +16,7 @@ export class ErrorCode {
     static readonly LoginError: CodeAndMsg = { CODE: 1000, MESSAGE: '用户名或密码错误' };
     static readonly LoginTimeout: CodeAndMsg = { CODE: 1001, MESSAGE: '登录超时' };
     static readonly InActive: CodeAndMsg = { CODE: 1002, MESSAGE: '账号未激活' };
-    static readonly AccountBind: CodeAndMsg = { CODE: 1102, MESSAGE: '账号已绑定' };
+    static readonly AccountBind: CodeAndMsg = { CODE: 1101, MESSAGE: '账号已绑定' };
     static readonly UserBind: CodeAndMsg = { CODE: 1102, MESSAGE: '账号已绑定' };
     static readonly UserUnBind: CodeAndMsg = { CODE: 1103, MESSAGE: '账号未绑定' };
 

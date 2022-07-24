@@ -74,6 +74,7 @@ export const actions = {
     notify?.emit(ON_INIT_COUNT);
   },
   async loadNoticeStatus ({ commit, state, dispatch }) {
+    if (!process.client) return;
     if (!state.user) return;
     if (!state.token) return;
     // const resData = await this.$axios.get('/api/users/notify/count');

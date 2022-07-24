@@ -115,15 +115,15 @@ export class UserController {
     } else {
       where.username = signinDto.login;
     }
-    const user = await this.userService.findByObj(where);
-
+    const user = await this.userService.findByUnSafeObj(where);
+    
     if (!user || !this.userService.verifyPassword(signinDto.pass, user.pass)) {
       throw new MyHttpException({ code: ErrorCode.LoginError.CODE })
     }
     const token = await this.commonService.generateToken(user);
     // 更新登录时间
     this.userService.updateLoginTime(user.id);
-    await this.redisService.setUserToken(user.id.toString(), token);
+    await this.redisService.setUserToken(user.id, token);
     await this.redisService.setUser(user);
     return token;
   }
@@ -199,7 +199,7 @@ export class UserController {
   @ApiOperation({ summary: "清空消息列表" })
   @ApiBearerAuth()
   async notifyClear (@CurUser() user: User) {
-    return await this.notifyService.clearNotifyListByUserId(user.id);
+    return this.notifyService.clearNotifyListByUserId(user.id);
   }
 
   /**
@@ -211,7 +211,7 @@ export class UserController {
   @ApiBearerAuth()
   async notifyRemoveById (@CurUser() user: User, @Param('id') id: string) {
     const nid = id;
-    return await this.notifyService.delNotifyListById(user.id, nid);
+    return this.notifyService.delNotifyListById(user.id, nid);
   }
 
   /**
@@ -226,9 +226,7 @@ export class UserController {
     if (listDto.page_index < 1 || listDto.page_size < 1) {
       throw new MyHttpException({ code: ErrorCode.ParamsError.CODE })
     }
-    return this.userService.findList(listDto, {
-      createAt: -1
-    });
+    return this.userService.findList(listDto, 'DESC');
   }
 
   /**
@@ -341,7 +339,7 @@ export class UserController {
   @ApiOperation({ summary: "修改用户权限" })
   @ApiBearerAuth()
   async changeRole (@Body() RoleDto: UserChangeRoleDto, @CurUser() user: User) {
-    if (user.id === RoleDto.id) {
+    if (user.id === RoleDto.id && !user.isAdmin) {
       throw new MyHttpException({ message: "不能给自己操作" })
     }
     return this.userService.changeRole(RoleDto.id, RoleDto.role);

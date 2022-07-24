@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany ,PrimaryGeneratedColumn }  from "typeorm";
 import { LinkClick } from "./LinkClick";
 
-@Entity("link", { schema: "blog" })
+@Entity("link")
 export class Link {
   @Column("timestamp", {
     name: "create_at",

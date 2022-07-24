@@ -2,7 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne ,PrimaryGeneratedColumn } 
 import { User } from "./User";
 
 @Index("FK_50afc0eb7abd87305440eb416a92", ["userId"], {})
-@Entity("user_link", { schema: "blog" })
+@Entity("user_link")
 export class UserLink {
   @Column("timestamp", {
     name: "create_at",
@@ -21,8 +21,8 @@ export class UserLink {
   @Column("varchar", { name: "type", length: 255 })
   type: string;
 
-  @Column("int", { name: "login_id" })
-  loginId: number;
+  @Column("varchar", { name: "login_id",length: 255 })
+  loginId: string;
 
   @Column("varchar", { name: "login_name", length: 255 })
   loginName: string;

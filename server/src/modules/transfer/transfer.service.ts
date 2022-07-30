@@ -271,33 +271,39 @@ export class TransferService {
             loginId: item.githubID,
             loginName: item.githubLogin,
             loginAvatar: item.githubAvatarURL,
+            type: 'github',
           },
           {
             loginId: item.qqID,
             loginName: item.qqName,
             loginAvatar: item.qqAvatar,
+            type: 'qq',
           },
           {
             loginId: item.giteeID,
             loginName: item.giteeName,
             loginAvatar: item.giteeAvatar,
             loginEmail: item.giteeEmail,
+            type: 'gitee',
           },
           {
             loginId: item.baiduID,
             loginName: item.baiduName,
             loginAvatar: item.baiduAvatarLarge,
+            type: 'baidu',
           },
           {
             loginId: item.weiboID,
             loginName: item.weiboName,
             loginAvatar: item.weiboAvatarURL,
+            type: 'weibo'
           },
           {
             loginId: item.notbucaiID,
             loginName: item.notbucaiNickname,
             loginAvatar: item.notbucaiAvatarUrl,
             loginOpenid: item.notbucaiOpenid,
+            type: 'notbucai'
           },
         ];
 
@@ -306,7 +312,6 @@ export class TransferService {
           Object.keys(v).forEach(k => {
             a[k] = v[k]
           });
-          a.type = 'default';
           a.userId = this.genUUIDByObjectId(item._id.toString());
           pv.push(a)
         });

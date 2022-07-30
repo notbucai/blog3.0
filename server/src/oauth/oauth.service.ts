@@ -222,7 +222,7 @@ export class OauthService {
     }
     const resData = {
       ..._resUserData.data,
-      id: _resUserData.data.id
+      id: _resUserData.data._id
     }
 
     return resData;
@@ -355,7 +355,7 @@ export class OauthService {
         loginName: 'name',
       },
       [StateEnum.notbucai]: {
-        loginId: 'id',
+        loginId: '_id',
         loginOpenid: 'openid',
         loginName: 'nickname',
         loginAvatar: 'avatarUrl',

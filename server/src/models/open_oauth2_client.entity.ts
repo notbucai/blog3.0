@@ -26,7 +26,7 @@ export class OpenOauth2Client extends Base {
   clientRedirectUris: string;
 
   @prop({ default: Date })
-  createAt: Date;
+  createdAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;

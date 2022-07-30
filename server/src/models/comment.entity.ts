@@ -8,7 +8,7 @@ import { ContentStatus } from '../constants/constants';
 export class Comment extends Base {
 
   @prop({ default: Date })
-  createAt: Date;
+  createdAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;
@@ -30,13 +30,13 @@ export class Comment extends Base {
   parent: Ref<Comment>; // 直接父评论
 
   @prop({ index: true })
-  rootId: ObjectID; // 一级评论
+  rootID: ObjectID; // 一级评论
 
   @prop()
   likedCount: number; // 点赞数
 
   @prop({ index: true })
-  sourceId: ObjectID; // 各种类型
+  sourceID: ObjectID; // 各种类型
 
   @prop({ ref: User, index: true })
   user: Ref<User>;

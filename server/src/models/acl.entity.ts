@@ -12,7 +12,7 @@ import { Base } from '@typegoose/typegoose/lib/defaultClasses';
 export class Acl extends Base {
 
   @prop({ default: Date })
-  createAt: Date;
+  createdAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;

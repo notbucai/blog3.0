@@ -77,7 +77,7 @@
                   color="primary"
                 >
                   <v-icon x-small left>{{
-                    $icons['mdi-' + item.iconUrl]
+                    $icons['mdi-' + item.icon]
                   }}</v-icon>
                   {{ item.name }}
                 </v-chip>

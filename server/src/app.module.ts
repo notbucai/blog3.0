@@ -1,4 +1,5 @@
 import { Module, MiddlewareConsumer, NestModule, RequestMethod, OnApplicationBootstrap } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 // import { ConfigModule as NestConfigModule } from '@nestjs/config';
 
@@ -25,7 +26,7 @@ import { DataModule } from './modules/data/data.module';
 import { NotifyModule } from './modules/notify/notify.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GatewayModule } from './modules/gateway/gateway.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TransferModule } from './modules/transfer/transfer.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     NotifyModule,
     AuthModule,
     GatewayModule,
+    TransferModule,
   ],
   controllers: [],
   providers: [],

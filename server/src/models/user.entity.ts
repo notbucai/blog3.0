@@ -24,7 +24,7 @@ export enum UserSex {
 export class User extends Base {
 
     @prop({ default: Date })
-    createAt: Date;
+    createdAt: Date;
 
     @prop({ default: Date })
     updatedAt: Date;
@@ -73,7 +73,7 @@ export class User extends Base {
     status: UserStatus; // 用户状态
 
     @prop()
-    avatarUrl: string; // 头像
+    avatarURL: string; // 头像
 
     @prop()
     sex: UserSex;

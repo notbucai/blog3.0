@@ -16,7 +16,7 @@ export enum LinkType {
 export class Link extends Base {
 
   @prop({ default: Date })
-  createAt: Date;
+  createdAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;

@@ -3,3 +3,4 @@ blog.sh
 .version
 .next
 node_modules
+.DS_Store

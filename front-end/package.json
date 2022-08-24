@@ -16,7 +16,8 @@
     "analyze": "cross-env ENV_ANALYZE=analyze nuxt build",
     "generate": "nuxt generate",
     "help": "nuxt",
-    "pm2": "cross-env NODE_ENV=production pm2-runtime start server/index.js -i 0 --name blog-front --max-memory-restart 4096M"
+    "pm2": "cross-env NODE_ENV=production pm2-runtime start server/index.js -i 0 --name blog-front --max-memory-restart 4096M",
+    "test": "tsc && nightwatch"
   },
   "config": {
     "nuxt": {
@@ -58,13 +59,17 @@
   "devDependencies": {
     "@mdi/font": "^5.1.45",
     "@nuxtjs/vuetify": "^1.11.0",
+    "@types/nightwatch": "^2.3.0",
+    "chromedriver": "^103.0.0",
     "minify-css-string": "^1.0.0",
+    "nightwatch": "^2.3.0",
     "node-sass": "^7.0.1",
     "nodemon": "^2.0.15",
     "nuxt-purgecss": "^1.0.0",
     "sass": "^1.32.13",
     "sass-loader": "^8.0.2",
     "speed-measure-webpack-plugin": "^1.5.0",
+    "typescript": "^4.7.4",
     "vue-loader": "^15.9.8",
     "vuetify-loader": "^1.7.3"
   }

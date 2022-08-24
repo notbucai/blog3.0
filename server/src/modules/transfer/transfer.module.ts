@@ -36,9 +36,11 @@ import { RoleAcl } from '../../entities/RoleAcl';
 import { Tag } from '../../entities/Tag';
 import { UserLink } from '../../entities/UserLink';
 import { UserRole } from '../../entities/UserRole';
+import { CommonModule } from '../../common/common.module';
 
 @Module({
   imports: [
+    CommonModule,
     TypegooseModule.forFeature([
       UserEntity, AclEntity, ArticleEntity, ArticleReadEntity, MessageCommentEntity, ArticleCommenttEntity, KeywordsEntity, LinkEntity, NotifyEntity, RoleEntity, TagEntity
     ]),

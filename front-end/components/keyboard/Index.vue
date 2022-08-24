@@ -11,9 +11,9 @@ export default {
 
     };
   },
-  mounted() {
+  async mounted() {
     const el = this.$refs['canvas'];
-    this.splineApp = run(el);
+    this.splineApp = await run(el);
   },
   beforeDestroy() {
     this.splineApp.dispose();

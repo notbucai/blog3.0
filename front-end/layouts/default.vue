@@ -137,7 +137,7 @@ export default {
     Keyboard: () => {
       return {
         component: import('@/components/keyboard/Index.vue'),
-        loading: ComponetLoading,
+        // loading: ComponetLoading,
         delay: 100,
         timeout: 3000
       };

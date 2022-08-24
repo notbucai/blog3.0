@@ -6,7 +6,7 @@
  * @Description: 
  */
 export const asyncLoad = {
-  async mavonEditorComponent () {
+  async mavonEditorComponent() {
     const id = 'mavon-editor-script';
     // 加载主题
     // const styleElement = document.createElement('style');
@@ -34,7 +34,7 @@ export const asyncLoad = {
       }
     });
   },
-  async vueCropperComponent () {
+  async vueCropperComponent() {
     const id = 'vue-cropper-script';
 
     return new Promise(async (resolve, reject) => {
@@ -61,7 +61,7 @@ export const asyncLoad = {
       }
     });
   },
-  async browserImageCompression () {
+  async browserImageCompression() {
     const id = 'browser-image-compression-script';
     return new Promise(async (resolve, reject) => {
       let linkElement = document.getElementById(id);
@@ -81,6 +81,23 @@ export const asyncLoad = {
         // 不存在时
         resolve((await import('browser-image-compression')));
       }
+    });
+  },
+  async splinetoolRuntime() {
+    return new Promise(async (resolve, reject) => {
+      const loadCallback = `load_${Date.now()}`;
+      window[loadCallback] = (Application) => {
+        resolve({ Application })
+      }
+      const linkElement = document.createElement('script');
+      linkElement.type = 'module';
+      // 临时处理一下
+      linkElement.innerHTML = `
+          import * as runtime from '//unpkg.com/@splinetool/runtime@0.9.42';
+          ${loadCallback}(runtime.Application)
+          window.SplinetoolRuntime = runtime;
+        `;
+      document.head.appendChild(linkElement);
     });
   }
 }

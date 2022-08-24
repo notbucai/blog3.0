@@ -261,6 +261,7 @@ module.exports = {
             'vue-cropper': 'vue-cropper',
             'mavon-editor': 'MavonEditor',
             'vue-router': 'VueRouter',
+            '@splinetool/runtime': 'SplinetoolRuntime',
             'browser-image-compression': 'imageCompression'
           }
         ];

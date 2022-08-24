@@ -1,5 +1,6 @@
-import { Application } from '@splinetool/runtime';
+// import { Application } from '@splinetool/runtime';
 import tween from '@tweenjs/tween.js';
+import { asyncLoad } from '../../utils/loadScriptComponent';
 
 const keyCodeMap = {
   SPACE: 'space',
@@ -33,8 +34,9 @@ const keyCodeMap = {
   FN: 'fn'
 };
 
-export const run = (canvasElement) => {
-  const app = new Application(canvasElement, {autoRender: true});
+export const run = async (canvasElement) => {
+  const splinetoolRuntime = await asyncLoad.splinetoolRuntime()
+  const app = new splinetoolRuntime.Application(canvasElement, {autoRender: true});
 
   const keyHandle = {
     animate: new Map(),

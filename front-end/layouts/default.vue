@@ -96,6 +96,7 @@
                   src="https://image.notbucai.com/static/ghs.png"
                   loading="lazy"
                   width="12px"
+                  height="12px"
                 />
                 粤公网安备 44030602006687号</a
               >

@@ -8,5 +8,5 @@
 import { format } from 'date-fns';
 
 export const formatDate = (date, formatStr = "yyyy-MM-dd HH:mm:ss") => {
-  return format(new Date(date), formatStr);
+  return format(new Date(date || Date.now()), formatStr);
 }

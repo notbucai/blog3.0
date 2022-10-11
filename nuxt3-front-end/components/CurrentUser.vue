@@ -78,6 +78,7 @@ export default {
           url = `/user/${this.user._id}`;
         } else if (key == 'exit') {
           this.$cookies.removeAll('Authorization')
+          this.$cookies.removeAll('uid')
           location.reload();
           return;
         }

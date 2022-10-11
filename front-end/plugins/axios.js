@@ -15,6 +15,7 @@ export default function ({ $axios, app, redirect, error: _error, ...other }) {
     console.log('errorHandle=> error', error.code);
     if ([403, 1001, 1002, 1003, 1004].includes(error.code)) {
       app.$cookies.remove('Authorization');
+      app.$cookies.removeAll('uid')
       redirect(other.route.path === '/auth' ? '/' : '/auth');
     }
     if (process.client) {

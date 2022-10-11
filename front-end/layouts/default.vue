@@ -19,31 +19,20 @@
           </v-btn>
           <v-btn elevation="0" @click="handleChangeTheme" text small>
             <v-icon v-if="$vuetify.theme.dark">{{
-              $icons['mdi-white-balance-sunny']
+            $icons['mdi-white-balance-sunny']
             }}</v-icon>
             <v-icon v-if="!$vuetify.theme.dark">{{
-              $icons['mdi-weather-night']
+            $icons['mdi-weather-night']
             }}</v-icon>
           </v-btn>
 
           <v-btn elevation="0" text small v-if="user" @click="handleGoMessage">
-            <v-badge
-              color="error"
-              :content="noticeStatus.unread"
-              :value="noticeStatus && noticeStatus.unread"
-              small
-              overlap
-            >
+            <v-badge color="error" :content="noticeStatus.unread" :value="noticeStatus && noticeStatus.unread" small
+              overlap>
               <v-icon>{{ $icons['mdi-bell'] }}</v-icon>
             </v-badge>
           </v-btn>
-          <v-btn
-            color="info"
-            elevation="0"
-            @click="SET_LOGIN_OR_REGISTER_DIALOG"
-            v-if="!user"
-            >登录</v-btn
-          >
+          <v-btn color="info" elevation="0" @click="SET_LOGIN_OR_REGISTER_DIALOG" v-if="!user">登录</v-btn>
           <div class="pl-2" v-else>
             <current-user />
           </div>
@@ -71,35 +60,18 @@
               &copy; 2021
               <a href="/">不才</a> All Rights Reserved.
             </p>
-            <div
-              style="
+            <div style="
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 14px;
-              "
-            >
-              <a
-                href="http://beian.miit.gov.cn/"
-                target="_blank"
-                style="font-size: 12px; color: #888;"
-                rel="noopener noreferrer"
-                >赣ICP备15001741号</a
-              >
-              <a
-                href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44030602006687"
-                target="_blank"
-                style="font-size: 12px; color: #888;"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="https://image.notbucai.com/static/ghs.png"
-                  loading="lazy"
-                  width="12px"
-                  height="12px"
-                />
-                粤公网安备 44030602006687号</a
-              >
+              ">
+              <a href="http://beian.miit.gov.cn/" target="_blank" style="font-size: 12px; color: #888;"
+                rel="noopener noreferrer">赣ICP备15001741号</a>
+              <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44030602006687" target="_blank"
+                style="font-size: 12px; color: #888;" rel="noopener noreferrer">
+                <img src="https://image.notbucai.com/static/ghs.png" loading="lazy" width="12px" height="12px" />
+                粤公网安备 44030602006687号</a>
             </div>
           </div>
         </v-container>
@@ -144,7 +116,7 @@ export default {
       };
     },
   },
-  data () {
+  data() {
     return {
 
     };
@@ -153,17 +125,17 @@ export default {
     ...mapState(['user', 'noticeStatus', 'LoginOrRegisterDialog', 'sideStatus', 'keyboardShow'])
   },
   watch: {
-    user () {
+    user() {
       // this.loadUserMessageCount();
     },
-    $route(){
+    $route() {
       console.log(111, this);
     }
   },
   // created() {
 
   // },
-  created () {
+  created() {
     const h = new Date().getHours();
     const theme = this.$cookies.get('theme');
     let isDark = (h >= 19 && h <= 24) || (h >= 0 && h <= 7);
@@ -173,13 +145,26 @@ export default {
     this.$vuetify.theme.dark = isDark;
     this.handleLoadNoticeStatus();
   },
+  mounted() {
+    if (process.client) {
+      // 接入 Aegis 监控
+      const aegis = new Aegis({
+        id: 'mZWaYTLWGWYgbo0wRY', // 上报 id
+        uin: this.$cookies.get('uid'), // 用户唯一 ID（可选）
+        reportApiSpeed: true, // 接口测速
+        reportAssetSpeed: true, // 静态资源测速
+        spa: true, // spa 应用页面跳转的时候开启 pv 计算
+      });
+      console.log('aegis', aegis);
+    }
+  },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
-    handleChangeTheme () {
+    handleChangeTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       this.$cookies.set('theme', this.$vuetify.theme.dark ? 'dark' : 'white');
     },
-    handleShowSide () {
+    handleShowSide() {
       this.$store.commit('SET_SIDE_STATUS', true);
     },
     // async loadUserMessageCount () {
@@ -188,10 +173,10 @@ export default {
     //   const resData = await this.$axios.get('/api/users/notify/count');
     //   this.messageCount = resData;
     // },
-    handleGoMessage () {
+    handleGoMessage() {
       this.$router.push('/user/notice')
     },
-    async handleLoadNoticeStatus () {
+    async handleLoadNoticeStatus() {
       await this.$store.dispatch('loadNoticeStatus');
     }
   }
@@ -202,12 +187,15 @@ export default {
 .theme--light.v-application {
   background-color: #f4f4f4;
 }
+
 .theme--light.v-app-bar.v-toolbar.v-sheet {
   background-color: #fff;
 }
+
 .theme--dark.v-app-bar.v-toolbar.v-sheet {
   background-color: #151515;
 }
+
 .toolbar-content {
   /* max-width: 1440px;
   width: 100%; */
@@ -219,25 +207,31 @@ export default {
   justify-content: space-between;
 
   @media (max-width: 824px) {
+
     .toolbar-action,
     .toolbar-nav {
       display: none !important;
     }
+
     .toolbar-apps {
       display: block !important;
     }
   }
+
   .toolbar-apps {
     display: none;
   }
+
   .toolbar-title {
     .v-btn.v-size--default {
       font-size: 20px;
       font-weight: bold;
     }
   }
+
   .toolbar-nav {
     height: 100%;
+
     .v-btn.v-size--default {
       min-width: 80px;
       margin: 0 6px;
@@ -245,19 +239,23 @@ export default {
       border: none;
     }
   }
+
   .toolbar-action {
     display: flex;
     align-items: center;
+
     .v-btn {
       margin-right: 12px;
     }
   }
 }
+
 .footer {
   text-align: center;
   font-size: 14px;
   /* color: #333; */
   line-height: 2;
+
   a {
     /* color: #333; */
     text-decoration: none;
@@ -265,6 +263,7 @@ export default {
     font-size: 14px;
   }
 }
+
 #app .v-card {
   box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05);
 }

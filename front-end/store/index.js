@@ -3,7 +3,7 @@
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai<1450941858@qq.com>
  * @LastEditTime: 2022-05-08 17:06:21
- * @Description: 
+ * @Description:
  */
 import io from 'socket.io-client';
 import { EMIT_EXCEPTION, EMIT_NOTIFY_COUNT, ON_INIT_COUNT } from '~/constant/wsEvents';
@@ -59,6 +59,12 @@ export const actions = {
       // 获取用户信息更新
       // commit用以提交需要更新的数据，并指定更新的方法
       const userinfo = await $axios.get('/api/users/info');
+
+      app.$cookies.set('uid', userinfo.id, {
+        path: '/',
+        maxAge: 5 * 24 * 60 * 60
+      });
+
       // userinfo
       commit('SET_TOKEN', token);
       commit('SET_USER', userinfo);

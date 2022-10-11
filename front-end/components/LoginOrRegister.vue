@@ -302,6 +302,10 @@ export default {
           path: '/',
           maxAge: 5 * 24 * 60 * 60
         });
+        this.$cookies.set('uid', resData.id, {
+          path: '/',
+          maxAge: 5 * 24 * 60 * 60
+        });
 
         this.$store.commit('SET_TOKEN', resData);
         this.$store.commit('SET_LOGIN_OR_REGISTER_DIALOG');

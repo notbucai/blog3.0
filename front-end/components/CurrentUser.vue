@@ -3,7 +3,7 @@
  * @Date: 2020-05-04 20:54:03
  * @LastEditors: bucai<1450941858@qq.com>
  * @LastEditTime: 2022-07-17 11:58:14
- * @Description: 
+ * @Description:
  -->
 
 <template>
@@ -76,6 +76,7 @@ export default {
           url = `/user/${this.user.id}`;
         } else if (key == 'exit') {
           this.$cookies.removeAll('Authorization')
+          this.$cookies.removeAll('uid')
           location.reload();
           return;
         }

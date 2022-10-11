@@ -10,7 +10,7 @@
     "@testing-library/user-event": "^12.1.10",
     "ahooks": "^2.9.6",
     "antd": "^4.12.3",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "axios-hooks": "^2.3.0",
     "i18next": "^19.9.1",
     "less": "^4.1.1",

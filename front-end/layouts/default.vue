@@ -109,6 +109,7 @@
     <Keyboard v-if="keyboardShow" />
     <ScrollToTop />
     <SvgWalle />
+    <Qixi v-if="$route.query.love" />
   </v-app>
 </template>
 
@@ -117,6 +118,7 @@ import { mapMutations, mapState, mapActions } from 'vuex';
 import CurrentUser from '@/components/CurrentUser.vue';
 // import NavigationDrawer from '@/components/NavigationDrawer.vue';
 import ScrollToTop from '@/components/ScrollToTop.vue';
+// import Qixi from '@/components/Qixi/Index.vue';
 import ComponetLoading from '@/components/common/Loading.vue';
 
 export default {
@@ -129,6 +131,7 @@ export default {
         timeout: 3000
       };
     },
+    Qixi: () => import('@/components/Qixi/Index.vue'),
     ComponetLoading,
     CurrentUser,
     NavigationDrawer: () => import('@/components/NavigationDrawer.vue'),
@@ -159,6 +162,10 @@ export default {
   // created() {
 
   // },
+  mounted() {
+    // console.log('--->',this.);
+    
+  },
   created () {
     const h = new Date().getHours();
     const theme = this.$cookies.get('theme');

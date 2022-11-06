@@ -93,6 +93,7 @@ export default {
   props: {},
   computed: {
     isQixi () {
+      return true;
       if (localStorage.getItem('qixi')) return false  ;
       const date = new Date();
       const y = date.getFullYear()

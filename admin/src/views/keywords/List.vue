@@ -24,7 +24,7 @@
           max-width="200"
         ></el-table-column>
         <el-table-column
-          prop="value"
+          prop="content"
           header-align="center"
           show-overflow-tooltip
           label="词名"
@@ -75,6 +75,7 @@
         >
           <template slot-scope="scope">
             <el-tag
+              size="mini" 
               :type="['danger', '', 'success'][(scope.row.status || 0) + 1]"
               >{{ filter_KeywordsStatus(scope.row.status) }}</el-tag
             >

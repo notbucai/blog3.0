@@ -26,21 +26,21 @@
         ></el-table-column>
 
         <el-table-column
-          prop="title"
-          header-align="center"
-          show-overflow-tooltip
-          label="标题"
-          max-width="320"
-        ></el-table-column>
-        <el-table-column
           prop="name"
           header-align="center"
           show-overflow-tooltip
-          label="权限点名称"
+          label="权限名称"
           max-width="320"
         ></el-table-column>
         <el-table-column
-          prop="parent"
+          prop="code"
+          header-align="center"
+          show-overflow-tooltip
+          label="权限标识"
+          max-width="320"
+        ></el-table-column>
+        <el-table-column
+          prop="parentId"
           header-align="center"
           show-overflow-tooltip
           label="父权限点"
@@ -75,11 +75,11 @@
     <el-dialog title="修改" :visible.sync="dialogFormVisible" width="30%">
       <div class="tc" v-if="current">
         <el-form ref="form" :model="current" label-width="80px">
-          <el-form-item label="权限点">
+          <el-form-item label="权限名称">
             <el-input v-model="current.name" placeholder="请输入权限点"></el-input>
           </el-form-item>
-          <el-form-item label="权限名">
-            <el-input v-model="current.title" placeholder="请输入权限名"></el-input>
+          <el-form-item label="权限标识">
+            <el-input v-model="current.code" placeholder="请输入权限名"></el-input>
           </el-form-item>
           <el-form-item label="父权限点">
             <el-input v-model="current.parent" placeholder="请输入权限点"></el-input>
@@ -189,13 +189,13 @@ export default {
       }
     },
     async handleChangeRoleCofirm() {
-      const { name, title, parent } = this.current;
-      if (!name || !title) {
+      const { name, code, parent } = this.current;
+      if (!name || !code) {
         return this.$message.error('参数不能为空');
       }
       const reqData = {
         name,
-        title
+        code
       };
       this.changStatusLoading = true;
       const id = this.current.id;

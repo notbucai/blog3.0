@@ -158,6 +158,9 @@ export default {
     user () {
       // this.loadUserMessageCount();
     },
+    $route(){
+      console.log(111, this);
+    }
   },
   // created() {
 

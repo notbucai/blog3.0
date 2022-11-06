@@ -100,9 +100,9 @@
                     small
                     text
                     nuxt
-                    :to="{ path: '', query: { s: item.value } }"
-                    @click="handleSearch(item.value)"
-                    >{{ item.value }}</v-btn
+                    :to="{ path: '', query: { s: item.content } }"
+                    @click="handleSearch(item.content)"
+                    >{{ item.content }}</v-btn
                   >
                 </div>
               </div>

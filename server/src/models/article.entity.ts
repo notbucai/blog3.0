@@ -15,7 +15,7 @@ export class Article extends Base {
   updatedAt: Date;
 
   @prop({ default: Date })
-  createAt: Date;
+  createdAt: Date;
 
   @prop({ default: null })
   deletedAt: Date;
@@ -40,7 +40,7 @@ export class Article extends Base {
   browseCount: number;
 
   @prop()
-  coverUrl: string;
+  coverURL: string;
 
   @prop()
   wordCount: number;

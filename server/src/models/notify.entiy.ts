@@ -33,7 +33,7 @@ export enum NotifyStatus {
 export class Notify extends Base {
 
   @prop({ default: Date })
-  createAt: Date;
+  createdAt: Date;
 
   @prop({ default: Date })
   updatedAt: Date;
@@ -48,7 +48,7 @@ export class Notify extends Base {
   senderAction: NotifyActionType; // 操作者的动作，如：捐款、更新、评论、收藏；
 
   @prop({ required: true })
-  objectId: ObjectID; // 目标对象ID
+  objectID: ObjectID; // 目标对象ID
 
   @prop({ required: false })
   object: string; // 目标对象内容或简介，比如：文章标题；

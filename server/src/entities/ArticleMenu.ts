@@ -2,7 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne ,PrimaryGeneratedColumn } 
 import { Article } from "./Article";
 
 @Index("FK_f1cf6e559a8ef2940a07cfe3c821", ["articleId"], {})
-@Entity("article_menu", { schema: "blog" })
+@Entity("article_menu")
 export class ArticleMenu {
   @Column("timestamp", {
     name: "create_at",

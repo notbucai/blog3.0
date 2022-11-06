@@ -20,7 +20,7 @@ export class Keywords extends Base {
   updatedAt: Date;
 
   @prop({ default: Date, })
-  createAt: Date;
+  createdAt: Date;
 
   @prop({ default: null })
   deletedAt: Date;

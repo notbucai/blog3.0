@@ -2,7 +2,7 @@ import { Column, Entity, Index, OneToMany ,PrimaryGeneratedColumn }  from "typeo
 import { ArticleTag } from "./ArticleTag";
 
 @Index("IDX_6a9775008add570dc3e5a0bab7", ["name"], { unique: true })
-@Entity("tag", { schema: "blog" })
+@Entity("tag")
 export class Tag {
   @Column("varchar", { name: "name", unique: true, length: 255 })
   name: string;

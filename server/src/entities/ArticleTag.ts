@@ -4,7 +4,7 @@ import { Tag } from "./Tag";
 
 @Index("FK_26455b396109a0b535ddb6148324", ["articleId"], {})
 @Index("FK_cdc3f155737b763c298ab080f842", ["tagId"], {})
-@Entity("article_tag", { schema: "blog" })
+@Entity("article_tag")
 export class ArticleTag {
   @Column("timestamp", {
     name: "create_at",

@@ -4,7 +4,7 @@ import { Role } from "./Role";
 
 @Index("useridd2", ["userId"], {})
 @Index("userroleid3", ["roleId"], {})
-@Entity("user_role", { schema: "blog" })
+@Entity("user_role")
 export class UserRole {
   @Column("timestamp", {
     name: "create_at",

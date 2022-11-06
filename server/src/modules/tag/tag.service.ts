@@ -37,7 +37,7 @@ export class TagService {
   }
 
   async update (id: string, tagDto: CreateDto) {
-    const tag = await this.tagRepository.findOneOrFail(id)
+    const tag = await this.tagRepository.findOneByOrFail({ id })
     tag.name = tagDto.name;
     tag.icon = tagDto.iconUrl;
     return this.tagRepository.save(tag);
@@ -55,7 +55,7 @@ export class TagService {
       });
       return newItem;
     });
-    return await Promise.all(p_all);
+    return Promise.all(p_all);
   }
 
   async findCountGreaterZero () {
@@ -64,11 +64,11 @@ export class TagService {
     return tags.filter(item => item.articleCount);
   }
   async findById (id: string) {
-    return this.tagRepository.findOne(id);
+    return this.tagRepository.findOneBy({ id });
   }
   async findByName (name: string) {
-    const rgx = Like(name);
-    return this.tagRepository.find({
+    const rgx = Like(`%${name}%`);
+    return this.tagRepository.findBy({
       name: rgx
     });
   }

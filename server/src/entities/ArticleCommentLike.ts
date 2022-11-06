@@ -4,7 +4,7 @@ import { ArticleComment } from "./ArticleComment";
 
 @Index("FK_81760a4f6459171df120e51112c3", ["userId"], {})
 @Index("FK_daaadf11d9b71b3f6b332da09cd4", ["objectId"], {})
-@Entity("article_comment_like", { schema: "blog" })
+@Entity("article_comment_like")
 export class ArticleCommentLike {
   @Column("timestamp", {
     name: "create_at",

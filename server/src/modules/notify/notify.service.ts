@@ -69,7 +69,7 @@ export class NotifyService {
       throw new Error("schema not fined, please examine type.");
     }
 
-    return schema.findOne(objectId);
+    return schema.findOneBy({ id: objectId });
   }
 
   private getTitleByType (type: NotifyObjectType, object: ObjectType) {
@@ -129,8 +129,8 @@ export class NotifyService {
       data: arguments
     });
 
-    const sender = senderID === systemObjectId ? await this.getSystemUser() : await this.userRepository.findOne(senderID);
-    const recipient = await this.userRepository.findOne(recipientID);
+    const sender = senderID === systemObjectId ? await this.getSystemUser() : await this.userRepository.findOneBy({ id: senderID });
+    const recipient = await this.userRepository.findOneBy({ id: recipientID });
 
     if (!sender) throw new Error("sender not undefined");
     if (!recipient) throw new Error("recipient not undefined");
@@ -179,7 +179,7 @@ export class NotifyService {
     });
     if (!doesExist) {
       // 有手机号才通知，其他平台后续考虑再接入
-      const notifyUser = await this.userRepository.findOne(userId);
+      const notifyUser = await this.userRepository.findOneBy({ id: userId });
       if (!notifyUser?.phone) return;
       // 不存在才创建任务, 存在就忽略
       const timeoutId = setTimeout(async () => {
@@ -208,7 +208,7 @@ export class NotifyService {
   private async notifyAudit (userId: string, content: ObjectType) {
 
     try {
-      const notifyUser = await this.userRepository.findOne(userId);
+      const notifyUser = await this.userRepository.findOneBy({ id: userId });
       if (!notifyUser?.phone) return;
       const title = content instanceof ArticleEntity ? content.title : content.content;
       this.logger.info({
@@ -248,15 +248,13 @@ export class NotifyService {
    * @param id 用户id
    */
   public async readAllByUserId (id: string) {
-    const notify = await this.notifiesRepository.findOneOrFail({
-      where: {
-        id,
-        status: NotifyStatus.New
-      }
+    return this.notifiesRepository.update({
+      recipientId: id,
+      status: NotifyStatus.New
+    }, {
+      readAt: new Date(),
+      status: NotifyStatus.Read
     });
-    notify.readAt = new Date();
-    notify.status = NotifyStatus.Read;
-    return this.notifiesRepository.save(notify);
   }
 
   private async getNotifySourceIdByType (type: NotifyObjectType, sourceId: string) {
@@ -315,7 +313,7 @@ export class NotifyService {
    * @param id 消息id
    */
   public async clearNotifyListByUserId (uid: string) {
-    const notifyList = await this.notifiesRepository.find({
+    const notifyList = await this.notifiesRepository.findBy({
       recipientId: uid
     });
     return this.notifiesRepository.delete(notifyList.map(item => item.id));

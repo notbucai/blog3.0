@@ -1,6 +1,6 @@
 import { Column, Entity ,PrimaryGeneratedColumn }  from "typeorm";
 
-@Entity("keyword_use", { schema: "blog" })
+@Entity("keyword_use")
 export class KeywordUse {
   @Column("timestamp", {
     name: "create_at",

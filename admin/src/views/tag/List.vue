@@ -25,7 +25,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="iconUrl"
+          prop="icon"
           header-align="center"
           show-overflow-tooltip
           label="图标"

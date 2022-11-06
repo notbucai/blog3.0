@@ -10,7 +10,7 @@
         class="article-item"
         v-for="(item, index) in cList"
         :key="index"
-        @click.prevent="$router.push('/article/' + item.sourceId + '#comment')"
+        @click.prevent="$router.push('/article/' + item.objectId + '#comment')"
       >
         <user-card :userId="item.user.id">
           <nuxt-link
@@ -25,7 +25,7 @@
           </nuxt-link>
         </user-card>
         <nuxt-link
-          :to="'/article/' + item.sourceId + '#comment'"
+          :to="'/article/' + item.objectId + '#comment'"
           v-ripple
           class="article-item-right"
           @click.stop

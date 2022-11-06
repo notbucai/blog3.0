@@ -98,7 +98,7 @@
               :to="`/tag/${item.tag ? item.tag.name : item.name}`"
             >
               <v-chip class="ma-2" label>
-                <v-icon left small v-if="item.tag && item.tag.iconUrl">{{ $icons['mdi-' + item.tag.iconUrl] }}</v-icon>
+                <v-icon left small v-if="item.tag && item.tag.icicononUrl">{{ $icons['mdi-' + item.tag.icon] }}</v-icon>
                 {{ item.tag ? item.tag.name : '-' }}
               </v-chip>
             </nuxt-link>

@@ -1,4 +1,5 @@
 import { Module, MiddlewareConsumer, NestModule, RequestMethod, OnApplicationBootstrap } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 // import { ConfigModule as NestConfigModule } from '@nestjs/config';
 
@@ -25,7 +26,7 @@ import { DataModule } from './modules/data/data.module';
 import { NotifyModule } from './modules/notify/notify.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GatewayModule } from './modules/gateway/gateway.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TransferModule } from './modules/transfer/transfer.module';
 
 @Module({
   imports: [
@@ -40,7 +41,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
         // typeorm bug, https://github.com/nestjs/nest/issues/1119
         // 将 type 定义为 type: 'mysql' | 'mariadb'; 解决此issue
         console.log('configService.mysql',configService.mysql);
@@ -73,6 +74,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     NotifyModule,
     AuthModule,
     GatewayModule,
+    TransferModule,
   ],
   controllers: [],
   providers: [],

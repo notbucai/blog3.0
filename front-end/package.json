@@ -11,12 +11,12 @@
     "./static/favicon.ico"
   ],
   "scripts": {
-    "dev": "cross-env NODE_ENV=development PORT=9907 nodemon server/index.js --watch server --max-memory-restart 4096M",
-    "build": "nuxt build  --max-memory-restart 4096M",
+    "dev": "cross-env NODE_ENV=development PORT=9907 nodemon server/index.js --watch server --max-memory-restart 8192M",
+    "build": "nuxt build  --max-memory-restart 8192M",
     "analyze": "cross-env ENV_ANALYZE=analyze nuxt build",
     "generate": "nuxt generate",
     "help": "nuxt",
-    "pm2": "cross-env NODE_ENV=production pm2-runtime start server/index.js -i 0 --name blog-front --max-memory-restart 4096M"
+    "pm2": "cross-env NODE_ENV=production pm2-runtime start server/index.js -i 0 --name blog-front --max-memory-restart 8192M"
   },
   "config": {
     "nuxt": {

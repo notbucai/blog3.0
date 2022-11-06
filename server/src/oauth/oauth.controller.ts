@@ -43,14 +43,13 @@ export class OauthController {
     // 判断是否存在这个用户
     if (!localUserinfo) {
       // 创建临时用户
-      localUserinfo = new User();
-      localUserinfo = await this.oauthService.saveUser(state, oAuthUserinfo, localUserinfo);
+      localUserinfo = await this.oauthService.saveUser(state, oAuthUserinfo);
     }
     const token = await this.commonService.generateToken(localUserinfo);
     // 更新登录时间
     this.userService.updateLoginTime(localUserinfo.id);
 
-    await this.redisService.setUserToken(String(localUserinfo.id), token);
+    await this.redisService.setUserToken(localUserinfo.id, token);
     await this.redisService.setUser(localUserinfo);
     return token;
   }

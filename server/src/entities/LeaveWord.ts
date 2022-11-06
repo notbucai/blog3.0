@@ -4,14 +4,15 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,PrimaryGeneratedColumn }  from "typeorm";
+  OneToMany, PrimaryGeneratedColumn
+} from "typeorm";
 import { User } from "./User";
 import { LeaveWordLike } from "./LeaveWordLike";
 
 @Index("FK_1d58a25d7313466b6cd4b18bcd12", ["parentId"], {})
 @Index("FK_9be4a306c5f7401994d32d69edd1", ["rootId"], {})
 @Index("FK_baac50024d026d8eee693b03ada11", ["userId"], {})
-@Entity("leave_word", { schema: "blog" })
+@Entity("leave_word")
 export class LeaveWord {
   @Column("timestamp", {
     name: "create_at",
@@ -81,6 +82,8 @@ export class LeaveWord {
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
 
-  @OneToMany(() => LeaveWordLike, (leaveWordLike) => leaveWordLike.object)
+  @OneToMany(() => LeaveWordLike, (leaveWordLike) => leaveWordLike.object, {
+    cascade: true
+  })
   likes: LeaveWordLike[];
 }

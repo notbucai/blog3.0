@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany ,PrimaryGeneratedColumn }  from "typeorm";
 import { RoleAcl } from "./RoleAcl";
 import { UserRole } from "./UserRole";
 
-@Entity("role", { schema: "blog" })
+@Entity("role")
 export class Role {
   @Column("timestamp", {
     name: "create_at",
@@ -27,7 +27,7 @@ export class Role {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => RoleAcl, (roleAcl) => roleAcl.role)
+  @OneToMany(() => RoleAcl, (roleAcl) => roleAcl.role, { cascade: true })
   roleAcls: RoleAcl[];
 
   @OneToMany(() => UserRole, (userRole) => userRole.role)

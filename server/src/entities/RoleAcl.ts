@@ -4,7 +4,7 @@ import { Role } from "./Role";
 
 @Index("acl_map_id_mm1", ["aclId"], {})
 @Index("role_map_id_mm2", ["roleId"], {})
-@Entity("role_acl", { schema: "blog" })
+@Entity("role_acl")
 export class RoleAcl {
   @Column("timestamp", {
     name: "create_at",

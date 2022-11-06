@@ -23,4 +23,9 @@ export class CreateRoleDto {
   @ApiProperty({ description: "name" })
   name: string;
 
+  @IsString()
+  @Length(1, 50, { message: ErrorCode.ParamsError.MESSAGE })
+  @ApiProperty({ description: "name" })
+  code: string;
+
 }

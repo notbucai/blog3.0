@@ -10,8 +10,9 @@ import { ObjectID } from 'mongodb';
 import { Role as RoleEntity } from '../../entities/Role';
 import { Acl as AclEntity } from '../../entities/Acl';
 import { RoleAcl as RoleAclEntity } from '../../entities/RoleAcl';
+import { UserRole as UserRoleEntity } from '../../entities/UserRole';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, IsNull, LessThan, Like, Repository } from 'typeorm';
+import { Between, In, IsNull, LessThan, Like, Raw, Repository } from 'typeorm';
 
 @Injectable()
 export class RoleService {
@@ -23,7 +24,9 @@ export class RoleService {
     @InjectRepository(AclEntity)
     private aclRepository: Repository<AclEntity>,
     @InjectRepository(RoleAclEntity)
-    private roleAclRepository: Repository<RoleAclEntity>
+    private roleAclRepository: Repository<RoleAclEntity>,
+    @InjectRepository(UserRoleEntity)
+    private userRoleRepository: Repository<UserRoleEntity>
   ) { }
   /**
    * 创建角色
@@ -32,13 +35,21 @@ export class RoleService {
   create (roleDto: CreateRoleDto) {
     const role = new RoleEntity();
     role.name = roleDto.name;
+    role.code = roleDto.code;
     return this.roleRepository.save(role);
   }
 
   /**
    * 删除角色
    */
-  delete (id: string) {
+  async delete (id: string) {
+    // 需要先删除权限关联
+    await this.userRoleRepository.delete({
+      roleId: id
+    });
+    await this.roleAclRepository.delete({
+      roleId: id
+    });
     return this.roleRepository.delete(id);
   }
 
@@ -46,11 +57,12 @@ export class RoleService {
    * 修改角色
    */
   async update (id: string, dto: CreateRoleDto) {
-    const { name } = dto;
+    const { name, code } = dto;
     const _set = {};
     name && (_set['name'] = name);
-    const role = await this.roleRepository.findOneOrFail(id);
+    const role = await this.roleRepository.findOneByOrFail({ id });
     role.name = name;
+    role.code = code;
 
     return this.roleRepository.save(role);
   }
@@ -59,7 +71,7 @@ export class RoleService {
    * 绑定权限
    */
   async bindAcls (id: string, bindAclDto: BindAclDto) {
-    const role = await this.roleRepository.findOneOrFail(id);
+    const role = await this.roleRepository.findOneByOrFail({ id });
 
     const acls = await this.aclRepository.find({
       where: {
@@ -93,17 +105,18 @@ export class RoleService {
     let { page_index = 1, page_size = 20 } = roleListDto;
     page_index = Number(page_index);
     page_size = Number(page_size);
-    const keyRex = new RegExp(roleListDto.keyword || '');
+    const regex = roleListDto.keyword || '';
+    const where = {
+      name: regex ? Raw(alias => `${alias} REGEXP :regex`, { regex }) : undefined
+    };
     const list = await this.roleRepository
       .find({
-        where: {
-          name: Like(keyRex),
-        },
+        where,
         skip: (page_index - 1) * page_size,
         take: page_size,
-        relations: ['roleAcls', 'roleAcls.Acls']
+        relations: ['roleAcls', 'roleAcls.acl']
       })
-    const total = await this.roleRepository.count({ where: { name: Like(keyRex) } });
+    const total = await this.roleRepository.count({ where });
     return {
       list,
       total

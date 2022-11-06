@@ -158,7 +158,7 @@ export class OpenapiController {
     // 4. 获取当前登录用户信息
     // cacheUser.id
     // 5. 生成token并保存用户信息
-    const token = await this.openApiService.genTokenByClientAndUserId(client, cacheUser.id);
+    const token = await this.openApiService.genTokenByClientAndUserId(client, cacheUser._id);
     await this.openApiService.saveDataOfToken(token, cacheUser);
     // 4. 返回 token 以及有效期
     return {

@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany ,PrimaryGeneratedColumn }  from "typeorm";
 import { RoleAcl } from "./RoleAcl";
 
-@Entity("acl", { schema: "blog" })
+@Entity("acl")
 export class Acl {
   @Column("timestamp", {
     name: "create_at",

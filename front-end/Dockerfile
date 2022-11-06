@@ -16,7 +16,9 @@ RUN npm config set sharp_binary_host https://npm.taobao.org/mirrors/sharp
 
 RUN npm config set sharp_libvips_binary_host https://npm.taobao.org/mirrors/sharp-libvips
 
-RUN npm install --registry https://registry.npm.taobao.org --max-old-space-size=4096
+RUN npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass
+
+RUN npm install --registry https://registry.npm.taobao.org --max-old-space-size=8192
 
 RUN npm run build
 

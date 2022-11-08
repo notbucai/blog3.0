@@ -72,7 +72,6 @@
     <div class="qixi-dialog" @click="handleOpenQixi" v-show="!isStart">
       <div class="qixi-text">
         点击开启
-        <span>七夕</span>
         <span>彩蛋</span>
       </div>
     </div>

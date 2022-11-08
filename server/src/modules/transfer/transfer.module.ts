@@ -36,6 +36,7 @@ import { RoleAcl } from '../../entities/RoleAcl';
 import { Tag } from '../../entities/Tag';
 import { UserLink } from '../../entities/UserLink';
 import { UserRole } from '../../entities/UserRole';
+import { CommentModule } from '../comment/comment.module';
 
 @Module({
   imports: [
@@ -44,7 +45,8 @@ import { UserRole } from '../../entities/UserRole';
     ]),
     TypeOrmModule.forFeature([
       User, Acl, Article, ArticleComment, ArticleCommentLike, ArticleLike, ArticleMenu, ArticleRead, ArticleTag, Keyword, KeywordUse, LeaveWord, LeaveWordLike, Link, LinkClick, Notifies, Role, RoleAcl, Tag, UserLink, UserRole
-    ])
+    ]),
+    CommentModule
   ],
   providers: [TransferService],
   controllers: [TransferController],

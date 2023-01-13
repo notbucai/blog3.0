@@ -84,7 +84,7 @@ export const run = async (canvasElement) => {
   };
 
   app
-    .load('https://image.notbucai.com/static/k.splinecode?t=22')
+    .load('https://image.notbucai.com/static/k.splinecode?t=23')
     .then(() => {
       document.addEventListener('keydown', listenHandle('down'));
       document.addEventListener('keyup', listenHandle('up'));

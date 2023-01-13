@@ -26,7 +26,7 @@ import { DataModule } from './modules/data/data.module';
 import { NotifyModule } from './modules/notify/notify.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GatewayModule } from './modules/gateway/gateway.module';
-import { TransferModule } from './modules/transfer/transfer.module';
+// import { TransferModule } from './modules/transfer/transfer.module';
 
 @Module({
   imports: [
@@ -45,7 +45,7 @@ import { TransferModule } from './modules/transfer/transfer.module';
         // typeorm bug, https://github.com/nestjs/nest/issues/1119
         // 将 type 定义为 type: 'mysql' | 'mariadb'; 解决此issue
         console.log('configService.mysql',configService.mysql);
-        
+
         return {
           ...configService.mysql,
           autoLoadEntities: true,
@@ -74,7 +74,7 @@ import { TransferModule } from './modules/transfer/transfer.module';
     NotifyModule,
     AuthModule,
     GatewayModule,
-    TransferModule,
+    // TransferModule,
   ],
   controllers: [],
   providers: [],

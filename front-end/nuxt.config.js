@@ -34,15 +34,15 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: '//unpkg.com/animate.css@4.1.1/animate.min.css' },
-      { rel: 'stylesheet', href: '//unpkg.com/mavon-editor@2.9.0/dist/markdown/github-markdown.min.css' }
+      { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/animate.min.css' },
+      { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/github-markdown.min.css' }
     ],
     script: [
       // { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
-      { src: '//unpkg.com/vue@2/dist/vue.min.js', defer: true },
-      { src: '//unpkg.com/axios', defer: true },
+      { src: '//image.notbucai.com/static/notbucai/static/vue.min.js', defer: true },
+      { src: '//image.notbucai.com/static/notbucai/static/axios.min.js', defer: true },
       // { src: '//unpkg.com/gsap', defer: true },
-      { src: '//unpkg.com/vue-router@3/dist/vue-router.min.js', defer: true },
+      { src: '//image.notbucai.com/static/notbucai/static/vue-router.min.js', defer: true },
       // { src: '//unpkg.com/browser-image-compression', defer: true },
       // { src: '//unpkg.com/vuetify@2.x/dist/vuetify.min.js', defer: true },
       { src: '//at.alicdn.com/t/font_2451840_fhijy36qb98.js', defer: true }, /*iconfont*/

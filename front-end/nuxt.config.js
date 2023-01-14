@@ -35,7 +35,8 @@ module.exports = {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/animate.min.css' },
-      { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/github-markdown.min.css' }
+      { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/github-markdown.min.css' },
+      { rel: 'preload', href: '//image.notbucai.com/static/k.splinecode?t=23', as: "fetch" },
     ],
     script: [
       // { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
@@ -236,10 +237,6 @@ module.exports = {
 
     optimization: {
       minimize: process.env.NODE_ENV !== 'development',
-      splitChunks: {
-        maxInitialRequests: 5,
-        maxAsyncRequests: 5
-      }
     },
     optimizeCSS: {
       assetNameRegExp: /\.optimize\.css$/g,

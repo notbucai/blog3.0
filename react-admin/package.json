@@ -60,7 +60,7 @@
     "http-proxy-middleware": "^1.0.6",
     "less-loader": "^7.1.0",
     "react-app-rewired": "^2.1.8",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^5.0.1",
     "redux-devtools": "^3.7.0",
     "sass": "^1.32.8",
     "sass-loader": "^11.0.1",

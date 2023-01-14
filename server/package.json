@@ -52,7 +52,7 @@
     "ioredis": "^4.16.0",
     "is-number": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
-    "markdown-it": "^11.0.0",
+    "markdown-it": "^12.3.2",
     "markdown-it-highlightjs": "^3.2.0",
     "markdown-it-link-attributes": "^4.0.0",
     "moment": "^2.24.0",

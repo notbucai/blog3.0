@@ -22,6 +22,7 @@ import { User as UserEntity } from '../../entities/User';
 import { Notifies as NotifiesEntity } from '../../entities/Notifies';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Like, Not, Repository } from 'typeorm';
+import { NotifyListDto } from '../user/dto/notify-list.dto';
 
 
 type ObjectType = ArticleEntity | ArticleCommentEntity | LeaveWordEntity;
@@ -258,11 +259,54 @@ export class NotifyService {
   }
 
   private async getNotifySourceIdByType (type: NotifyObjectType, sourceId: string) {
+    console.log('type, sourceId', type, sourceId);
     let object = await this.getObject(type, sourceId);
     const s = object;
+    if (!s) {
+      return null;
+    }
     delete s.htmlContent;
     delete s.content;
     return s;
+  }
+  public packNotifyListInObject(list: NotifiesEntity[]) {
+    const resList = list.map(async (item) => {
+      console.log('item', item);
+      const { objectType, objectId } = item;
+      const $source_temp = await this.getNotifySourceIdByType(objectType as NotifyObjectType, objectId);
+      console.log('$source_temp', $source_temp);
+
+      return {
+        ...item,
+        source: $source_temp
+      };
+    });
+
+    return Promise.all(resList);
+  }
+
+  /**
+   * 获取该用户的消息 分页
+   * @param id 用户id
+   */
+  public async getNotifyPageListByUserId (id: string, listDto: NotifyListDto) {
+    listDto.page_index = Number(listDto.page_index) || 1;
+    listDto.page_size = Number(listDto.page_size) || 10;
+
+    const list = await this.notifiesRepository.find({
+      where: {
+        recipientId: id,
+        senderId: Not(id)
+      },
+      order: {
+        createAt: 'DESC'
+      },
+      skip: (listDto.page_index - 1) * listDto.page_size,
+      take: listDto.page_size,
+      relations: ['sender', 'recipient']
+    });
+
+    return this.packNotifyListInObject(list);
   }
 
   /**
@@ -281,17 +325,7 @@ export class NotifyService {
       relations: ['sender', 'recipient']
     });
 
-    const resList = list.map(async (item) => {
-      const { objectType, objectId } = item;
-      const $source_temp = await this.getNotifySourceIdByType(objectType as NotifyObjectType, objectId);
-
-      return {
-        ...item,
-        source: $source_temp
-      };
-    });
-
-    return Promise.all(resList);
+    return this.packNotifyListInObject(list);
   }
 
   /**

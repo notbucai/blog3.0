@@ -226,6 +226,9 @@ export class CommentService {
         where: query,
         skip: (listDto.page_index - 1) * listDto.page_size,
         take: listDto.page_size,
+        order: {
+          updateAt: 'desc',
+        },
         relations: ['parent', 'root', 'user', 'root.user', 'parent.user'].concat(source === CommentConstants.SourceArticle ? ['object', 'object.user'] : [])
       })
     const total = await commentRepository.count({

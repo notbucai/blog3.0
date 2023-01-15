@@ -2,7 +2,7 @@
  * @Author: bucai<1450941858@qq.com>
  * @Date: 2022-03-13 22:12:26
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-03-14 19:03:42
+ * @LastEditTime: 2023-01-15 15:29:01
  * @Description: 
  */
 import { Catch, ArgumentsHost } from '@nestjs/common';
@@ -15,7 +15,7 @@ import { CustomException } from '../exception/custom.exception';
 import { ErrorCode } from '../../constants/error';
 import { ConfigService } from '../../config/config.service';
 import { LoggerService } from '../../common/logger.service';
-import { EMIT_EXCEPTION } from 'src/constants/wsEvents';
+import { EMIT_EXCEPTION } from '../../constants/wsEvents';
 
 @Catch()
 export class WsExceptionsFilter implements WsExceptionFilter {

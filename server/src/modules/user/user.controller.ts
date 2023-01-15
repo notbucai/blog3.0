@@ -27,6 +27,7 @@ import { RoleService } from '../role/role.service';
 import { Role } from '../../models/role.entity';
 import { Role as RoleEntity } from '../../entities/Role';
 import { AclService } from '../role/acl.service';
+import { NotifyListDto } from './dto/notify-list.dto';
 
 @Controller('users')
 @ApiTags('用户')
@@ -185,9 +186,10 @@ export class UserController {
   @UseGuards(ActiveGuard)
   @ApiOperation({ summary: "获取用户消息列表" })
   @ApiBearerAuth()
-  async notifyList (@CurUser() user: User) {
+  async notifyList (@CurUser() user: User, @Query() listDto: NotifyListDto) {
+    // listDto
     await this.notifyService.readAllByUserId(user.id);
-    const list = await this.notifyService.getNotifyListByUserId(user.id);
+    const list = await this.notifyService.getNotifyPageListByUserId(user.id, listDto);
     return list;
   }
 

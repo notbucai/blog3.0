@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { CommonModule } from 'src/common/common.module';
-import { RedisModule } from 'src/redis/redis.module';
+import { CommonModule } from '../../common/common.module';
+import { RedisModule } from '../../redis/redis.module';
 import { NotifyModule } from '../notify/notify.module';
 import { NoticeGateway } from './notice.gateway';
 

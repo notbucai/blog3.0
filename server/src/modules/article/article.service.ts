@@ -318,7 +318,7 @@ export class ArticleService {
 
   async pageList(listDto: ArticleListDto, status?: ContentStatus, up?: boolean) {
     const where: any[] = [{}];
-    const sort1: any = { createAt: 'DESC' };
+    const sort1: any = { updateAt: 'DESC' };
     const sort2: any = {};
     if (status) {
       where[0].status = status;
@@ -359,6 +359,7 @@ export class ArticleService {
           up: true,
           browseCount: true,
           createAt: true,
+          updateAt: true,
           tags: true,
           likes: true,
           user: {

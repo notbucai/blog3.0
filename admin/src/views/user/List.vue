@@ -146,12 +146,12 @@ export default {
       console.log(item);
       // TODO: 激活解冻
       let msg = '激活';
-      let status = 2;
+      let status = 'Actived';
       let id = item.id;
-      if (item.status === 2) {
+      if (item.status === 'Actived') {
         // 冻结
         msg = '冻结';
-        status = 3;
+        status = 'Frozen';
       }
       await this.$confirm('是否' + msg + '“' + item.username + '”？');
       const [err, data] = await this.$http.changeUserStatus(item.id, {

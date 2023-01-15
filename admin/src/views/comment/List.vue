@@ -8,129 +8,65 @@
     <div class="table mt2">
       <div>
         <el-select v-model="source" size="small" class="pr1" placeholder="请选择" @change="loadData">
-          <el-option
-            v-for="item in sources"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
+          <el-option v-for="item in sources" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <el-input
-          placeholder="请输入内容"
-          size="small"
-          clearable
-          v-model="keyword"
-          class="search_input mb2"
-        >
+        <el-input placeholder="请输入内容" size="small" clearable v-model="keyword" class="search_input mb2">
           <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
         </el-input>
       </div>
 
-      <el-table
-        :data="tableData"
-        v-loading="loading"
-        border
-        style="width: 100%"
-        size="small"
-        cell-class-name="p0"
-      >
-        <el-table-column
-          prop="id"
-          header-align="center"
-          show-overflow-tooltip
-          label="ID"
-          max-width="200"
-        ></el-table-column>
-        <el-table-column
-          prop="objectId"
-          header-align="center"
-          show-overflow-tooltip
-          label="文章"
-          max-width="200"
-          v-if="source === 'article'"
-        ></el-table-column>
+      <el-table :data="tableData" v-loading="loading" border style="width: 100%" size="small" cell-class-name="p0">
+        <el-table-column prop="id" header-align="center" show-overflow-tooltip label="ID"
+          max-width="200"></el-table-column>
+        <el-table-column prop="objectId" header-align="center" show-overflow-tooltip label="文章" max-width="200"
+          v-if="source === 'article'"></el-table-column>
 
-        <el-table-column
-          prop="parentId"
-          header-align="center"
-          show-overflow-tooltip
-          label="上级"
-          max-width="200"
-        ></el-table-column>
+        <el-table-column prop="parentId" header-align="center" show-overflow-tooltip label="上级"
+          max-width="200"></el-table-column>
 
-        <el-table-column
-          prop="user"
-          align="center"
-          show-overflow-tooltip
-          label="作者"
-          max-width="100"
-        >
+        <el-table-column prop="user" align="center" show-overflow-tooltip label="作者" max-width="100">
           <template slot-scope="scope">
-            <div v-if="scope.row.user">{{scope.row.user.username}}</div>
+            <div v-if="scope.row.user">{{ scope.row.user.username }}</div>
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop="content"
-          header-align="center"
-          show-overflow-tooltip
-          label="内容"
-          max-width="320"
-        ></el-table-column>
+        <el-table-column prop="content" header-align="center" show-overflow-tooltip label="内容"
+          max-width="320"></el-table-column>
 
         <el-table-column prop="createAt" label="创建时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.createAt)}}</template>
+          <template slot-scope="scope">{{ filter_format (scope.row.createAt) }}</template>
         </el-table-column>
         <el-table-column prop="updatedAt" label="更新时间" width="160" align="center">
-          <template slot-scope="scope">{{filter_format(scope.row.updateAt)}}</template>
+          <template slot-scope="scope">{{ filter_format (scope.row.updateAt) }}</template>
         </el-table-column>
 
         <el-table-column prop="status" show-overflow-tooltip label="状态" width="120" align="center">
           <template slot-scope="scope">
-            <el-tag type="info" size="mini">{{filter_articleStatus(scope.row.status)}}</el-tag>
+            <el-tag type="info" size="mini">{{ filter_articleStatus (scope.row.status) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="100">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              plain
-              @click="handleChangeStatus(scope.row)"
-              v-if="$permissions('ChangeCommentStatus')"
-            >改变状态</el-button>
+            <el-button size="mini" plain @click="handleChangeStatus(scope.row)"
+              v-if="$permissions('ChangeCommentStatus')">改变状态</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        background
-        layout="total, sizes, prev, pager, next"
-        :page-size="page_size"
-        :total="total"
-        class="mt2"
-      ></el-pagination>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" background
+        layout="total, sizes, prev, pager, next" :page-size="page_size" :total="total" class="mt2"></el-pagination>
     </div>
 
     <el-dialog title="文章状态设置" :visible.sync="dialogFormVisible" width="30%">
       <div class="tc">
-        <div class="pb2 fb" v-if="current">设置“{{current.title}}”的状态</div>
+        <div class="pb2 fb" v-if="current">设置“{{ current.title }}”的状态</div>
         <el-radio-group v-model="currentRadio" size="small">
-          <el-radio-button
-            :label="index+1"
-            v-for="(item, index) in statusList"
-            :key="index"
-          >{{item}}</el-radio-button>
+          <el-radio-button :label="key" v-for="(item, key) of statusList" :key="key">{{ item }}</el-radio-button>
         </el-radio-group>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false" size="small">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="handleChangeRoleCofirm"
-          size="small"
-          :loading="changStatusLoading"
-        >确 定</el-button>
+        <el-button type="primary" @click="handleChangeRoleCofirm" size="small" :loading="changStatusLoading">确
+          定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -139,7 +75,7 @@
 <script>
 import { mapState } from 'vuex';
 export default {
-  data() {
+  data () {
     return {
       current: null,
       dialogFormVisible: false,
@@ -168,16 +104,18 @@ export default {
   computed: {
     ...mapState(['user']),
 
-    statusList() {
-      return ['审核中', '审核通过', '审核未通过'];
+    statusList () {
+      return {
+        Verifying: '审核中', VerifySuccess: '审核通过', VerifyFail: '审核未通过'
+      };
     }
   },
-  created() {
+  created () {
     this.loadData();
   },
   filters: {},
   methods: {
-    async loadData() {
+    async loadData () {
       this.loading = true;
       const { page_size, page_index, keyword } = this;
       const query = {
@@ -193,27 +131,27 @@ export default {
       this.tableData = data.list;
       this.total = data.total;
     },
-    handleSearch() {
+    handleSearch () {
       // const keyword;
       this.page_index = 1;
       this.loadData();
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(`每页 ${val} 条`);
       this.page_size = val;
       this.loadData();
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       console.log(`当前页: ${val}`);
       this.page_index = val;
       this.loadData();
     },
-    handleChangeStatus(item) {
+    handleChangeStatus (item) {
       this.dialogFormVisible = true;
       this.currentRadio = item.status || 1;
       this.current = item;
     },
-    async handleChangeRoleCofirm() {
+    async handleChangeRoleCofirm () {
       this.changStatusLoading = true;
       // TODO: 发送AJAX
       const id = this.current.id;
@@ -241,6 +179,7 @@ export default {
     width: 32px;
     height: 32px;
   }
+
   .search_input {
     width: 400px;
   }

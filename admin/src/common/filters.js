@@ -1,8 +1,8 @@
 /*
  * @Author: bucai
  * @Date: 2020-03-23 20:55:27
- * @LastEditors: bucai
- * @LastEditTime: 2021-06-08 17:07:20
+ * @LastEditors: bucai<1450941858@qq.com>
+ * @LastEditTime: 2023-01-15 17:20:02
  * @Description: 
  */
 
@@ -30,6 +30,7 @@ Vue.mixin({
       }[status];
     },
     filter_imageMogr2 (url = '', width = 68, height) {
+      if(!url) return '';
       const query = url.split('?')[1];
       if (query) return url;
       // height  width

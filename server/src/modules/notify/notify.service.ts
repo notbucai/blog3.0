@@ -269,7 +269,7 @@ export class NotifyService {
     delete s.content;
     return s;
   }
-  public packNotifyListInObject(list: NotifiesEntity[]) {
+  public packNotifyListInObject (list: NotifiesEntity[]) {
     const resList = list.map(async (item) => {
       console.log('item', item);
       const { objectType, objectId } = item;
@@ -292,12 +292,12 @@ export class NotifyService {
   public async getNotifyPageListByUserId (id: string, listDto: NotifyListDto) {
     listDto.page_index = Number(listDto.page_index) || 1;
     listDto.page_size = Number(listDto.page_size) || 10;
-
+    const query = {
+      recipientId: id,
+      senderId: Not(id)
+    };
     const list = await this.notifiesRepository.find({
-      where: {
-        recipientId: id,
-        senderId: Not(id)
-      },
+      where: query,
       order: {
         createAt: 'DESC'
       },
@@ -306,7 +306,12 @@ export class NotifyService {
       relations: ['sender', 'recipient']
     });
 
-    return this.packNotifyListInObject(list);
+    const total = await this.notifiesRepository
+      .createQueryBuilder()
+      .where(query)
+      .getCount();
+
+    return { list: await this.packNotifyListInObject(list), total }
   }
 
   /**

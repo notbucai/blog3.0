@@ -44,6 +44,7 @@
               :to="url(notice.objectType, notice.objectId)"
               color="success"
               plain
+              style="max-width: 100px;overflow: hidden;text-overflow: ellipsis;margin-left: 6px;"
             >
               {{
                 notice.objectType === 'article' && notice.source

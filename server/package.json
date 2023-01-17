@@ -59,6 +59,7 @@
     "mongodb": "^3.5.5",
     "mongoose": "^5.9.5",
     "mysql2": "^2.3.3",
+    "nacos": "^2.5.1",
     "nestjs-typegoose": "^7.1.0",
     "node-cron": "^3.0.0",
     "nodejieba": "^2.5.2",

@@ -1,6 +1,6 @@
 import BaseConfig from './BaseConfig';
 
-export default class DBConfig extends BaseConfig {
+export default class MongodbConfig extends BaseConfig {
 
     public readonly uri: string;
     public readonly useUnifiedTopology: boolean;

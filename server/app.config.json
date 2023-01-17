@@ -1,0 +1,142 @@
+{
+  "mongodb": {
+    "uri": "mongodb://localhost/blog3",
+    "useUnifiedTopology": true,
+    "useNewUrlParser": true,
+    "useCreateIndex": true
+  },
+  "mysql": {
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "123456",
+    "database": "blog",
+    "synchronize": true,
+    "logging": true
+  },
+  "redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "keyPrefix": "blog:",
+    "family": 4,
+    "password": "",
+    "db": 0
+  },
+  "static": {
+    "staticURL": "https://image.notbucai.com",
+    "imgPath": "https://image.notbucai.com",
+    "imgFormat": [
+      "jpg",
+      "jpeg",
+      "png",
+      "gif"
+    ],
+    "imgMaxSize": 3145728,
+    "imgMaxSizeError": "图片大小不能超过%sM",
+    "userLevelChapterURL": "https://www.notbucai.com"
+  },
+  "cos": {
+    "SecretId": "",
+    "SecretKey": "",
+    "Bucket": "blog-111111",
+    "Region": "ap-chengdu"
+  },
+  "sms": {
+    "AppID": "111111",
+    "appkey": "111111",
+    "templateIds": {
+      "code": "111111",
+      "audit": "111111",
+      "message": "111111"
+    },
+    "smsSign": "不才的博客"
+  },
+  "email": {
+    "host": "smtp.qq.com",
+    "port": 465,
+    "secure": true,
+    "auth": {
+      "user": "bucai_o@qq.com",
+      "pass": "111111"
+    }
+  },
+  "captcha": {
+    "appID": "111111",
+    "appSecret": "111111",
+    "CaptchaAppId": 111111,
+    "AppSecretKey": "111111"
+  },
+  "wxMp": {
+    "AppID": "111111",
+    "AppSecret": "111111",
+    "urls": {
+      "getAccessToken": "https://api.weixin.qq.com/cgi-bin/token",
+      "code2Session": "https://api.weixin.qq.com/sns/jscode2session",
+      "getUnlimited": "https://api.weixin.qq.com/wxa/getwxacodeunlimit"
+    }
+  },
+  "server": {
+    "siteName": "不才的博客",
+    "companyName": "北京xxxxxxx有限公司",
+    "icp": "京ICP备12345678号",
+    "email": "bucai_o@qq.com",
+    "allowOrigins": [],
+    "apiPrefix": "/api/v1",
+    "passSalt": "111111",
+    "tokenName": "authorization",
+    "tokenSecret": "111111",
+    "tokenMaxAge": 604800000,
+    "cookieSecret": "111111",
+    "rateLimitWindowMs": 900000,
+    "rateLimitMax": 1000,
+    "swaggerPrefix": "doc/v1"
+  },
+  "geetestCaptcha": {
+    "geetest_id": "",
+    "geetest_key": ""
+  },
+  "github": {
+    "clientID": "111111",
+    "clientSecret": "111111",
+    "accessTokenURL": "https://github.com/login/oauth/access_token",
+    "userInfoURL": "https://api.github.com/user"
+  },
+  "baidu": {
+    "clientID": "111111",
+    "clientSecret": "111111",
+    "accessTokenURL": "https://openapi.baidu.com/oauth/2.0/token",
+    "userInfoURL": "https://openapi.baidu.com/rest/2.0/passport/users/getLoggedInUser"
+  },
+  "weibo": {
+    "clientID": "111111",
+    "clientSecret": "111111",
+    "accessTokenURL": "https://api.weibo.com/oauth2/access_token",
+    "getTokenInfo": "https://api.weibo.com/oauth2/get_token_info",
+    "userInfoURL": "https://api.weibo.com/2/users/show.json"
+  },
+  "gitee": {
+    "clientID": "111111",
+    "clientSecret": "111111",
+    "accessTokenURL": "https://gitee.com/oauth/token",
+    "userInfoURL": "https://gitee.com/api/v5/user"
+  },
+  "qq": {
+    "clientID": "111111",
+    "clientSecret": "1111111",
+    "accessTokenURL": "https://graph.qq.com/oauth2.0/token",
+    "getTokenInfo": "https://graph.qq.com/oauth2.0/me",
+    "userInfoURL": "https://graph.qq.com/user/get_user_info"
+  },
+  "wxmp_oauth": {
+    "clientID": "111111",
+    "clientSecret": "111111",
+    "accessTokenURL": "https://www.notbucai.com/api/openapi/access_token",
+    "userInfoURL": "https://www.notbucai.com/api/openapi/userinfo"
+  },
+  "censor": {
+    "appID": "111111",
+    "apiKey": "111111",
+    "secretKey": "111111"
+  }
+}

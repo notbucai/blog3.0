@@ -35,7 +35,9 @@ lerna-debug.log*
 
 # env
 production.conf.*
-/src/config/*
-.env.prod
 
 ormconfig.json
+
+app.config.*.json
+
+.env.*

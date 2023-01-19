@@ -3,7 +3,7 @@ version: "3.7"
 services:
   "bucai-blog-frontend":
     build: ./front-end
-    image: ccr.ccs.tencentyun.com/bucai/blog:move-frontend
+    image: ccr.ccs.tencentyun.com/bucai/blog:frontend
     container_name: bucai-blog-frontend
     restart: always
     # ports: 
@@ -13,7 +13,7 @@ services:
   
   "bucai-blog-server":
     build: ./server
-    image: ccr.ccs.tencentyun.com/bucai/blog:move-server
+    image: ccr.ccs.tencentyun.com/bucai/blog:server
     container_name: bucai-blog-server
     restart: always
     networks:

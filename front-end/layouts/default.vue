@@ -131,17 +131,10 @@ export default {
     user() {
       // this.loadUserMessageCount();
     },
-    $route() {
-      console.log(111, this);
-    }
   },
   // created() {
 
   // },
-  mounted() {
-    // console.log('--->',this.);
-    
-  },
   created () {
     const h = new Date().getHours();
     const theme = this.$cookies.get('theme');
@@ -150,7 +143,6 @@ export default {
       isDark = theme === 'dark';
     }
     this.$vuetify.theme.dark = isDark;
-    this.handleLoadNoticeStatus();
   },
   mounted() {
     if (process.client) {
@@ -163,6 +155,7 @@ export default {
         spa: true, // spa 应用页面跳转的时候开启 pv 计算
       });
       console.log('aegis', aegis);
+      this.handleLoadNoticeStatus();
     }
   },
   methods: {

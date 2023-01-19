@@ -6,7 +6,7 @@
     hide-delimiter-background
     :delimiter-icon="$icons['mdi-minus']"
     width="100%"
-    height="calc(100vh - 68px - 16px)"
+    height="80vh"
     v-resize="onResize"
     ref="carousel"
     class="bc-banner"

@@ -1,13 +1,8 @@
 <template>
   <div>
-    <v-row align="center" justify="center">
-      <v-col xl="7" lg="9" md="11" sm="12" xs="12">
-        <banner
-          :recommendedList="recommendedList"
-          v-if="recommendedList && recommendedList.length"
-        />
-      </v-col>
-    </v-row>
+    <v-container class="content-container">
+      <banner :recommendedList="recommendedList" v-if="recommendedList && recommendedList.length" />
+    </v-container>
     <v-container class="content-container">
       <!-- class="my-4" -->
       <v-row>
@@ -22,29 +17,17 @@
         </v-col>
         <v-col :md="4" :sm="12" :cols="12">
           <div style="position: sticky; top: 0">
-            <v-lazy
-              :value="$isServer"
-              transition="scale-transition"
-              min-height="100px"
-            >
+            <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
               <div>
                 <tag-list :taglist="taglist" />
               </div>
             </v-lazy>
-            <v-lazy
-              :value="$isServer"
-              transition="scale-transition"
-              min-height="100px"
-            >
+            <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
               <div>
                 <side-random-article :list="randomList" />
               </div>
             </v-lazy>
-            <v-lazy
-              :value="$isServer"
-              transition="scale-transition"
-              min-height="100px"
-            >
+            <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
               <div>
                 <side-comment-list :list="commentlist" />
               </div>
@@ -129,11 +112,13 @@ export default {
 .carousel-info-box {
   margin-bottom: 60px;
   padding: 0 40px;
+
   h1 {
     font-weight: normal;
     margin-bottom: 20px;
   }
 }
+
 .carousel-image {
   border-radius: 8px;
   color: #fff;
@@ -159,20 +144,12 @@ export default {
       border: #303030;
     }
 
-    .v-note-wrapper
-      .v-note-panel
-      .v-note-edit.divarea-wrapper.scroll-style::-webkit-scrollbar {
+    .v-note-wrapper .v-note-panel .v-note-edit.divarea-wrapper.scroll-style::-webkit-scrollbar {
       background-color: #000;
     }
 
-    .v-note-wrapper
-      .v-note-panel
-      .v-note-show
-      .v-show-content.scroll-style::-webkit-scrollbar-thumb,
-    .v-note-wrapper
-      .v-note-panel
-      .v-note-show
-      .v-show-content-html.scroll-style::-webkit-scrollbar-thumb {
+    .v-note-wrapper .v-note-panel .v-note-show .v-show-content.scroll-style::-webkit-scrollbar-thumb,
+    .v-note-wrapper .v-note-panel .v-note-show .v-show-content-html.scroll-style::-webkit-scrollbar-thumb {
       background-color: #303030;
     }
   }

@@ -2,7 +2,7 @@
  * @Author: bucai
  * @Date: 2020-05-02 21:09:11
  * @LastEditors: bucai<1450941858@qq.com>
- * @LastEditTime: 2022-05-08 17:06:21
+ * @LastEditTime: 2023-01-19 17:58:03
  * @Description:
  */
 import io from 'socket.io-client';

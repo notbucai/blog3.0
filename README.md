@@ -17,6 +17,28 @@
 4. 全站`https`化
 5. `RESETful api`规范化
 
+
+### 配置说明
+
+服务端配置（server目录）
+项目当前支持两种配置方式 `file`和`nacos`，可通过环境变量进行区分(`CONFIG_MODE`)。
+
+```
+CONFIG_MODE=file | nacos # 二选一
+```
+
+1. file 配置通过server根目录 `app.config.[production|development].json` 与 `app.config.json` 进行合并注入配置。
+2. nacos 通过环境变量注入
+```
+NACOS_SERVER_ADDR=localhost:8848 # 地址
+NACOS_NAMESPACE=dev # 命名空间
+NACOS_DATA_ID=blog # 数据ID
+NACOS_GROUP=DEFAULT_GROUP # 组ID
+NACOS_USERNAME=dev_test # 用户名
+NACOS_PASSWORD=111111 # 密码
+```
+
+
 ### 🤬历史版本介绍
 > 都是在校的时候写的  
 

@@ -8,7 +8,7 @@ ADD . /app/
 
 WORKDIR /app
 
-RUN rm -rf node_modules
+RUN rm -rf node_modules cache
 
 RUN npm config set sharp_binary_host https://npm.taobao.org/mirrors/sharp
 

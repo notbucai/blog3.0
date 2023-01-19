@@ -8,7 +8,7 @@ import { User as UserEntity } from '../../entities/User';
 import { UserLink as UserLinkEntity } from '../../entities/UserLink';
 import { UserRole as UserRoleEntity } from '../../entities/UserRole';
 
-import { ConfigModule } from '../../config/config.module';
+// import { ConfigModule } from '../../config/config.module';
 import { TypegooseModule } from 'nestjs-typegoose';
 import { CommentModule } from '../comment/comment.module';
 import { ArticleModule } from '../article/article.module';
@@ -18,7 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    ConfigModule,
+    // ConfigModule,
     CommonModule,
     CommentModule,
     ArticleModule,

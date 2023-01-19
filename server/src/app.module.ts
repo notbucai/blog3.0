@@ -33,7 +33,7 @@ import { GatewayModule } from './modules/gateway/gateway.module';
     // NestConfigModule.forRoot({
     //   envFilePath: process.env.NODE_ENV === 'development' ? '.env' : '.env.prod'
     // }),
-    ConfigModule,
+    ConfigModule.forRootAsync(),
     TypegooseModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
         return configService.mongodb;

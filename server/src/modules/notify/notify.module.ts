@@ -8,7 +8,7 @@ import { CommonModule } from '../../common/common.module';
 import { NotifyService } from './notify.service';
 import { RedisModule } from '../../redis/redis.module';
 import { GatewayModule } from '../gateway/gateway.module';
-import { ConfigModule } from '../../config/config.module';
+// import { ConfigModule } from '../../config/config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Article as ArticleEntity } from '../../entities/Article';
@@ -21,7 +21,7 @@ import { Notifies as NotifiesEntity } from '../../entities/Notifies';
   imports: [
     CommonModule,
     RedisModule,
-    ConfigModule,
+    // ConfigModule,
     forwardRef(() => GatewayModule),
     TypegooseModule.forFeature([Notify, Article, ArticleComment, MessageComment, User]),
     TypeOrmModule.forFeature([NotifiesEntity, UserEntity, ArticleEntity, ArticleCommentEntity, LeaveWordEntity])

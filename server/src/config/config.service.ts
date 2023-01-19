@@ -21,7 +21,7 @@ import CensorConfig from './type/CensorConfig';
 import MysqlConfig from './type/MysqlConfig';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
-import { NacosNamingClient } from 'nacos'
+import { NacosConfigClient } from 'nacos'
 
 enum configModeEnum {
   File = 'file',
@@ -34,44 +34,31 @@ export class ConfigService {
   readonly TEST = 'test';
   readonly PRODUCTION = 'production';
 
-  readonly env: string;
-  readonly mongodb: MongodbConfig;
-  readonly mysql: MysqlConfig;
-  readonly redis: RedisConfig;
-  readonly server: ServerConfig;
-  readonly static: StaticConfig;
-  readonly cos: COSConfig;
-  readonly sms: SMSConfig;
-  readonly email: EmailConfig;
-  readonly captcha: CaptchaConfig;
-  readonly github: GithubConfig;
-  readonly baidu: BaiduConfig;
-  readonly weibo: WeiboConfig;
-  readonly gitee: GiteeConfig;
-  readonly qq: QQConfig;
-  readonly wxmp: WxMpConfig;
-  readonly wechat: WeChatConfig;
-  readonly censor: CensorConfig
+  env: string;
+  mongodb: MongodbConfig;
+  mysql: MysqlConfig;
+  redis: RedisConfig;
+  server: ServerConfig;
+  static: StaticConfig;
+  cos: COSConfig;
+  sms: SMSConfig;
+  email: EmailConfig;
+  captcha: CaptchaConfig;
+  github: GithubConfig;
+  baidu: BaiduConfig;
+  weibo: WeiboConfig;
+  gitee: GiteeConfig;
+  qq: QQConfig;
+  wxmp: WxMpConfig;
+  wechat: WeChatConfig;
+  censor: CensorConfig;
+  
+  static DATA_CATCH: any;
 
-  readonly APP_CWD = process.cwd();
+  static readonly APP_CWD = process.cwd();
 
   constructor() {
-    const NODE_ENV = process.env.NODE_ENV;
-    const CONFIG_MODE = process.env.CONFIG_MODE;
-
-    console.log('ENV: CONFIG_MODE', CONFIG_MODE);
-
-    console.log('ENV: NODE_ENV: ', NODE_ENV, this.APP_CWD);
-    let loadConfig: any = {};
-    if (CONFIG_MODE === configModeEnum.File) {
-      // 获取配置文件
-      loadConfig = this.getEnvConfig(NODE_ENV);
-    } else if (CONFIG_MODE === configModeEnum.Nacos) {
-      loadConfig = this.getNacosConfig();
-    } else {
-      throw new Error('配置文件模式错误，只能是 ' + Object.values(configModeEnum).join('、') + ' 当前是：' + CONFIG_MODE)
-    }
-
+    const loadConfig = ConfigService.DATA_CATCH;
     this.mongodb = new MongodbConfig(loadConfig.mongodb);
     this.mysql = new MysqlConfig(loadConfig.mysql);
     this.redis = new RedisConfig(loadConfig.redis);
@@ -91,20 +78,50 @@ export class ConfigService {
     this.censor = new CensorConfig(loadConfig.censor);
   }
 
-  private async getNacosConfig() {
-    console.log('NacosNamingClient', process.env.NACOS_SERVER_LIST);
-    
-    throw 11;
-    // const logger = console;
-    // const client = new NacosNamingClient({
-    //   logger,
-    //   serverList: '', // replace to real nacos serverList
-    //   namespace: '',
-    // });
-    // await client.ready();
+  public static async init () {
+    const NODE_ENV = process.env.NODE_ENV;
+    const CONFIG_MODE = process.env.CONFIG_MODE;
+
+    console.log('ENV: CONFIG_MODE', CONFIG_MODE);
+
+    console.log('ENV: NODE_ENV: ', NODE_ENV, this.APP_CWD);
+    let loadConfig: any = {};
+    if (CONFIG_MODE === configModeEnum.File) {
+      // 获取配置文件
+      loadConfig = this.getEnvConfig(NODE_ENV);
+    } else if (CONFIG_MODE === configModeEnum.Nacos) {
+      loadConfig = await this.getNacosConfig();
+    } else {
+      throw new Error('配置文件模式错误，只能是 ' + Object.values(configModeEnum).join('、') + ' 当前是：' + CONFIG_MODE)
+    }
+    console.log('loadConfig', CONFIG_MODE, loadConfig);
+    this.DATA_CATCH = loadConfig;
   }
 
-  private getEnvConfig (env: string): Record<string, any> {
+  private static async getNacosConfig () {
+    const APP_CWD = this.APP_CWD
+    const NACOS_SERVER_ADDR = process.env.NACOS_SERVER_ADDR;
+    const NACOS_NAMESPACE = process.env.NACOS_NAMESPACE;
+    const NACOS_GROUP = process.env.NACOS_GROUP;
+    const NACOS_DATA_ID = process.env.NACOS_DATA_ID;
+    const NACOS_USERNAME = process.env.NACOS_USERNAME;
+    const NACOS_PASSWORD = process.env.NACOS_PASSWORD;
+
+    const client = new NacosConfigClient({
+      serverAddr: NACOS_SERVER_ADDR, // replace to real nacos serverList
+      namespace: NACOS_NAMESPACE,
+      username: NACOS_USERNAME,
+      password: NACOS_PASSWORD,
+      cacheDir: resolve(APP_CWD, 'cache'),
+    } as any);
+    await client.ready();
+
+    const confStr = await client.getConfig(NACOS_DATA_ID, NACOS_GROUP)
+    console.log('confStr', confStr);
+    return JSON.parse(confStr);
+  }
+
+  private static getEnvConfig (env: string): Record<string, any> {
     const loadConfigPath = resolve(this.APP_CWD, `app.config.json`);
     const envConfigPath = resolve(this.APP_CWD, `app.config.${env}.json`);
     const loadConfigPathExists = existsSync(loadConfigPath);

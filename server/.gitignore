@@ -41,3 +41,5 @@ ormconfig.json
 app.config.*.json
 
 .env.*
+
+cache

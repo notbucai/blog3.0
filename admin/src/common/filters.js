@@ -34,7 +34,7 @@ Vue.mixin({
       const query = url.split('?')[1];
       if (query) return url;
       // height  width
-      return `${url}?imageMogr2/thumbnail/${width}x${height || ''}`
+      return `${url}?imageMogr2/thumbnail/${width}x${height || ''}/format/webp`
     }
   }
 })

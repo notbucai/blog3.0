@@ -19,5 +19,5 @@ Vue.filter('imageMogr2', (url = '', width = 68, height) => {
   const query = url.split('?')[1];
   if (query) return url;
   // height  width
-  return `${url}?imageMogr2/thumbnail/${width}x${height || ''}`
+  return `${url}?imageMogr2/thumbnail/${width}x${height || ''}/format/webp`
 });

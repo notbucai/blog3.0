@@ -4,6 +4,7 @@ export default class SMSConfig extends BaseConfig {
 
   AppID: string;
   appkey: string;
+  accessKey: string;
   templateIds: {
     [key: string]: string
   };

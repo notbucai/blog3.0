@@ -36,7 +36,10 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/animate.min.css' },
       { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/github-markdown.min.css' },
-      { rel: 'preload', href: '//image.notbucai.com/static/k.splinecode?t=23', as: "fetch" },
+      { rel: 'preload', href: '//image.notbucai.com/static/key/process.wasm', as: "fetch" },
+      { rel: 'preload', href: '//image.notbucai.com/static/key/runtime.js', as: "fetch" },
+      { rel: 'preload', href: '//image.notbucai.com/static/key/process.wasm', as: "fetch" },
+      { rel: 'preload', href: '//image.notbucai.com/static/key/process.js', as: "fetch" },
     ],
     script: [
       // { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
@@ -167,6 +170,7 @@ module.exports = {
       icons: 'mdi'
     }
   },
+  experimental: { asyncEntry: true },
   sitemap: {
     hostname: "https://www.notbucai.com/",
     gzip: true,
@@ -249,7 +253,7 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
-    extend (config, ctx) {
+    extend(config, ctx) {
       if (ctx.isClient) {
         // config.externalsType = 'script';
         config.externals = [

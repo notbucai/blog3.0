@@ -34,7 +34,7 @@ const keyCodeMap = {
   FN: 'fn'
 };
 
-export const run = async (canvasElement) => {
+export const run = async (canvasElement, size) => {
   const splinetoolRuntime = await asyncLoad.splinetoolRuntime()
   const app = new splinetoolRuntime.Application(canvasElement, {autoRender: true});
 
@@ -84,7 +84,7 @@ export const run = async (canvasElement) => {
   };
 
   app
-    .load('https://image.notbucai.com/static/k.splinecode?t=23')
+    .load('https://image.notbucai.com/static/key/scene.splinecode?t=2')
     .then(() => {
       document.addEventListener('keydown', listenHandle('down'));
       document.addEventListener('keyup', listenHandle('up'));

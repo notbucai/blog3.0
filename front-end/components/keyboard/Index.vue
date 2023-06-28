@@ -1,6 +1,6 @@
 <template>
   <div class="keyboard" >
-    <canvas ref="canvas" />  
+    <canvas ref="canvas" />
   </div>
 </template>
 <script>
@@ -12,8 +12,11 @@ export default {
     };
   },
   async mounted() {
+    const width = window.innerWidth * 0.3;
     const el = this.$refs['canvas'];
-    this.splineApp = await run(el);
+    this.splineApp = await run(el, {
+      width,
+    });
   },
   beforeDestroy() {
     this.splineApp.dispose();
@@ -26,7 +29,7 @@ export default {
   .keyboard {
     position: fixed;
     z-index: 8;
-    width: 30vw;
+    width: 38vw;
     right: 0;
     bottom: 0;
     pointer-events: none;

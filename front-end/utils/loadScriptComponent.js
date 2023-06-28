@@ -3,7 +3,7 @@
  * @Date: 2022-03-09 09:50:47
  * @LastEditors: bucai<1450941858@qq.com>
  * @LastEditTime: 2023-01-15 16:15:13
- * @Description: 
+ * @Description:
  */
 export const asyncLoad = {
   async mavonEditorComponent() {
@@ -93,7 +93,7 @@ export const asyncLoad = {
       linkElement.type = 'module';
       // 临时处理一下
       linkElement.innerHTML = `
-          import * as runtime from '//unpkg.com/@splinetool/runtime@0.9.42';
+          import * as runtime from '//image.notbucai.com/static/key/runtime.js';
           ${loadCallback}(runtime.Application)
           window.SplinetoolRuntime = runtime;
         `;

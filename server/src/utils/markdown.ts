@@ -6,6 +6,7 @@ const md = require('markdown-it')({
   linkify: true,
 })
   .use(require('markdown-it-highlightjs')) // 代码高亮 目前太大了
+  .use(require('markdown-it-math'))
   .use(require('markdown-it-link-attributes'), {
     attrs: {
       target: "_blank",
@@ -13,7 +14,7 @@ const md = require('markdown-it')({
     },
   })
   .use(require('./markdown-it-sanitizer'), {
-    extraTags: ['details', 'summary']
+    extraTags: ['details', 'summary', 'math', 'mi', 'mo', 'mrow', 'mfrac']
   });
 md.disable("entity");
 

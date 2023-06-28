@@ -1536,6 +1536,13 @@
   "resolved" "https://registry.npmmirror.com/array-unique/-/array-unique-0.3.2.tgz"
   "version" "0.3.2"
 
+"ascii2mathml@^0.6.2":
+  "integrity" "sha512-tkPONh2Y7ZpuGQw6AiRnExX/CSYf5C2T/rF+UMJq5n0Us7+QjL8VY5ZE16xo9wcXhdqPkl/F7lzEzU9HX0YKng=="
+  "resolved" "https://registry.npmmirror.com/ascii2mathml/-/ascii2mathml-0.6.2.tgz"
+  "version" "0.6.2"
+  dependencies:
+    "minimist" "^1.2.0"
+
 "asn1.js@^5.2.0":
   "integrity" "sha512-+I//4cYPccV8LdmBLiX8CYvf9Sp3vQsrqu2QNXRcrbiWvcx/UdlFiqUJJzxRQxgsZmvhXhn4cSKeSmoFjVdupA=="
   "resolved" "https://registry.npmmirror.com/asn1.js/-/asn1.js-5.4.1.tgz"
@@ -5942,6 +5949,13 @@
   "integrity" "sha512-ssjxSLlLfQBkX6BvAx1rCPrx7ZoK91llQQvS3P7KXvlbnVD34OUkfXwWecN7su/7mrI/HOW0RI5szdJOIqYC3w=="
   "resolved" "https://registry.npmjs.org/markdown-it-link-attributes/-/markdown-it-link-attributes-4.0.0.tgz"
   "version" "4.0.0"
+
+"markdown-it-math@^4.1.1":
+  "integrity" "sha512-LQ0hREgMgN4tNcy2PGyw1XypjmKJjc+ZzATMuDIVD/Bagr5SGL198uHleVdiFDrNdXpqVmL4N1KD1GYyftMakQ=="
+  "resolved" "https://registry.npmmirror.com/markdown-it-math/-/markdown-it-math-4.1.1.tgz"
+  "version" "4.1.1"
+  optionalDependencies:
+    "ascii2mathml" "^0.6.2"
 
 "markdown-it@^11.0.0":
   "integrity" "sha512-aU1TzmBKcWNNYvH9pjq6u92BML+Hz3h5S/QpfTFwiQF852pLT+9qHsrhM9JYipkOXZxGn+sGH8oyJE9FD9WezQ=="

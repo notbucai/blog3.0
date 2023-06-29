@@ -69,6 +69,7 @@
     "pino": "^5.17.0",
     "pinyin": "^3.0.0-alpha.5",
     "pm2": "^5.1.2",
+    "qcloud-cos-sts": "^3.1.0",
     "qcloudsms_js": "^0.1.1",
     "reflect-metadata": "^0.1.13",
     "request-ip": "^2.1.3",

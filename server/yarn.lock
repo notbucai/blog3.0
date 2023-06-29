@@ -592,6 +592,20 @@
     "@node-rs/jieba-win32-ia32-msvc" "1.6.1"
     "@node-rs/jieba-win32-x64-msvc" "1.6.1"
 
+"@notbucai/baidu-aip-sdk@^2.4.6":
+  "integrity" "sha512-Mmxoagvdn6DKzS2FFCo8l4sIJVlQUAKqEQi2F4AQZRjotqZ5uvHHbaqUVjUwZszjMFr5i858STWYL1/FonLAfA=="
+  "resolved" "https://registry.npmjs.org/@notbucai/baidu-aip-sdk/-/baidu-aip-sdk-2.4.6.tgz"
+  "version" "2.4.6"
+  dependencies:
+    "debug" "^2.6.0"
+    "iconv-lite" "^0.4.15"
+    "keep-alive-agent" "0.0.1"
+    "request" "^2.79.0"
+    "underscore" "^1.8.3"
+  optionalDependencies:
+    "mocha" "^4.0.1"
+    "should" "^13.2.0"
+
 "@nuxtjs/opencollective@0.3.2":
   "integrity" "sha512-um0xL3fO7Mf4fDxcqx9KryrB7zgRM5JSlvGN5AGkP6JLM5XEKyjeAiPbNxdXVXQ16isuAhYpvP88NgL2BGd6aA=="
   "resolved" "https://registry.npmmirror.com/@nuxtjs/opencollective/-/opencollective-0.3.2.tgz"
@@ -7436,6 +7450,13 @@
   "resolved" "https://registry.npmmirror.com/punycode/-/punycode-1.3.2.tgz"
   "version" "1.3.2"
 
+"qcloud-cos-sts@^3.1.0":
+  "integrity" "sha512-qZvW6jVJuIjmhqNrsJAKJ9RtWOHaaWzZ/mVWF3+yRJIaIV0+L08IFfFLgS7g3MRHHRoYYU5Cnv8R071c+2py8A=="
+  "resolved" "https://registry.npmjs.org/qcloud-cos-sts/-/qcloud-cos-sts-3.1.0.tgz"
+  "version" "3.1.0"
+  dependencies:
+    "request" "^2.88.0"
+
 "qcloudsms_js@^0.1.1":
   "integrity" "sha512-ewdlD32XF0BkV5sGNCFHCR9FSf6fi6PijJGX1YkowFziycYUyoCThDWKM0aeZG6kSQ1y8qHHBYFhAl7JTSlhuQ=="
   "resolved" "https://registry.npmmirror.com/qcloudsms_js/-/qcloudsms_js-0.1.1.tgz"
@@ -7807,7 +7828,7 @@
     "stealthy-require" "^1.1.1"
     "tough-cookie" "^2.3.3"
 
-"request@^2.34", "request@^2.79.0", "request@^2.87.0", "request@^2.88.2":
+"request@^2.34", "request@^2.79.0", "request@^2.87.0", "request@^2.88.0", "request@^2.88.2":
   "integrity" "sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw=="
   "resolved" "https://registry.npmmirror.com/request/-/request-2.88.2.tgz"
   "version" "2.88.2"

@@ -8,7 +8,7 @@ export class CosService {
   constructor(
     private readonly configService: ConfigService
   ) {
-    this.cos = new COSActions(this.configService.cos, this.configService.static.imgPath);
+    this.cos = new COSActions(this.configService.cos);
   }
 
   public async uploadImage(img: FileDto) {
@@ -17,7 +17,12 @@ export class CosService {
     if (error) {
       throw error
     }
-    return '//' + imgPath;
+
+    return `${this.configService.static.imgPath}/${imgPath}`;
+  }
+
+  public async getUploadToken() {
+    
   }
 
 }

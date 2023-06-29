@@ -15,13 +15,12 @@ import { promisify } from 'util';
 export class COSActions {
   private readonly options: COSConfig;
   private client: any;
-  constructor(options: COSConfig, Domain: string) {
+  constructor(options: COSConfig) {
 
     this.options = options;
     this.client = new COS({
       SecretId: options.SecretId,
       SecretKey: options.SecretKey,
-      Domain
     });
   }
   public async uploadImg(path: string, body: any) {
@@ -36,15 +35,16 @@ export class COSActions {
         Body: body,
       });
       if (res.statusCode === 200) {
-        resData[1] = res.Location;
+        resData[1] = path;
       } else {
         resData[0] = res;
       }
     } catch (error) {
       resData[0] = error;
     }
-
     return resData;
+  }
+  public async getUploadToken() {
   }
 }
 

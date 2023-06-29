@@ -52,6 +52,15 @@ export class CommonController {
     return this.cosService.uploadImage(file);
   }
 
+  @Get('upload/sts')
+  @UseGuards(ActiveGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "图片上传权限管理" })
+  public uploadSts (@Query('type') type: string) {
+    
+    // -
+  }
+
   @Post('sendPhoneCode')
   @ApiOperation({ summary: "发送手机验证码" })
   @ApiQuery({ name: 'phone', example: "13767284559" })

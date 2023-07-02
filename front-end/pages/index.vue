@@ -1,8 +1,8 @@
 <template>
   <div>
-    <!-- <v-container class="content-container"> -->
+    <v-container class="content-container">
       <banner :recommendedList="recommendedList" v-if="recommendedList && recommendedList.length" />
-    <!-- </v-container> -->
+    </v-container>
     <v-container class="content-container">
       <!-- class="my-4" -->
       <v-row>

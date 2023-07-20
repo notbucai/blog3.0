@@ -11,7 +11,7 @@
     "start": "env-cmd -f .env.prod nest start",
     "start:dev": "env-cmd -f .env.dev nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "env-cmd -f .env.prod node dist/main",
+    "start:prod": "node dist/main",
     "start:pm2": "env-cmd -f .env.prod pm2-runtime start dist/main.js -i 0 npm --name blog-server",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",

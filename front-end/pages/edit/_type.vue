@@ -333,6 +333,11 @@ export default {
 };
 </script>
 <style lang="scss">
+.theme--dark {
+  .a_title {
+    color: #fff;
+  }
+}
 .Index {
   width: 100%;
   height: 100%;

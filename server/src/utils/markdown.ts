@@ -14,7 +14,7 @@ const md = require('markdown-it')({
     },
   })
   .use(require('./markdown-it-sanitizer'), {
-    extraTags: ['details', 'summary', 'math', 'mi', 'mo', 'mrow', 'mfrac']
+    extraTags: ['details', 'summary', 'math'],
   });
 md.disable("entity");
 

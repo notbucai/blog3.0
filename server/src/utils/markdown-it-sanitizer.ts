@@ -120,7 +120,7 @@ module.exports = function sanitizer_plugin (md, options) {
       }
 
       // whitelisted tags
-      match = tag.match(/<(\/?)(b|blockquote|code|em|h[1-6]|li|ol(?: start="\d+")?|p|pre|s|sub|sup|strong|ul|details|summary)>/i);
+      match = tag.match(/<(\/?)(b|blockquote|code|em|h[1-6]|li|ol(?: start="\d+")?|p|pre|s|sub|sup|strong|ul|details|summary|math(?: .*?)|maction|annotation|annotation-xml|menclose|merror|mfenced|mfrac|mi|mmultiscripts|mn|mo|mover|mpadded|mphantom|mprescripts|mroot|mrow|ms|semantics|mspace|msqrt|mstyle|msub|msup|msubsup|mtable|mtd|mtext|mtr|munder|munderover|math|mi|mn|mo|ms|mspace|mtext|menclose|merror|mfenced|mfrac|mpadded|mphantom|mroot|mrow|msqrt|mstyle|mmultiscripts|mover|mprescripts|msub|msubsup|msup|munder|munderover|mtable|mtd|mtr|maction|annotation|annotation-xml|semantics)>/i);
       if (match && !/<\/ol start="\d+"/i.test(tag)) {
         runBalancer = true;
         tagnameIndex = allowedTags.indexOf(match[2].toLowerCase().split(' ')[0]);
@@ -217,6 +217,7 @@ module.exports = function sanitizer_plugin (md, options) {
 
     // replace unbalanced tags
     for (blkIdx = 0; blkIdx < state.tokens.length; blkIdx++) {
+      
       if (state.tokens[blkIdx].type === 'html_block') {
         state.tokens[blkIdx].content = replaceAllUnbalancedTags(state.tokens[blkIdx].content);
         continue;

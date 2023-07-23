@@ -22,6 +22,7 @@ import MysqlConfig from './type/MysqlConfig';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
 import { NacosConfigClient } from 'nacos'
+import BaiduMapConfig from './type/BaiduMapCconfig';
 
 enum configModeEnum {
   File = 'file',
@@ -52,6 +53,7 @@ export class ConfigService {
   wxmp: WxMpConfig;
   wechat: WeChatConfig;
   censor: CensorConfig;
+  baiduMap: BaiduMapConfig;
   
   static DATA_CATCH: any;
 
@@ -76,6 +78,7 @@ export class ConfigService {
     this.wechat = new WeChatConfig(loadConfig.wxMp);
     this.wxmp = new WxMpConfig(loadConfig.wxmp_oauth);
     this.censor = new CensorConfig(loadConfig.censor);
+    this.baiduMap = new BaiduMapConfig(loadConfig.baiduMap);
   }
 
   public static async init () {

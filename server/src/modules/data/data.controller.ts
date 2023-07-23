@@ -2,13 +2,16 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { DataService } from './data.service';
+import { ClientIpService } from '../client-ip/client-ip.service';
 
 @Controller('data')
 @ApiTags("数据接口")
 export class DataController {
 
   constructor(
-    private readonly dataService: DataService
+    private readonly dataService: DataService,
+
+    private readonly clientIpService: ClientIpService,
   ) { }
 
 
@@ -52,5 +55,10 @@ export class DataController {
       historyBrowse, historyComment, historyUser,
       tags, userType, author
     }
+  }
+
+  @Get('test')
+  async test () {
+    return this.clientIpService.generateClientIpInfo();
   }
 }

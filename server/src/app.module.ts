@@ -27,6 +27,7 @@ import { NotifyModule } from './modules/notify/notify.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { GatewayModule } from './modules/gateway/gateway.module';
 // import { TransferModule } from './modules/transfer/transfer.module';
+import { ClientIpModule } from './modules/client-ip/client-ip.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { GatewayModule } from './modules/gateway/gateway.module';
     NotifyModule,
     AuthModule,
     GatewayModule,
+    ClientIpModule,
     // TransferModule,
   ],
   controllers: [],
@@ -96,6 +98,6 @@ export class AppModule implements NestModule, OnApplicationBootstrap {
   }
 
   onApplicationBootstrap () {
-    this.keywordsService.generateKeywordsCloud()
+    // this.keywordsService.generateKeywordsCloud()
   }
 }

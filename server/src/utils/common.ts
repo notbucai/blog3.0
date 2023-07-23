@@ -48,3 +48,8 @@ export const md5 = (str: string): string => {
     const key = _md5.update(str).digest('hex');
     return key;
 };
+
+// 延迟
+export const delay = (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};

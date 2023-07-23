@@ -150,7 +150,7 @@ export class ArticleController {
     await this.articleService.addViewCount(id);
 
     const article = await this.articleService.findById(id);
-    await this.articleReadService.record(id, ipAddress);
+    this.articleReadService.record(id, ipAddress);
     return article;
   }
 

@@ -3,10 +3,11 @@ import { TasksService } from './tasks.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerService } from '../logger.service';
 import { KeywordsModule } from '../../modules/keywords/keywords.module';
+import { ClientIpModule } from '../../modules/client-ip/client-ip.module';
 
 @Module({
+  imports: [ScheduleModule.forRoot(), KeywordsModule, ClientIpModule],
   providers: [TasksService, LoggerService],
-  imports: [ScheduleModule.forRoot(), KeywordsModule],
   exports: [TasksService]
 })
 export class TasksModule { }

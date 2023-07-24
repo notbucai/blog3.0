@@ -104,7 +104,7 @@ export class ClientIpService {
     const domain = domains[Math.floor(Math.random() * domains.length)];
     const url = `${domain}/json/${ip}?lang=zh-CN&fields=status,message,country,countryCode,region,regionName,city,lat,lon`;
     const res = await http.get<IIpApiData>(url, {
-      timeout: 8 * 1000,
+      timeout: 10 * 1000,
     });
     const header = res.headers || {};
     // X-Rl、X-Ttl

@@ -65,6 +65,6 @@ export class DataController {
   }
   @Get('test')
   async test () {
-    return this.articleReadService.groupDays();
+    return this.clientIpService.generateClientIpInfo()
   }
 }

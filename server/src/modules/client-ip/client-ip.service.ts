@@ -3,11 +3,13 @@ import { ReadService } from '../article/read.service';
 import { ArticleService } from '../article/article.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientIpInfo as ClientIpInfoRepository } from '../../entities/ClientIpInfo';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ConfigService } from '../../config/config.service';
 import http from '../../plugins/axios';
 import { LoggerService } from '../../common/logger.service';
-import { delay } from '../../utils/common';
+import { delay, md5 } from '../../utils/common';
+import { URLSearchParams } from 'url';
+import { chunk } from 'lodash';
 
 @Injectable()
 export class ClientIpService {
@@ -39,16 +41,71 @@ export class ClientIpService {
       },
     });
   }
+  getRowByInIps(ips: string[]) {
+    return this.clientIpInfoRepository.find({
+      where: {
+        ip: In(ips),
+      },
+      select: ['ip'],
+    });
+  }
+  async getClientInfoByIpOfQQMap(ip: string) {
+    const appKey = this.configService.qqMap.key;
+    const sk = this.configService.qqMap.sk;
+    const params: Record<string, string> = {
+      key: appKey,
+      ip,
+    };
+    // key排序
+    const keys = Object.keys(params).sort();
+    // 拼接字符串
+    const paramStr = keys
+      .reduce((pv, curr) => {
+        return pv + curr + '=' + params[curr] + '&';
+      }, '')
+      .replace(/&$/, '');
 
+    const tempStr = `/ws/location/v1/ip?${paramStr}${sk}`;
+
+    // md5
+    const sig = md5(tempStr);
+    params.sig = sig;
+    this.loggerService.info({
+      message: `getClientInfoByIpOfQQMap tempStr: ${tempStr} sig: ${sig}`,
+    });
+    const url = `https://apis.map.qq.com/ws/location/v1/ip?${new URLSearchParams(
+      params,
+    )}`;
+    const res = await http.get<IQQLocationIpResponse>(url);
+    const data = res.data;
+    if (data?.status !== 0) {
+      throw new Error(data?.message);
+    }
+    const clientIpInfo = new ClientIpInfoRepository();
+
+    clientIpInfo.ip = ip;
+    clientIpInfo.city = data?.result?.ad_info?.city;
+    clientIpInfo.country = data?.result?.ad_info?.nation;
+    clientIpInfo.countryCode = data?.result?.ad_info?.nation_code?.toString();
+    clientIpInfo.lat = data?.result?.location?.lat;
+    clientIpInfo.lon = data?.result?.location?.lng;
+    clientIpInfo.region = data?.result?.ad_info?.province;
+    clientIpInfo.regionName = data?.result?.ad_info?.district;
+
+    return clientIpInfo;
+  }
   async getClientInfoByIp(ip: string) {
     // 国外 http://ip-api.com/json/218.206.197.134?lang=zh-CN&fields=status,message,country,countryCode,region,regionName,city,lat,lon
     // 百度 https://api.map.baidu.com/location/ip?ak=您的AK&ip=您的IP&coor=bd09ll
     // const appKey = this.configService.baiduMap.appKey;
     // const url = `https://api.map.baidu.com/location/ip?ak=${appKey}&ip=${ip}&coor=bd09ll`;
     // const res = await http.get<IBaiduLocationIp>(url);
-
-    const url = `http://ip-api.com/json/${ip}?lang=zh-CN&fields=status,message,country,countryCode,region,regionName,city,lat,lon`;
-    const res = await http.get<IIpApiData>(url);
+    const domains = ['http://ip-api.com'];
+    const domain = domains[Math.floor(Math.random() * domains.length)];
+    const url = `${domain}/json/${ip}?lang=zh-CN&fields=status,message,country,countryCode,region,regionName,city,lat,lon`;
+    const res = await http.get<IIpApiData>(url, {
+      timeout: 8 * 1000,
+    });
     const header = res.headers || {};
     // X-Rl、X-Ttl
     const xrl = header['x-rl'];
@@ -84,46 +141,53 @@ export class ClientIpService {
       message: `ips: ${ips.length}`,
     });
     // 查信息，控制并发1分钟最多30个请求
-    const COMPLICATION_SIZE = 40;
-    const COMPLICATION_ITEM_TIME = (1000 * 60) / COMPLICATION_SIZE;
+    const COMPLICATION_SIZE = 15;
+    const existRows = await this.getRowByInIps(ips);
+    const existIps = existRows.map(item => item.ip);
+    // 去重
+    const newIps = ips.filter(item => {
+      return !existIps.includes(item);
+    });
+    // COMPLICATION_SIZE个一组
+    const chunkIps = chunk(newIps, COMPLICATION_SIZE);
 
-    for (let i = 0; i < ips.length; i++) {
-      let startNow = Date.now();
-      const ip = ips[i];
-
-      try {
-        this.loggerService.info({
-          message: `start: [${i}]: ip: ${ip}, startNow: ${startNow}`,
-        });
-        const row = await this.getRowByIp(ip);
-        if (row) {
-          startNow -= COMPLICATION_ITEM_TIME;
+    for (let i = 0; i < chunkIps.length; i++) {
+      const ips = chunkIps[i];
+      const chunkStartTime = Date.now();
+      const promiseList = ips.map(async ip => {
+        try {
           this.loggerService.info({
-            message: `ip: ${ip}, row: ${row}, startNow: ${startNow}`,
+            message: `start: [${i}]: ip: ${ip}`,
           });
-          continue;
+          const row = await this.getRowByIp(ip);
+          if (row) {
+            this.loggerService.info({
+              message: `ip: ${ip}, row: ${row}`,
+            });
+            return;
+          }
+          const clientIpInfo = await this.getClientInfoByIp(ip);
+          this.loggerService.info({
+            message: `getClientInfoByIp: [${i}]: ip: ${ip}`,
+            data: clientIpInfo,
+          });
+          await this.clientIpInfoRepository.save(clientIpInfo);
+        } catch (error) {
+          this.loggerService.error({
+            message: `ip: ${ip}, esg: ${error?.message}.`,
+            data: error,
+          });
+        } finally {
+          this.loggerService.info({
+            message: `finally: [${i}]: ip: ${ip}}`,
+          });
         }
-        const clientIpInfo = await this.getClientInfoByIp(ip);
-        this.loggerService.info({
-          message: `getClientInfoByIp: [${i}]: ip: ${ip}`,
-          data: clientIpInfo,
-        });
-        await this.clientIpInfoRepository.save(clientIpInfo);
-      } catch (error) {
-        this.loggerService.error({
-          message: `ip: ${ip}, esg: ${error?.message}.`,
-          data: error,
-        });
-      } finally {
-        this.loggerService.info({
-          message: `finally: [${i}]: ip: ${ip}}`,
-        });
-        let endNow = Date.now();
-        let diff = endNow - startNow;
-        if (diff < COMPLICATION_ITEM_TIME) {
-          await delay(COMPLICATION_ITEM_TIME - diff);
-        }
-      }
+      });
+      await Promise.all(promiseList);
+      const chunkEndTime = Date.now();
+      const chunkDiffTime = chunkEndTime - chunkStartTime;
+      // 查看是否超过1分钟，如果没有就延迟间隔
+      await delay(5 * 1000);
     }
   }
 
@@ -143,7 +207,6 @@ export class ClientIpService {
       try {
         // 如果没有就取1970年1月1日
         const readOnlyData = await this.articleReadService.findAfterDateRows(
-          lastDate,
           LIMIT,
           readOnlyRowsNum * LIMIT,
         );

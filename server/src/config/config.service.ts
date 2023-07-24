@@ -23,6 +23,7 @@ import { resolve } from 'path';
 import { existsSync } from 'fs';
 import { NacosConfigClient } from 'nacos'
 import BaiduMapConfig from './type/BaiduMapCconfig';
+import QQMapConfig from './type/QQMapConfig';
 
 enum configModeEnum {
   File = 'file',
@@ -54,6 +55,7 @@ export class ConfigService {
   wechat: WeChatConfig;
   censor: CensorConfig;
   baiduMap: BaiduMapConfig;
+  qqMap: QQMapConfig;
   
   static DATA_CATCH: any;
 
@@ -79,6 +81,7 @@ export class ConfigService {
     this.wxmp = new WxMpConfig(loadConfig.wxmp_oauth);
     this.censor = new CensorConfig(loadConfig.censor);
     this.baiduMap = new BaiduMapConfig(loadConfig.baiduMap);
+    this.qqMap = new QQMapConfig(loadConfig.qqMap);
   }
 
   public static async init () {

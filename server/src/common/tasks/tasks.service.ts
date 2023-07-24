@@ -34,11 +34,18 @@ export class TasksService {
     name: 'generate client ip info',
   })
   async generateClientIpInfo() {
+    // 如果任务正在执行，则不执行
+    const isRunning = await this.redis.getCache('task:generateClientIpInfo');
+    if (isRunning) {
+      return;
+    }
+    this.redis.setCache('task:generateClientIpInfo', '1', 60 * 60 * 4 - 60);
     // start logger
     this.logger.info({
       message: 'generate client ip info start',
     });
     await this.clientIpService.generateClientIpInfo();
+    await this.redis.delCache('task:generateClientIpInfo');
     // end logger
     this.logger.info({
       message: 'generate client ip info end',

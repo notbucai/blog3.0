@@ -139,14 +139,12 @@ export class ReadService {
   }
   // 查询某个时间之后的数据
   async findAfterDateRows(
-    date: Date,
     limit: number = 1000,
     offset: number = 0,
   ) {
     const query = this.articleReadRepository
       .createQueryBuilder('article_read')
       .where({
-        createAt: MoreThanOrEqual(date),
         ip: Like('%.%.%.%'),
       })
       .andWhere({
@@ -154,6 +152,9 @@ export class ReadService {
       })
       .andWhere({
         ip: Not(In(['127.0.0.1', 'localhost'])),
+      })
+      .andWhere({
+        ip: Not(In([]))
       })
       // .distinctOn(['ip'])
       .distinct(true)

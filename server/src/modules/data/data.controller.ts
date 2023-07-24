@@ -3,12 +3,14 @@ import { ApiTags } from '@nestjs/swagger';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { DataService } from './data.service';
 import { ClientIpService } from '../client-ip/client-ip.service';
+import { ReadService } from '../article/read.service';
 
 @Controller('data')
 @ApiTags("数据接口")
 export class DataController {
 
   constructor(
+    private readonly articleReadService: ReadService,
     private readonly dataService: DataService,
 
     private readonly clientIpService: ClientIpService,
@@ -56,9 +58,13 @@ export class DataController {
       tags, userType, author
     }
   }
-
+  @Get('dv')
+  async dv () {
+    const data = await this.dataService.dv();
+    return data || {};
+  }
   @Get('test')
   async test () {
-    return this.clientIpService.generateClientIpInfo();
+    return this.articleReadService.groupDays();
   }
 }

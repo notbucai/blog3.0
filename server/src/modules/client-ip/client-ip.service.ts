@@ -148,7 +148,10 @@ export class ClientIpService {
           readOnlyRowsNum * LIMIT,
         );
         const readOnlyRows = readOnlyData.rows;
-        total = readOnlyData.total;
+        // 避免死循环
+        if (total === 0) {
+          total = readOnlyData.total;
+        }
         // 1. 取出所有ip
         let ips = readOnlyRows.map(item => item.ip);
         // 去重
@@ -170,5 +173,39 @@ export class ClientIpService {
     } while (total > readOnlyRowsNum * LIMIT);
 
     return total;
+  }
+
+  groupByLonLat() {
+    return this.clientIpInfoRepository
+      .createQueryBuilder('client_ip_info')
+      .select('count(*) as count, client_ip_info.lon, client_ip_info.lat')
+      .groupBy('client_ip_info.lon, client_ip_info.lat')
+      .orderBy({
+        count: 'DESC',
+      })
+      .getRawMany();
+  }
+
+  groupByCity() {
+    return this.clientIpInfoRepository
+      .createQueryBuilder('client_ip_info')
+      .select('count(*) as count, client_ip_info.city')
+      .groupBy('client_ip_info.city')
+      .orderBy({
+        count: 'DESC',
+      })
+      .limit(30)
+      .getRawMany();
+  }
+  groupByRegion() {
+    return this.clientIpInfoRepository
+      .createQueryBuilder('client_ip_info')
+      .select('count(*) as count, client_ip_info.regionName')
+      .groupBy('client_ip_info.regionName')
+      .orderBy({
+        count: 'DESC',
+      })
+      .limit(30)
+      .getRawMany();
   }
 }

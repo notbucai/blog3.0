@@ -112,6 +112,31 @@ export class ReadService {
   count() {
     return this.articleReadRepository.count();
   }
+  countToday() {
+    const date = moment().format('YYYY-MM-DD');
+    return this.articleReadRepository.countBy({
+      createAt: Between(
+        new Date(date + ' 00:00:00'),
+        new Date(date + ' 23:59:59'),
+      ),
+    });
+  }
+  groupDays() {
+    return this.articleReadRepository
+      .createQueryBuilder('article_read')
+      .select('count(*) as count, date(article_read.create_at) as date')
+      .groupBy('date')
+      .where({
+        createAt: Between(
+          new Date(moment().add(-30, 'day').format('YYYY-MM-DD') + ' 00:00:00'),
+          new Date(moment().format('YYYY-MM-DD') + ' 23:59:59'),
+        ),
+      })
+      .orderBy({
+        date: 'DESC',
+      })
+      .getRawMany();
+  }
   // 查询某个时间之后的数据
   async findAfterDateRows(
     date: Date,

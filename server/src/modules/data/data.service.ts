@@ -5,17 +5,26 @@ import { CommentService } from '../comment/comment.service';
 import { TagService } from '../tag/tag.service';
 import { UserService } from '../user/user.service';
 import { DateType } from '../../constants/constants';
+import { ClientIpService } from '../client-ip/client-ip.service';
+import { RedisService } from '../../redis/redis.service';
 
 
 @Injectable()
 export class DataService {
 
+  static readonly DV_KEY = 'bucai:blog_dv';
+
   constructor(
+    private readonly redis: RedisService,
+
     private readonly articleService: ArticleService,
     private readonly articleReadService: ReadService,
     private readonly commentService: CommentService,
     private readonly userService: UserService,
     private readonly tagService: TagService,
+
+
+    private readonly clientIpService: ClientIpService,
   ) { }
 
 
@@ -99,6 +108,11 @@ export class DataService {
   // -作者 数据信息
   author () {
     return this.userService.authorData();
+  }
+
+  // dv
+  dv () {
+    return this.redis.getJson(DataService.DV_KEY)
   }
 
 }

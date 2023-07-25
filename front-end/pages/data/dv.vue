@@ -69,6 +69,8 @@
 import Earth from '../../dv/earth/main.js';
 import * as echarts from 'echarts';
 
+import { format } from 'date-fns';
+
 export default {
   layout: 'empty',
   data() {
@@ -80,11 +82,11 @@ export default {
   methods: {
     async handleLoadData() {
       const dvData = await this.$axios.get('/api/data/dv');
+      this.initDataChangeLine(dvData.readCountDays);
       this.earth.renderData({
         lat: 30,
         lon: 120,
       }, dvData.groupByLonLat.filter(item => item.count > 1));
-      this.initDataChangeLine(dvData.readCountDays);
     },
     init() {
       const container = this.$refs.container;
@@ -97,6 +99,7 @@ export default {
       this.handleLoadData();
     },
     initDataChangeLine(data) {
+      console.log('data', data);
       const myChart = echarts.init(this.$refs['chart-el']);
       // data
       const option = {
@@ -110,7 +113,7 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: data.map(item => format(new Date(item.date), 'MM-dd')),
           // boundaryGap: false,
           axisLabel: {
             color: '#fff',
@@ -136,20 +139,20 @@ export default {
         },
         series: [
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: data.map(item => item.count),
             type: 'line',
             smooth: true,
             // 点大小
-            symbolSize: 10,
+            symbolSize: 4,
           },
           {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: data.map(item => item.count),
             type: 'bar',
+            barMaxWidth: 20,
             // 圆角
             itemStyle: {
               barBorderRadius: [5, 5, 0, 0],
               // 限制宽度
-              barMaxWidth: 8,
             },
           }
         ]
@@ -252,6 +255,7 @@ export default {
         border-radius: 0.5vw;
         width: 100%;
         box-shadow: 0 0 1vw 0 rgba($color: #ffffff, $alpha: .1);
+
         &.echarts {
           width: 100%;
           height: 20vh;

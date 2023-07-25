@@ -16,7 +16,7 @@
           <div class="info-card-title">访问总统计</div>
           <div class="info-card-content">
             <div class="info-card-content-number">
-              123,12312
+              {{ dvData.readCount || '-' }}
             </div>
           </div>
         </div>
@@ -26,7 +26,7 @@
             <div class="info-card-title">流量城市</div>
             <div class="info-card-content">
               <div class="info-card-content-text">
-                江西
+                {{ city || '-' }}
               </div>
             </div>
           </div>
@@ -34,7 +34,7 @@
             <div class="info-card-title">今日访问</div>
             <div class="info-card-content">
               <div class="info-card-content-number">
-                123,22
+                {{ dvData.readCountToday || '-' }}
               </div>
             </div>
           </div>
@@ -74,7 +74,14 @@ import { format } from 'date-fns';
 export default {
   layout: 'empty',
   data() {
-    return {};
+    return {
+      dvData: {},
+    };
+  },
+  computed: {
+    city() {
+      return this.dvData?.groupByCity?.[0]?.city || '-';
+    }
   },
   mounted() {
     this.init();
@@ -82,6 +89,7 @@ export default {
   methods: {
     async handleLoadData() {
       const dvData = await this.$axios.get('/api/data/dv');
+      this.dvData = dvData;
       this.initDataChangeLine(dvData.readCountDays);
       this.earth.renderData({
         lat: 30,

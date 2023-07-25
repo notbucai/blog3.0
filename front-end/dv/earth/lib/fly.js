@@ -12,7 +12,7 @@ export const getArcMesh = (arcInfo) => {
     false, // aClockwise
     0 // aRotation
   );
-  const points = curve.getPoints(20);
+  const points = curve.getPoints(24);
   const _geometry = new THREE.BufferGeometry().setFromPoints(points);
   const _material = new THREE.LineBasicMaterial({
     color: 0x00ffff,
@@ -42,7 +42,7 @@ export const getFlyLineMesh = (arcInfo) => {
     false, // aClockwise
     0 // aRotation
   );
-  const flyPoints = flyCurve.getPoints(20);
+  const flyPoints = flyCurve.getPoints(24);
   const flyGeometry = new THREE.BufferGeometry().setFromPoints(flyPoints);
   const flyMaterial = new THREE.PointsMaterial({
     vertexColors: true,

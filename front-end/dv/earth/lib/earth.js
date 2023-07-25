@@ -16,7 +16,7 @@ export const createEarth = (radius = 100) => {
     // './assets/earth.jpg'
   );
   // 球
-  const geometry = new THREE.SphereGeometry(coreRadius, 26, 26);
+  const geometry = new THREE.SphereGeometry(coreRadius, 32, 32);
   const material = new THREE.MeshPhongMaterial({
     map: texture,
     // normalMap: texture,
@@ -73,7 +73,7 @@ export const createEarth = (radius = 100) => {
   });
 
   // 球体光晕
-  const glowGeometry = new THREE.SphereGeometry(coreRadius + 2, 26, 26);
+  const glowGeometry = new THREE.SphereGeometry(coreRadius + 2, 32, 32);
   const glowMaterial = new THREE.MeshLambertMaterial({
     color: 0xffffff,
     side: THREE.FrontSide,

@@ -222,6 +222,7 @@ module.exports = {
     //   }
     // },
     // plugins: [],
+    transpile: ['three'],
     plugins: [
       // new VueLoaderPlugin(),
       // new VuetifyLoaderPlugin()

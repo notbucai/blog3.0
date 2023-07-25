@@ -16,7 +16,7 @@ export const getShowPoint = (position, val, size = 0.5) => {
   const outRingGeometry = new THREE.RingGeometry(size - gapSize, size, 20);
   const outRingMaterial = new THREE.MeshBasicMaterial({
     color: 0x81f2e1,
-    side: THREE.DoubleSide,
+    side: THREE.BackSide,
   });
   const outRing = new THREE.Mesh(outRingGeometry, outRingMaterial);
   // 旋转角度
@@ -26,7 +26,7 @@ export const getShowPoint = (position, val, size = 0.5) => {
   const innerCircleGeometry = new THREE.CircleGeometry(size - gapSize * 2, 20);
   const innerCircleMaterial = new THREE.MeshBasicMaterial({
     color: 0x81f2e1,
-    side: THREE.DoubleSide,
+    side: THREE.BackSide,
   });
   const innerCircle = new THREE.Mesh(innerCircleGeometry, innerCircleMaterial);
   innerCircle.rotation.x = Math.PI / 2;
@@ -42,7 +42,7 @@ export const getShowPoint = (position, val, size = 0.5) => {
     );
     const rippleRingMaterial = new THREE.MeshBasicMaterial({
       color: 0x81f2e1,
-      side: THREE.DoubleSide,
+      side: THREE.BackSide,
       transparent: true,
       opacity: 0.8,
     });
@@ -68,24 +68,24 @@ export const getShowPoint = (position, val, size = 0.5) => {
   const line = new THREE.Line(lineGeometry, lineMaterial);
   group.add(line);
 
-  new TWEEN.Tween({
-    scale: 1,
-    opacity: 0.8,
-  })
-    .to({
-      scale: 2,
-      opacity: 0,
-    })
-    .onUpdate((obj) => {
-      rippleRingList.forEach((rippleRing, index) => {
-        rippleRing.scale.setScalar(obj.scale - index * 0.1);
-        rippleRing.material.opacity = obj.opacity - index * 0.1;
-      });
-    })
-    .delay(100)
-    .duration(1000)
-    .repeat(Infinity)
-    .start();
+  // new TWEEN.Tween({
+  //   scale: 1,
+  //   opacity: 0.8,
+  // })
+  //   .to({
+  //     scale: 2,
+  //     opacity: 0,
+  //   })
+  //   .onUpdate((obj) => {
+  //     rippleRingList.forEach((rippleRing, index) => {
+  //       rippleRing.scale.setScalar(obj.scale - index * 0.1);
+  //       rippleRing.material.opacity = obj.opacity - index * 0.1;
+  //     });
+  //   })
+  //   .delay(100)
+  //   .duration(1000)
+  //   .repeat(Infinity)
+  //   .start();
 
   return group;
 };

@@ -61,7 +61,7 @@ export const calcArcInfo = (p1, p2) => {
 
   // 计算角度
   const angle = startPosition.angleTo(endPosition);
-  const centerRadiusPositionY = length + angle / 0.2;
+  const centerRadiusPositionY = length + angle / 0.1;
   const centerRadiusPosition = new THREE.Vector3(0, centerRadiusPositionY, 0);
 
   // 计算圆心

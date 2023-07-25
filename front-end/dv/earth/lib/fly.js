@@ -48,7 +48,7 @@ export const getFlyLineMesh = (arcInfo) => {
     vertexColors: true,
     size: 1,
     transparent: true,
-    side: THREE.DoubleSide,
+    side: THREE.FrontSide,
   });
   const flyEllipse = new THREE.Points(flyGeometry, flyMaterial);
   flyEllipse.position.copy(arcInfo.center);

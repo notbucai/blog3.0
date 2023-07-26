@@ -30,7 +30,7 @@ export class TasksService {
   }
 
   // 任务每2个小时执行一次，获取 article_read表中创建时间大于当前2小时之前ip，将ip转位置信息，存入client_ip_info表中
-  @Cron('0 0 0/2 * * *', {
+  @Cron('0 0/10 * * * *', {
     name: 'generate client ip info',
   })
   async generateClientIpInfo() {
@@ -52,7 +52,7 @@ export class TasksService {
     });
   }
   // 任务每15分钟执行一次
-  @Cron('0 0/15 * * * *', {
+  @Cron('0 0/5 * * * *', {
     name: 'calc data visualization',
   })
   async calcDv() {

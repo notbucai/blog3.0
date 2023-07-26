@@ -117,11 +117,17 @@ export class DataService {
     return this.redis.getJson(DataService.DV_KEY);
   }
 
-  record(ip: string, client?: string, userId?: string) {
-    return this.clientRecordRepository.save({
-      ip,
-      client,
-      userId,
-    });
+  async record(ip: string, client?: string, userId?: string) {
+    try {
+      await this.clientRecordRepository.save({
+        ip,
+        client,
+        userId,
+      });
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 }

@@ -1,9 +1,12 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Header, Headers, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ActiveGuard } from '../../core/guards/active.guard';
 import { DataService } from './data.service';
 import { ClientIpService } from '../client-ip/client-ip.service';
 import { ReadService } from '../article/read.service';
+import { IpAddress } from '../../core/decorators/ipAddress.decorator';
+import { CurUser } from '../../core/decorators/user.decorator';
+import { User } from '../../entities/User';
 
 @Controller('data')
 @ApiTags("数据接口")
@@ -63,8 +66,16 @@ export class DataController {
     const data = await this.dataService.dv();
     return data || {};
   }
-  @Get('test')
-  async test () {
-    return this.clientIpService.generateClientIpInfo()
+
+  // @Get('test')
+  // async test () {
+  //   // todo
+  //   return this.clientIpService.generateClientIpInfo();
+  // }
+
+  @Get('record')
+  async record (@IpAddress() ip: string, @Headers('User-Agent') ua?: string, @CurUser() user?: User) {
+    // todo
+    return this.dataService.record(ip, ua, user?.id);
   }
 }

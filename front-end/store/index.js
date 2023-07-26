@@ -51,7 +51,7 @@ export const actions = {
     return Array.isArray(likes) ? likes.find(item => item == uId) : false;
   },
   // nuxtServerInit，用以初始化数据
-  async nuxtServerInit ({ commit }, { app, $axios }) {
+  async nuxtServerInit ({ commit, }, { app, $axios }) {
     // 从cookie中获取token，并且将其中的数据更新到store
     const token = app.$cookies.get('Authorization')
     // 如果存在token
@@ -69,6 +69,8 @@ export const actions = {
       commit('SET_TOKEN', token);
       commit('SET_USER', userinfo);
     }
+    // 记录
+    $axios.get('/api/data/record');
   },
   async updateUserInfo ({ commit, state }, { key, value }) {
     const user = Object.assign({}, state.user);

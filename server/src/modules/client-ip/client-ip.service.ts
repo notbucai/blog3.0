@@ -3,13 +3,14 @@ import { ReadService } from '../article/read.service';
 import { ArticleService } from '../article/article.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientIpInfo as ClientIpInfoRepository } from '../../entities/ClientIpInfo';
-import { In, Repository } from 'typeorm';
+import { In, Like, Not, Repository } from 'typeorm';
 import { ConfigService } from '../../config/config.service';
 import http from '../../plugins/axios';
 import { LoggerService } from '../../common/logger.service';
 import { delay, md5 } from '../../utils/common';
 import { URLSearchParams } from 'url';
 import { chunk } from 'lodash';
+import { ClientRecord } from '../../entities/ClientRecord';
 
 @Injectable()
 export class ClientIpService {
@@ -23,6 +24,9 @@ export class ClientIpService {
 
     @InjectRepository(ClientIpInfoRepository)
     private clientIpInfoRepository: Repository<ClientIpInfoRepository>,
+
+    @InjectRepository(ClientRecord)
+    private readonly clientRecordRepository: Repository<ClientRecord>,
   ) {}
 
   getLastRow() {
@@ -206,14 +210,27 @@ export class ClientIpService {
     do {
       try {
         // 如果没有就取1970年1月1日
-        const readOnlyData = await this.articleReadService.findAfterDateRows(
-          LIMIT,
-          readOnlyRowsNum * LIMIT,
-        );
-        const readOnlyRows = readOnlyData.rows;
+        const readOnlyData = this.clientRecordRepository
+          .createQueryBuilder('client_record')
+          .where({
+            ip: Like('%.%.%.%'),
+          })
+          .andWhere({
+            ip: Not(Like('%:%')),
+          })
+          .andWhere({
+            ip: Not(In(['127.0.0.1', 'localhost', '::1', '0.0.0.0'])),
+          })
+          .distinct(true)
+          .orderBy({
+            create_at: 'DESC',
+          })
+          .skip(LIMIT * readOnlyRowsNum)
+          .take(LIMIT);
+        const readOnlyRows = await readOnlyData.getRawMany();
         // 避免死循环
         if (total === 0) {
-          total = readOnlyData.total;
+          total = await readOnlyData.getCount();
         }
         // 1. 取出所有ip
         let ips = readOnlyRows.map(item => item.ip);

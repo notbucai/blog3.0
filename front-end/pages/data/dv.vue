@@ -106,7 +106,7 @@ export default {
         return {
           ...item,
           // 得到比例
-          percent: item.count / total,
+          percent: item.count / total * 100,
         }
       });
       return list;

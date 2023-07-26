@@ -11,6 +11,7 @@
           <v-btn to="/message" elevation="0" tile text nuxt>留言</v-btn>
           <v-btn to="/links" elevation="0" tile text nuxt>友邻</v-btn>
           <v-btn to="/friends" elevation="0" tile text nuxt>圈子</v-btn>
+          <v-btn href="/data/dv" target="_blank" elevation="0" tile text>大屏</v-btn>
           <!-- <v-btn to="/timelines" elevation="0" tile text nuxt>归档</v-btn> -->
         </div>
         <div class="toolbar-action">

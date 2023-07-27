@@ -17,5 +17,6 @@ import { ClientRecord } from '../../entities/ClientRecord';
   ],
   providers: [DataService],
   controllers: [DataController],
+  exports: [DataService],
 })
 export class DataModule { }

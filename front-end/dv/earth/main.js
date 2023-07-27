@@ -103,10 +103,7 @@ export default class Earth {
       const targetPoint = corePoint.clone();
       // 两点长度
       const distance = originPoint.position.distanceTo(targetPoint.position);
-      // 如果小于1 就忽略
-      if (distance < 4) {
-        return;
-      }
+
       // 核心
       const arcInfo = calcArcInfo(originPoint.position, targetPoint.position);
       const arcMesh = getArcMesh(arcInfo);
@@ -114,20 +111,24 @@ export default class Earth {
 
       const group = new THREE.Group();
       group.add(originPoint);
-      group.add(flyEllipse);
-      group.add(arcMesh);
+      // 如果小于1 就忽略
+      if (distance > 10) {
 
-      new TWEEN.Tween(flyEllipse.rotation)
-        .to(
-          {
-            z: arcInfo.endAngle - arcInfo.startAngle + flyEllipse.rotation.z,
-          },
-          1000 * (distance / size)
-        )
-        .easing(TWEEN.Easing.Linear.None)
-        .delay(100)
-        .repeat(Infinity)
-        .start();
+        group.add(flyEllipse);
+        group.add(arcMesh);
+        new TWEEN.Tween(flyEllipse.rotation)
+          .to(
+            {
+              z: arcInfo.endAngle - arcInfo.startAngle + flyEllipse.rotation.z,
+            },
+            1000 * (distance / size)
+          )
+          .easing(TWEEN.Easing.Linear.None)
+          .delay(100)
+          .repeat(Infinity)
+          .start();
+
+      }
 
       return group;
     }).filter(item => item);

@@ -20,6 +20,8 @@ export class TasksService {
     private readonly keywordsService: KeywordsService,
 
     private readonly clientIpService: ClientIpService,
+    private readonly dataService: DataService,
+    // 
   ) {}
 
   @Cron('0 0 0 * * *', {
@@ -67,10 +69,15 @@ export class TasksService {
     const groupByCity = await this.clientIpService.groupByCity();
     // 2.2 省份
     const groupByRegion = await this.clientIpService.groupByRegion();
-    // 3.总数
+    // 3.阅读总数
     const readCount = await this.articleReadService.count();
-    // 4.今日
+    // 4.今日阅读
     const readCountToday = await this.articleReadService.countToday();
+    // 今日访问
+    const visitCountToday = await this.dataService.recordTodayCount();
+    // 累计访问
+    const visitCount = await this.dataService.recordCount();
+
     // 5.30天数据变化
     const readCountDays = await this.articleReadService.groupDays();
     // 存储数据
@@ -81,6 +88,8 @@ export class TasksService {
       readCount,
       readCountToday,
       readCountDays,
+      visitCount,
+      visitCountToday,
     }, 60 * 60 * 24 * 30);
     // end logger
     this.logger.info({

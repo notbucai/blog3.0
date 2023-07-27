@@ -13,7 +13,7 @@ export const getShowPoint = (position, val, size = 0.5) => {
   );
 
   // 创建外环
-  const outRingGeometry = new THREE.RingGeometry(size - gapSize, size, 20);
+  const outRingGeometry = new THREE.RingGeometry(size - gapSize, size, 5);
   const outRingMaterial = new THREE.MeshBasicMaterial({
     color: 0x81f2e1,
     side: THREE.BackSide,
@@ -22,8 +22,8 @@ export const getShowPoint = (position, val, size = 0.5) => {
   // 旋转角度
   outRing.rotation.x = Math.PI / 2;
   group.add(outRing);
-  // 内圆面
-  const innerCircleGeometry = new THREE.CircleGeometry(size - gapSize * 2, 20);
+  // // 内圆面
+  const innerCircleGeometry = new THREE.CircleGeometry(size - gapSize * 2, 12);
   const innerCircleMaterial = new THREE.MeshBasicMaterial({
     color: 0x81f2e1,
     side: THREE.BackSide,
@@ -32,27 +32,27 @@ export const getShowPoint = (position, val, size = 0.5) => {
   innerCircle.rotation.x = Math.PI / 2;
   group.add(innerCircle);
 
-  const rippleRingList = [];
-  for (let i = 0; i < 3; i++) {
-    // 涟漪
-    const rippleRingGeometry = new THREE.RingGeometry(
-      size + gapSize * i,
-      size + gapSize * i * 1.6,
-      20
-    );
-    const rippleRingMaterial = new THREE.MeshBasicMaterial({
-      color: 0x81f2e1,
-      side: THREE.BackSide,
-      transparent: true,
-      opacity: 0.8,
-    });
-    const rippleRing = new THREE.Mesh(rippleRingGeometry, rippleRingMaterial);
-    rippleRing.rotation.x = Math.PI / 2;
+  // const rippleRingList = [];
+  // for (let i = 0; i < 3; i++) {
+  //   // 涟漪
+  //   const rippleRingGeometry = new THREE.RingGeometry(
+  //     size + gapSize * i,
+  //     size + gapSize * i * 1.6,
+  //     20
+  //   );
+  //   const rippleRingMaterial = new THREE.MeshBasicMaterial({
+  //     color: 0x81f2e1,
+  //     side: THREE.BackSide,
+  //     transparent: true,
+  //     opacity: 0.8,
+  //   });
+  //   const rippleRing = new THREE.Mesh(rippleRingGeometry, rippleRingMaterial);
+  //   rippleRing.rotation.x = Math.PI / 2;
 
-    rippleRingList.push(rippleRing);
-  }
-  // 旋转角度
-  group.add(...rippleRingList);
+  //   rippleRingList.push(rippleRing);
+  // }
+  // // 旋转角度
+  // group.add(...rippleRingList);
 
   const baseLineSize = val;
   // 创建线条

@@ -6,10 +6,18 @@ import { KeywordsModule } from '../../modules/keywords/keywords.module';
 import { ClientIpModule } from '../../modules/client-ip/client-ip.module';
 import { CommonModule } from '../common.module';
 import { ArticleModule } from '../../modules/article/article.module';
+import { DataModule } from '../../modules/data/data.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), KeywordsModule, ClientIpModule, CommonModule, ArticleModule],
+  imports: [
+    ScheduleModule.forRoot(),
+    KeywordsModule,
+    ClientIpModule,
+    CommonModule,
+    ArticleModule,
+    DataModule,
+  ],
   providers: [TasksService, LoggerService],
-  exports: [TasksService]
+  exports: [TasksService],
 })
-export class TasksModule { }
+export class TasksModule {}

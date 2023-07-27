@@ -8,8 +8,9 @@ import { DateType } from '../../constants/constants';
 import { ClientIpService } from '../client-ip/client-ip.service';
 import { RedisService } from '../../redis/redis.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { ClientRecord } from '../../entities/ClientRecord';
+import moment = require('moment');
 
 @Injectable()
 export class DataService {
@@ -129,5 +130,19 @@ export class DataService {
       console.log(error);
       return false;
     }
+  }
+
+  async recordCount() {
+    return this.clientRecordRepository.count();
+  }
+  // toady
+  async recordTodayCount() {
+    const date = moment().format('YYYY-MM-DD');
+    return this.clientRecordRepository.countBy({
+      createAt: Between(
+        new Date(date + ' 00:00:00'),
+        new Date(date + ' 23:59:59'),
+      ),
+    });
   }
 }

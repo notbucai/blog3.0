@@ -16,7 +16,7 @@
           <div class="info-card-title">访问总统计</div>
           <div class="info-card-content">
             <div class="info-card-content-number">
-              {{ dvData.readCount || '-' }}
+              {{ dvData.recordCount || '-' }}
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="info-card-title">今日访问</div>
             <div class="info-card-content">
               <div class="info-card-content-number" style="color: #26EF9B;">
-                {{ dvData.readCountToday || '-' }}
+                {{ dvData.recordTodayCount || '-' }}
               </div>
             </div>
           </div>
@@ -51,7 +51,7 @@
       </div>
 
       <div class="info-right">
-        <div class="info-time">{{nowDate}}</div>
+        <div class="info-time">{{ nowDate }}</div>
         <div class="info-card">
           <div class="info-card-title">城市排行</div>
           <div class="info-card-content">
@@ -60,11 +60,11 @@
               <div class="info-city-list">
                 <div class="info-city-item" v-for="(item, index) in cityList" :key="item.city">
                   <div class="info-city-item-name">
-                    <span>{{index + 1}}、{{item.city}}</span>
-                    <span>{{item.count}}</span>
+                    <span>{{ index + 1 }}、{{ item.city }}</span>
+                    <span>{{ item.count }}</span>
                   </div>
                   <div class="info-city-item-count">
-                    <div class="p" :style="{width: item.percent + '%'}"></div>
+                    <div class="p" :style="{ width: item.percent + '%' }"></div>
                   </div>
                 </div>
               </div>
@@ -86,7 +86,7 @@ import { format } from 'date-fns';
 export default {
   layout: 'empty',
   data () {
-    
+
     return {
       dvData: {},
       nowDate: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
@@ -96,7 +96,7 @@ export default {
     city () {
       return this.dvData?.groupByCity?.[0]?.city || '-';
     },
-    cityList() {
+    cityList () {
       let list = (this.dvData?.groupByCity || []);
       // 取前10条
       list = list.slice(0, 10);
@@ -118,14 +118,26 @@ export default {
   },
   methods: {
     // 当前时间更新
-    renderDate() {
+    renderDate () {
       setInterval(() => {
         this.nowDate = format(new Date(), 'yyyy年MM月dd日 HH:mm:ss');
       }, 800);
     },
     async handleLoadData () {
-      const dvData = await this.$axios.get('/api/data/dv');
+      let dvData = null;
+      const dvDataPromise = this.$axios.get('/api/data/dv');
+      const dvDataStr = localStorage.getItem('dvData');
+      if (dvDataStr) {
+        dvData = JSON.parse(dvDataStr);
+      } else {
+        dvData = await dvDataPromise;
+        localStorage.setItem('dvData', JSON.stringify(dvData));
+      }
       this.dvData = dvData;
+      dvDataPromise.then(e => {
+        this.dvData = e;
+        localStorage.setItem('dvData', JSON.stringify(e));
+      });
       this.initDataChangeLine(dvData.readCountDays);
       this.earth.renderData({
         lat: 30,
@@ -218,6 +230,8 @@ export default {
   height: 100%;
   font-family: DingTalk-JinBuTi, DingTalk;
   line-height: 1;
+  transform: translate3d(0, 0, 0);
+  background-color: #000;
 
   .info-warp {
     position: absolute;
@@ -327,27 +341,32 @@ export default {
       }
     }
   }
+
   .info-city-list {
     .info-city-item {
       margin-bottom: 1.8vh;
       width: 100%;
+
       .info-city-item-name {
         margin-bottom: 0.6vh;
         font-size: 1vw;
         width: 100%;
         display: flex;
         justify-content: space-between;
+
         span {
           &:last-child {
             color: #5cd6bc;
           }
         }
       }
-      .info-city-item-count{ 
+
+      .info-city-item-count {
         width: 100%;
         height: 0.6vh;
         background-color: rgba($color: #fff, $alpha: 0.4);
         border-radius: 3vw;
+
         .p {
           height: 100%;
           background-color: #5cd6bc;

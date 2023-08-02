@@ -100,12 +100,12 @@ export default class Earth {
       if (!originPoint) {
         return;
       }
-      const targetPoint = corePoint.clone();
+      const targetPointPosition = corePoint.position;
       // 两点长度
-      const distance = originPoint.position.distanceTo(targetPoint.position);
+      const distance = originPoint.position.distanceTo(targetPointPosition);
 
       // 核心
-      const arcInfo = calcArcInfo(originPoint.position, targetPoint.position);
+      const arcInfo = calcArcInfo(originPoint.position, targetPointPosition);
       const arcMesh = getArcMesh(arcInfo);
       const flyEllipse = getFlyLineMesh(arcInfo);
 

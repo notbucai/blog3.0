@@ -16,7 +16,7 @@
           <div class="info-card-title">访问总统计</div>
           <div class="info-card-content">
             <div class="info-card-content-number">
-              {{ dvData.recordCount || '-' }}
+              {{ dvData.visitCount || '-' }}
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="info-card-title">今日访问</div>
             <div class="info-card-content">
               <div class="info-card-content-number" style="color: #26EF9B;">
-                {{ dvData.recordTodayCount || '-' }}
+                {{ dvData.visitCountToday || '-' }}
               </div>
             </div>
           </div>

@@ -34,8 +34,8 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/animate.min.css' },
-      { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/github-markdown.min.css' },
+      // { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/animate.min.css' },
+      // { rel: 'stylesheet', href: '//image.notbucai.com/static/notbucai/static/github-markdown.min.css' },
       { rel: 'preload', href: '//image.notbucai.com/static/key/process.wasm', as: "fetch" },
       { rel: 'preload', href: '//image.notbucai.com/static/key/runtime.js', as: "fetch" },
       { rel: 'preload', href: '//image.notbucai.com/static/key/process.wasm', as: "fetch" },
@@ -50,7 +50,7 @@ module.exports = {
       // { src: '//unpkg.com/browser-image-compression', defer: true },
       // { src: '//unpkg.com/vuetify@2.x/dist/vuetify.min.js', defer: true },
       { src: '//at.alicdn.com/t/font_2451840_fhijy36qb98.js', defer: true }, /*iconfont*/
-      { src: 'https://cdn-go.cn/aegis/aegis-sdk/latest/aegis.min.js', defer: true }, /*异常上报*/
+      // { src: 'https://cdn-go.cn/aegis/aegis-sdk/latest/aegis.min.js', defer: true }, /*异常上报*/
       { src: 'https://hm.baidu.com/hm.js?a30ef10be90b4a2b118c6cfe5e2275b9', defer: true }, /*引入百度统计的js*/
 
     ]
@@ -261,6 +261,7 @@ module.exports = {
           {
             vue: 'Vue',
             axios: 'axios',
+            // gsap: 'gsap',
             // 'highlight.js': 'hljs',
             'vue-cropper': 'vue-cropper',
             'mavon-editor': 'MavonEditor',

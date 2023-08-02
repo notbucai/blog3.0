@@ -20,10 +20,10 @@
           </v-btn>
           <v-btn elevation="0" @click="handleChangeTheme" text small>
             <v-icon v-if="$vuetify.theme.dark">{{
-            $icons['mdi-white-balance-sunny']
+              $icons['mdi-white-balance-sunny']
             }}</v-icon>
             <v-icon v-if="!$vuetify.theme.dark">{{
-            $icons['mdi-weather-night']
+              $icons['mdi-weather-night']
             }}</v-icon>
           </v-btn>
 
@@ -82,7 +82,7 @@
     <NavigationDrawer v-if="sideStatus" />
     <Keyboard v-if="keyboardShow" />
     <ScrollToTop />
-    <SvgWalle />
+    <!-- <SvgWalle /> -->
     <Qixi v-if="$route.query.love" />
   </v-app>
 </template>
@@ -94,6 +94,7 @@ import CurrentUser from '@/components/CurrentUser.vue';
 import ScrollToTop from '@/components/ScrollToTop.vue';
 // import Qixi from '@/components/Qixi/Index.vue';
 import ComponetLoading from '@/components/common/Loading.vue';
+import { initStyle } from './init.js';
 
 export default {
   components: {
@@ -110,7 +111,7 @@ export default {
     CurrentUser,
     NavigationDrawer: () => import('@/components/NavigationDrawer.vue'),
     ScrollToTop,
-    SvgWalle: () => import('@/components/svg/Walle.vue'),
+    // SvgWalle: () => import('@/components/svg/Walle.vue'),
     Keyboard: () => {
       return {
         component: import('@/components/keyboard/Index.vue'),
@@ -120,7 +121,7 @@ export default {
       };
     },
   },
-  data() {
+  data () {
     return {
 
     };
@@ -129,7 +130,7 @@ export default {
     ...mapState(['user', 'noticeStatus', 'LoginOrRegisterDialog', 'sideStatus', 'keyboardShow'])
   },
   watch: {
-    user() {
+    user () {
       // this.loadUserMessageCount();
     },
   },
@@ -145,27 +146,28 @@ export default {
     }
     this.$vuetify.theme.dark = isDark;
   },
-  mounted() {
+  mounted () {
     if (process.client) {
       // 接入 Aegis 监控
-      const aegis = new Aegis({
-        id: 'mZWaYTLWGWYgbo0wRY', // 上报 id
-        uin: this.$cookies.get('uid'), // 用户唯一 ID（可选）
-        reportApiSpeed: true, // 接口测速
-        reportAssetSpeed: true, // 静态资源测速
-        spa: true, // spa 应用页面跳转的时候开启 pv 计算
-      });
-      console.log('aegis', aegis);
+      // const aegis = new Aegis({
+      //   id: 'mZWaYTLWGWYgbo0wRY', // 上报 id
+      //   uin: this.$cookies.get('uid'), // 用户唯一 ID（可选）
+      //   reportApiSpeed: true, // 接口测速
+      //   reportAssetSpeed: true, // 静态资源测速
+      //   spa: true, // spa 应用页面跳转的时候开启 pv 计算
+      // });
+      // console.log('aegis', aegis);
       this.handleLoadNoticeStatus();
+      initStyle();
     }
   },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
-    handleChangeTheme() {
+    handleChangeTheme () {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       this.$cookies.set('theme', this.$vuetify.theme.dark ? 'dark' : 'white');
     },
-    handleShowSide() {
+    handleShowSide () {
       this.$store.commit('SET_SIDE_STATUS', true);
     },
     // async loadUserMessageCount () {
@@ -174,10 +176,10 @@ export default {
     //   const resData = await this.$axios.get('/api/users/notify/count');
     //   this.messageCount = resData;
     // },
-    handleGoMessage() {
+    handleGoMessage () {
       this.$router.push('/user/notice')
     },
-    async handleLoadNoticeStatus() {
+    async handleLoadNoticeStatus () {
       await this.$store.dispatch('loadNoticeStatus');
     }
   }

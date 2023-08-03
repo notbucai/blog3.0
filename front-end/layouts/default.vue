@@ -52,38 +52,42 @@
         <nuxt />
       </v-container>
     </v-main>
-
-    <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
-      <v-footer app absolute>
-        <v-container>
-          <div class="footer">
-            <p>
-              &copy; 2021
-              <a href="/">不才</a> All Rights Reserved.
-            </p>
-            <div style="
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 14px;
-              ">
-              <a href="http://beian.miit.gov.cn/" target="_blank" style="font-size: 12px; color: #888;"
-                rel="noopener noreferrer">赣ICP备15001741号</a>
-              <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44030602006687" target="_blank"
-                style="font-size: 12px; color: #888;" rel="noopener noreferrer">
-                <img src="https://image.notbucai.com/static/ghs.png" loading="lazy" width="12px" height="12px" />
-                粤公网安备 44030602006687号</a>
+    <client-only>
+      <v-lazy :value="$isServer" transition="scale-transition" min-height="100px">
+        <v-footer app absolute>
+          <v-container>
+            <div class="footer">
+              <p>
+                &copy; 2021
+                <a href="/">不才</a> All Rights Reserved.
+              </p>
+              <div style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 14px;
+                ">
+                <a href="http://beian.miit.gov.cn/" target="_blank" style="font-size: 12px; color: #888;"
+                  rel="noopener noreferrer">赣ICP备15001741号</a>
+                <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44030602006687" target="_blank"
+                  style="font-size: 12px; color: #888;" rel="noopener noreferrer">
+                  <img src="https://image.notbucai.com/static/ghs.png" loading="lazy" width="12px" height="12px" />
+                  粤公网安备 44030602006687号</a>
+              </div>
             </div>
-          </div>
-        </v-container>
-      </v-footer>
-    </v-lazy>
-    <LoginOrRegister v-if="LoginOrRegisterDialog" />
-    <NavigationDrawer v-if="sideStatus" />
-    <Keyboard v-if="keyboardShow" />
-    <ScrollToTop />
-    <!-- <SvgWalle /> -->
-    <Qixi v-if="$route.query.love" />
+          </v-container>
+        </v-footer>
+      </v-lazy>
+    </client-only>
+
+    <client-only>
+      <LoginOrRegister v-if="LoginOrRegisterDialog" />
+      <NavigationDrawer v-if="sideStatus" />
+      <Keyboard v-if="keyboardShow" />
+      <ScrollToTop />
+      <!-- <SvgWalle /> -->
+      <Qixi v-if="$route.query.love" />
+    </client-only>
   </v-app>
 </template>
 

@@ -14,6 +14,7 @@ import { ArticleCommentLike } from "./ArticleCommentLike";
 @Index("FK_5206717892f9b654d3db0417d3b2", ["objectId"], {})
 @Index("FK_6472c40c562f7fab6024dc264bc3", ["parentId"], {})
 @Index("FK_a55c2cebc263800c7ee408045b74", ["rootId"], {})
+@Index("FK_9c2a17cc39708b9f382a5ui89122", ["objectId", "status"], {})
 @Entity("article_comment")
 export class ArticleComment {
   @Column("timestamp", {

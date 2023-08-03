@@ -13,6 +13,7 @@ import { ArticleRead } from "./ArticleRead";
 import { ArticleTag } from "./ArticleTag";
 
 @Index("FK_fae0bad5f06a58f3d2b68e37f1111", ["userId"], {})
+@Index("FK_fae0bad5f0xx8e37f1111", ["up", "updateAt", "status"], {})
 @Entity("article")
 export class Article {
   @Column("timestamp", {

@@ -25,21 +25,27 @@ bffRouter.get('/user/:id/card', async (ctx) => {
 router.get('/data/home', async (ctx) => {
   const httpUrls = [
     ['/article/list/hot', 'cache'],
-    ['/article/list/all', ''],
+    ['/article/list/all', 'cache'],
     ['/tag/list/effect', 'cache'],
     ['/article/list/random', 'cache'],
     ['/comment/list/new/article', 'cache'],
   ];
-  const promiseList = httpUrls.map(async (item) => {
+  const promiseList = httpUrls.map(async (item, index) => {
+    const timeKey = `cache:${item[0]}:time`;
+    console.time(timeKey);
     const [url, type] = item;
     if (type === 'cache') {
+      const data = await cache.getCache(url);
+      console.timeEnd(timeKey);
       return {
         data: {
-          data: await cache.getCache(url)
+          data,
         }
       }
     }
-    return http.get(url)
+    const res = await http.get(url)
+    console.timeEnd(timeKey);
+    return res;
   });
 
   const data = await Promise.all(promiseList)

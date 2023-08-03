@@ -43,10 +43,10 @@ module.exports = {
     ],
     script: [
       // { src: '//unpkg.com/mavon-editor@2.9.0', defer: true },
-      { src: '//image.notbucai.com/static/notbucai/static/vue.min.js', defer: true },
-      { src: '//image.notbucai.com/static/notbucai/static/axios.min.js', defer: true },
+      // { src: '//image.notbucai.com/static/notbucai/static/vue.min.js', defer: true },
+      // { src: '//image.notbucai.com/static/notbucai/static/axios.min.js', defer: true },
       // { src: '//unpkg.com/gsap', defer: true },
-      { src: '//image.notbucai.com/static/notbucai/static/vue-router.min.js', defer: true },
+      // { src: '//image.notbucai.com/static/notbucai/static/vue-router.min.js', defer: true },
       // { src: '//unpkg.com/browser-image-compression', defer: true },
       // { src: '//unpkg.com/vuetify@2.x/dist/vuetify.min.js', defer: true },
       { src: '//at.alicdn.com/t/font_2451840_fhijy36qb98.js', defer: true }, /*iconfont*/
@@ -259,13 +259,13 @@ module.exports = {
         // config.externalsType = 'script';
         config.externals = [
           {
-            vue: 'Vue',
-            axios: 'axios',
+            // vue: 'Vue',
+            // axios: 'axios',
             // gsap: 'gsap',
             // 'highlight.js': 'hljs',
             'vue-cropper': 'vue-cropper',
             'mavon-editor': 'MavonEditor',
-            'vue-router': 'VueRouter',
+            // 'vue-router': 'VueRouter',
             '@splinetool/runtime': 'SplinetoolRuntime',
             'browser-image-compression': 'imageCompression'
           }

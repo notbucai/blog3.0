@@ -3,7 +3,7 @@ import * as THREE from "three";
 export const getBackground = (redis) => {
   // 加载材质
   const textureLoader = new THREE.TextureLoader();
-  const texture = textureLoader.load("https://image.notbucai.com/static/threejs/earth/assets/bg.png");
+  const texture = textureLoader.load("/earth/bg.png");
   // 创建精灵
   const spriteMaterial = new THREE.SpriteMaterial({
     map: texture,

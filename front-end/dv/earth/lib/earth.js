@@ -12,7 +12,7 @@ export const createEarth = (radius = 100) => {
   // 地球贴图
   const textureLoader = new THREE.TextureLoader();
   const texture = textureLoader.load(
-    "https://image.notbucai.com/static/threejs/earth/assets/world.png"
+    "/earth/world.png"
     // './assets/earth.jpg'
   );
   // 球

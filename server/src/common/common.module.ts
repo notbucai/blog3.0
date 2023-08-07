@@ -14,6 +14,7 @@ import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 import { WechatService } from './wechat/wechat.service';
 import { CensorService } from './censor.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AliCloudService } from './alicloud/aliCloud.service';
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     LoggerService,
     TencentCloudService,
     WechatService,
-    CensorService
+    CensorService,
+    AliCloudService
   ],
   exports: [
     LoggerService,

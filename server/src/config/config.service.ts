@@ -24,12 +24,12 @@ import { existsSync } from 'fs';
 import { NacosConfigClient } from 'nacos'
 import BaiduMapConfig from './type/BaiduMapCconfig';
 import QQMapConfig from './type/QQMapConfig';
+import AliyunCaptchaConfig from './type/AliyunCaptchaConfig';
 
 enum configModeEnum {
   File = 'file',
   Nacos = 'nacos'
 }
-
 @Injectable()
 export class ConfigService {
   readonly DEVELOPMENT = 'development';
@@ -56,6 +56,8 @@ export class ConfigService {
   censor: CensorConfig;
   baiduMap: BaiduMapConfig;
   qqMap: QQMapConfig;
+
+  aliCaptcha: AliyunCaptchaConfig;
   
   static DATA_CATCH: any;
 
@@ -82,6 +84,7 @@ export class ConfigService {
     this.censor = new CensorConfig(loadConfig.censor);
     this.baiduMap = new BaiduMapConfig(loadConfig.baiduMap);
     this.qqMap = new QQMapConfig(loadConfig.qqMap);
+    this.aliCaptcha = new AliyunCaptchaConfig(loadConfig.aliyunCaptcha);
   }
 
   public static async init () {

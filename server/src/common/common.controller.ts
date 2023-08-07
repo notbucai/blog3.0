@@ -1,5 +1,21 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Get, Query, UseGuards, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Get,
+  Query,
+  UseGuards,
+  Body,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiConsumes,
+  ApiBody,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as util from 'util';
 
@@ -15,61 +31,76 @@ import { TencentCloudService } from './tencentcloud/tencentCloud.service';
 import { ActiveGuard } from '../core/guards/active.guard';
 import { IpAddress } from '../core/decorators/ipAddress.decorator';
 import { SendSmsDto } from './dto/sendSms.dto';
+import { AliCloudService } from './alicloud/aliCloud.service';
 
 @Controller('common')
 @ApiTags('公共接口')
 export class CommonController {
-
   constructor(
     private readonly cosService: CosService,
     private readonly smsService: SMSService,
     private readonly emailService: EmailService,
     private readonly tencentCloudService: TencentCloudService,
-    private readonly redisService: RedisService
-  ) { }
+    private readonly aliCloudService: AliCloudService,
+    private readonly redisService: RedisService,
+  ) {}
 
   @Post('uploadImage')
   @UseGuards(ActiveGuard)
-  @UseInterceptors(FileInterceptor('file', {
-    fileFilter (req, file, callback) {
-      if (!file.mimetype.startsWith('image/')) {
-        callback(new MyHttpException({
-          code: ErrorCode.ImageTypeError.CODE
-        }), false);
-      } else {
-        callback(null, true);
-      }
-    }
-  }))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      fileFilter(req, file, callback) {
+        if (!file.mimetype.startsWith('image/')) {
+          callback(
+            new MyHttpException({
+              code: ErrorCode.ImageTypeError.CODE,
+            }),
+            false,
+          );
+        } else {
+          callback(null, true);
+        }
+      },
+    }),
+  )
   @ApiBearerAuth()
-  @ApiOperation({ summary: "图片上传" })
+  @ApiOperation({ summary: '图片上传' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'List of cats',
     type: ImgUploadDto,
   })
-  public uploadImage (@UploadedFile() file: FileDto) {
+  public uploadImage(@UploadedFile() file: FileDto) {
     return this.cosService.uploadImage(file);
   }
 
   @Get('upload/sts')
   @UseGuards(ActiveGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: "图片上传权限管理" })
-  public uploadSts (@Query('type') type: string) {
-    
+  @ApiOperation({ summary: '图片上传权限管理' })
+  public uploadSts(@Query('type') type: string) {
     // -
   }
 
   @Post('sendPhoneCode')
-  @ApiOperation({ summary: "发送手机验证码" })
-  @ApiQuery({ name: 'phone', example: "13767284559" })
-  public async sendPhoneCode (@Body() reqData: SendSmsDto, @IpAddress() ipAddress: string) {
-    const { phone } = reqData
+  @ApiOperation({ summary: '发送手机验证码' })
+  @ApiQuery({ name: 'phone', example: '13767284559' })
+  public async sendPhoneCode(
+    @Body() reqData: SendSmsDto,
+    @IpAddress() ipAddress: string,
+  ) {
+    const { phone, captchaVerifyParam } = reqData;
+
     const reg = /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/;
     if (!reg.test(phone)) {
       throw new MyHttpException({ code: ErrorCode.InvalidPhone.CODE });
     }
+
+    const status = await this.aliCloudService.verify(captchaVerifyParam);
+    if (!status) {
+      throw new MyHttpException({ code: ErrorCode.CaptchaError.CODE });
+    }
+
     console.log('ipAddress', ipAddress);
     // 验证验证码
 
@@ -89,9 +120,9 @@ export class CommonController {
   }
 
   @Get('sendEmailCode')
-  @ApiOperation({ summary: "发送邮箱验证码" })
-  @ApiQuery({ name: 'email', example: "1450941858@qq.com" })
-  public async sendEmailCode (@Query('email') email: string) {
+  @ApiOperation({ summary: '发送邮箱验证码' })
+  @ApiQuery({ name: 'email', example: '1450941858@qq.com' })
+  public async sendEmailCode(@Query('email') email: string) {
     const reg = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     if (!reg.test(email)) {
       throw new MyHttpException({ code: ErrorCode.InvalidPhone.CODE });

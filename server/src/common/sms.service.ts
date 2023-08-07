@@ -3,12 +3,15 @@ import { ConfigService } from '../config/config.service';
 import SMS from '../utils/sms';
 import * as _ from 'lodash';
 import { ContentStatus, ContentStatusLabelMap } from '../constants/constants';
+import { LoggerService } from './logger.service';
+import { AliCloudService } from './alicloud/aliCloud.service';
 
 @Injectable()
 export class SMSService {
   private readonly sms: SMS
   constructor(
     private readonly configService: ConfigService,
+    private readonly logger: LoggerService,
   ) {
     this.sms = new SMS(configService.sms);
   }

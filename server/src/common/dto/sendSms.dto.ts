@@ -5,21 +5,21 @@
  * @LastEditTime: 2022-04-08 21:49:47
  * @Description:
  */
-import {
-  IsMobilePhone,
-  IsObject
-} from 'class-validator';
+import { IsMobilePhone, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ErrorCode } from '../../constants/error';
 
 export type CaptchaType = {
   ticket: string;
   randstr: string;
-}
+};
 
 export class SendSmsDto {
-
-  @ApiProperty({ description: '手机号', example: "13767284559", required: true })
+  @ApiProperty({
+    description: '手机号',
+    example: '13767284559',
+    required: true,
+  })
   @IsMobilePhone('zh-CN', {
     message: ErrorCode.InvalidPhone.MESSAGE,
     context: {
@@ -27,6 +27,15 @@ export class SendSmsDto {
     },
   })
   readonly phone: string;
+
+  @ApiProperty({ description: '验证码数据', required: true })
+  @IsString({
+    message: ErrorCode.ParamsError.MESSAGE,
+    context: {
+      errorCode: ErrorCode.ParamsError.CODE,
+    },
+  })
+  readonly captchaVerifyParam: string;
 
   // @ApiProperty({ description: '验证码数据', required: true })
   // @IsObject({
@@ -36,5 +45,4 @@ export class SendSmsDto {
   //   },
   // })
   // captcha: CaptchaType;
-
 }

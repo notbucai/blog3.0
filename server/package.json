@@ -21,6 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@alicloud/captcha20230305": "^1.0.1",
+    "@alicloud/openapi-client": "^0.4.6",
     "@nestjs/common": "^8.4.0",
     "@nestjs/config": "^1.2.0",
     "@nestjs/core": "^8.4.0",

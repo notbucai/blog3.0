@@ -29,9 +29,9 @@
               <div class="sms_box" slot="append">
                 <v-btn
                   text
-                  :loading="codeTmp.loading"
+                  :loading="loadScriptIng || codeTmp.loading"
                   :disabled="codeTmp.isSend"
-                  @click="handleGetCode"
+                  @click="handleGetCodeCheck"
                 >
                   <v-icon v-if="!codeTmp.isSend">{{
                     $icons['mdi-message-processing']
@@ -77,6 +77,7 @@ export default {
         isSend: false,
         num: -1 // 进度
       },
+      loadScriptIng: false,
     };
   },
   computed: {
@@ -89,7 +90,8 @@ export default {
       }
     }
   },
-  created () {
+  mounted () {
+    this.loadScript();
   },
   methods: {
     async handleSubmit (formElName) {
@@ -112,8 +114,60 @@ export default {
       }
       this.submitIng = false;
     },
-    // 获取验证码
-    async handleGetCode () {
+    // 加载Captcha
+    loadScript() {
+      if (this.loadScriptIng) return;
+      this.loadScriptIng = true;
+      const script = document.createElement('script');
+      script.src = 'https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js';
+      script.onload = () => {
+        this.loadCaptcha();
+        this.loadScriptIng = false;
+      };
+      script.onerror = () => {
+        this.loadScriptIng = false;
+        // message
+        return this.$snackbar.error('验证码加载失败，请刷新重试');
+      }
+      document.body.appendChild(script);
+    },
+    loadCaptcha() {
+      const smsBtn = document.createElement('button');
+      smsBtn.id = `smsBtn_${Math.random().toString(36).substr(2)}`;
+      smsBtn.hidden = true;
+      document.body.appendChild(smsBtn);
+      this.captchaButton = smsBtn;
+      const v = initAliyunCaptcha({
+        SceneId: 'mneshqxu', // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
+        prefix: '14d1vp', // 身份标。开通阿里云验证码2.0后，您可以在控制台概览页面的实例基本信息卡片区域，获取身份标
+        mode: 'popup', // 验证码模式。popup表示要集成的验证码模式为弹出式。无需修改
+        element: '#captchaElement', //页面上预留的渲染验证码的元素，与原代码中预留的页面元素保持一致。
+        button: `#${smsBtn.id}`, // 触发验证码弹窗的元素。button表示单击登录按钮后，触发captchaVerifyCallback函数。您可以根据实际使用的元素修改element的值
+        captchaVerifyCallback: async (captchaVerifyParam) => {
+          // console.log('captchaVerifyParam', captchaVerifyParam);
+          // this.$axios.post('');
+          await this.handleGetCode(captchaVerifyParam);
+          return {
+            captchaResult: true,
+            bizResult: {},
+          }
+        }, // 业务请求(带验证码校验)回调函数，无需修改
+        onBizResultCallback: (bizResult) => {
+          console.log('bizResult', bizResult);
+        }, // 业务请求结果回调函数，无需修改
+        // getInstance: getInstance, // 绑定验证码实例函数，无需修改
+        slideStyle: {
+          width: 360,
+          height: 40,
+        }, // 滑块验证码样式，支持自定义宽度和高度，填入数字即可，单位为px
+      });
+    },
+    verifyCaptcha() {
+      if (this.loadScriptIng) return;
+      console.log('this.captchaButton', this.captchaButton);
+      this.captchaButton.click();
+    },
+    async handleGetCodeCheck() {
       const phone = this.formData.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -121,7 +175,11 @@ export default {
       if (errlist.length) {
         return this.$snackbar.error('手机号不能为空');
       }
-      const codeTmp = this.codeTmp;
+      this.verifyCaptcha();
+    },
+    // 获取验证码
+    async handleGetCode () {
+      const phone = this.formData.phone;
       codeTmp.loading = true; // 开始发送
 
       try {

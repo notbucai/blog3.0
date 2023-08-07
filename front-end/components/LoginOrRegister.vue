@@ -6,12 +6,7 @@
  * @Description:
 -->
 <template>
-  <v-dialog
-    :z-index="9999"
-    persistent
-    v-model="LoginOrRegisterDialog"
-    width="440"
-  >
+  <v-dialog :z-index="9999" persistent v-model="LoginOrRegisterDialog" width="440">
     <v-card>
       <div class="back_btn-box">
         <v-btn elevation="0" text @click="SET_LOGIN_OR_REGISTER_DIALOG">
@@ -22,77 +17,38 @@
         <header class="login_header-box">
           <h2>
             欢迎你，
-            <v-btn
-              text
-              class="header_action-btn"
-              @click="setType(type == 1 ? 2 : 1)"
-              >{{ type | reTypeToName }}</v-btn
-            >
+            <v-btn text class="header_action-btn" @click="setType(type == 1 ? 2 : 1)">{{ type | reTypeToName }}</v-btn>
           </h2>
           <h3>请填写以下信息进行{{ type | typeToName }}</h3>
         </header>
         <!-- 登录 -->
-        <v-form
-          v-show="isLogin"
-          ref="loginForm"
-          v-model="loginValid"
-          lazy-validation
-        >
+        <v-form v-show="isLogin" ref="loginForm" v-model="loginValid" lazy-validation>
           <div class="form-field required">
             <label>用户名/手机号/邮箱</label>
-            <v-text-field
-              v-model="loginForm.login"
-              :rules="$constant.valid.REQUIRED"
-              required
-            ></v-text-field>
+            <v-text-field v-model="loginForm.login" :rules="$constant.valid.REQUIRED" required></v-text-field>
           </div>
           <div class="form-field required">
             <label>密码</label>
-            <v-text-field
-              v-model="loginForm.pass"
-              type="password"
-              :rules="$constant.valid.REQUIRED"
-              required
-            ></v-text-field>
+            <v-text-field v-model="loginForm.pass" type="password" :rules="$constant.valid.REQUIRED"
+              required></v-text-field>
           </div>
         </v-form>
         <!-- 注册 -->
-        <v-form
-          v-show="isRegister"
-          ref="registerForm"
-          v-model="registerValid"
-          lazy-validation
-        >
+        <v-form v-show="isRegister" ref="registerForm" v-model="registerValid" lazy-validation>
           <div class="form-field required">
             <label>用户名</label>
-            <v-text-field
-              v-model="registerForm.username"
-              :rules="$constant.valid.REQUIRED"
-              required
-            ></v-text-field>
+            <v-text-field v-model="registerForm.username" :rules="$constant.valid.REQUIRED" required></v-text-field>
           </div>
           <div class="form-field required">
             <label>手机号</label>
-            <v-text-field
-              v-model="registerForm.phone"
-              :rules="$constant.valid.PHONE"
-              required
-            ></v-text-field>
+            <v-text-field v-model="registerForm.phone" :rules="$constant.valid.PHONE" required></v-text-field>
           </div>
           <div class="form-field required">
             <label>验证码</label>
-            <v-text-field
-              v-model="registerForm.code"
-              :rules="$constant.valid.REQUIRED"
-              required
-            >
+            <v-text-field v-model="registerForm.code" :rules="$constant.valid.REQUIRED" required>
               <div class="sms_box" slot="append">
-                <v-btn
-                  text
-                  :loading="loadScriptIng || codeTmp.loading"
-                  :disabled="codeTmp.isSend"
-                  @click="handleShowVCodeForGetCode"
-                >
+                <v-btn text :loading="loadScriptIng || codeTmp.loading" :disabled="codeTmp.isSend"
+                  @click="handleShowVCodeForGetCode">
                   <v-icon v-if="!codeTmp.isSend">{{
                     $icons['mdi-message-processing']
                   }}</v-icon>
@@ -103,23 +59,16 @@
           </div>
           <div class="form-field required">
             <label>密码</label>
-            <v-text-field
-              v-model="registerForm.pass"
-              type="password"
-              :rules="$constant.valid.REQUIRED"
-              required
-            ></v-text-field>
+            <v-text-field v-model="registerForm.pass" type="password" :rules="$constant.valid.REQUIRED"
+              required></v-text-field>
           </div>
         </v-form>
 
+        <!-- captchaElement -->
+        <div id="captchaElement"></div>
+
         <div class="form-field center mt-4">
-          <v-btn
-            large
-            elevation="0"
-            class="continue-btn"
-            @click="handleSubmit"
-            :loading="submitIng"
-          >
+          <v-btn large elevation="0" class="continue-btn" @click="handleSubmit" :loading="submitIng">
             继续
             <v-icon>{{ $icons['mdi-arrow-right'] }}</v-icon>
           </v-btn>
@@ -157,12 +106,7 @@
             </svg>
           </v-btn>
 
-          <v-btn
-            :elevation="0"
-            icon
-            x-large
-            @click="handleAuthLogin('notbucai')"
-          >
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('notbucai')">
             <svg class="symbol-icon" aria-hidden="true">
               <use xlink:href="#iconxiaochengxu"></use>
             </svg>
@@ -176,7 +120,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 export default {
-  data () {
+  data() {
     return {
       type: 1,
       submitIng: false,
@@ -203,36 +147,91 @@ export default {
       // scriptSuccesful: false,
     };
   },
-  mounted () { },
+  mounted() {
+    this.loadScript();
+  },
   computed: {
     ...mapState(['LoginOrRegisterDialog']),
     // 是否是登录
-    isLogin () {
+    isLogin() {
       return this.isType(1);
     },
     // 是否是注册
-    isRegister () {
+    isRegister() {
       return this.isType(2);
-    }
+    },
   },
   filters: {
-    typeToName (type) {
+    typeToName(type) {
       return type == 1 ? '登录' : '注册';
     },
-    reTypeToName (type) {
+    reTypeToName(type) {
       return type == 1 ? '注册' : '登录';
     }
   },
   methods: {
     ...mapMutations(['SET_LOGIN_OR_REGISTER_DIALOG']),
+    // 加载Captcha
+    loadScript() {
+      if (this.loadScriptIng) return;
+      this.loadScriptIng = true;
+      const script = document.createElement('script');
+      script.src = 'https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js';
+      script.onload = () => {
+        this.loadCaptcha();
+        this.loadScriptIng = false;
+      };
+      script.onerror = () => {
+        this.loadScriptIng = false;
+        // message
+        return this.$snackbar.error('验证码加载失败，请刷新重试');
+      }
+      document.body.appendChild(script);
+    },
+    loadCaptcha() {
+      const smsBtn = document.createElement('button');
+      smsBtn.id = `smsBtn_${Math.random().toString(36).substr(2)}`;
+      smsBtn.hidden = true;
+      document.body.appendChild(smsBtn);
+      this.captchaButton = smsBtn;
+      const v = initAliyunCaptcha({
+        SceneId: 'mneshqxu', // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
+        prefix: '14d1vp', // 身份标。开通阿里云验证码2.0后，您可以在控制台概览页面的实例基本信息卡片区域，获取身份标
+        mode: 'popup', // 验证码模式。popup表示要集成的验证码模式为弹出式。无需修改
+        element: '#captchaElement', //页面上预留的渲染验证码的元素，与原代码中预留的页面元素保持一致。
+        button: `#${smsBtn.id}`, // 触发验证码弹窗的元素。button表示单击登录按钮后，触发captchaVerifyCallback函数。您可以根据实际使用的元素修改element的值
+        captchaVerifyCallback: async (captchaVerifyParam) => {
+          // console.log('captchaVerifyParam', captchaVerifyParam);
+          // this.$axios.post('');
+          await this.handleGetCode(captchaVerifyParam);
+          return {
+            captchaResult: true,
+            bizResult: {},
+          }
+        }, // 业务请求(带验证码校验)回调函数，无需修改
+        onBizResultCallback: (bizResult) => {
+          console.log('bizResult', bizResult);
+        }, // 业务请求结果回调函数，无需修改
+        // getInstance: getInstance, // 绑定验证码实例函数，无需修改
+        slideStyle: {
+          width: 360,
+          height: 40,
+        }, // 滑块验证码样式，支持自定义宽度和高度，填入数字即可，单位为px
+      });
+    },
+    verifyCaptcha() {
+      if (this.loadScriptIng) return;
+      console.log('this.captchaButton', this.captchaButton);
+      this.captchaButton.click();
+    },
     // 验证类型
-    isType (type) {
+    isType(type) {
       return this.type === type;
     },
-    setType (type) {
+    setType(type) {
       this.type = type;
     },
-    handleAuthLogin (type) {
+    handleAuthLogin(type) {
       console.log('type', type);
       const url = this.$constant.STATE_LIST['login_' + type];
 
@@ -244,7 +243,7 @@ export default {
         }
       }, 100);
     },
-    handleShowVCodeForGetCode () {
+    handleShowVCodeForGetCode() {
       if (this.loadScriptIng) return;
       const phone = this.registerForm.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
@@ -253,9 +252,9 @@ export default {
       if (errlist.length) {
         return this.$snackbar.error('手机号不能为空');
       }
-      this.handleGetCode();
+      this.verifyCaptcha();
     },
-    async handleGetCode () {
+    async handleGetCode(captchaVerifyParam) {
       const phone = this.registerForm.phone;
       const errlist = this.$constant.valid.PHONE.filter(item => {
         return !(typeof item(phone) == 'boolean');
@@ -271,6 +270,7 @@ export default {
         // 发送ajax
         await this.$axios.post('api/common/sendPhoneCode', {
           phone,
+          captchaVerifyParam,
         });
         codeTmp.loading = false; // 发送完毕
         // 开始倒计时
@@ -287,7 +287,7 @@ export default {
         codeTmp.loading = false;
       }
     },
-    async handleSubmit () {
+    async handleSubmit() {
       const formElName = this.type == 1 ? 'loginForm' : 'registerForm';
       // 验证
       const isValidate = this.$refs[formElName].validate();
@@ -330,10 +330,12 @@ export default {
       label {
         color: #9e9e9e !important;
       }
+
       .v-input__slot {
         input {
           background-color: #272727;
           color: #fff;
+
           &:focus,
           &:hover {
             background-color: #121212;
@@ -343,39 +345,48 @@ export default {
     }
   }
 }
+
 .back_btn-box {
   padding: 8px 6px 0;
 }
+
 .login-box {
   padding: 12px 28px 34px;
+
   .symbol-icon {
     font-size: 2em;
     opacity: 0.8;
   }
+
   .login_header-box {
     overflow: hidden;
+
     h2 {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 6px;
+
       .header_action-btn {
         font-size: 16px;
         color: rgb(236, 88, 141);
         caret-color: rgb(236, 88, 141);
       }
     }
+
     h3 {
       color: #999;
       margin-bottom: 12px;
     }
   }
+
   .form-field {
     &.center {
       display: flex;
       align-items: center;
       justify-content: center;
     }
+
     &.required {
       label {
         &::after {
@@ -386,6 +397,7 @@ export default {
         }
       }
     }
+
     label {
       padding-left: 8px;
       display: block;
@@ -395,16 +407,20 @@ export default {
       margin: 14px 0 6px;
       color: #0d0c22;
     }
+
     .continue-btn {
       width: 240px;
     }
+
     .v-text-field {
       padding: 0;
       margin: 0;
     }
+
     .v-input__slot {
       .sms_box {
         align-self: center;
+
         /* cursor: pointer; */
         /* padding-left: 12px; */
         &:hover {
@@ -413,11 +429,13 @@ export default {
           }
         }
       }
+
       &::before,
       &::after {
         content: none;
       }
     }
+
     input {
       border-radius: 4px;
       border: 1px solid transparent;
@@ -429,6 +447,7 @@ export default {
       transition: all 0.3s;
       caret-color: #f00;
       font-size: 14px;
+
       &:hover,
       &:focus {
         background-color: #fff;

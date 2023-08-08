@@ -12,13 +12,12 @@ export const getArcMesh = (arcInfo) => {
     false, // aClockwise
     0 // aRotation
   );
-  const points = curve.getPoints(24);
+  const points = curve.getPoints(arcInfo.radius | 0);
   const _geometry = new THREE.BufferGeometry().setFromPoints(points);
   const _material = new THREE.LineBasicMaterial({
-    color: 0x00ffff,
+    color: 0x26908b,
   });
   const ellipse = new THREE.Line(_geometry, _material);
-
   ellipse.position.copy(arcInfo.center);
 
   // 旋转
@@ -42,13 +41,15 @@ export const getFlyLineMesh = (arcInfo) => {
     false, // aClockwise
     0 // aRotation
   );
-  const flyPoints = flyCurve.getPoints(24);
+  const flyPoints = flyCurve.getPoints((arcInfo.radius / 2) | 0);
+
+  // flyCurve.
   const flyGeometry = new THREE.BufferGeometry().setFromPoints(flyPoints);
   const flyMaterial = new THREE.PointsMaterial({
     vertexColors: true,
     size: 1,
     transparent: true,
-    side: THREE.FrontSide,
+    // side: THREE.FrontSide,
   });
   const flyEllipse = new THREE.Points(flyGeometry, flyMaterial);
   flyEllipse.position.copy(arcInfo.center);
@@ -58,9 +59,9 @@ export const getFlyLineMesh = (arcInfo) => {
   const flyColors = [];
   const flyPercents = [];
   for (let i = 0; i < flyPoints.length; i++) {
-    flyPercents.push(i / flyPoints.length + 0.6);
+    flyPercents.push(i / flyPoints.length + 0.2);
     // 0 - 1 : 0 - 255
-    flyColors.push(0x00, 0xff, 0xff, i / flyPoints.length);
+    flyColors.push(0x00, 0xaa, 0xff, i / flyPoints.length);
   }
   flyGeometry.setAttribute(
     "color",

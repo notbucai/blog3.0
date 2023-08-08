@@ -19,10 +19,10 @@ export default class Earth {
     this.container = container;
     this.size = size;
     this.initScene();
-    this.initEarth()
+    // this.initEarth()
   }
   initScene () {
-    const renderer = this.renderer = new THREE.WebGLRenderer({ antialias: false });
+    const renderer = this.renderer = new THREE.WebGLRenderer({ antialias: false, });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     this.container.appendChild(renderer.domElement);
@@ -36,7 +36,7 @@ export default class Earth {
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.minDistance = 50;
-    controls.maxDistance = 10000;
+    controls.maxDistance = 1000;
 
     scene.add(new THREE.AmbientLight(0x443333));
 
@@ -60,7 +60,7 @@ export default class Earth {
 
     window.addEventListener('resize', onWindowResize, false);
   }
-  initEarth () {
+  async initEarth () {
     const size = this.size;
 
     const scene = this.scene;
@@ -69,7 +69,7 @@ export default class Earth {
     const bg = getBackground(size);
     earthGroup.add(bg);
 
-    const earth = createEarth(size);
+    const earth = await createEarth(size);
     earthGroup.add(earth);
 
     scene.add(earthGroup);
@@ -92,44 +92,45 @@ export default class Earth {
     const currentLon = coreLocation.lon;
     const currentLat = coreLocation.lat;
 
-    const corePoint = getShowPointByLonLat(currentLon, currentLat, size, 0, 1);
+    const corePoint = getShowPointByLonLat(currentLon, currentLat, size, 0, 2.5);
     earthGroup.add(corePoint);
 
     const points = originLocationList.map(location => {
-      const originPoint = getShowPointByLonLat(location.lon, location.lat, size, location.count, 0.6);
+      const originPoint = getShowPointByLonLat(location.lon, location.lat, size, location.count, 1.5);
       if (!originPoint) {
         return;
       }
       const targetPointPosition = corePoint.position;
+      const originPointPosition = originPoint.position;
       // 两点长度
-      const distance = originPoint.position.distanceTo(targetPointPosition);
+      const distance = originPointPosition.distanceTo(targetPointPosition);
+
+      // 如果小于1 就忽略
+      if (distance < 10) {
+        originPoint.clear();
+        return null;
+      }
 
       // 核心
-      const arcInfo = calcArcInfo(originPoint.position, targetPointPosition);
+      const arcInfo = calcArcInfo(originPointPosition, targetPointPosition);
       const arcMesh = getArcMesh(arcInfo);
       const flyEllipse = getFlyLineMesh(arcInfo);
 
       const group = new THREE.Group();
-      group.add(originPoint);
-      // 如果小于1 就忽略
-      if (distance > 10) {
-
-        group.add(flyEllipse);
-        group.add(arcMesh);
-        new TWEEN.Tween(flyEllipse.rotation)
-          .to(
-            {
-              z: arcInfo.endAngle - arcInfo.startAngle + flyEllipse.rotation.z,
-            },
-            1000 * (distance / size)
-          )
-          .easing(TWEEN.Easing.Linear.None)
-          .delay(100)
-          .repeat(Infinity)
-          .start();
-
-      }
-
+      earthGroup.add(originPoint);
+      group.add(flyEllipse);
+      group.add(arcMesh);
+      new TWEEN.Tween(flyEllipse.rotation)
+        .to(
+          {
+            z: arcInfo.endAngle - arcInfo.startAngle + flyEllipse.rotation.z,
+          },
+          1500 * (distance / size)
+        )
+        .easing(TWEEN.Easing.Linear.None)
+        .delay(100)
+        .repeat(Infinity)
+        .start();
       return group;
     }).filter(item => item);
 

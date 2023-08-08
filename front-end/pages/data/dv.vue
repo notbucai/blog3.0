@@ -139,19 +139,22 @@ export default {
         localStorage.setItem('dvData', JSON.stringify(e));
       });
       this.initDataChangeLine(dvData.readCountDays);
+
       this.earth.renderData({
         lat: 30,
         lon: 120,
-      }, dvData.groupByLonLat.filter(item => item.count > 1));
+      }, dvData.groupByLonLat.filter((item, index) => item.count > 1));
+
     },
-    init () {
+    async init () {
       const container = this.$refs.container;
       const earth = new Earth({
         container,
         size: 100,
       });
       this.earth = earth;
-      earth.earthGroup.position.x = -40;
+      await earth.initEarth();
+      // earth.earthGroup.position.x = -40;
       this.handleLoadData();
     },
     initDataChangeLine (data) {

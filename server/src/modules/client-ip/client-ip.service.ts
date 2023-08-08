@@ -258,8 +258,8 @@ export class ClientIpService {
   groupByLonLat() {
     return this.clientIpInfoRepository
       .createQueryBuilder('client_ip_info')
-      .select('count(*) as count, client_ip_info.lon, client_ip_info.lat')
-      .groupBy('client_ip_info.lon, client_ip_info.lat')
+      .select('count(*) as count, MAX(client_ip_info.lon) as lon, MAX(client_ip_info.lat) as lat')
+      .groupBy('client_ip_info.region')
       .orderBy({
         count: 'DESC',
       })

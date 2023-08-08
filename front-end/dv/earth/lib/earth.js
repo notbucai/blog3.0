@@ -6,21 +6,30 @@ import { latLonToVector3 } from "./utils.js";
  * @param {Number} radius 半径
  * @returns
  */
-export const createEarth = (radius = 100) => {
+export const createEarth = async (radius = 100) => {
   const coreRadius = radius;
 
   // 地球贴图
   const textureLoader = new THREE.TextureLoader();
-  const texture = textureLoader.load(
-    "/earth/world.png"
-    // './assets/earth.jpg'
-  );
+  const texture = await new Promise((resolve, reject) => {
+    textureLoader.load(
+      "/earth/world.png",
+      (t) => {
+        resolve(t);
+      }
+    );
+  });
   // 球
-  const geometry = new THREE.SphereGeometry(coreRadius, 32, 32);
+  const geometry = new THREE.SphereGeometry(coreRadius, 64, 64);
   const material = new THREE.MeshPhongMaterial({
     map: texture,
     // normalMap: texture,
+    // side: THREE.DoubleSide,
     // color: 0x777777,
+    // transparent: true,
+    // alphaTest:0.8,
+    // depthWrite: true,
+    // depthWrite: false,
   });
   const sphere = new THREE.Mesh(geometry, material);
 
@@ -73,12 +82,13 @@ export const createEarth = (radius = 100) => {
   });
 
   // 球体光晕
-  const glowGeometry = new THREE.SphereGeometry(coreRadius + 2, 32, 32);
+  const glowGeometry = new THREE.SphereGeometry(coreRadius + 2, 64, 64);
   const glowMaterial = new THREE.MeshLambertMaterial({
     color: 0xffffff,
     side: THREE.FrontSide,
     transparent: true,
     opacity: 0.1,
+    depthWrite: false,
   });
   const glowSphere = new THREE.Mesh(glowGeometry, glowMaterial);
   sphere.add(glowSphere);

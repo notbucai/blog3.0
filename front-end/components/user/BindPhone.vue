@@ -146,9 +146,9 @@ export default {
         captchaVerifyCallback: async (captchaVerifyParam) => {
           // console.log('captchaVerifyParam', captchaVerifyParam);
           // this.$axios.post('');
-          await this.handleGetCode(captchaVerifyParam);
+          const status = await this.handleGetCode(captchaVerifyParam);
           return {
-            captchaResult: true,
+            captchaResult: status,
             bizResult: {},
           }
         }, // 业务请求(带验证码校验)回调函数，无需修改
@@ -184,10 +184,13 @@ export default {
 
       try {
         // 发送ajax
-        await this.$axios.post('api/common/sendPhoneCode', {
+        const resData = await this.$axios.post('api/common/sendPhoneCode', {
           phone,
         });
         codeTmp.loading = false; // 发送完毕
+        if (!resData?.status) {
+          return false;
+        }
         // 开始倒计时
         codeTmp.isSend = true;
         codeTmp.num = 60;
@@ -198,9 +201,11 @@ export default {
             clearInterval(timer);
           }
         }, 1000);
+        return status;
       } catch (error) {
         codeTmp.loading = false;
       }
+      return false;
     },
   },
 }

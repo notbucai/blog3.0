@@ -9,19 +9,10 @@
   <Head>
     <Script src="//at.alicdn.com/t/font_2451840_fhijy36qb98.js" defer />
   </Head>
-  <v-dialog
-    :z-index="9999"
-    height=""
-    persistent
-    v-model="loginOrRegisterDialog"
-  >
+  <v-dialog :z-index="9999" height="" persistent v-model="loginOrRegisterDialog">
     <v-card>
       <div class="back_btn-box">
-        <v-btn
-          text
-          flat
-          @click="loginOrRegisterDialog = !loginOrRegisterDialog"
-        >
+        <v-btn text flat @click="loginOrRegisterDialog = !loginOrRegisterDialog">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
       </div>
@@ -29,86 +20,42 @@
         <header class="login_header-box">
           <h2>
             欢迎你，
-            <v-btn
-              text
-              variant="text"
-              flat
-              color="pink-lighten-1"
-              class="header_action-btn"
-              @click="setType(data.type == 1 ? 2 : 1)"
-              >{{ reTypeToName(data.type) }}</v-btn
-            >
+            <v-btn text variant="text" flat color="pink-lighten-1" class="header_action-btn"
+              @click="setType(data.type == 1 ? 2 : 1)">{{ reTypeToName(data.type) }}</v-btn>
           </h2>
           <h3>请填写以下信息进行{{ typeToName(data.type) }}</h3>
         </header>
         <!-- 登录 -->
-        <v-form
-          v-show="isType(1)"
-          ref="loginFormRef"
-          v-model="data.loginValid"
-          lazy-validation
-        >
+        <v-form v-show="isType(1)" ref="loginFormRef" v-model="data.loginValid" lazy-validation>
           <div class="form-field required">
             <label>用户名/手机号/邮箱</label>
-            <v-text-field
-              v-model="data.loginForm.login"
-              :rules="$constant.valid.REQUIRED"
-              error-messages="123123"
-              required
-            ></v-text-field>
+            <v-text-field v-model="data.loginForm.login" :rules="$constant.valid.REQUIRED" error-messages="123123"
+              required></v-text-field>
           </div>
           <div class="form-field required">
             <label>密码</label>
-            <v-text-field
-              v-model="data.loginForm.pass"
-              type="password"
-              :rules="$constant.valid.REQUIRED"
-              required
-            ></v-text-field>
+            <v-text-field v-model="data.loginForm.pass" type="password" :rules="$constant.valid.REQUIRED"
+              required></v-text-field>
           </div>
         </v-form>
         <!-- 注册 -->
-        <v-form
-          v-show="isType(2)"
-          ref="registerFormRef"
-          v-model="data.registerValid"
-          lazy-validation
-        >
+        <v-form v-show="isType(2)" ref="registerFormRef" v-model="data.registerValid" lazy-validation>
           <div class="form-field required">
             <label>用户名</label>
-            <v-text-field
-              v-model="data.registerForm.username"
-              :rules="$constant.valid.REQUIRED"
-              required
-            ></v-text-field>
+            <v-text-field v-model="data.registerForm.username" :rules="$constant.valid.REQUIRED" required></v-text-field>
           </div>
           <div class="form-field required">
             <label>手机号</label>
-            <v-text-field
-              v-model="data.registerForm.phone"
-              :rules="$constant.valid.PHONE"
-              required
-            ></v-text-field>
+            <v-text-field v-model="data.registerForm.phone" :rules="$constant.valid.PHONE" required></v-text-field>
           </div>
           <div class="form-field required">
             <label>验证码</label>
-            <v-text-field
-              v-model="data.registerForm.code"
-              :rules="$constant.valid.REQUIRED"
-              required
-            >
+            <v-text-field v-model="data.registerForm.code" :rules="$constant.valid.REQUIRED" required>
               <template #append>
                 <div class="sms_box">
-                  <v-btn
-                    text
-                    flat
-                    :loading="data.loadScriptIng || data.codeTmp.loading"
-                    :disabled="data.codeTmp.isSend"
-                    @click="handleShowVCodeForGetCode"
-                  >
-                    <v-icon v-if="!data.codeTmp.isSend"
-                      >mdi-message-processing</v-icon
-                    >
+                  <v-btn text flat :loading="data.loadScriptIng || data.codeTmp.loading" :disabled="data.codeTmp.isSend"
+                    @click="handleShowVCodeForGetCode">
+                    <v-icon v-if="!data.codeTmp.isSend">mdi-message-processing</v-icon>
                     <span v-else>{{ data.codeTmp.num }}</span>
                   </v-btn>
                 </div>
@@ -117,24 +64,14 @@
           </div>
           <div class="form-field required">
             <label>密码</label>
-            <v-text-field
-              v-model="data.registerForm.pass"
-              type="password"
-              :rules="$constant.valid.REQUIRED"
-              required
-            ></v-text-field>
+            <v-text-field v-model="data.registerForm.pass" type="password" :rules="$constant.valid.REQUIRED"
+              required></v-text-field>
           </div>
         </v-form>
 
         <div class="form-field center mt-4">
-          <v-btn
-            size="large"
-            flat
-            color="grey-lighten-4"
-            class="continue-btn"
-            @click="handleSubmit"
-            :loading="data.submitIng"
-          >
+          <v-btn size="large" flat color="grey-lighten-4" class="continue-btn" @click="handleSubmit"
+            :loading="data.submitIng">
             继续
             <v-icon>mdi-arrow-right</v-icon>
           </v-btn>
@@ -148,60 +85,31 @@
             </svg>
           </v-btn>
 
-          <v-btn
-            :elevation="0"
-            icon
-            flat
-            x-large
-            @click="handleAuthLogin('qq')"
-          >
+          <v-btn :elevation="0" icon flat x-large @click="handleAuthLogin('qq')">
             <svg class="symbol-icon" aria-hidden="true">
               <use xlink:href="#iconQQ1"></use>
             </svg>
           </v-btn>
 
-          <v-btn
-            :elevation="0"
-            icon
-            flat
-            x-large
-            @click="handleAuthLogin('baidu')"
-          >
+          <v-btn :elevation="0" icon flat x-large @click="handleAuthLogin('baidu')">
             <svg class="symbol-icon" aria-hidden="true">
               <use xlink:href="#iconbaidu"></use>
             </svg>
           </v-btn>
 
-          <v-btn
-            :elevation="0"
-            icon
-            flat
-            x-large
-            @click="handleAuthLogin('weibo')"
-          >
+          <v-btn :elevation="0" icon flat x-large @click="handleAuthLogin('weibo')">
             <svg class="symbol-icon" aria-hidden="true">
               <use xlink:href="#iconweibo"></use>
             </svg>
           </v-btn>
 
-          <v-btn
-            :elevation="0"
-            icon
-            flat
-            x-large
-            @click="handleAuthLogin('gitee')"
-          >
+          <v-btn :elevation="0" icon flat x-large @click="handleAuthLogin('gitee')">
             <svg class="symbol-icon" aria-hidden="true">
               <use xlink:href="#icongitee"></use>
             </svg>
           </v-btn>
 
-          <v-btn
-            :elevation="0"
-            icon
-            x-large
-            @click="handleAuthLogin('notbucai')"
-          >
+          <v-btn :elevation="0" icon x-large @click="handleAuthLogin('notbucai')">
             <svg class="symbol-icon" aria-hidden="true">
               <use xlink:href="#iconxiaochengxu"></use>
             </svg>
@@ -252,22 +160,22 @@ const loginOrRegisterDialog = useLoginOrRegisterDialog()
 const $axios: any = {};
 
 
-function typeToName (type) {
+function typeToName(type) {
   return type == 1 ? '登录' : '注册';
 }
-function reTypeToName (type) {
+function reTypeToName(type) {
   return type == 1 ? '注册' : '登录';
 }
 
-function isType (type) {
+function isType(type) {
   return data.value.type === type;
 }
-function setType (type) {
+function setType(type) {
   data.value.type = type;
   // 注册
   handleLoadVImageCode();
 }
-function handleLoadVImageCode () {
+function handleLoadVImageCode() {
   if (!isType(2)) return;
   if (data.value.loadScriptIng) return;
   if (scriptSuccesful) return;
@@ -297,12 +205,12 @@ function handleLoadVImageCode () {
     // $snackbar.error('加载资源失败，请刷新页面重试。');
   }
   document.querySelector('body').appendChild(scriptEl);
-} function captchaSuccesful (data) {
+} function captchaSuccesful(data) {
   console.log('data', data);
   // 调用接口验证数据
   // 调用发送验证码
   handleGetCode(data);
-} function handleAuthLogin (type) {
+} function handleAuthLogin(type) {
   console.log('type', type);
   const url = $constant.STATE_LIST['login_' + type];
   console.log('url', url);
@@ -314,7 +222,7 @@ function handleLoadVImageCode () {
       location.reload();
     }
   }, 100);
-} function handleShowVCodeForGetCode () {
+} function handleShowVCodeForGetCode() {
 
   if (data.value.loadScriptIng) return;
   if (scriptError) {
@@ -336,7 +244,7 @@ function handleLoadVImageCode () {
 
   captcha.show();
 }
-async function handleGetCode (captcha) {
+async function handleGetCode(captcha) {
   const phone = data.value.registerForm.phone;
   const errlist = $constant.valid.PHONE.filter(item => {
     return !(typeof item(phone) == 'boolean');
@@ -352,11 +260,14 @@ async function handleGetCode (captcha) {
   try {
     // 发送ajax
     // todo $axios
-    await $axios.post('api/common/sendPhoneCode', {
+    const reData = await $axios.post('api/common/sendPhoneCode', {
       phone,
       captcha
     });
     codeTmp.loading = false; // 发送完毕
+    if (!reData.status) {
+      return false;
+    }
     // 开始倒计时
     codeTmp.isSend = true;
     codeTmp.num = 60;
@@ -367,11 +278,13 @@ async function handleGetCode (captcha) {
         clearInterval(timer);
       }
     }, 1000);
+    return true;
   } catch (error) {
     codeTmp.loading = false;
   }
+  return false;
 }
-async function handleSubmit (event) {
+async function handleSubmit(event) {
   const formElRef = data.value.type == 1 ? loginFormRef.value : registerFormRef.value;
   const formName = data.value.type == 1 ? 'loginForm' : 'registerForm'
   console.log('formElRef', formElRef);
@@ -420,12 +333,14 @@ async function handleSubmit (event) {
     max-width: 100%;
   }
 }
+
 .v-theme--dark {
   .login-box {
     .form-field {
       label {
         color: #9e9e9e !important;
       }
+
       .v-input__slot {
         input {
           color: #333;
@@ -434,41 +349,50 @@ async function handleSubmit (event) {
     }
   }
 }
+
 .back_btn-box {
   padding: 8px 6px 0;
   width: 440px;
   max-width: 100%;
 }
+
 .login-box {
   padding: 12px 28px 34px;
+
   .symbol-icon {
     font-size: 2em;
     opacity: 0.8;
   }
+
   .login_header-box {
     overflow: hidden;
+
     h2 {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 6px;
+
       .header_action-btn {
         font-size: 16px;
         /* color: rgb(236, 88, 141);
         caret-color: rgb(236, 88, 141); */
       }
     }
+
     h3 {
       color: #999;
       margin-bottom: 12px;
     }
   }
+
   .form-field {
     &.center {
       display: flex;
       align-items: center;
       justify-content: center;
     }
+
     &.required {
       label {
         &::after {
@@ -479,6 +403,7 @@ async function handleSubmit (event) {
         }
       }
     }
+
     label {
       padding-left: 8px;
       display: block;
@@ -488,35 +413,44 @@ async function handleSubmit (event) {
       margin: 0 0 6px;
       color: #0d0c22;
     }
+
     .continue-btn {
       width: 240px;
     }
+
     .v-text-field {
       padding: 0;
       margin: 0;
     }
+
     .v-field__overlay {
       display: none;
     }
+
     .v-field__field {
       .v-field-label {
         display: none;
       }
     }
+
     .v-input__details {
       margin-bottom: 0;
       padding: 0;
       min-height: 0;
     }
+
     .v-field__outline {
       display: none;
     }
+
     .v-field__input {
       opacity: 1 !important;
     }
+
     .v-input__slot {
       .sms_box {
         align-self: center;
+
         /* cursor: pointer; */
         /* padding-left: 12px; */
         &:hover {
@@ -525,6 +459,7 @@ async function handleSubmit (event) {
           }
         }
       }
+
       &::before,
       &::after {
         content: none;
@@ -542,6 +477,7 @@ async function handleSubmit (event) {
       transition: all 0.3s;
       caret-color: #f00;
       font-size: 14px;
+
       &:hover,
       &:focus {
         background-color: #fff;

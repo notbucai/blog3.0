@@ -203,9 +203,9 @@ export default {
         captchaVerifyCallback: async (captchaVerifyParam) => {
           // console.log('captchaVerifyParam', captchaVerifyParam);
           // this.$axios.post('');
-          await this.handleGetCode(captchaVerifyParam);
+          const status = await this.handleGetCode(captchaVerifyParam);
           return {
-            captchaResult: true,
+            captchaResult: status,
             bizResult: {},
           }
         }, // 业务请求(带验证码校验)回调函数，无需修改
@@ -256,23 +256,20 @@ export default {
     },
     async handleGetCode(captchaVerifyParam) {
       const phone = this.registerForm.phone;
-      const errlist = this.$constant.valid.PHONE.filter(item => {
-        return !(typeof item(phone) == 'boolean');
-      });
-      if (errlist.length) {
-        return this.$snackbar.error('手机号不能为空');
-      }
 
       const codeTmp = this.codeTmp;
       codeTmp.loading = true; // 开始发送
 
       try {
         // 发送ajax
-        await this.$axios.post('api/common/sendPhoneCode', {
+        const reqData = await this.$axios.post('api/common/sendPhoneCode', {
           phone,
           captchaVerifyParam,
         });
         codeTmp.loading = false; // 发送完毕
+        if (!reqData?.status) {
+          return false;
+        }
         // 开始倒计时
         codeTmp.isSend = true;
         codeTmp.num = 60;
@@ -283,9 +280,11 @@ export default {
             clearInterval(timer);
           }
         }, 1000);
+        return true;
       } catch (error) {
         codeTmp.loading = false;
       }
+      return false;
     },
     async handleSubmit() {
       const formElName = this.type == 1 ? 'loginForm' : 'registerForm';

@@ -98,7 +98,9 @@ export class CommonController {
 
     const status = await this.aliCloudService.verify(captchaVerifyParam);
     if (!status) {
-      throw new MyHttpException({ code: ErrorCode.CaptchaError.CODE });
+      return {
+        status: false,
+      };
     }
 
     console.log('ipAddress', ipAddress);
@@ -116,7 +118,9 @@ export class CommonController {
     const code: string = await this.smsService.sendSMSCode(phone, expire);
     this.redisService.setValidationCodeTime(phone, reExpireSecond); // 储存间隔
     this.redisService.setValidationCode(phone, code, expire); // 储存验证码
-    return {};
+    return {
+      status: true,
+    };
   }
 
   @Get('sendEmailCode')

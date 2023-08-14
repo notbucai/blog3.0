@@ -203,10 +203,18 @@ export default {
         captchaVerifyCallback: async (captchaVerifyParam) => {
           // console.log('captchaVerifyParam', captchaVerifyParam);
           // this.$axios.post('');
-          const status = await this.handleGetCode(captchaVerifyParam);
-          return {
-            captchaResult: status,
-            bizResult: {},
+          try {
+            const status = await this.handleGetCode(captchaVerifyParam);
+            return {
+              captchaResult: status,
+              bizResult: {},
+            };
+          } catch (error) {
+            console.log('error', error)
+            return {
+              captchaResult: true,
+              bizResult: {},
+            }
           }
         }, // 业务请求(带验证码校验)回调函数，无需修改
         onBizResultCallback: (bizResult) => {
